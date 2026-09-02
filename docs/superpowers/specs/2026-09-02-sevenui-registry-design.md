@@ -6,7 +6,7 @@
 
 ## Summary
 
-SevenUI is a React component library built exclusively on [Base UI](https://base-ui.com) (`@base-ui-components/react`) primitives, distributed via the shadcn registry protocol. It follows ReUI's model: users copy components into their project as source code via `npx shadcn add`, not as an npm package. The docs site and registry are published from a single repo at sevenui.dev.
+SevenUI is a React component library built exclusively on [Base UI](https://base-ui.com) (`@base-ui/react`) primitives, distributed via the shadcn registry protocol. It follows ReUI's model: users copy components into their project as source code via `npx shadcn add`, not as an npm package. The docs site and registry are published from a single repo at sevenui.dev.
 
 ## Key Decisions
 
@@ -59,35 +59,37 @@ npx shadcn@latest add https://sevenui.dev/r/button.json
 
 - `registry:ui` — the components
 - `registry:lib` — helpers such as `cn`
-- `registry:example` — demo files under examples/ (same source as the docs previews)
-- Theme item — shadcn-compatible CSS variable set; never overrides the user's existing variables
+- `registry:component` — demo files under examples/ (same source as the docs previews; the older `registry:example` type no longer exists in the 2026 schema)
+- `registry:theme` — shadcn-compatible CSS variable set; never overrides the user's existing variables
+
+Internal `registryDependencies` references use full URLs (`https://sevenui.dev/r/utils.json`): bare names resolve to shadcn's own registry, and namespaced refs (`@sevenui/utils`) would break for consumers who install via direct URL without configuring the namespace.
 
 ### Dependency Policy
 
-Each component may only use: `@base-ui-components/react`, Tailwind v4, `class-variance-authority` / `clsx` / `tailwind-merge`. Radix and react-aria appear in no dependency in v1. Exceptions (see Third Party section) are listed individually and are all Radix-free.
+Each component may only use: `@base-ui/react`, Tailwind v4, `class-variance-authority` / `clsx` / `tailwind-merge`. Radix and react-aria appear in no dependency in v1. Exceptions (see Third Party section) are listed individually and are all Radix-free.
 
 ## Component Scope (~50 items)
 
-### Backed 1:1 by a Base UI primitive (28)
+### Backed 1:1 by a Base UI primitive (32)
 
-accordion, alert-dialog, avatar, checkbox, collapsible, combobox, context-menu, dialog, dropdown-menu (Base UI `Menu`), field/form, hover-card (Base UI `Preview Card`), input, label, menubar, navigation-menu, popover, progress, radio-group, scroll-area, select, sheet (based on Base UI `Dialog`), slider, switch, tabs, toast, toggle, toggle-group, tooltip
+accordion, alert-dialog, avatar, button (Base UI `Button`), checkbox, collapsible, combobox, context-menu, dialog, drawer (Base UI `Drawer`), dropdown-menu (Base UI `Menu`), field/form, hover-card (Base UI `Preview Card`), input, input-otp (Base UI `OTP Field`), label, menubar, navigation-menu, popover, progress, radio-group, scroll-area, select, separator, sheet (based on Base UI `Dialog`), slider, switch, tabs, toast, toggle, toggle-group, tooltip
 
-### Pure Tailwind, no primitive (13)
+### Pure Tailwind, no primitive (11)
 
-button, badge, card, alert, separator, skeleton, spinner, table, textarea, breadcrumb, pagination, aspect-ratio, kbd
+badge, card, alert, skeleton, spinner, table, textarea, breadcrumb, pagination, aspect-ratio, kbd
 
 ### Where shadcn uses third-party libraries — our solutions
 
 | In shadcn | Problem | SevenUI solution |
 |---|---|---|
-| drawer (vaul) | vaul depends on Radix Dialog | Own drawer implementation on Base UI Dialog |
-| command (cmdk) | cmdk depends on Radix | Own command on Base UI Autocomplete/Combobox |
+| drawer (vaul) | vaul depends on Radix Dialog | Base UI `Drawer` primitive (added to Base UI in 2026) |
+| command (cmdk) | cmdk depends on Radix | Own command on Base UI Autocomplete |
 | sonner | independent but unnecessary | Base UI Toast |
+| input-otp | third-party library | Base UI `OTP Field` primitive |
 | calendar | react-day-picker (Radix-free) | Same library |
 | carousel | embla-carousel (Radix-free) | Same library |
 | chart | recharts (Radix-free) | Same library |
 | resizable | react-resizable-panels (Radix-free) | Same library |
-| input-otp | input-otp (Radix-free) | Same library |
 | sidebar | composite | Composite of our own components |
 
 ### Bonus (Base UI primitives absent from shadcn)
@@ -104,7 +106,7 @@ Each wave is a shippable whole: component + demo + docs page + registry item.
 4. **Navigation & composite (~9):** tabs, accordion, collapsible, navigation-menu, scroll-area, toolbar, meter, command, sidebar
 5. **Third-party wrappers (~4):** calendar, carousel, chart, resizable
 
-**Risk focus:** Wave 3 animations; drawer and command, the two written from scratch.
+**Risk focus:** Wave 3 animations; command, the one component written from scratch (on Base UI Autocomplete).
 
 ## Docs Structure
 
@@ -119,7 +121,7 @@ Each wave is a shippable whole: component + demo + docs page + registry item.
 
 ### Preview mechanism
 
-Blume's `Component` feature renders files from `examples/` as live previews with source tabs. Example files serve double duty: docs preview **and** `registry:example` item. Single source, two outputs; demo code and docs never drift apart.
+Blume's `Component` feature renders files from `examples/` as live previews with source tabs. Example files serve double duty: docs preview **and** `registry:component` item. Single source, two outputs; demo code and docs never drift apart.
 
 ### Theme bridge
 
@@ -148,6 +150,9 @@ The homepage/landing stays minimal in v1; component pages take priority.
 
 ## Assumptions to Verify (first tasks of Wave 1)
 
-1. Blume's static file passthrough: do `public/r/*.json` files land in `dist/` after build? If not, add a copy step to the build script.
-2. Blume `Component` preview compatibility with Base UI portal/popup components (dialog, tooltip) — portals may escape the preview frame; verify with the first overlay demo.
-3. That `shadcn build` produces `/r/{name}.json` output with flat item names and that the `@sevenui` registries config works through it, tested in a real consumer project.
+Verified against official docs on 2026-09-02: Blume serves `public/` verbatim into `dist/` (assumption resolved); `shadcn build` outputs to `./public/r` by default; the `@sevenui` namespace config syntax is confirmed. Remaining:
+
+1. Blume `Component` preview compatibility with Base UI portal/popup components (dialog, tooltip) — portals may escape the preview frame; verify with the first overlay demo.
+2. Whether Blume's preview build resolves the `@/registry/...` import alias in example files; if not, configure the alias through Blume's `integrations` hook.
+3. Whether `@theme inline` in the injected `examples/theme.css` is processed by Blume's Tailwind pipeline so token utilities (`bg-primary`) generate; if not, fall back to plain CSS utility definitions in the same file.
+4. The `@sevenui` namespace flow end to end, tested in a real consumer project after first deploy.
