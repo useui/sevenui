@@ -1,0 +1,83 @@
+---
+title: Sheet
+description: An edge-positioned panel that slides in from the side of the screen, built on the Base UI Dialog primitive.
+---
+
+<Component path="sheet/sheet-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/sheet
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
+export default function SheetDemo() {
+  return (
+    <Sheet>
+      <SheetTrigger render={<Button variant="outline">Open sheet</Button>} />
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Edit profile</SheetTitle>
+          <SheetDescription>
+            Make changes to your profile here. Click save when you're done.
+          </SheetDescription>
+        </SheetHeader>
+        <div className="grid flex-1 auto-rows-min gap-6 px-4">
+          <div className="grid gap-2">
+            <Label htmlFor="sheet-name">Name</Label>
+            <Input id="sheet-name" defaultValue="Pedro Duarte" />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="sheet-username">Username</Label>
+            <Input id="sheet-username" defaultValue="@peduarte" />
+          </div>
+        </div>
+        <SheetFooter>
+          <Button type="submit">Save changes</Button>
+          <SheetClose render={<Button variant="outline">Close</Button>} />
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Dialog](https://base-ui.com/react/components/dialog)
+primitive — Sheet is a positioned Dialog rather than a distinct primitive.
+Per Base UI's own guidance, an edge panel without swipe gestures is just a
+Dialog pinned to a screen edge; reach for a `drawer` component instead when
+you need gesture-driven dragging.
+
+- `side` — lives on `SheetContent`, accepts `"top" | "right" | "bottom" |
+  "left"` and defaults to `"right"`; each side has a static Tailwind class
+  pair controlling position, size, and the translate transform it animates
+  from
+- All Dialog root props apply since `Sheet` is `SheetPrimitive.Root`:
+  - `modal` — accepts `true | false | 'trap-focus'` and defaults to `true`
+  - `disablePointerDismissal` — defaults to `false`; set it to keep the
+    sheet open on an outside press instead of dismissing it
+  - `onOpenChange` — controlled open state callback
+- No `Viewport` part is used — the Popup is `position: fixed` against a
+  screen edge and slides via the `translate` utilities, animated by
+  `transition-transform`

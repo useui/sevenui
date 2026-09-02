@@ -1,0 +1,86 @@
+---
+title: Drawer
+description: A panel that slides in from an edge of the screen and can be dismissed with a swipe gesture, built on the Base UI Drawer primitive.
+---
+
+<Component path="drawer/drawer-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/drawer
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import { Button } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+
+export default function DrawerDemo() {
+  return (
+    <Drawer>
+      <DrawerTrigger render={<Button variant="outline">Open drawer</Button>} />
+      <DrawerContent>
+        <div className="mx-auto w-full max-w-sm">
+          <DrawerHeader>
+            <DrawerTitle>Move goal</DrawerTitle>
+            <DrawerDescription>Set your daily activity goal.</DrawerDescription>
+          </DrawerHeader>
+          <div className="flex flex-col items-center justify-center gap-1 p-4">
+            <div className="text-6xl font-bold tracking-tighter">350</div>
+            <div className="text-sm text-muted-foreground">
+              calories/day
+            </div>
+          </div>
+          <DrawerFooter>
+            <Button type="submit">Submit</Button>
+            <DrawerClose render={<Button variant="outline">Cancel</Button>} />
+          </DrawerFooter>
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Drawer](https://base-ui.com/react/components/drawer)
+primitive — Drawer is a real, standalone Base UI component (not `Dialog`
+composed with the [vaul](https://vaul.emilkowal.ski) library), and is the
+Radix-free replacement for the classic shadcn/vaul drawer.
+
+- `Drawer.Viewport` is mandatory in the composition — it owns the
+  swipe-gesture engine, and without it swipe-to-dismiss silently does
+  nothing. `Drawer.Content` sits inside the popup, re-enables text
+  selection, and carries the scrollable area.
+- Swipe-to-dismiss is enabled by default, dragging **down**. Change the
+  axis with `swipeDirection` (`"down" | "up" | "left" | "right"`) on the
+  root.
+- All Dialog root props apply since `Drawer` is `DrawerPrimitive.Root`:
+  - `modal` — accepts `true | false | 'trap-focus'` and defaults to `true`
+  - `disablePointerDismissal` — defaults to `false`; set it to keep the
+    drawer open on an outside press instead of dismissing it
+  - `onOpenChange` — controlled open state callback
+- Add `data-base-ui-swipe-ignore` to an element inside the popup to opt it
+  out of swipe handling — interactive elements (buttons, inputs, links)
+  are ignored automatically, which is why dragging the demo's Cancel
+  button does not start a swipe.
+- Snap points (`snapPoints`, `snapPoint`, `defaultSnapPoint`,
+  `onSnapPointChange`, `snapToSequentialPoints`), swipe-to-open via
+  `Drawer.SwipeArea`, and the nested-drawer indent effect
+  (`Drawer.Indent` / `Drawer.IndentBackground`) all exist on the
+  primitive but are not wrapped by this component in v1 — compose
+  `DrawerPrimitive` directly from `@base-ui/react/drawer` for those.

@@ -705,6 +705,277 @@
       "files": [
         { "path": "examples/combobox/combobox-demo.tsx", "type": "registry:component" }
       ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "title": "Tooltip",
+      "description": "A popup that displays information related to an element when hovered or focused, built on the Base UI Tooltip primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/tooltip.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "tooltip-demo",
+      "type": "registry:component",
+      "title": "Tooltip Demo",
+      "description": "Default tooltip example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/tooltip.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        { "path": "examples/tooltip/tooltip-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "Popover",
+      "description": "Displays rich content in a portal, positioned relative to an anchor element, built on the Base UI Popover primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/popover.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "popover-demo",
+      "type": "registry:component",
+      "title": "Popover Demo",
+      "description": "Default popover example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/popover.json",
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        { "path": "examples/popover/popover-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "hover-card",
+      "type": "registry:ui",
+      "title": "Hover Card",
+      "description": "Displays a preview card when hovering or focusing a link, built on the Base UI Preview Card primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/hover-card.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "hover-card-demo",
+      "type": "registry:component",
+      "title": "Hover Card Demo",
+      "description": "Default hover card example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/hover-card.json",
+        "https://sevenui.dev/r/avatar.json"
+      ],
+      "files": [
+        { "path": "examples/hover-card/hover-card-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "A window overlaid on either the primary window or another dialog window, rendering the content underneath inert, built on the Base UI Dialog primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/dialog.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "dialog-demo",
+      "type": "registry:component",
+      "title": "Dialog Demo",
+      "description": "Default dialog example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/dialog.json",
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        { "path": "examples/dialog/dialog-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "alert-dialog",
+      "type": "registry:ui",
+      "title": "Alert Dialog",
+      "description": "A modal dialog that interrupts the user with important content and expects a response, built on the Base UI Alert Dialog primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": [
+        "https://sevenui.dev/r/utils.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        { "path": "registry/base/ui/alert-dialog.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "alert-dialog-demo",
+      "type": "registry:component",
+      "title": "Alert Dialog Demo",
+      "description": "Default alert dialog example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/alert-dialog.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        { "path": "examples/alert-dialog/alert-dialog-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "sheet",
+      "type": "registry:ui",
+      "title": "Sheet",
+      "description": "An edge-positioned panel that slides in from the side of the screen, built on the Base UI Dialog primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/sheet.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "sheet-demo",
+      "type": "registry:component",
+      "title": "Sheet Demo",
+      "description": "Default sheet example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/sheet.json",
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        { "path": "examples/sheet/sheet-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "drawer",
+      "type": "registry:ui",
+      "title": "Drawer",
+      "description": "A panel that slides in from an edge of the screen and can be dismissed with a swipe gesture, built on the Base UI Drawer primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/drawer.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "drawer-demo",
+      "type": "registry:component",
+      "title": "Drawer Demo",
+      "description": "Default drawer example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/drawer.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        { "path": "examples/drawer/drawer-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "title": "Dropdown Menu",
+      "description": "Displays a menu to the user — such as a set of actions or functions — triggered by a button, built on the Base UI Menu primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/dropdown-menu.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "dropdown-menu-demo",
+      "type": "registry:component",
+      "title": "Dropdown Menu Demo",
+      "description": "Default dropdown menu example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/dropdown-menu.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        { "path": "examples/dropdown-menu/dropdown-menu-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "context-menu",
+      "type": "registry:ui",
+      "title": "Context Menu",
+      "description": "Displays a menu to the user — such as a set of actions or functions — triggered by right click or touch long-press, built on the Base UI Menu primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/context-menu.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "context-menu-demo",
+      "type": "registry:component",
+      "title": "Context Menu Demo",
+      "description": "Default context menu example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/context-menu.json"
+      ],
+      "files": [
+        { "path": "examples/context-menu/context-menu-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "menubar",
+      "type": "registry:ui",
+      "title": "Menubar",
+      "description": "A horizontal menu bar with multiple menus — such as File, Edit, and View — built on the Base UI Menu primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/menubar.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "menubar-demo",
+      "type": "registry:component",
+      "title": "Menubar Demo",
+      "description": "Default menubar example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/menubar.json"
+      ],
+      "files": [
+        { "path": "examples/menubar/menubar-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "toast",
+      "type": "registry:ui",
+      "title": "Toast",
+      "description": "A sonner-style, module-level toast API for showing brief, non-blocking notifications, built on the Base UI Toast primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/toast.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "toast-demo",
+      "type": "registry:component",
+      "title": "Toast Demo",
+      "description": "Default toast example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/toast.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        { "path": "examples/toast/toast-demo.tsx", "type": "registry:component" }
+      ]
     }
   ]
 }

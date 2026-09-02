@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.3.0 — Overlay wave
+
+11 new components: dialog, alert-dialog, sheet, drawer, popover,
+hover-card, tooltip, dropdown-menu, context-menu, menubar, toast.
+Drawer uses the native Base UI Drawer primitive (no vaul) and toast
+ships a sonner-style global `toast()` API on Base UI Toast (no
+sonner). Also fixes the select/combobox popup scale transition.
+
 ## v0.2.0 — Form wave
 
 15 new components: input, label, field, form, form-rhf, checkbox,

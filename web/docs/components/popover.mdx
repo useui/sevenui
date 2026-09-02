@@ -1,0 +1,74 @@
+---
+title: Popover
+description: Displays rich content in a portal, positioned relative to an anchor element, built on the Base UI Popover primitive.
+---
+
+<Component path="popover/popover-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/popover
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+export default function PopoverDemo() {
+  return (
+    <Popover>
+      <PopoverTrigger
+        render={<Button variant="outline">Open popover</Button>}
+      />
+      <PopoverContent className="grid gap-4">
+        <div className="space-y-2">
+          <div className="font-medium text-sm">Dimensions</div>
+          <p className="text-muted-foreground text-sm">
+            Set the dimensions for the layer.
+          </p>
+        </div>
+        <div className="grid gap-2">
+          <div className="grid grid-cols-3 items-center gap-4">
+            <Label htmlFor="width">Width</Label>
+            <Input id="width" defaultValue="100%" className="col-span-2 h-8" />
+          </div>
+          <div className="grid grid-cols-3 items-center gap-4">
+            <Label htmlFor="height">Height</Label>
+            <Input id="height" defaultValue="25px" className="col-span-2 h-8" />
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Popover](https://base-ui.com/react/components/popover)
+primitive — all its props apply.
+
+- `modal` — lives on `Popover` (the Root), accepts `true | false | 'trap-focus'`
+  and defaults to `false`; `true` only traps focus if a `Close` part is
+  rendered inside `PopoverContent`, since there's otherwise no way to
+  dismiss the popover with the keyboard
+- `openOnHover` / `delay` — live on `PopoverTrigger`, not Root; `openOnHover`
+  defaults to `false`, `delay` defaults to 300ms and `closeDelay` defaults to
+  0ms once hover-opening is enabled
+- `initialFocus` / `finalFocus` — pass through `PopoverContent` to the
+  underlying Popup to control where focus lands on open and where it
+  returns to on close
+- For custom anchoring (e.g. anchoring to a rect or a different element than
+  the trigger), compose the `Popover` primitive directly and pass an
+  `anchor` prop to its `Positioner` instead of using `PopoverContent`

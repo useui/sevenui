@@ -1,0 +1,130 @@
+---
+title: Menubar
+description: A horizontal menu bar with multiple menus — such as File, Edit, and View — built on the Base UI Menu primitive.
+---
+
+<Component path="menubar/menubar-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/menubar
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import {
+  Menubar,
+  MenubarCheckboxItem,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarShortcut,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
+
+export default function MenubarDemo() {
+  return (
+    <Menubar>
+      <MenubarMenu>
+        <MenubarTrigger>File</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>
+            New tab
+            <MenubarShortcut>⌘T</MenubarShortcut>
+          </MenubarItem>
+          <MenubarItem>
+            New window
+            <MenubarShortcut>⌘N</MenubarShortcut>
+          </MenubarItem>
+          <MenubarSeparator />
+          <MenubarSub>
+            <MenubarSubTrigger>Share</MenubarSubTrigger>
+            <MenubarSubContent>
+              <MenubarItem>Email link</MenubarItem>
+              <MenubarItem>Messages</MenubarItem>
+            </MenubarSubContent>
+          </MenubarSub>
+          <MenubarSeparator />
+          <MenubarItem>
+            Print
+            <MenubarShortcut>⌘P</MenubarShortcut>
+          </MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>Edit</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>
+            Undo
+            <MenubarShortcut>⌘Z</MenubarShortcut>
+          </MenubarItem>
+          <MenubarItem>
+            Redo
+            <MenubarShortcut>⇧⌘Z</MenubarShortcut>
+          </MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>View</MenubarTrigger>
+        <MenubarContent>
+          <MenubarCheckboxItem defaultChecked>
+            Always show bookmarks
+          </MenubarCheckboxItem>
+          <MenubarCheckboxItem>Always show full URLs</MenubarCheckboxItem>
+          <MenubarSeparator />
+          <MenubarItem>
+            Reload
+            <MenubarShortcut>⌘R</MenubarShortcut>
+          </MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Menubar](https://base-ui.com/react/components/menubar)
+component, which coordinates a row of individual
+[Base UI Menu](https://base-ui.com/react/components/menu) instances — all
+their props apply.
+
+- `Menubar` (the flat component this file's `Menubar` wraps) is not a
+  `.Root` — it renders a plain `<div role="menubar">` directly and takes
+  no namespaced parts of its own. Its props are `modal` (defaults to
+  `true`), `disabled`, `orientation` (defaults to `"horizontal"`), and
+  `loopFocus` (defaults to `true`, wrapping arrow-key navigation at the
+  ends of the bar).
+- Each `MenubarMenu` is an ordinary `Menu.Root` from `@base-ui/react/menu`
+  — the same primitive `dropdown-menu` and `context-menu` build on — so
+  menu items share the same data attributes, `closeOnClick` defaults, and
+  checkbox/radio behavior.
+- The menubar coordinates its sibling menus through context: once one menu
+  is open, hovering a different `MenubarTrigger` switches the open menu to
+  it automatically. No `openOnHover` prop is needed (or read) on
+  `MenubarTrigger`.
+- `MenubarTrigger` styles its open state with `data-popup-open` and its
+  pressed state with `data-pressed`, in addition to the usual
+  `data-highlighted` / `data-disabled` attributes shared with menu items.
+- `MenubarContent`'s `Positioner` only exposes `sideOffset` and
+  `alignOffset` — a positioner parented to a menubar trigger automatically
+  defaults to `side="bottom" align="start"`, so there is no `side` / `align`
+  prop to pass.
+- Submenus are composed with `MenubarSub` (which wraps `SubmenuRoot`) plus
+  `MenubarSubTrigger` and `MenubarSubContent`, identical to dropdown-menu.
+
+## Usage guidance
+
+A menubar is a persistent, always-visible row of menus — reach for it when
+modeling an application-style command bar (File/Edit/View...), not as a
+one-off dropdown. For a single triggered menu use `dropdown-menu`; for a
+right-click / long-press menu use `context-menu`.

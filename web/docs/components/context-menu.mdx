@@ -1,0 +1,110 @@
+---
+title: Context Menu
+description: Displays a menu to the user — such as a set of actions or functions — triggered by right click or touch long-press, built on the Base UI Menu primitive.
+---
+
+<Component path="context-menu/context-menu-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/context-menu
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import {
+  ContextMenu,
+  ContextMenuCheckboxItem,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuRadioGroup,
+  ContextMenuRadioItem,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+
+export default function ContextMenuDemo() {
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger className="flex h-36 w-full max-w-sm items-center justify-center rounded-md border border-dashed text-sm select-none">
+        Right click here
+      </ContextMenuTrigger>
+      <ContextMenuContent className="w-52">
+        <ContextMenuItem>
+          Back
+          <ContextMenuShortcut>⌘[</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuItem disabled>
+          Forward
+          <ContextMenuShortcut>⌘]</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuItem>
+          Reload
+          <ContextMenuShortcut>⌘R</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuSub>
+          <ContextMenuSubTrigger inset>More tools</ContextMenuSubTrigger>
+          <ContextMenuSubContent>
+            <ContextMenuItem>Save page</ContextMenuItem>
+            <ContextMenuItem>Create shortcut</ContextMenuItem>
+            <ContextMenuItem>Developer tools</ContextMenuItem>
+          </ContextMenuSubContent>
+        </ContextMenuSub>
+        <ContextMenuSeparator />
+        <ContextMenuCheckboxItem defaultChecked>
+          Show bookmarks
+        </ContextMenuCheckboxItem>
+        <ContextMenuSeparator />
+        <ContextMenuRadioGroup defaultValue="pedro">
+          <ContextMenuLabel inset>People</ContextMenuLabel>
+          <ContextMenuRadioItem value="pedro">Pedro Duarte</ContextMenuRadioItem>
+          <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
+        </ContextMenuRadioGroup>
+      </ContextMenuContent>
+    </ContextMenu>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Context Menu](https://base-ui.com/react/components/context-menu)
+primitive — all its props apply. Every part imports from
+`@base-ui/react/context-menu`, which re-exports the same Menu part objects
+used by dropdown-menu plus its own `Root` and `Trigger`, so context menus
+share all Menu item semantics (data attributes, `closeOnClick` defaults,
+checkbox/radio behavior) with `dropdown-menu`.
+
+- The menu opens on right click (desktop) or touch long-press (mobile) —
+  there is no click-to-open trigger.
+- `ContextMenuTrigger` renders a plain `<div>` — the area a user right-clicks
+  or long-presses — not a button. It accepts no positioning props beyond the
+  shared `className` / `render` / `children` trio.
+- `ContextMenu` (the Root) omits `modal`: context menus are always modal
+  internally.
+- Positioning is pointer-anchored and automatic. `ContextMenuContent`
+  deliberately exposes no `side` / `align` / `offset` props — Base UI
+  anchors the popup to the pointer with built-in corner offsets
+  (`align="start"`, `alignOffset={2}`, `sideOffset={-5}`,
+  `position: fixed`), and passing `side` explicitly would disable that
+  behavior. There is no `Viewport` part on this subpath.
+- Submenus are composed with `ContextMenuSub` (which wraps `SubmenuRoot`)
+  plus `ContextMenuSubTrigger` and `ContextMenuSubContent`, identical to
+  dropdown-menu.
+
+## Usage guidance
+
+A context menu is a supplementary shortcut, not the only way to reach an
+action — right click and long-press are not discoverable, and some input
+devices and assistive technologies never trigger them. Keep a visible
+control (a button, toolbar action, or regular menu item) for every action
+also available in the context menu.

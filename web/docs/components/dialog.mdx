@@ -1,0 +1,83 @@
+---
+title: Dialog
+description: A window overlaid on either the primary window or another dialog window, rendering the content underneath inert, built on the Base UI Dialog primitive.
+---
+
+<Component path="dialog/dialog-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/dialog
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+export default function DialogDemo() {
+  return (
+    <Dialog>
+      <DialogTrigger render={<Button variant="outline">Edit profile</Button>} />
+      <DialogContent className="sm:max-w-106">
+        <DialogHeader>
+          <DialogTitle>Edit profile</DialogTitle>
+          <DialogDescription>
+            Make changes to your profile here. Click save when you're done.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="name">Name</Label>
+            <Input id="name" defaultValue="Pedro Duarte" />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="username">Username</Label>
+            <Input id="username" defaultValue="@peduarte" />
+          </div>
+        </div>
+        <DialogFooter>
+          <DialogClose render={<Button variant="outline">Cancel</Button>} />
+          <Button type="submit">Save changes</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Dialog](https://base-ui.com/react/components/dialog)
+primitive — all its props apply.
+
+- `modal` — lives on `Dialog` (the Root), accepts `true | false | 'trap-focus'`
+  and defaults to `true`
+- `disablePointerDismissal` — lives on `Dialog` (the Root), defaults to
+  `false`; set it to keep the dialog open on an outside press instead of
+  dismissing it (Base UI has no `dismissible` prop)
+- `initialFocus` / `finalFocus` — pass through `DialogContent` to the
+  underlying Popup to control where focus lands on open and where it
+  returns to on close
+- `showCloseButton` — SevenUI addition on `DialogContent`, defaults to
+  `true`; set to `false` to omit the built-in close button
+- Nested dialogs — a dialog with another dialog open inside it exposes
+  `data-nested-dialog-open` on its Popup and the `--nested-dialogs` CSS
+  variable, useful for dimming or scaling background dialogs
+- Content is centered by a `Dialog.Viewport` — long content scrolls the
+  viewport, not the page

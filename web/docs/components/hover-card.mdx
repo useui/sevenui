@@ -1,0 +1,70 @@
+---
+title: Hover Card
+description: Displays a preview card when hovering or focusing a link, built on the Base UI Preview Card primitive.
+---
+
+<Component path="hover-card/hover-card-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/hover-card
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+
+export default function HoverCardDemo() {
+  return (
+    <HoverCard>
+      <HoverCardTrigger
+        href="https://base-ui.com"
+        target="_blank"
+        rel="noreferrer"
+        className="text-sm font-medium underline underline-offset-4"
+      >
+        @base_ui
+      </HoverCardTrigger>
+      <HoverCardContent className="flex gap-3">
+        <Avatar>
+          <AvatarFallback>BU</AvatarFallback>
+        </Avatar>
+        <div className="space-y-1">
+          <h4 className="font-medium text-sm">Base UI</h4>
+          <p className="text-muted-foreground text-sm">
+            Unstyled UI components for React, by the MUI team.
+          </p>
+          <p className="text-muted-foreground text-xs">Joined 2024</p>
+        </div>
+      </HoverCardContent>
+    </HoverCard>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Preview Card](https://base-ui.com/react/components/preview-card)
+primitive — all its props apply.
+
+- `HoverCardTrigger` renders a real link (`<a>` element) and needs an `href`
+  — preview cards exist to preview link destinations, so the trigger is
+  typed as `React.ComponentPropsWithRef<'a'>`
+- `delay` / `closeDelay` — live on `HoverCardTrigger`; `delay` defaults to
+  600ms before the card opens, `closeDelay` defaults to 300ms before it
+  closes after the pointer leaves
+- Hover-open is built in — there's no `openOnHover` prop like `Popover`
+- `HoverCard` (the Root) has no `modal` prop
+- `HoverCardContent`'s `side` prop defaults to `bottom`
+- Not accessible to touch or screen-reader users by design — preview cards
+  are a progressive enhancement over the underlying link, which remains
+  fully operable on its own

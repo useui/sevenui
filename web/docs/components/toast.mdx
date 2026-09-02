@@ -1,0 +1,103 @@
+---
+title: Toast
+description: A sonner-style, module-level toast API for showing brief, non-blocking notifications, built on the Base UI Toast primitive.
+---
+
+<Component path="toast/toast-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/toast
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Toaster, toast } from "@/components/ui/toast";
+
+export default function ToastDemo() {
+  return (
+    <div>
+      <Toaster />
+      <div className="flex flex-wrap gap-2">
+        <Button
+          variant="outline"
+          onClick={() =>
+            toast("Event created", {
+              description: "Sunday, September 7 at 9:00",
+            })
+          }
+        >
+          Show toast
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => toast.success("Changes saved")}
+        >
+          Success
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => toast.error("Something went wrong")}
+        >
+          Error
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() =>
+            toast.promise(
+              new Promise((resolve) => setTimeout(resolve, 2000)),
+              {
+                loading: "Saving…",
+                success: "Saved",
+                error: "Failed to save",
+              },
+            )
+          }
+        >
+          Promise
+        </Button>
+      </div>
+    </div>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Toast](https://base-ui.com/react/components/toast)
+primitive — `Toaster` renders `Toast.Provider` > `Toast.Portal` >
+`Toast.Viewport` and the stacked toast list once, and `toast` is a
+sonner-style module-level API for triggering notifications from anywhere,
+including outside React — replacing sonner with zero third-party
+dependencies.
+
+- Render `<Toaster />` once, near your app root. It owns a module-level
+  `Toast.createToastManager()` instance passed to `Toast.Provider` via the
+  `toastManager` prop — the primitive's documented seam for a global
+  imperative API.
+- Call `toast(title, options?)`, `toast.success(title, options?)`,
+  `toast.error(title, options?)`, `toast.promise(promise, { loading,
+  success, error })`, or `toast.dismiss(id?)` from anywhere — event
+  handlers, effects, or plain functions outside the React tree.
+- `options` passes through to the underlying `toastManager.add()` call, so
+  it accepts `description`, `timeout` (defaults to `5000`ms), `priority`,
+  `actionProps` (render `Toast.Action`; it renders nothing without this),
+  `id` (reuses an existing toast — upsert instead of stacking a new one),
+  and `onClose`.
+- The viewport stacks up to `limit` toasts (defaults to `3`); collapsed
+  toasts peek and scale behind the frontmost one, and the stack expands on
+  hover or focus (`data-expanded`). <kbd>F6</kbd> jumps focus into the
+  toast viewport landmark.
+- Swipe down or right on a toast to dismiss it — the runtime freezes the
+  CSS transition inline and drives `--toast-swipe-movement-x/y` live while
+  swiping, so no `data-[swiping]` styling is needed.
+- A 4th toast beyond `limit` stays mounted with `data-limited` (and HTML
+  `inert`) instead of unmounting.
+- Only the `title` and `description` **strings** are read aloud by
+  high-priority screen-reader announcements — pass plain text/`ReactNode`
+  content for those fields, not arbitrary interactive JSX.

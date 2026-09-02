@@ -1,0 +1,57 @@
+---
+title: Tooltip
+description: A popup that displays information related to an element when hovered or focused, built on the Base UI Tooltip primitive.
+---
+
+<Component path="tooltip/tooltip-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/tooltip
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+export default function TooltipDemo() {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger
+          render={<Button variant="outline">Hover me</Button>}
+        />
+        <TooltipContent>Add to library</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Tooltip](https://base-ui.com/react/components/tooltip)
+primitive — all its props apply.
+
+- `delay` / `closeDelay` — live on `TooltipTrigger` (Base UI 1.7 moved these
+  off Root); `delay` defaults to 600ms before the tooltip opens, `closeDelay`
+  defaults to 0ms before it closes after the pointer leaves
+- `TooltipProvider` shares open/close delays across every tooltip it wraps —
+  once one tooltip has opened, moving to another within its `timeout` window
+  (default 400ms) opens the next one instantly, skipping its own `delay`
+- Tooltips are intentionally disabled on touch devices (Base UI behavior,
+  since there's no hover to trigger them); for info icons that need to work
+  on touch, use a [Popover](/docs/components/popover) with `openOnHover`
+  instead
+- `TooltipContent`'s `side` prop defaults to `top` — the only primitive in
+  the registry where the shared positioner default isn't `bottom`

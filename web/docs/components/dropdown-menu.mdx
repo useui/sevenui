@@ -1,0 +1,113 @@
+---
+title: Dropdown Menu
+description: Displays a menu to the user — such as a set of actions or functions — triggered by a button, built on the Base UI Menu primitive.
+---
+
+<Component path="dropdown-menu/dropdown-menu-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/dropdown-menu
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+export default function DropdownMenuDemo() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger render={<Button variant="outline">Open menu</Button>} />
+      <DropdownMenuContent align="start" className="w-56">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuItem>
+            Profile
+            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            Billing
+            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            Settings
+            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuItem>Email</DropdownMenuItem>
+            <DropdownMenuItem>Message</DropdownMenuItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+        <DropdownMenuSeparator />
+        <DropdownMenuCheckboxItem defaultChecked>
+          Status bar
+        </DropdownMenuCheckboxItem>
+        <DropdownMenuCheckboxItem>Activity bar</DropdownMenuCheckboxItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuRadioGroup defaultValue="bottom">
+          <DropdownMenuLabel>Panel position</DropdownMenuLabel>
+          <DropdownMenuRadioItem value="top">Top</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="bottom">Bottom</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="right">Right</DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem variant="destructive">Log out</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Menu](https://base-ui.com/react/components/menu)
+primitive — all its props apply.
+
+- `modal` / `loopFocus` / `closeParentOnEsc` — live on `DropdownMenu` (the
+  Root). `modal` defaults to `true`; `loopFocus` (not `loop`) controls
+  whether arrow-key navigation wraps at the ends of the menu and defaults
+  to `true`; `closeParentOnEsc` (not `closeParent`) controls whether Escape
+  inside a submenu also closes the parent menu.
+- `openOnHover` / `delay` — live on `DropdownMenuTrigger` (and
+  `DropdownMenuSubTrigger` for submenus), not the Root. `delay` defaults
+  to 100ms once hover-opening is enabled.
+- `closeOnClick` defaults differ by part: `true` on `DropdownMenuItem`, but
+  `false` on `DropdownMenuCheckboxItem` and `DropdownMenuRadioItem` — so
+  toggling a checkbox or picking a radio option keeps the menu open.
+- Only `DropdownMenuTrigger` renders a native `<button>`. Item,
+  CheckboxItem, RadioItem, and SubTrigger all render `<div>` elements, so
+  disabled styling is applied via the `data-disabled` attribute rather
+  than the `disabled` HTML attribute.
+- `DropdownMenuRadioItem` requires a `value` prop.
+- `DropdownMenuLabel` must be placed inside `DropdownMenuGroup` or
+  `DropdownMenuRadioGroup` — Base UI wires the group's `aria-labelledby`
+  to it and throws otherwise.
+- Submenus are composed with `DropdownMenuSub` (which wraps `SubmenuRoot`,
+  not a nested `DropdownMenu` root) plus `DropdownMenuSubTrigger` and
+  `DropdownMenuSubContent`. Submenu positioning is automatic and
+  RTL-aware — it defaults to `side="inline-end" align="start"` and should
+  not be overridden with a hardcoded `side="right"`.

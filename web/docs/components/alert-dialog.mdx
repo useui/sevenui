@@ -1,0 +1,71 @@
+---
+title: Alert Dialog
+description: A modal dialog that interrupts the user with important content and expects a response, built on the Base UI Alert Dialog primitive.
+---
+
+<Component path="alert-dialog/alert-dialog-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/alert-dialog
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+
+export default function AlertDialogDemo() {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger
+        render={<Button variant="outline">Delete account</Button>}
+      />
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete your
+            account and remove your data from our servers.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction>Continue</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Alert Dialog](https://base-ui.com/react/components/alert-dialog)
+primitive — all its props apply.
+
+- Always modal and never dismissed by an outside press — both are enforced
+  by the primitive itself: the Root accepts no `modal` or
+  `disablePointerDismissal` props, unlike the plain Dialog
+- Renders with `role="alertdialog"` instead of `role="dialog"`
+- Escape still closes the dialog
+- `AlertDialogAction` and `AlertDialogCancel` are both the Close part
+  styled with `buttonVariants` — they close the dialog regardless of which
+  one is pressed, so attach the destructive handler via `onClick` on
+  `AlertDialogAction`
+- Content is centered by an `AlertDialog.Viewport` — long content scrolls
+  the viewport, not the page
