@@ -5,6 +5,7 @@ export default defineConfig({
   description:
     "Base UI powered components, distributed through the shadcn registry.",
   theme: { accent: "blue", radius: "md", mode: "system" },
+  deployment: { site: "https://sevenui.dev" },
   examples: { css: "examples/theme.css" },
   navigation: {
     sidebar: {
