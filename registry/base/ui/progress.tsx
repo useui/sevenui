@@ -11,13 +11,15 @@ function Progress({
   ...props
 }: React.ComponentProps<typeof ProgressPrimitive.Root>) {
   return (
-    <ProgressPrimitive.Root value={value} {...props}>
-      <ProgressPrimitive.Track
-        className={cn(
-          "block h-2 w-full overflow-hidden rounded-full bg-primary/20",
-          className,
-        )}
-      >
+    <ProgressPrimitive.Root
+      className={cn(
+        "relative h-2 w-full overflow-hidden rounded-full bg-primary/20",
+        className,
+      )}
+      value={value}
+      {...props}
+    >
+      <ProgressPrimitive.Track className="h-full w-full">
         <ProgressPrimitive.Indicator className="bg-primary transition-[width] duration-500" />
       </ProgressPrimitive.Track>
     </ProgressPrimitive.Root>
