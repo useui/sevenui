@@ -1,0 +1,36 @@
+---
+title: Button
+description: Displays a button built on the Base UI Button primitive.
+---
+
+<Component path="button/button-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/button
+```
+
+## Usage
+
+```tsx
+import { Button } from "@/components/ui/button";
+
+<Button variant="outline">Button</Button>;
+```
+
+## Examples
+
+### Variants
+
+<Component path="button/button-variants" />
+
+## API reference
+
+Built on the [Base UI Button](https://base-ui.com/react/components/button)
+primitive — all its props apply. SevenUI adds:
+
+| Prop      | Type                                                                       | Default     |
+| --------- | -------------------------------------------------------------------------- | ----------- |
+| `variant` | `"default" \| "destructive" \| "outline" \| "secondary" \| "ghost" \| "link"` | `"default"` |
+| `size`    | `"default" \| "sm" \| "lg" \| "icon"`                                       | `"default"` |

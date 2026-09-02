@@ -61,6 +61,27 @@
           "ring": "oklch(0.556 0 0)"
         }
       }
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "Displays a button built on the Base UI Button primitive.",
+      "dependencies": ["@base-ui/react", "class-variance-authority"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/button.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "button-demo",
+      "type": "registry:component",
+      "title": "Button Demo",
+      "description": "Default button example.",
+      "registryDependencies": ["https://sevenui.dev/r/button.json"],
+      "files": [
+        { "path": "examples/button/button-demo.tsx", "type": "registry:component" }
+      ]
     }
   ]
 }
