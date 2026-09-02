@@ -1,0 +1,26 @@
+---
+title: Progress
+description: Displays an indicator showing the completion progress of a task.
+---
+
+<Component path="progress/progress-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/progress
+```
+
+## Usage
+
+```tsx
+import { Progress } from "@/components/ui/progress";
+
+<Progress value={33} />;
+```
+
+## API reference
+
+Built on the [Base UI Progress](https://base-ui.com/react/components/progress)
+primitive — all its props apply. Pass `value={null}` to render the progress
+bar in an indeterminate state.

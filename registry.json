@@ -346,6 +346,27 @@
       "files": [
         { "path": "examples/pagination/pagination-demo.tsx", "type": "registry:component" }
       ]
+    },
+    {
+      "name": "progress",
+      "type": "registry:ui",
+      "title": "Progress",
+      "description": "Displays an indicator showing the completion progress of a task.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/progress.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "progress-demo",
+      "type": "registry:component",
+      "title": "Progress Demo",
+      "description": "Default progress example.",
+      "registryDependencies": ["https://sevenui.dev/r/progress.json"],
+      "files": [
+        { "path": "examples/progress/progress-demo.tsx", "type": "registry:component" }
+      ]
     }
   ]
 }
