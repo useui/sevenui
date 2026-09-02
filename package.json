@@ -11,7 +11,8 @@
     "build:registry": "shadcn build",
     "preview": "blume preview",
     "typecheck": "tsc --noEmit",
-    "check:registry": "node scripts/check-registry.mjs"
+    "check:registry": "node scripts/check-registry.mjs",
+    "test:smoke": "bash scripts/smoke-test.sh"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
