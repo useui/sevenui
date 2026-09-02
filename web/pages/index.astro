@@ -1,59 +1,49 @@
 ---
-// Temporary landing page. The docs live under /docs (see basePath in
-// blume.config.ts); this placeholder holds the root until the real
-// landing ships.
+// Temporary landing page, rendered through Blume's PageLayout so it shares
+// the site chrome (header, theme, search). The docs live under /docs; the
+// header tabs below are scoped to this page only.
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import data from "blume:data";
+
+const { config } = data;
+
+const navigation = {
+  ...data.navigation,
+  tabs: [
+    { label: "Docs", path: "/docs", href: "/docs" },
+    {
+      label: "Components",
+      path: "/docs/components",
+      href: "/docs/components/button",
+    },
+  ],
+};
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SevenUI</title>
-    <meta
-      name="description"
-      content="Base UI powered components, distributed through the shadcn registry."
-    />
-    <style>
-      body {
-        margin: 0;
-        display: grid;
-        place-items: center;
-        min-height: 100dvh;
-        font-family: ui-sans-serif, system-ui, sans-serif;
-        background: #fff;
-        color: #09090b;
-      }
-      @media (prefers-color-scheme: dark) {
-        body {
-          background: #09090b;
-          color: #fafafa;
-        }
-      }
-      main {
-        text-align: center;
-        padding: 2rem;
-      }
-      h1 {
-        font-size: 2rem;
-        letter-spacing: -0.025em;
-        margin: 0 0 0.5rem;
-      }
-      p {
-        margin: 0 0 1.5rem;
-        opacity: 0.7;
-      }
-      a {
-        color: inherit;
-        font-weight: 500;
-      }
-    </style>
-  </head>
-  <body>
-    <main>
-      <h1>SevenUI</h1>
-      <p>Base UI powered components, distributed through the shadcn registry.</p>
-      <a href="/docs">Read the docs →</a>
-    </main>
-  </body>
-</html>
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={navigation}
+  favicon={config.favicon}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  searchEnabled={config.search.enabled}
+  siteUrl={config.site}
+  ogEnabled={config.og.enabled}
+  page={{ title: config.title, description: config.description }}
+>
+  <section class="mx-auto flex max-w-3xl flex-col items-center px-6 py-24 text-center">
+    <h1 class="text-4xl font-semibold tracking-tight">SevenUI</h1>
+    <p class="text-muted-foreground mt-4 text-lg">
+      Base UI powered components, distributed through the shadcn registry.
+    </p>
+    <a
+      href="/docs"
+      class="bg-primary text-primary-foreground hover:bg-primary/90 mt-8 inline-flex h-10 items-center rounded-md px-6 text-sm font-medium"
+    >
+      Read the docs
+    </a>
+  </section>
+</PageLayout>
