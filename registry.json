@@ -164,6 +164,67 @@
       "files": [
         { "path": "examples/alert/alert-demo.tsx", "type": "registry:component" }
       ]
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "title": "Separator",
+      "description": "Visually or semantically separates content.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/separator.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "separator-demo",
+      "type": "registry:component",
+      "title": "Separator Demo",
+      "description": "Default separator example.",
+      "registryDependencies": ["https://sevenui.dev/r/separator.json"],
+      "files": [
+        { "path": "examples/separator/separator-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "title": "Skeleton",
+      "description": "Use to show a placeholder while content is loading.",
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/skeleton.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "skeleton-demo",
+      "type": "registry:component",
+      "title": "Skeleton Demo",
+      "description": "Default skeleton example.",
+      "registryDependencies": ["https://sevenui.dev/r/skeleton.json"],
+      "files": [
+        { "path": "examples/skeleton/skeleton-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "title": "Spinner",
+      "description": "Displays a loading indicator.",
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/spinner.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "spinner-demo",
+      "type": "registry:component",
+      "title": "Spinner Demo",
+      "description": "Default spinner example.",
+      "registryDependencies": ["https://sevenui.dev/r/spinner.json", "https://sevenui.dev/r/button.json"],
+      "files": [
+        { "path": "examples/spinner/spinner-demo.tsx", "type": "registry:component" }
+      ]
     }
   ]
 }
