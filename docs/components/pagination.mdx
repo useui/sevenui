@@ -1,0 +1,72 @@
+---
+title: Pagination
+description: Displays navigation for multi-page content.
+---
+
+<Component path="pagination/pagination-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/pagination
+```
+
+## Usage
+
+```tsx
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
+
+<Pagination>
+  <PaginationContent>
+    <PaginationItem>
+      <PaginationPrevious href="#" />
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationLink href="#">1</PaginationLink>
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationLink href="#" isActive>
+        2
+      </PaginationLink>
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationLink href="#">3</PaginationLink>
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationEllipsis />
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationNext href="#" />
+    </PaginationItem>
+  </PaginationContent>
+</Pagination>;
+```
+
+## API reference
+
+Semantic pagination using `<nav>`, `<ul>`, and `<li>` elements with aria attributes. SevenUI exports:
+
+| Component              | Description                                                                |
+| ---------------------- | -------------------------------------------------------------------------- |
+| `Pagination`          | Container with `aria-label="pagination"` on `<nav>`.                     |
+| `PaginationContent`   | Unordered list container with flex layout and gap.                        |
+| `PaginationItem`      | List item wrapper for pagination elements.                                |
+| `PaginationLink`      | Clickable page number with optional active state.                         |
+| `PaginationPrevious`  | Previous page button with `aria-label` and chevron symbol.               |
+| `PaginationNext`      | Next page button with `aria-label` and chevron symbol.                   |
+| `PaginationEllipsis`  | Ellipsis indicator for skipped pages.                                     |
+
+| Prop        | Type                                | Default   | Description                                              |
+| ----------- | ----------------------------------- | --------- | -------------------------------------------------------- |
+| `isActive`  | `boolean`                           | `false`   | Highlights the current page with outline variant.       |
+| `size`      | `"default" \| "sm" \| "lg" \| "icon"` | `"icon"`  | Button size variant (only on `PaginationLink`).         |
+
+All components accept standard HTML props and an optional `className` override.

@@ -1,0 +1,57 @@
+---
+title: Breadcrumb
+description: Displays the current location within a hierarchical navigation structure.
+---
+
+<Component path="breadcrumb/breadcrumb-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/breadcrumb
+```
+
+## Usage
+
+```tsx
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+
+<Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/">Home</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/components">Components</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+    </BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>;
+```
+
+## API reference
+
+Semantic navigation structure using `<nav>`, `<ol>`, and `<li>` elements with aria attributes. SevenUI exports:
+
+| Component                | Description                                                              |
+| ----------------------- | ----------------------------------------------------------------------- |
+| `Breadcrumb`           | Container with `aria-label="breadcrumb"` on `<nav>`.                    |
+| `BreadcrumbList`       | Ordered list container with flex layout and gap.                        |
+| `BreadcrumbItem`       | List item wrapper with inline-flex layout.                              |
+| `BreadcrumbLink`       | Link element with hover transition color effect.                        |
+| `BreadcrumbPage`       | Current page indicator with `role="link"` and `aria-current="page"`.   |
+| `BreadcrumbSeparator`  | Visual separator between items (default slash).                         |
+| `BreadcrumbEllipsis`   | Ellipsis indicator for skipped items.                                   |
+
+All components accept standard HTML props and an optional `className` override.

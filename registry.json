@@ -285,6 +285,46 @@
       "files": [
         { "path": "examples/table/table-demo.tsx", "type": "registry:component" }
       ]
+    },
+    {
+      "name": "breadcrumb",
+      "type": "registry:ui",
+      "title": "Breadcrumb",
+      "description": "Displays the current location within a hierarchical navigation structure.",
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/breadcrumb.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "breadcrumb-demo",
+      "type": "registry:component",
+      "title": "Breadcrumb Demo",
+      "description": "Default breadcrumb example.",
+      "registryDependencies": ["https://sevenui.dev/r/breadcrumb.json"],
+      "files": [
+        { "path": "examples/breadcrumb/breadcrumb-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "pagination",
+      "type": "registry:ui",
+      "title": "Pagination",
+      "description": "Displays navigation for multi-page content.",
+      "registryDependencies": ["https://sevenui.dev/r/utils.json", "https://sevenui.dev/r/button.json"],
+      "files": [
+        { "path": "registry/base/ui/pagination.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "pagination-demo",
+      "type": "registry:component",
+      "title": "Pagination Demo",
+      "description": "Default pagination example.",
+      "registryDependencies": ["https://sevenui.dev/r/pagination.json"],
+      "files": [
+        { "path": "examples/pagination/pagination-demo.tsx", "type": "registry:component" }
+      ]
     }
   ]
 }
