@@ -123,6 +123,47 @@
       "files": [
         { "path": "examples/kbd/kbd-demo.tsx", "type": "registry:component" }
       ]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "title": "Card",
+      "description": "Displays a container with optional header, content, and footer sections.",
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/card.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "card-demo",
+      "type": "registry:component",
+      "title": "Card Demo",
+      "description": "Default card example.",
+      "registryDependencies": ["https://sevenui.dev/r/card.json", "https://sevenui.dev/r/button.json"],
+      "files": [
+        { "path": "examples/card/card-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "alert",
+      "type": "registry:ui",
+      "title": "Alert",
+      "description": "Displays a message with optional title and description for the user.",
+      "dependencies": ["class-variance-authority"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/alert.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "alert-demo",
+      "type": "registry:component",
+      "title": "Alert Demo",
+      "description": "Default alert example.",
+      "registryDependencies": ["https://sevenui.dev/r/alert.json"],
+      "files": [
+        { "path": "examples/alert/alert-demo.tsx", "type": "registry:component" }
+      ]
     }
   ]
 }
