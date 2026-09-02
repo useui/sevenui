@@ -1,0 +1,68 @@
+---
+title: Table
+description: Displays data in rows and columns with semantic HTML and support for headers, bodies, and footers.
+---
+
+<Component path="table/table-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/table
+```
+
+## Usage
+
+```tsx
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+<Table>
+  <TableCaption>A list of your recent invoices.</TableCaption>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Invoice</TableHead>
+      <TableHead>Status</TableHead>
+      <TableHead>Method</TableHead>
+      <TableHead className="text-right">Amount</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>INV-001</TableCell>
+      <TableCell>Paid</TableCell>
+      <TableCell>Credit Card</TableCell>
+      <TableCell className="text-right">$250.00</TableCell>
+    </TableRow>
+  </TableBody>
+  <TableFooter>
+    <TableRow>
+      <TableCell colSpan={3}>Total</TableCell>
+      <TableCell className="text-right">$750.00</TableCell>
+    </TableRow>
+  </TableFooter>
+</Table>;
+```
+
+## API reference
+
+Semantic HTML table elements with Tailwind styling. SevenUI exports:
+
+| Component      | Description                                                                  |
+| -------------- | ---------------------------------------------------------------------------- |
+| `Table`        | Wrapper element with horizontal scroll support and caption positioning.     |
+| `TableHeader`  | Header section (thead) with bottom border on header rows.                   |
+| `TableBody`    | Body section (tbody) with bottom border on all rows except the last.        |
+| `TableFooter`  | Footer section (tfoot) with top border and muted background.                |
+| `TableRow`     | Row element (tr) with border, hover effects, and selection state styling.   |
+| `TableHead`    | Header cell element (th) with padding, font weight, and alignment.           |
+| `TableCell`    | Data cell element (td) with padding and alignment.                          |
+| `TableCaption` | Caption element positioned above the table with muted foreground styling.   |
