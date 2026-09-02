@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.blume/
+public/r/
+*.log
+.DS_Store
