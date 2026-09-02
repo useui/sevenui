@@ -164,7 +164,9 @@ function ComboboxEmpty({
   return (
     <ComboboxPrimitive.Empty
       className={cn(
-        "py-6 text-center text-sm text-muted-foreground",
+        // Base UI keeps Empty mounted while items exist (a11y live region),
+        // so the padding must only apply when it actually has content.
+        "not-empty:py-6 text-center text-sm text-muted-foreground",
         className,
       )}
       {...props}
