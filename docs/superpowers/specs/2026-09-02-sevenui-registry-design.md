@@ -1,153 +1,153 @@
-# SevenUI — Base UI Tabanlı shadcn Registry Tasarımı
+# SevenUI — Base UI-Powered shadcn Registry Design
 
-**Tarih:** 2026-09-02
-**Durum:** Onaylandı (tasarım bölümleri sohbette tek tek onaylandı)
-**Kapsam dışı:** Blocks/templates ve ücretli satış (sonraki faz), Radix ve React Aria varyantları (v2)
+**Date:** 2026-09-02
+**Status:** Approved (design sections approved one by one in conversation)
+**Out of scope:** Blocks/templates and paid sales (later phase), Radix and React Aria variants (v2)
 
-## Özet
+## Summary
 
-SevenUI, yalnızca [Base UI](https://base-ui.com) (`@base-ui-components/react`) primitive'leri üzerine kurulmuş, shadcn registry protokolüyle dağıtılan bir React component kütüphanesidir. ReUI'ın modelini izler: kullanıcı componentleri npm paketi olarak değil, `npx shadcn add` ile kaynak kodu olarak projesine kopyalar. Docs sitesi ve registry tek repodan, sevenui.dev üzerinden yayınlanır.
+SevenUI is a React component library built exclusively on [Base UI](https://base-ui.com) (`@base-ui-components/react`) primitives, distributed via the shadcn registry protocol. It follows ReUI's model: users copy components into their project as source code via `npx shadcn add`, not as an npm package. The docs site and registry are published from a single repo at sevenui.dev.
 
-## Temel Kararlar
+## Key Decisions
 
-| Karar | Seçim | Gerekçe |
+| Decision | Choice | Rationale |
 |---|---|---|
-| Primitive kütüphanesi | Yalnızca Base UI (v1) | Tek bağımlılık, tutarlı API; Radix/Aria varyantları v2'de |
-| Görsel kimlik | shadcn-uyumlu drop-in | Aynı CSS değişkenleri (`--primary`, `--radius`...); mevcut shadcn projelerinin temasına otomatik uyum |
-| Kapsam | Tam shadcn paritesi (~50 item) | "shadcn yerine kullan" iddiası eksiksiz set gerektirir |
-| Docs framework'ü | Blume (Astro + Vite tabanlı) | `Component` canlı önizleme özelliği, `examples.css` token kancası, hazır arama/llms.txt/SEO |
-| Repo yapısı | Düz tek paket (monorepo değil) | YAGNI; blocks fazında taşınır |
-| Domain | sevenui.dev | Registry URL'leri baştan sabit |
+| Primitive library | Base UI only (v1) | Single dependency, consistent API; Radix/Aria variants in v2 |
+| Visual identity | shadcn-compatible drop-in | Same CSS variables (`--primary`, `--radius`...); adapts automatically to existing shadcn project themes |
+| Scope | Full shadcn parity (~50 items) | The "use this instead of shadcn" claim requires a complete set |
+| Docs framework | Blume (Astro + Vite based) | `Component` live-preview feature, `examples.css` token hook, built-in search/llms.txt/SEO |
+| Repo structure | Flat single package (no monorepo) | YAGNI; migrate when the blocks phase arrives |
+| Domain | sevenui.dev | Registry URLs fixed from day one |
 
-## Mimari
+## Architecture
 
-### Dizin Yapısı
+### Directory Layout
 
 ```
 sevenui/
-├── registry/base/ui/       # component kaynakları: button.tsx, dialog.tsx...
-├── registry/base/lib/      # yardımcılar (cn vb.)
-├── examples/               # demo dosyaları (component başına klasör)
+├── registry/base/ui/       # component sources: button.tsx, dialog.tsx...
+├── registry/base/lib/      # helpers (cn, etc.)
+├── examples/               # demo files (one folder per component)
 │   └── button/
 │       ├── button-demo.tsx
 │       └── button-variants.tsx
-├── docs/                   # Blume MDX içeriği
+├── docs/                   # Blume MDX content
 │   ├── index.mdx
 │   ├── installation.mdx
 │   ├── theming.mdx
-│   └── components/*.mdx    # component başına 1 sayfa
-├── registry.json           # shadcn registry tanımı
+│   └── components/*.mdx    # one page per component
+├── registry.json           # shadcn registry definition
 ├── blume.config.ts
-└── public/r/               # `shadcn build` çıktısı (statik JSON)
+└── public/r/               # `shadcn build` output (static JSON)
 ```
 
-`registry/base/` klasörlemesi çok-flavor hazırlığıdır: v2'de `registry/radix/`, `registry/aria/` ve `/r/radix/{name}.json` yolları eklenir; v1 URL'leri hiç kırılmaz.
+The `registry/base/` folder structure is multi-flavor preparation: in v2, `registry/radix/`, `registry/aria/`, and `/r/radix/{name}.json` paths are added; v1 URLs never break.
 
-### Kullanıcı Akışı
+### User Flow
 
 ```bash
-# components.json'a bir kez:
+# once, in components.json:
 "registries": { "@sevenui": "https://sevenui.dev/r/{name}.json" }
 
-# sonra:
+# then:
 npx shadcn@latest add @sevenui/button
-# veya doğrudan:
+# or directly:
 npx shadcn@latest add https://sevenui.dev/r/button.json
 ```
 
-### Registry Item Türleri
+### Registry Item Types
 
-- `registry:ui` — componentler
-- `registry:lib` — `cn` gibi yardımcılar
-- `registry:example` — examples/ altındaki demo dosyaları (docs önizlemeleriyle aynı kaynak)
-- Tema item'ı — shadcn-uyumlu CSS değişken seti; kullanıcının mevcut değişkenlerini ezmez
+- `registry:ui` — the components
+- `registry:lib` — helpers such as `cn`
+- `registry:example` — demo files under examples/ (same source as the docs previews)
+- Theme item — shadcn-compatible CSS variable set; never overrides the user's existing variables
 
-### Bağımlılık Politikası
+### Dependency Policy
 
-Her component yalnızca şunları kullanabilir: `@base-ui-components/react`, Tailwind v4, `class-variance-authority` / `clsx` / `tailwind-merge`. Radix ve react-aria v1'de hiçbir bağımlılıkta görünmez. İstisnalar (Bölüm: Üçüncü Parti) tek tek listelenmiştir ve hepsi Radix-free'dir.
+Each component may only use: `@base-ui-components/react`, Tailwind v4, `class-variance-authority` / `clsx` / `tailwind-merge`. Radix and react-aria appear in no dependency in v1. Exceptions (see Third Party section) are listed individually and are all Radix-free.
 
-## Component Kapsamı (~50 item)
+## Component Scope (~50 items)
 
-### Base UI primitive'iyle birebir (28)
+### Backed 1:1 by a Base UI primitive (28)
 
-accordion, alert-dialog, avatar, checkbox, collapsible, combobox, context-menu, dialog, dropdown-menu (Base UI `Menu`), field/form, hover-card (Base UI `Preview Card`), input, label, menubar, navigation-menu, popover, progress, radio-group, scroll-area, select, sheet (Base UI `Dialog` tabanlı), slider, switch, tabs, toast, toggle, toggle-group, tooltip
+accordion, alert-dialog, avatar, checkbox, collapsible, combobox, context-menu, dialog, dropdown-menu (Base UI `Menu`), field/form, hover-card (Base UI `Preview Card`), input, label, menubar, navigation-menu, popover, progress, radio-group, scroll-area, select, sheet (based on Base UI `Dialog`), slider, switch, tabs, toast, toggle, toggle-group, tooltip
 
-### Saf Tailwind, primitive'siz (13)
+### Pure Tailwind, no primitive (13)
 
 button, badge, card, alert, separator, skeleton, spinner, table, textarea, breadcrumb, pagination, aspect-ratio, kbd
 
-### shadcn'in üçüncü parti kullandıkları — bizim çözümlerimiz
+### Where shadcn uses third-party libraries — our solutions
 
-| shadcn'de | Sorun | SevenUI çözümü |
+| In shadcn | Problem | SevenUI solution |
 |---|---|---|
-| drawer (vaul) | vaul → Radix Dialog bağımlılığı | Base UI Dialog üstüne kendi drawer implementasyonu |
-| command (cmdk) | cmdk → Radix bağımlılığı | Base UI Autocomplete/Combobox üstüne kendi command'ı |
-| sonner | bağımsız ama gereksiz | Base UI Toast |
-| calendar | react-day-picker (Radix-free) | Aynı kütüphane |
-| carousel | embla-carousel (Radix-free) | Aynı kütüphane |
-| chart | recharts (Radix-free) | Aynı kütüphane |
-| resizable | react-resizable-panels (Radix-free) | Aynı kütüphane |
-| input-otp | input-otp (Radix-free) | Aynı kütüphane |
-| sidebar | kompozit | Kendi componentlerimizden kompozit |
+| drawer (vaul) | vaul depends on Radix Dialog | Own drawer implementation on Base UI Dialog |
+| command (cmdk) | cmdk depends on Radix | Own command on Base UI Autocomplete/Combobox |
+| sonner | independent but unnecessary | Base UI Toast |
+| calendar | react-day-picker (Radix-free) | Same library |
+| carousel | embla-carousel (Radix-free) | Same library |
+| chart | recharts (Radix-free) | Same library |
+| resizable | react-resizable-panels (Radix-free) | Same library |
+| input-otp | input-otp (Radix-free) | Same library |
+| sidebar | composite | Composite of our own components |
 
-### Bonus (shadcn'de olmayan Base UI primitive'leri)
+### Bonus (Base UI primitives absent from shadcn)
 
-number-field, meter, toolbar — farklılaşma noktaları.
+number-field, meter, toolbar — differentiation points.
 
-## Çıkış Dalgaları
+## Release Waves
 
-Her dalga yayınlanabilir bir bütündür: component + demo + docs sayfası + registry item.
+Each wave is a shippable whole: component + demo + docs page + registry item.
 
-1. **Temel (~15):** `cn` lib, button, badge, card, alert, separator, skeleton, spinner, kbd, aspect-ratio, table, textarea, breadcrumb, pagination, avatar, progress. Registry pipeline'ı uçtan uca burada kanıtlanır.
+1. **Foundation (~15):** `cn` lib, button, badge, card, alert, separator, skeleton, spinner, kbd, aspect-ratio, table, textarea, breadcrumb, pagination, avatar, progress. The registry pipeline is proven end to end here.
 2. **Form (~13):** input, label, field/form, checkbox, radio-group, switch, slider, select, combobox, number-field, toggle, toggle-group, input-otp
 3. **Overlay (~11):** dialog, alert-dialog, sheet, drawer, popover, hover-card, tooltip, dropdown-menu, context-menu, menubar, toast
-4. **Navigasyon & kompozit (~9):** tabs, accordion, collapsible, navigation-menu, scroll-area, toolbar, meter, command, sidebar
-5. **Üçüncü parti sarmalayıcılar (~4):** calendar, carousel, chart, resizable
+4. **Navigation & composite (~9):** tabs, accordion, collapsible, navigation-menu, scroll-area, toolbar, meter, command, sidebar
+5. **Third-party wrappers (~4):** calendar, carousel, chart, resizable
 
-**Risk odakları:** Dalga 3 animasyonları; sıfırdan yazılacak drawer ve command.
+**Risk focus:** Wave 3 animations; drawer and command, the two written from scratch.
 
-## Docs Yapısı
+## Docs Structure
 
-### Component sayfa şablonu (her sayfa aynı düzen)
+### Component page template (every page follows the same layout)
 
-1. Başlık + tek cümle açıklama
-2. Canlı önizleme (varsayılan demo)
-3. Kurulum komutu (kopyalanabilir)
-4. Kullanım (import + minimal kod)
-5. Varyant/örnek önizlemeleri
-6. API referansı
+1. Title + one-sentence description
+2. Live preview (default demo)
+3. Install command (copyable)
+4. Usage (import + minimal code)
+5. Variant/example previews
+6. API reference
 
-### Önizleme mekanizması
+### Preview mechanism
 
-Blume'un `Component` özelliği `examples/` dosyalarını canlı önizleme + kaynak sekmeleriyle render eder. Örnek dosyalar çift görevlidir: docs önizlemesi **ve** `registry:example` item'ı. Tek kaynak, iki çıktı; demo kodu ile docs sapmaz.
+Blume's `Component` feature renders files from `examples/` as live previews with source tabs. Example files serve double duty: docs preview **and** `registry:example` item. Single source, two outputs; demo code and docs never drift apart.
 
-### Tema köprüsü
+### Theme bridge
 
-Blume'un `examples.css` kancasına shadcn değişken setimiz (light/dark) bağlanır. Önizleme frame'leri Tailwind'i example dosyalarından tarar; dark mode Blume'un tema anahtarıyla senkron çalışır.
+Our shadcn variable set (light/dark) is attached to Blume's `examples.css` hook. Preview frames scan Tailwind from the example files; dark mode syncs with Blume's theme switch.
 
-### API referansı
+### API reference
 
-48 component'te elle props tablosu çürür. Her sayfada Base UI primitive dokümanına link + yalnızca SevenUI'ın eklediği props'lar (örn. `variant`, `size`) küçük tabloyla belgelenir.
+Hand-maintained props tables rot across ~50 components. Each page links to the Base UI primitive's docs, plus a small table for props SevenUI adds (e.g. `variant`, `size`).
 
-Ana sayfa/landing v1'de minimal; component sayfaları önceliklidir.
+The homepage/landing stays minimal in v1; component pages take priority.
 
-## Kalite ve Pipeline
+## Quality and Pipeline
 
-**Felsefe:** Base UI'ın test ettiğini (focus trap, aria, klavye) yeniden test etme. Bizim yazdığımızı test et.
+**Philosophy:** Don't re-test what Base UI already tests (focus trap, aria, keyboard). Test what we write.
 
-1. **Statik:** `tsc --noEmit` (registry + examples birlikte; demo dosyaları en ucuz entegrasyon testi) + ESLint
-2. **Registry bütünlük scripti (CI):** registry.json'daki her dosya diskte var mı; her `registryDependencies` gerçek item'a işaret ediyor mu; her `registry:ui` item'ının en az bir example ve bir docs sayfası var mı
-3. **Kurulum smoke testi (CI):** Geçici Vite + Tailwind projesi scaffold → build edilmiş lokal registry'den `shadcn add` ile temsilci componentler (button, dialog, select) kurulur → `tsc` + build
-4. **Birim/davranış testleri (dar):** Vitest + Testing Library, yalnızca sıfırdan yazılan davranışlar (drawer, command, input-otp entegrasyonu). Saf Tailwind componentlerine birim test yazılmaz.
+1. **Static:** `tsc --noEmit` (registry + examples together; demo files are the cheapest integration test) + ESLint
+2. **Registry integrity script (CI):** does every file in registry.json exist on disk; does every `registryDependencies` point to a real item; does every `registry:ui` item have at least one example and one docs page
+3. **Install smoke test (CI):** scaffold a temp Vite + Tailwind project → `shadcn add` representative components (button, dialog, select) from the built local registry → `tsc` + build
+4. **Unit/behavior tests (narrow):** Vitest + Testing Library, only for behavior written from scratch (drawer, command, input-otp integration). No unit tests for pure Tailwind components.
 
 **CI/CD (GitHub Actions):**
-- PR: typecheck → lint → registry bütünlük → `shadcn build` → `blume build` → smoke test
-- main: Vercel otomatik deploy → sevenui.dev
+- PR: typecheck → lint → registry integrity → `shadcn build` → `blume build` → smoke test
+- main: automatic Vercel deploy → sevenui.dev
 
-**Sürümleme:** npm publish yok. `CHANGELOG.md` + git tag'leriyle dalga çıkışları işaretlenir; kırıcı değişiklikler docs'ta not edilir.
+**Versioning:** No npm publish. Wave releases are marked with `CHANGELOG.md` + git tags; breaking component changes are noted in the docs.
 
-## Doğrulanacak Varsayımlar (Dalga 1'in ilk işleri)
+## Assumptions to Verify (first tasks of Wave 1)
 
-1. Blume'un statik dosya passthrough'u: `public/r/*.json` build sonrası `dist/`e giriyor mu? Girmiyorsa build script'ine kopyalama adımı eklenir.
-2. Blume `Component` önizlemesinin Base UI portal/popup componentleriyle (dialog, tooltip) uyumu — portal'lar önizleme frame'i dışına taşabilir; ilk overlay demo'sunda doğrulanır.
-3. `shadcn build`'in namespace'siz düz item isimleriyle `/r/{name}.json` çıktısı ürettiği ve `@sevenui` registries config'inin bu yolla çalıştığı, gerçek bir tüketici projede test edilir.
+1. Blume's static file passthrough: do `public/r/*.json` files land in `dist/` after build? If not, add a copy step to the build script.
+2. Blume `Component` preview compatibility with Base UI portal/popup components (dialog, tooltip) — portals may escape the preview frame; verify with the first overlay demo.
+3. That `shadcn build` produces `/r/{name}.json` output with flat item names and that the `@sevenui` registries config works through it, tested in a real consumer project.
