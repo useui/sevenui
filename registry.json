@@ -82,6 +82,47 @@
       "files": [
         { "path": "examples/button/button-demo.tsx", "type": "registry:component" }
       ]
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "title": "Badge",
+      "description": "Displays a small status descriptor.",
+      "dependencies": ["class-variance-authority"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/badge.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "badge-demo",
+      "type": "registry:component",
+      "title": "Badge Demo",
+      "description": "Default badge example.",
+      "registryDependencies": ["https://sevenui.dev/r/badge.json"],
+      "files": [
+        { "path": "examples/badge/badge-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "kbd",
+      "type": "registry:ui",
+      "title": "Kbd",
+      "description": "Displays a keyboard key.",
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/kbd.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "kbd-demo",
+      "type": "registry:component",
+      "title": "Kbd Demo",
+      "description": "Default kbd example.",
+      "registryDependencies": ["https://sevenui.dev/r/kbd.json"],
+      "files": [
+        { "path": "examples/kbd/kbd-demo.tsx", "type": "registry:component" }
+      ]
     }
   ]
 }
