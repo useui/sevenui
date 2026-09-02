@@ -6,8 +6,10 @@ export default defineConfig({
     "Base UI powered components, distributed through the shadcn registry.",
   theme: { accent: "blue", radius: "md", mode: "system" },
   deployment: { site: "https://sevenui.dev" },
+  basePath: "/docs",
   content: {
-    exclude: ["**/_*", "**/.*", "superpowers/**"],
+    root: "web/docs",
+    pages: "web/pages",
   },
   examples: { css: "examples/theme.css" },
   navigation: {

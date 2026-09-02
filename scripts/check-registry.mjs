@@ -29,8 +29,8 @@ for (const item of registry.items) {
     if (!itemNames.has(`${item.name}-demo`)) {
       errors.push(`${where}: no "${item.name}-demo" example item`);
     }
-    if (!existsSync(`docs/components/${item.name}.mdx`)) {
-      errors.push(`${where}: no docs page docs/components/${item.name}.mdx`);
+    if (!existsSync(`web/docs/components/${item.name}.mdx`)) {
+      errors.push(`${where}: no docs page web/docs/components/${item.name}.mdx`);
     }
   }
 }
