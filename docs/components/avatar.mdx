@@ -1,0 +1,29 @@
+---
+title: Avatar
+description: An image element with a fallback for representing the user.
+---
+
+<Component path="avatar/avatar-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/avatar
+```
+
+## Usage
+
+```tsx
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+
+<Avatar>
+  <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+  <AvatarFallback>CN</AvatarFallback>
+</Avatar>;
+```
+
+## API reference
+
+Built on the [Base UI Avatar](https://base-ui.com/react/components/avatar)
+primitive — all its props apply. The `Fallback` component supports a `delay`
+prop to control when the fallback is shown (in milliseconds).

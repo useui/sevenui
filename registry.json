@@ -166,6 +166,27 @@
       ]
     },
     {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "Avatar",
+      "description": "An image element with a fallback for representing the user.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/avatar.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "avatar-demo",
+      "type": "registry:component",
+      "title": "Avatar Demo",
+      "description": "Default avatar example.",
+      "registryDependencies": ["https://sevenui.dev/r/avatar.json"],
+      "files": [
+        { "path": "examples/avatar/avatar-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
       "name": "separator",
       "type": "registry:ui",
       "title": "Separator",
