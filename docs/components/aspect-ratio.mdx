@@ -1,0 +1,30 @@
+---
+title: Aspect Ratio
+description: Displays content with a fixed aspect ratio.
+---
+
+<Component path="aspect-ratio/aspect-ratio-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/aspect-ratio
+```
+
+## Usage
+
+```tsx
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+
+<AspectRatio ratio={16 / 9}>
+  <img src="..." alt="..." className="size-full object-cover" />
+</AspectRatio>;
+```
+
+## API reference
+
+Plain `<div>`; no primitive. All `<div>` props apply. SevenUI adds:
+
+| Prop    | Type     | Default |
+| ------- | -------- | ------- |
+| `ratio` | `number` | `1`     |

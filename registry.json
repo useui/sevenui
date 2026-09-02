@@ -225,6 +225,46 @@
       "files": [
         { "path": "examples/spinner/spinner-demo.tsx", "type": "registry:component" }
       ]
+    },
+    {
+      "name": "aspect-ratio",
+      "type": "registry:ui",
+      "title": "Aspect Ratio",
+      "description": "Displays content with a fixed aspect ratio.",
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/aspect-ratio.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "aspect-ratio-demo",
+      "type": "registry:component",
+      "title": "Aspect Ratio Demo",
+      "description": "Default aspect ratio example.",
+      "registryDependencies": ["https://sevenui.dev/r/aspect-ratio.json"],
+      "files": [
+        { "path": "examples/aspect-ratio/aspect-ratio-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "textarea",
+      "type": "registry:ui",
+      "title": "Textarea",
+      "description": "Displays a multi-line text input field.",
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/textarea.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "textarea-demo",
+      "type": "registry:component",
+      "title": "Textarea Demo",
+      "description": "Default textarea example.",
+      "registryDependencies": ["https://sevenui.dev/r/textarea.json"],
+      "files": [
+        { "path": "examples/textarea/textarea-demo.tsx", "type": "registry:component" }
+      ]
     }
   ]
 }
