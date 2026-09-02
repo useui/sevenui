@@ -10,7 +10,8 @@
     "build": "pnpm build:registry && blume build",
     "build:registry": "shadcn build",
     "preview": "blume preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:registry": "node scripts/check-registry.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
