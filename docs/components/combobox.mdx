@@ -1,0 +1,84 @@
+---
+title: Combobox
+description: An input combined with a filterable popup list, built on the Base UI Combobox primitive.
+---
+
+<Component path="combobox/combobox-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/combobox
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
+
+const fruits = [
+  { value: "apple", label: "Apple" },
+  { value: "banana", label: "Banana" },
+  { value: "blueberry", label: "Blueberry" },
+  { value: "grapes", label: "Grapes" },
+  { value: "mango", label: "Mango" },
+];
+
+export default function ComboboxDemo() {
+  return (
+    <Combobox items={fruits}>
+      <ComboboxInput placeholder="e.g. Apple" className="w-64" />
+      <ComboboxContent>
+        <ComboboxEmpty>No fruits found.</ComboboxEmpty>
+        <ComboboxList>
+          {(item: (typeof fruits)[number]) => (
+            <ComboboxItem key={item.value} value={item}>
+              {item.label}
+            </ComboboxItem>
+          )}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Combobox](https://base-ui.com/react/components/combobox)
+primitive — all its props apply.
+
+Key props on the Root (`Combobox`):
+
+- `items` — an array of items (or `{ label, value }` entries) to filter
+  against as the user types; required for automatic filtering and for
+  `ComboboxEmpty` to know when the list has no matches
+- `multiple` — allow selecting more than one item; the value becomes an array
+  (chip rendering for multi-select is not included in this component yet)
+- `value` / `defaultValue` — the controlled or uncontrolled selected value
+- `onValueChange` — callback fired when the selected value changes
+- `disabled`, `required`, `readOnly` — standard field states
+
+`ComboboxList` takes a **function child** — `(item) => ReactElement` — instead
+of a plain node. Base UI calls it once per item currently matching the input
+value (computed from the Root's `items` prop) and expects a `ComboboxItem`
+back for each one, so filtering re-renders the list automatically as the user
+types.
+
+`ComboboxInput` renders the `Combobox.InputGroup` → `Combobox.Input` pair,
+with `ComboboxClear` and `ComboboxTrigger` positioned inside the group as
+inline controls. `ComboboxContent` renders through `Combobox.Portal` →
+`Combobox.Positioner` → `Combobox.Popup`, mirroring `Select`.
+
+Multi-select (`multiple`) and the chip parts (`Combobox.Chips`,
+`Combobox.Chip`, `Combobox.ChipRemove`) are available on the primitive but are
+out of scope for this component — they'll land in a future update.

@@ -1,0 +1,80 @@
+---
+title: Form (react-hook-form)
+description: shadcn's form API, implemented on Base UI Field and react-hook-form.
+---
+
+<Component path="form-rhf/form-rhf-demo" />
+
+This component mirrors [shadcn's `form`](https://ui.shadcn.com/docs/components/form)
+API 1:1 — `Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`,
+`FormDescription`, `FormMessage`, and `useFormField` all behave exactly as
+they do in shadcn/ui. The difference is internal: instead of Radix, its parts
+are implemented directly on Base UI's `Field` primitive (not SevenUI's styled
+`Field` — this component owns its own field wiring so it can stay a drop-in
+replacement for shadcn's form). It requires `react-hook-form`.
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/form-rhf
+```
+
+## Usage
+
+```tsx
+import { useForm } from "react-hook-form";
+
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form-rhf";
+import { Input } from "@/components/ui/input";
+
+const form = useForm({ defaultValues: { username: "" } });
+
+<Form {...form}>
+  <form onSubmit={form.handleSubmit(onSubmit)}>
+    <FormField
+      control={form.control}
+      name="username"
+      rules={{ required: "Username is required" }}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Username</FormLabel>
+          <FormControl>
+            <Input placeholder="shadcn" {...field} />
+          </FormControl>
+          <FormDescription>This is your public display name.</FormDescription>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+    <Button type="submit">Submit</Button>
+  </form>
+</Form>;
+```
+
+## API reference
+
+| Component         | Description                                                                          |
+| ------------------ | --------------------------------------------------------------------------------------|
+| `Form`             | Alias for react-hook-form's `FormProvider`.                                          |
+| `FormField`        | Wraps react-hook-form's `Controller` and provides its field name to child parts.      |
+| `FormItem`         | Field root; wires the `invalid` state from react-hook-form into Base UI `Field.Root`. |
+| `FormLabel`        | Label associated with the field's control.                                           |
+| `FormControl`      | Passthrough for the field's control. Base UI Field wires ids/aria automatically.      |
+| `FormDescription`  | Supporting help text rendered below the control.                                     |
+| `FormMessage`      | Renders the field's current validation error, or its children when there is none.    |
+| `useFormField`     | Hook returning `{ name, ...fieldState }` for the enclosing `FormField`.               |
+
+Built on the [Base UI Field](https://base-ui.com/react/components/field)
+primitive for `FormItem`, `FormLabel`, `FormDescription`, and `FormMessage` —
+their styling props apply. All other props come from
+[react-hook-form](https://react-hook-form.com/docs/usecontroller/controller)'s
+`Controller`.

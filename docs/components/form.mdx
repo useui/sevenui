@@ -1,0 +1,51 @@
+---
+title: Form
+description: A native form with consolidated, auto-clearing validation error handling.
+---
+
+<Component path="form/form-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/form
+```
+
+## Usage
+
+```tsx
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Form } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+
+<Form
+  errors={errors}
+  onFormSubmit={(values) => {
+    // submit values, then set `errors` from the server response if any
+  }}
+>
+  <Field name="url">
+    <FieldLabel>Website</FieldLabel>
+    <Input required type="url" placeholder="https://example.com" />
+    <FieldError />
+  </Field>
+</Form>;
+```
+
+## API reference
+
+Built on the [Base UI Form](https://base-ui.com/react/components/form)
+primitive — all its props apply. `Form` renders a native `<form>` element and
+consolidates validation errors for the `Field`s nested inside it.
+
+| Prop           | Type                                                          | Default    | Description                                                                                            |
+| -------------- | -------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------- |
+| `errors`       | `Record<string, string \| string[]>`                            | —          | Validation errors returned externally (e.g. from a server), keyed by the `name` on the matching `Field`. |
+| `onFormSubmit` | `(values, eventDetails) => void`                               | —          | Called on submit with the form's values. `preventDefault()` is already called on the native event.       |
+| `validationMode` | `"onSubmit" \| "onBlur" \| "onChange"`                        | `"onSubmit"` | When fields validate. A `Field`'s own `validationMode` takes precedence.                                |
+
+There is no `onClearErrors` handler: errors set via `errors` clear
+automatically once the matching field's value changes.
+
+All other props accept standard HTML `<form>` attributes and an optional
+`className` override.

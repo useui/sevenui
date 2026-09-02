@@ -1,0 +1,31 @@
+---
+title: Switch
+description: Displays a switch built on the Base UI Switch primitive.
+---
+
+<Component path="switch/switch-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/switch
+```
+
+## Usage
+
+```tsx
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+
+<Label>
+  <Switch defaultChecked />
+  Airplane mode
+</Label>;
+```
+
+## API reference
+
+Built on the [Base UI Switch](https://base-ui.com/react/components/switch)
+primitive — all its props apply. The component supports the `uncheckedValue`
+prop for form submission and fires the `onCheckedChange` callback with the
+new checked state on user interaction.

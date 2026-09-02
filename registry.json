@@ -35,6 +35,7 @@
           "accent": "oklch(0.97 0 0)",
           "accent-foreground": "oklch(0.205 0 0)",
           "destructive": "oklch(0.577 0.245 27.325)",
+          "destructive-foreground": "oklch(0.985 0 0)",
           "border": "oklch(0.922 0 0)",
           "input": "oklch(0.922 0 0)",
           "ring": "oklch(0.708 0 0)",
@@ -56,6 +57,7 @@
           "accent": "oklch(0.269 0 0)",
           "accent-foreground": "oklch(0.985 0 0)",
           "destructive": "oklch(0.704 0.191 22.216)",
+          "destructive-foreground": "oklch(0.985 0 0)",
           "border": "oklch(1 0 0 / 10%)",
           "input": "oklch(1 0 0 / 15%)",
           "ring": "oklch(0.556 0 0)"
@@ -81,6 +83,16 @@
       "registryDependencies": ["https://sevenui.dev/r/button.json"],
       "files": [
         { "path": "examples/button/button-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "button-variants",
+      "type": "registry:component",
+      "title": "Button Variants",
+      "description": "All button variants side by side.",
+      "registryDependencies": ["https://sevenui.dev/r/button.json"],
+      "files": [
+        { "path": "examples/button/button-variants.tsx", "type": "registry:component" }
       ]
     },
     {
@@ -125,6 +137,26 @@
       ]
     },
     {
+      "name": "label",
+      "type": "registry:ui",
+      "title": "Label",
+      "description": "Displays a label for form inputs.",
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/label.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "label-demo",
+      "type": "registry:component",
+      "title": "Label Demo",
+      "description": "Default label example.",
+      "registryDependencies": ["https://sevenui.dev/r/label.json", "https://sevenui.dev/r/input.json"],
+      "files": [
+        { "path": "examples/label/label-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
       "name": "card",
       "type": "registry:ui",
       "title": "Card",
@@ -142,6 +174,48 @@
       "registryDependencies": ["https://sevenui.dev/r/card.json", "https://sevenui.dev/r/button.json"],
       "files": [
         { "path": "examples/card/card-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "description": "Displays a text input built on the Base UI Input primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/input.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "input-demo",
+      "type": "registry:component",
+      "title": "Input Demo",
+      "description": "Default input example.",
+      "registryDependencies": ["https://sevenui.dev/r/input.json"],
+      "files": [
+        { "path": "examples/input/input-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "input-otp",
+      "type": "registry:ui",
+      "title": "Input OTP",
+      "description": "Displays an OTP input field built on the Base UI OTPField primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/input-otp.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "input-otp-demo",
+      "type": "registry:component",
+      "title": "Input OTP Demo",
+      "description": "Default input OTP example.",
+      "registryDependencies": ["https://sevenui.dev/r/input-otp.json"],
+      "files": [
+        { "path": "examples/input-otp/input-otp-demo.tsx", "type": "registry:component" }
       ]
     },
     {
@@ -366,6 +440,270 @@
       "registryDependencies": ["https://sevenui.dev/r/progress.json"],
       "files": [
         { "path": "examples/progress/progress-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "field",
+      "type": "registry:ui",
+      "title": "Field",
+      "description": "Associates a label, control, description, and validation error for a form field.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/field.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "field-demo",
+      "type": "registry:component",
+      "title": "Field Demo",
+      "description": "Default field example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/field.json",
+        "https://sevenui.dev/r/input.json"
+      ],
+      "files": [
+        { "path": "examples/field/field-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "form",
+      "type": "registry:ui",
+      "title": "Form",
+      "description": "A native form with consolidated, auto-clearing validation error handling.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/form.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "form-demo",
+      "type": "registry:component",
+      "title": "Form Demo",
+      "description": "Default form example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/form.json",
+        "https://sevenui.dev/r/field.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        { "path": "examples/form/form-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "form-rhf",
+      "type": "registry:ui",
+      "title": "Form (react-hook-form)",
+      "description": "shadcn's form API, implemented on Base UI Field and react-hook-form.",
+      "dependencies": ["@base-ui/react", "react-hook-form"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/form-rhf.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "form-rhf-demo",
+      "type": "registry:component",
+      "title": "Form (react-hook-form) Demo",
+      "description": "Default react-hook-form example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/form-rhf.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        { "path": "examples/form-rhf/form-rhf-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "title": "Checkbox",
+      "description": "Displays a checkbox built on the Base UI Checkbox primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/checkbox.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "checkbox-demo",
+      "type": "registry:component",
+      "title": "Checkbox Demo",
+      "description": "Default checkbox example.",
+      "registryDependencies": ["https://sevenui.dev/r/checkbox.json", "https://sevenui.dev/r/label.json"],
+      "files": [
+        { "path": "examples/checkbox/checkbox-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "radio-group",
+      "type": "registry:ui",
+      "title": "Radio Group",
+      "description": "Displays a radio group built on the Base UI Radio primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/radio-group.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "radio-group-demo",
+      "type": "registry:component",
+      "title": "Radio Group Demo",
+      "description": "Default radio group example.",
+      "registryDependencies": ["https://sevenui.dev/r/radio-group.json", "https://sevenui.dev/r/label.json"],
+      "files": [
+        { "path": "examples/radio-group/radio-group-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "title": "Switch",
+      "description": "Displays a switch built on the Base UI Switch primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/switch.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "switch-demo",
+      "type": "registry:component",
+      "title": "Switch Demo",
+      "description": "Default switch example.",
+      "registryDependencies": ["https://sevenui.dev/r/switch.json", "https://sevenui.dev/r/label.json"],
+      "files": [
+        { "path": "examples/switch/switch-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "title": "Toggle",
+      "description": "Displays a toggle built on the Base UI Toggle primitive.",
+      "dependencies": ["@base-ui/react", "class-variance-authority"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/toggle.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "toggle-demo",
+      "type": "registry:component",
+      "title": "Toggle Demo",
+      "description": "Default toggle example.",
+      "registryDependencies": ["https://sevenui.dev/r/toggle.json"],
+      "files": [
+        { "path": "examples/toggle/toggle-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "toggle-group",
+      "type": "registry:ui",
+      "title": "Toggle Group",
+      "description": "Displays a toggle group built on the Base UI Toggle Group primitive.",
+      "dependencies": ["@base-ui/react", "class-variance-authority"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json", "https://sevenui.dev/r/toggle.json"],
+      "files": [
+        { "path": "registry/base/ui/toggle-group.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "toggle-group-demo",
+      "type": "registry:component",
+      "title": "Toggle Group Demo",
+      "description": "Default toggle group example.",
+      "registryDependencies": ["https://sevenui.dev/r/toggle-group.json"],
+      "files": [
+        { "path": "examples/toggle-group/toggle-group-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "slider",
+      "type": "registry:ui",
+      "title": "Slider",
+      "description": "Displays a slider built on the Base UI Slider primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/slider.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "slider-demo",
+      "type": "registry:component",
+      "title": "Slider Demo",
+      "description": "Default slider example.",
+      "registryDependencies": ["https://sevenui.dev/r/slider.json"],
+      "files": [
+        { "path": "examples/slider/slider-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "number-field",
+      "type": "registry:ui",
+      "title": "Number Field",
+      "description": "Displays a number field built on the Base UI Number Field primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/number-field.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "number-field-demo",
+      "type": "registry:component",
+      "title": "Number Field Demo",
+      "description": "Default number field example.",
+      "registryDependencies": ["https://sevenui.dev/r/number-field.json", "https://sevenui.dev/r/label.json"],
+      "files": [
+        { "path": "examples/number-field/number-field-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "Displays a select menu built on the Base UI Select primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/select.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "select-demo",
+      "type": "registry:component",
+      "title": "Select Demo",
+      "description": "Default select example.",
+      "registryDependencies": ["https://sevenui.dev/r/select.json"],
+      "files": [
+        { "path": "examples/select/select-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "combobox",
+      "type": "registry:ui",
+      "title": "Combobox",
+      "description": "An input combined with a filterable popup list, built on the Base UI Combobox primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/combobox.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "combobox-demo",
+      "type": "registry:component",
+      "title": "Combobox Demo",
+      "description": "Default combobox example.",
+      "registryDependencies": ["https://sevenui.dev/r/combobox.json"],
+      "files": [
+        { "path": "examples/combobox/combobox-demo.tsx", "type": "registry:component" }
       ]
     }
   ]

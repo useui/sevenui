@@ -3,6 +3,10 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PORT=8137
+if lsof -ti "tcp:$PORT" >/dev/null 2>&1; then
+  echo "port $PORT busy" >&2
+  exit 1
+fi
 WORK="$(mktemp -d)"
 
 cleanup() {
@@ -94,7 +98,12 @@ EOF
 (cd "$APP" && npm install --silent)
 
 # 3. Install representative items through the CLI
-(cd "$APP" && npx --yes shadcn@latest add --yes --overwrite \
+# Pinned to the repo's own installed binary instead of `npx --yes shadcn@latest`:
+# `@latest` would re-resolve to whatever the registry serves at run time, which
+# both makes the test's behavior drift out from under us and pulls an
+# unreviewed package off the network on every run (supply-chain exposure).
+SHADCN_BIN="$ROOT/node_modules/.bin/shadcn"
+(cd "$APP" && "$SHADCN_BIN" add --yes --overwrite \
   "http://localhost:$PORT/theme.json" \
   "http://localhost:$PORT/button.json")
 

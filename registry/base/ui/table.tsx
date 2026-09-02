@@ -38,6 +38,8 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
 function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
   return (
     <tr
+      // data-[state=selected] is intentional: TanStack Table and shadcn set
+      // data-state on rows; keeping it preserves drop-in compatibility.
       className={cn(
         "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
         className,

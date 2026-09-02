@@ -1,0 +1,54 @@
+---
+title: Field
+description: Associates a label, control, description, and validation error for a form field.
+---
+
+<Component path="field/field-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/field
+```
+
+## Usage
+
+```tsx
+import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+
+<Field name="email">
+  <FieldLabel>Email</FieldLabel>
+  <Input required type="email" placeholder="name@example.com" />
+  <FieldDescription>Used to send you order updates.</FieldDescription>
+  <FieldError match="valueMissing">Please enter your email</FieldError>
+  <FieldError match="typeMismatch">Not a valid email</FieldError>
+</Field>;
+```
+
+## API reference
+
+Built on the [Base UI Field](https://base-ui.com/react/components/field) and
+[Base UI Fieldset](https://base-ui.com/react/components/fieldset) primitives —
+all their props apply. `Field` wires its `FieldLabel` and `Input`/`Control`
+together automatically (`for`/`id`), and exposes validation through
+`data-[invalid]` on its parts. SevenUI exports:
+
+| Component         | Description                                                          |
+| ------------------ | --------------------------------------------------------------------- |
+| `Field`            | Root that groups a label, control, description, and error.           |
+| `FieldLabel`       | Label associated with the field's control.                            |
+| `FieldDescription` | Supporting help text rendered below the control.                     |
+| `FieldError`       | Validation message, shown only when the matched condition is true.   |
+| `Fieldset`         | Groups related fields with a `<fieldset>` element.                   |
+| `FieldsetLegend`   | Legend/heading for a `Fieldset`.                                     |
+
+| Prop           | Type                                | Default | Description                                                                                          |
+| -------------- | ------------------------------------ | ------- | ------------------------------------------------------------------------------------------------------ |
+| `validate`     | `(value) => string \| string[] \| null \| Promise<...>` | —       | Custom validation run on `Field`, in addition to native constraints. |
+| `validationMode` | `"onBlur" \| "onChange" \| "onSubmit"` | `"onSubmit"` | When custom `validate` runs.                                                                       |
+| `invalid`      | `boolean`                            | —       | Marks the field invalid regardless of native validity.                                               |
+| `name`         | `string`                             | —       | Name of the field, used to associate its control.                                                    |
+| `match`        | `boolean \| keyof ValidityState`     | —       | On `FieldError`, restricts display to a specific validity state (e.g. `"valueMissing"`, `"typeMismatch"`). Omitting both `match` and children falls back to the control's native validation message. |
+
+All components accept standard HTML props and an optional `className` override.

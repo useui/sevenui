@@ -1,0 +1,53 @@
+---
+title: Toggle
+description: Displays a toggle built on the Base UI Toggle primitive.
+---
+
+<Component path="toggle/toggle-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/toggle
+```
+
+## Usage
+
+```tsx
+import { Toggle } from "@/components/ui/toggle";
+
+<Toggle variant="outline" aria-label="Toggle bold">
+  <span className="font-bold">B</span>
+</Toggle>;
+```
+
+## Examples
+
+### Variants
+
+```tsx
+import { Toggle } from "@/components/ui/toggle";
+
+<Toggle variant="default">Default</Toggle>
+<Toggle variant="outline">Outline</Toggle>
+```
+
+### Sizes
+
+```tsx
+import { Toggle } from "@/components/ui/toggle";
+
+<Toggle size="sm">Small</Toggle>
+<Toggle size="default">Default</Toggle>
+<Toggle size="lg">Large</Toggle>
+```
+
+## API reference
+
+Built on the [Base UI Toggle](https://base-ui.com/react/components/toggle)
+primitive — all its props apply. SevenUI adds:
+
+| Prop      | Type                           | Default     |
+| --------- | ------------------------------ | ----------- |
+| `variant` | `"default" \| "outline"`       | `"default"` |
+| `size`    | `"default" \| "sm" \| "lg"`    | `"default"` |

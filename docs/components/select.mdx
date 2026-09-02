@@ -1,0 +1,76 @@
+---
+title: Select
+description: Displays a select menu built on the Base UI Select primitive.
+---
+
+<Component path="select/select-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/select
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const fruits = [
+  { value: "apple", label: "Apple" },
+  { value: "banana", label: "Banana" },
+  { value: "blueberry", label: "Blueberry" },
+  { value: "grapes", label: "Grapes" },
+];
+
+export default function SelectDemo() {
+  return (
+    <Select items={fruits}>
+      <SelectTrigger className="w-45">
+        <SelectValue placeholder="Select a fruit" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Fruits</SelectLabel>
+          {fruits.map((fruit) => (
+            <SelectItem key={fruit.value} value={fruit.value}>
+              {fruit.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Select](https://base-ui.com/react/components/select)
+primitive — all its props apply.
+
+Key props on the Root (`Select`):
+
+- `items` — a `Record<string, ReactNode>` or an array of `{ label, value }`
+  entries; when specified, `SelectValue` renders the matching item's label
+  instead of the raw value
+- `multiple` — allow selecting more than one item; the value becomes an array
+- `value` / `defaultValue` — the controlled or uncontrolled selected value
+- `onValueChange` — callback fired when the selected value changes
+- `disabled`, `required`, `readOnly` — standard field states
+
+`SelectContent` renders through `Select.Portal` → `Select.Positioner` →
+`Select.Popup`, and always sets `alignItemWithTrigger={false}` on the
+Positioner so the popup opens as a plain dropdown below the trigger instead
+of the Base UI default (`alignItemWithTrigger={true}`), which overlaps the
+selected item on the trigger like a native macOS select.

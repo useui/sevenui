@@ -1,0 +1,56 @@
+---
+title: Number Field
+description: Displays a number field built on the Base UI Number Field primitive.
+---
+
+<Component path="number-field/number-field-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/number-field
+```
+
+## Usage
+
+```tsx
+import {
+  NumberField,
+  NumberFieldDecrement,
+  NumberFieldGroup,
+  NumberFieldIncrement,
+  NumberFieldInput,
+  NumberFieldScrubArea,
+} from "@/components/ui/number-field";
+import { Label } from "@/components/ui/label";
+
+<NumberField defaultValue={100}>
+  <NumberFieldScrubArea>
+    <Label>Price</Label>
+  </NumberFieldScrubArea>
+  <NumberFieldGroup>
+    <NumberFieldDecrement />
+    <NumberFieldInput />
+    <NumberFieldIncrement />
+  </NumberFieldGroup>
+</NumberField>;
+```
+
+## Features
+
+- **ScrubArea with Pointer Lock**: The `NumberFieldScrubArea` component enables drag-to-adjust
+  functionality using Pointer Lock API. Drag horizontally to increase or decrease the value.
+  Note: Pointer Lock is not available in Safari.
+- **Number Formatting**: Use the `format` prop (accepts `Intl.NumberFormatOptions`) to customize
+  how numbers are displayed in the input field.
+- **Stepper Buttons**: Increment and decrement buttons for precise value adjustments.
+- **Step Values**: Configure `step` for regular increments, `smallStep` for fine adjustments
+  (e.g., mouse scroll), and `largeStep` for large jumps (e.g., shift+scroll).
+
+## API reference
+
+Built on the [Base UI NumberField](https://base-ui.com/react/components/number-field) primitive —
+all its props apply. The component supports `value`, `defaultValue`, `min`, `max`, and
+`step` props for controlling the number range and increment behavior.
+
+Number Field is a Base UI exclusive — shadcn/ui has no equivalent component, so there is no migration path to preserve.

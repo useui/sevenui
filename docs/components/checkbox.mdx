@@ -1,0 +1,31 @@
+---
+title: Checkbox
+description: Displays a checkbox built on the Base UI Checkbox primitive.
+---
+
+<Component path="checkbox/checkbox-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/checkbox
+```
+
+## Usage
+
+```tsx
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+
+<Label>
+  <Checkbox defaultChecked />
+  Accept terms
+</Label>;
+```
+
+## API reference
+
+Built on the [Base UI Checkbox](https://base-ui.com/react/components/checkbox)
+primitive — all its props apply. The component supports the `indeterminate` state
+for mixed selection scenarios and fires the `onCheckedChange` callback with the
+new checked state on user interaction.

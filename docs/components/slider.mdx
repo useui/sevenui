@@ -1,0 +1,48 @@
+---
+title: Slider
+description: Displays a slider built on the Base UI Slider primitive.
+---
+
+<Component path="slider/slider-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/slider
+```
+
+## Usage
+
+```tsx
+import { Slider } from "@/components/ui/slider";
+
+<Slider defaultValue={40} />;
+```
+
+## Range
+
+Pass an array to `defaultValue` (or `value`) to render one thumb per value.
+Each thumb is indexed automatically in the order its value appears in the
+array.
+
+```tsx
+import { Slider } from "@/components/ui/slider";
+
+<Slider defaultValue={[20, 60]} />;
+```
+
+## API reference
+
+Built on the [Base UI Slider](https://base-ui.com/react/components/slider)
+primitive — all its props apply. The component accepts `min`, `max`, and
+`step` to control the range and granularity, and `orientation` to switch
+between `horizontal` (default) and `vertical` layouts.
+
+| Prop           | Type                 | Default        |
+| -------------- | -------------------- | -------------- |
+| `value`        | `number \| number[]` | -              |
+| `defaultValue` | `number \| number[]` | `0`            |
+| `min`          | `number`             | `0`            |
+| `max`          | `number`             | `100`          |
+| `step`         | `number`             | `1`            |
+| `orientation`  | `"horizontal" \| "vertical"` | `"horizontal"` |

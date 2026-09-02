@@ -1,0 +1,63 @@
+---
+title: Input OTP
+description: Displays an OTP input field built on the Base UI OTPField primitive.
+---
+
+<Component path="input-otp/input-otp-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/input-otp
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import { useState } from "react";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+} from "@/components/ui/input-otp";
+
+export default function InputOTPDemo() {
+  const [value, setValue] = useState("");
+
+  return (
+    <InputOTP length={6} value={value} onValueChange={(v) => setValue(v)}>
+      <InputOTPGroup>
+        {Array.from({ length: 3 }).map((_, i) => (
+          <InputOTPSlot key={i} />
+        ))}
+      </InputOTPGroup>
+      <InputOTPSeparator />
+      <InputOTPGroup>
+        {Array.from({ length: 3 }).map((_, i) => (
+          <InputOTPSlot key={i} />
+        ))}
+      </InputOTPGroup>
+    </InputOTP>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI OTP Field](https://base-ui.com/react/components/otp-field)
+primitive — all its props apply. This is a declarative wrapper with no
+third-party input-otp package required.
+
+Key props on the Root (`InputOTP`):
+
+- `length` — required, the number of OTP slots
+- `value` — the current OTP value (controlled mode)
+- `defaultValue` — the initial OTP value (uncontrolled mode)
+- `onValueChange` — callback fired when the OTP value changes
+- `validationType` — character validation: `'numeric'` (default), `'alpha'`, `'alphanumeric'`, or `'none'`
+- `mask` — whether to mask the input (default: `false`)
+- `onValueComplete` — callback when all slots are filled
+- `autoSubmit` — automatically submit the owning form when complete

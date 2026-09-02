@@ -1,0 +1,36 @@
+---
+title: Label
+description: Displays a label for form inputs.
+---
+
+<Component path="label/label-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/label
+```
+
+## Usage
+
+```tsx
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+
+<div>
+  <Label htmlFor="email">Email</Label>
+  <Input id="email" type="email" />
+</div>;
+```
+
+## API reference
+
+Styled native `<label>` element. Base UI ships no Label primitive; use `FieldLabel` inside a `Field` for automatic validation integration.
+
+| Component | Description                    |
+| --------- | ------------------------------ |
+| `Label`   | Styled native `<label>` element. |
+
+| Prop    | Type   | Default | Description                  |
+| ------- | ------ | ------- | ---------------------------- |
+| `htmlFor` | string | —       | ID of the associated input.   |

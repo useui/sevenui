@@ -1,0 +1,27 @@
+---
+title: Input
+description: Displays a text input built on the Base UI Input primitive.
+---
+
+<Component path="input/input-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/input
+```
+
+## Usage
+
+```tsx
+import { Input } from "@/components/ui/input";
+
+<Input type="email" placeholder="name@example.com" />;
+```
+
+## API reference
+
+Built on the [Base UI Input](https://base-ui.com/react/components/input)
+primitive — all its props apply. The component automatically responds to invalid
+field state through the `data-[invalid]` attribute, styling the border and ring
+in destructive colors for Field integration.

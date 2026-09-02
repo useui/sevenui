@@ -1,4 +1,4 @@
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync } from "node:fs";
 
 const registry = JSON.parse(readFileSync("registry.json", "utf8"));
 const errors = [];
@@ -31,6 +31,38 @@ for (const item of registry.items) {
     }
     if (!existsSync(`docs/components/${item.name}.mdx`)) {
       errors.push(`${where}: no docs page docs/components/${item.name}.mdx`);
+    }
+  }
+}
+
+// Unique item names
+const seen = new Set();
+for (const item of registry.items) {
+  if (seen.has(item.name)) errors.push(`duplicate item name "${item.name}"`);
+  seen.add(item.name);
+}
+
+// Every example file is registered
+const registeredFiles = new Set(
+  registry.items.flatMap((i) => (i.files ?? []).map((f) => f.path)),
+);
+for (const dir of readdirSync("examples", { withFileTypes: true })) {
+  if (!dir.isDirectory()) continue;
+  for (const f of readdirSync(`examples/${dir.name}`)) {
+    const p = `examples/${dir.name}/${f}`;
+    if (f.endsWith(".tsx") && !registeredFiles.has(p)) {
+      errors.push(`example file ${p} is not registered in registry.json`);
+    }
+  }
+}
+
+// Theme parity: every cssVars token appears in examples/theme.css with the same value
+const themeItem = registry.items.find((i) => i.name === "theme");
+const css = readFileSync("examples/theme.css", "utf8");
+for (const [mode, vars] of Object.entries(themeItem.cssVars)) {
+  for (const [key, val] of Object.entries(vars)) {
+    if (!css.includes(`--${key}: ${val};`)) {
+      errors.push(`theme ${mode} token --${key} missing or differs in examples/theme.css`);
     }
   }
 }

@@ -1,0 +1,47 @@
+---
+title: Radio Group
+description: Displays a radio group built on the Base UI Radio primitive.
+---
+
+<Component path="radio-group/radio-group-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/radio-group
+```
+
+## Usage
+
+```tsx
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+
+<RadioGroup defaultValue="comfortable">
+  <div className="flex items-center">
+    <Label>
+      <RadioGroupItem value="default" />
+      Default
+    </Label>
+  </div>
+  <div className="flex items-center">
+    <Label>
+      <RadioGroupItem value="comfortable" />
+      Comfortable
+    </Label>
+  </div>
+  <div className="flex items-center">
+    <Label>
+      <RadioGroupItem value="compact" />
+      Compact
+    </Label>
+  </div>
+</RadioGroup>;
+```
+
+## API reference
+
+Built on the [Base UI Radio](https://base-ui.com/react/components/radio) and
+[Base UI RadioGroup](https://base-ui.com/react/components/radio-group) primitives —
+all their props apply. The `name` prop lives on the `RadioGroup` component,
+while individual `RadioGroupItem` components require a `value` prop.
