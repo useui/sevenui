@@ -1,0 +1,18 @@
+---
+title: Theming
+description: SevenUI components follow your shadcn theme.
+---
+
+SevenUI components style themselves with the standard shadcn CSS
+variables (`--background`, `--primary`, `--radius`, ...). If your
+project already has a shadcn theme, components adapt to it with no
+extra setup.
+
+Starting fresh? Install the default neutral tokens:
+
+```bash
+npx shadcn@latest add @sevenui/theme
+```
+
+Dark mode works through your existing `.dark` class strategy — the
+variables carry both palettes.

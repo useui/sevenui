@@ -1,0 +1,32 @@
+---
+title: Installation
+description: Configure the SevenUI registry in your project.
+---
+
+SevenUI requires a project already set up with the shadcn CLI and
+Tailwind CSS v4. Run `npx shadcn@latest init` first if you have not.
+
+## Configure the registry
+
+Add the registry to your `components.json`:
+
+```json
+{
+  "registries": {
+    "@sevenui": "https://sevenui.dev/r/{name}.json"
+  }
+}
+```
+
+## Add components
+
+```bash
+npx shadcn@latest add @sevenui/button
+```
+
+Components install as source files under your `ui` alias. Direct URLs
+work without the namespace config:
+
+```bash
+npx shadcn@latest add https://sevenui.dev/r/button.json
+```
