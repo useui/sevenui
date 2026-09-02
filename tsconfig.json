@@ -10,7 +10,6 @@
     "noEmit": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "baseUrl": ".",
     "paths": { "@/*": ["./*"] }
   },
   "include": ["registry", "examples", "scripts", "blume.config.ts"]
