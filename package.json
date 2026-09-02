@@ -2,6 +2,7 @@
   "name": "sevenui",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@12.0.0",
   "engines": {
     "node": ">=22.12"
   },
