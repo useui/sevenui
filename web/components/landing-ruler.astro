@@ -1,0 +1,29 @@
+---
+// Decorative vertical ruler drawn outside the left grid rail, numbering the
+// page in 100px increments like a design-canvas measure. Purely visual:
+// hidden from assistive tech and from any viewport too narrow to fit it
+// beside the max-w-6xl canvas (hence xl:block).
+const marks = Array.from({ length: 90 }, (_, i) => i * 100);
+---
+
+<div
+  aria-hidden="true"
+  class="pointer-events-none absolute inset-y-0 left-0 right-[calc(50%+36rem)] hidden overflow-hidden select-none xl:block"
+>
+  <div
+    class="absolute inset-y-0 right-0 w-2"
+    style="background-image: repeating-linear-gradient(to bottom, var(--border) 0 1px, transparent 1px 25px);"
+  >
+  </div>
+  <div class="absolute inset-y-0 right-3.5 flex flex-col">
+    {
+      marks.map((m) => (
+        <span class="flex h-[100px] shrink-0 items-start justify-end pt-0.5">
+          <span class="font-mono text-[10px] leading-none text-muted-foreground/60 [writing-mode:vertical-rl]">
+            {m}
+          </span>
+        </span>
+      ))
+    }
+  </div>
+</div>

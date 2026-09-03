@@ -1,0 +1,67 @@
+---
+// Every registry:ui item as a grid cell linking to its docs page. The list
+// comes from registry.json at build time, so the wall grows with the
+// registry. 41 items + the trailing docs cell = 42, which divides evenly
+// into the 2 / 3 / 6 column counts — every breakpoint ends on a full row.
+//
+// Cell borders: each cell draws its end + bottom edge; the inner grid is
+// pulled 1px past the clipping wrapper so the outermost borders vanish
+// instead of doubling up against the section rails.
+import registry from "../../registry.json";
+
+const SPECIAL_NAMES: Record<string, string> = {
+  "input-otp": "Input OTP",
+  "form-rhf": "Form (RHF)",
+};
+
+const displayName = (name: string) =>
+  SPECIAL_NAMES[name] ??
+  name
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+const components = registry.items
+  .filter((item) => item.type === "registry:ui")
+  .map((item) => item.name);
+---
+
+<div class="overflow-hidden">
+  <nav
+    aria-label="All components"
+    class="-me-px -mb-px grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
+  >
+    {
+      components.map((name, i) => (
+        <a
+          href={`/docs/components/${name}`}
+          class="group flex items-baseline justify-between gap-2 border-e border-b border-border px-4 py-4 text-sm font-medium transition-colors hover:bg-muted focus-visible:z-10 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+        >
+          <span class="truncate">{displayName(name)}</span>
+          <span class="font-mono text-[10px] text-muted-foreground/50 tabular-nums transition-colors group-hover:text-muted-foreground">
+            {String(i + 1).padStart(2, "0")}
+          </span>
+        </a>
+      ))
+    }
+    <a
+      href="/docs"
+      class="group flex items-center justify-between gap-2 border-e border-b border-border bg-muted/40 px-4 py-4 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:z-10 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+    >
+      <span class="truncate">Browse the docs</span>
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="size-3.5 shrink-0 transition-transform group-hover:translate-x-0.5"
+        aria-hidden="true"
+      >
+        <path d="M5 12h14" />
+        <path d="m13 6 6 6-6 6" />
+      </svg>
+    </a>
+  </nav>
+</div>
