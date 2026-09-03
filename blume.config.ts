@@ -50,6 +50,20 @@ export default defineConfig({
     pages: "web/pages",
   },
   examples: { css: "examples/theme.css" },
+  github: {
+    owner: "useui",
+    repo: "sevenui",
+  },
+  search: {
+    popular: [
+      { href: "/installation", label: "Installation" },
+      { href: "/theming", label: "Theming" },
+      { href: "/components/button", label: "Button" },
+      { href: "/components/dialog", label: "Dialog" },
+      { href: "/components/combobox", label: "Combobox" },
+      { href: "/components/toast", label: "Toast" },
+    ],
+  },
   navigation: {
     sidebar: {
       items: [

@@ -2,11 +2,24 @@
 // Landing page on Blume's PageLayout: the site chrome (header, theme,
 // search) comes from the layout; the shadcn component tokens the showcase
 // needs come from the root theme.css. Header tabs are scoped to this page.
+//
+// The page is drawn as an exposed design canvas: a max-w-6xl column framed
+// by continuous 1px rails, full-width section separators, crop marks at the
+// rail intersections, and a decorative ruler outside the left rail. The
+// rails come from each row's sm:border-x (rows stack, so the lines read as
+// continuous); crop marks are the ::before/::after of .l-marks rows.
 import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
 import { Logomark } from "../components/logomark.tsx";
 import LandingShowcase from "../components/landing-showcase.tsx";
 import CopyCommand from "../components/copy-command.tsx";
+import LandingRuler from "../components/landing-ruler.astro";
+import ComponentWall from "../components/component-wall.astro";
+import registry from "../../registry.json";
+
+const uiCount = registry.items.filter(
+  (item) => item.type === "registry:ui",
+).length;
 
 const { config } = data;
 
@@ -21,6 +34,39 @@ const navigation = {
     },
   ],
 };
+
+const installSteps = [
+  {
+    title: "1. Initialize",
+    body: "Set up shadcn in your project if you have not already. Existing shadcn projects skip this step.",
+    command: "npx shadcn@latest init",
+  },
+  {
+    title: "2. Add components",
+    body: "Install any part from the registry. Source lands in your components directory, ready to edit.",
+    command: "npx shadcn@latest add @sevenui/button",
+  },
+  {
+    title: "3. Use them",
+    body: "Import from your own codebase. The components are yours now — restyle or rewrite anything.",
+    code: 'import { Button } from "@/components/ui/button"',
+  },
+];
+
+const whyColumns = [
+  {
+    title: "Base UI, exclusively",
+    body: "Every part is a Base UI primitive underneath — accessible, unstyled, and maintained by the Radix team's successors at MUI. No mixed foundations, no wrappers around wrappers.",
+  },
+  {
+    title: "The shadcn workflow",
+    body: "Components are distributed as source through the shadcn registry and use the same CSS variables, so they drop into an existing shadcn project without touching your theme.",
+  },
+  {
+    title: "Source, not a dependency",
+    body: "The CLI copies code into your repo. There is no runtime dependency on SevenUI and nothing to pin — MIT licensed, yours to keep.",
+  },
+];
 
 const footerComponents = [
   "button",
@@ -48,136 +94,306 @@ const footerComponents = [
   ogEnabled={config.og.enabled}
   page={{ title: config.title, description: config.description }}
 >
-  <section class="mx-auto flex max-w-3xl flex-col items-center px-6 pt-24 pb-20 text-center">
-    <Logomark className="mb-8 h-12 w-auto" />
-    <h1 class="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
-      Base UI primitives.<br />shadcn workflow.
-    </h1>
-    <p class="mt-5 max-w-xl text-lg text-balance text-muted-foreground">
-      SevenUI is a registry of accessible React components built exclusively
-      on Base UI — installed with the CLI you already use.
-    </p>
-    <div class="mt-9 flex w-full max-w-md flex-col items-center gap-3 sm:flex-row">
-      <a
-        href="/docs"
-        class="inline-flex h-10 shrink-0 items-center rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+  <div class="relative">
+    <LandingRuler />
+
+    <section class="border-b border-border">
+      <div
+        class="l-row l-marks flex flex-col items-center px-6 pt-20 pb-16 text-center sm:pt-28 sm:pb-24"
       >
-        Get started
-      </a>
-      <CopyCommand client:load command="npx shadcn add @sevenui/button" />
-    </div>
-  </section>
+        <Logomark className="hero-rise mb-8 h-12 w-auto" />
+        <h1
+          class="hero-rise hero-rise-2 text-4xl font-semibold tracking-tight text-balance sm:text-6xl"
+        >
+          Base UI primitives.<br />shadcn workflow.
+        </h1>
+        <p
+          class="hero-rise hero-rise-3 mt-6 max-w-xl text-lg text-balance text-muted-foreground"
+        >
+          SevenUI is a registry of accessible React components built
+          exclusively on Base UI — installed with the CLI you already use.
+        </p>
+        <div
+          class="hero-rise hero-rise-4 mt-10 flex w-full max-w-lg flex-col items-center gap-3 sm:flex-row"
+        >
+          <a
+            href="/docs"
+            class="inline-flex h-10 shrink-0 items-center rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Get started
+          </a>
+          <CopyCommand client:load command="npx shadcn@latest add @sevenui/button" />
+        </div>
+      </div>
+    </section>
 
-  <section class="mx-auto w-full max-w-6xl px-6 pb-24">
-    <p class="mb-4 font-mono text-xs tracking-widest text-muted-foreground uppercase">
-      Live from the registry — click around
-    </p>
-    <LandingShowcase client:load />
-  </section>
+    <section class="border-b border-border">
+      <div
+        class="l-row l-marks flex items-center justify-between gap-4 border-b border-border px-6 py-3 font-mono text-xs text-muted-foreground"
+      >
+        <span>Live from the registry</span>
+        <span class="text-end">Click around — every part is real</span>
+      </div>
+      <div class="l-row">
+        <LandingShowcase client:load />
+      </div>
+    </section>
 
-  <section class="border-t">
-    <div class="mx-auto grid w-full max-w-6xl gap-10 px-6 py-20 lg:grid-cols-2 lg:gap-16">
-      <div class="flex max-w-md flex-col justify-center gap-4">
-        <h2 class="text-2xl font-semibold tracking-tight">
+    <section class="border-b border-border">
+      <div class="l-row l-marks border-b border-border px-6 py-10 sm:py-12">
+        <h2 class="text-2xl font-semibold tracking-tight sm:text-3xl">
+          Install in three steps
+        </h2>
+        <p class="mt-3 max-w-xl text-muted-foreground">
+          No package to depend on, no config to learn. The registry speaks the
+          CLI your project already uses.
+        </p>
+      </div>
+      <div class="l-row">
+        <div
+          class="grid divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0"
+        >
+          {
+            installSteps.map((step) => (
+              <div class="flex flex-col gap-4 px-6 py-8">
+                <h3 class="font-medium">{step.title}</h3>
+                <p class="text-sm text-muted-foreground">{step.body}</p>
+                <div class="mt-auto">
+                  {step.command ? (
+                    <CopyCommand client:visible command={step.command} />
+                  ) : (
+                    <code class="flex h-[46px] w-full items-center overflow-x-auto rounded-lg border bg-card px-4 font-mono text-sm whitespace-nowrap text-card-foreground shadow-xs">
+                      {step.code}
+                    </code>
+                  )}
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="border-b border-border">
+      <div class="l-row l-marks border-b border-border px-6 py-10 sm:py-12">
+        <h2 class="text-2xl font-semibold tracking-tight sm:text-3xl">
           Same CLI. Different primitives.
         </h2>
-        <p class="text-muted-foreground">
-          Components are distributed as source through the shadcn registry and
-          use the same CSS variables, so they drop into an existing shadcn
-          project. Underneath, every part is a Base UI primitive — accessible,
-          unstyled, and maintained by the Radix team's successors at MUI.
-        </p>
       </div>
-      <div class="flex flex-col justify-center gap-3">
-        <CopyCommand client:visible command="npx shadcn add @sevenui/theme" />
-        <CopyCommand client:visible command="npx shadcn add @sevenui/form" />
-        <p class="font-mono text-xs text-muted-foreground">
-          30 components · MIT · no runtime dependency on SevenUI
-        </p>
+      <div class="l-row">
+        <div
+          class="grid divide-y divide-border lg:grid-cols-3 lg:divide-x lg:divide-y-0"
+        >
+          {
+            whyColumns.map((column) => (
+              <div class="flex flex-col gap-3 px-6 py-8">
+                <h3 class="font-medium">{column.title}</h3>
+                <p class="text-sm leading-relaxed text-muted-foreground">
+                  {column.body}
+                </p>
+              </div>
+            ))
+          }
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <footer slot="footer" class="border-t">
-    <div class="mx-auto grid w-full max-w-6xl gap-10 px-6 py-14 sm:grid-cols-2 lg:grid-cols-4">
-      <div class="flex flex-col gap-3">
-        <span class="inline-flex items-center gap-2 font-semibold">
-          <Logomark className="h-5 w-auto" /> SevenUI
-        </span>
-        <p class="max-w-xs text-sm text-muted-foreground">
-          Base UI powered components, distributed through the shadcn registry.
+    <section class="border-b border-border">
+      <div
+        class="l-row l-marks flex flex-wrap items-end justify-between gap-4 border-b border-border px-6 py-10 sm:py-12"
+      >
+        <div>
+          <h2 class="text-2xl font-semibold tracking-tight sm:text-3xl">
+            Every component in the registry
+          </h2>
+          <p class="mt-3 max-w-xl text-muted-foreground">
+            Each cell is one command away from your codebase.
+          </p>
+        </div>
+        <p class="font-mono text-xs text-muted-foreground">
+          {uiCount} components · MIT
         </p>
       </div>
-      <nav aria-label="Components" class="flex flex-col gap-2 text-sm">
-        <span class="mb-1 font-medium">Components</span>
-        {
-          footerComponents.map((name) => (
-            <a
-              class="text-muted-foreground transition-colors hover:text-foreground"
-              href={`/docs/components/${name}`}
-            >
-              {name.charAt(0).toUpperCase() + name.slice(1).replace("-", " ")}
-            </a>
-          ))
-        }
-        <a class="text-muted-foreground transition-colors hover:text-foreground" href="/docs">
-          All components →
-        </a>
-      </nav>
-      <nav aria-label="Resources" class="flex flex-col gap-2 text-sm">
-        <span class="mb-1 font-medium">Resources</span>
-        <a class="text-muted-foreground transition-colors hover:text-foreground" href="/docs">
-          Documentation
-        </a>
-        <a
-          class="text-muted-foreground transition-colors hover:text-foreground"
-          href="/docs/installation"
-        >
-          Installation
-        </a>
-        <a
-          class="text-muted-foreground transition-colors hover:text-foreground"
-          href="/docs/theming"
-        >
-          Theming
-        </a>
-        <a
-          class="text-muted-foreground transition-colors hover:text-foreground"
-          href="https://github.com/useui/sevenui"
-          rel="noopener noreferrer"
-        >
-          GitHub
-        </a>
-      </nav>
-      <nav aria-label="Built with" class="flex flex-col gap-2 text-sm">
-        <span class="mb-1 font-medium">Built on</span>
-        <a
-          class="text-muted-foreground transition-colors hover:text-foreground"
-          href="https://base-ui.com"
-          rel="noopener noreferrer"
-        >
-          Base UI
-        </a>
-        <a
-          class="text-muted-foreground transition-colors hover:text-foreground"
-          href="https://ui.shadcn.com/docs/registry"
-          rel="noopener noreferrer"
-        >
-          shadcn registry
-        </a>
-        <a
-          class="text-muted-foreground transition-colors hover:text-foreground"
-          href="https://tailwindcss.com"
-          rel="noopener noreferrer"
-        >
-          Tailwind CSS
-        </a>
-      </nav>
+      <div class="l-row">
+        <ComponentWall />
+      </div>
+    </section>
+  </div>
+
+  <footer slot="footer">
+    <div class="l-row l-marks">
+      <div class="grid w-full gap-10 px-6 py-14 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="flex flex-col gap-3">
+          <span class="inline-flex items-center gap-2 font-semibold">
+            <Logomark className="h-5 w-auto" /> SevenUI
+          </span>
+          <p class="max-w-xs text-sm text-muted-foreground">
+            Base UI powered components, distributed through the shadcn
+            registry.
+          </p>
+        </div>
+        <nav aria-label="Components" class="flex flex-col gap-2 text-sm">
+          <span class="mb-1 font-medium">Components</span>
+          {
+            footerComponents.map((name) => (
+              <a
+                class="text-muted-foreground transition-colors hover:text-foreground"
+                href={`/docs/components/${name}`}
+              >
+                {name.charAt(0).toUpperCase() + name.slice(1).replace("-", " ")}
+              </a>
+            ))
+          }
+          <a
+            class="text-muted-foreground transition-colors hover:text-foreground"
+            href="/docs"
+          >
+            All components →
+          </a>
+        </nav>
+        <nav aria-label="Resources" class="flex flex-col gap-2 text-sm">
+          <span class="mb-1 font-medium">Resources</span>
+          <a
+            class="text-muted-foreground transition-colors hover:text-foreground"
+            href="/docs"
+          >
+            Documentation
+          </a>
+          <a
+            class="text-muted-foreground transition-colors hover:text-foreground"
+            href="/docs/installation"
+          >
+            Installation
+          </a>
+          <a
+            class="text-muted-foreground transition-colors hover:text-foreground"
+            href="/docs/theming"
+          >
+            Theming
+          </a>
+          <a
+            class="text-muted-foreground transition-colors hover:text-foreground"
+            href="https://github.com/useui/sevenui"
+            rel="noopener noreferrer"
+          >
+            GitHub
+          </a>
+        </nav>
+        <nav aria-label="Built with" class="flex flex-col gap-2 text-sm">
+          <span class="mb-1 font-medium">Built on</span>
+          <a
+            class="text-muted-foreground transition-colors hover:text-foreground"
+            href="https://base-ui.com"
+            rel="noopener noreferrer"
+          >
+            Base UI
+          </a>
+          <a
+            class="text-muted-foreground transition-colors hover:text-foreground"
+            href="https://ui.shadcn.com/docs/registry"
+            rel="noopener noreferrer"
+          >
+            shadcn registry
+          </a>
+          <a
+            class="text-muted-foreground transition-colors hover:text-foreground"
+            href="https://tailwindcss.com"
+            rel="noopener noreferrer"
+          >
+            Tailwind CSS
+          </a>
+        </nav>
+      </div>
     </div>
-    <div class="border-t">
-      <p class="mx-auto w-full max-w-6xl px-6 py-6 text-xs text-muted-foreground">
+    <div class="border-t border-border">
+      <p class="l-row px-6 py-6 text-xs text-muted-foreground">
         MIT License © 2026 SevenUI
       </p>
     </div>
   </footer>
 </PageLayout>
+
+<style>
+  /* Move the header tab links (Docs, Components) to the right-hand cluster.
+     Blume's header lays out [logo · selectors · tabs · spacer · search ·
+     icons] with no alignment option, so flex order does it: the tab nav
+     jumps past the spacer and the icon cluster follows it. */
+  :global([data-blume-header] > nav) {
+    order: 1;
+  }
+
+  :global([data-blume-header] > div:last-child) {
+    order: 2;
+  }
+
+  /* One row of the exposed grid: the shared content column plus the two
+     vertical rails. Rows stack, so per-row borders read as continuous
+     lines. Rails and marks disappear below sm where they would hug the
+     viewport edge. */
+  .l-row {
+    position: relative;
+    margin-inline: auto;
+    width: 100%;
+    max-width: 72rem; /* matches the max-w-6xl used by the docs pages */
+  }
+
+  @media (min-width: 640px) {
+    .l-row {
+      border-inline: 1px solid var(--border);
+    }
+
+    .l-marks::before,
+    .l-marks::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      z-index: 1;
+      width: 7px;
+      height: 7px;
+      border: 1px solid var(--border);
+      background: var(--background);
+      transform: translate(-50%, -50%);
+    }
+
+    .l-marks::before {
+      left: 0;
+    }
+
+    .l-marks::after {
+      left: 100%;
+    }
+  }
+
+  /* The page's one authored motion moment: the hero settles into place on
+     load. Content is visible by default; the animation only runs when
+     motion is welcome. */
+  @media (prefers-reduced-motion: no-preference) {
+    .l-row :global(.hero-rise) {
+      animation: hero-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .l-row :global(.hero-rise-2) {
+      animation-delay: 0.07s;
+    }
+
+    .l-row :global(.hero-rise-3) {
+      animation-delay: 0.14s;
+    }
+
+    .l-row :global(.hero-rise-4) {
+      animation-delay: 0.21s;
+    }
+  }
+
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
