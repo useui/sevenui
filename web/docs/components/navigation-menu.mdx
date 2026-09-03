@@ -1,0 +1,77 @@
+---
+title: Navigation Menu
+description: A collection of links for navigating websites, sharing one animated popup between top-level menu triggers, built on the Base UI Navigation Menu primitive.
+---
+
+<Component path="navigation-menu/navigation-menu-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/navigation-menu
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+
+export default function NavigationMenuDemo() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <NavigationMenuLink href="#">Introduction</NavigationMenuLink>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Navigation Menu](https://base-ui.com/react/components/navigation-menu)
+primitive — all its props apply.
+
+- `value` / `defaultValue` / `onValueChange`, `delay` (default **50ms**),
+  `closeDelay` (default 50ms), and `orientation` all live on
+  `NavigationMenu` (the Root) — unlike our other overlay components, where
+  hover-open timing lives on the trigger.
+- Every panel shares **one** popup. Each `NavigationMenuContent` portals
+  its content into the single Viewport inside the shared Popup; the
+  trigger imperatively measures the incoming panel and writes
+  `--popup-width` / `--popup-height` onto the Popup and
+  `--positioner-width` / `--positioner-height` onto the Positioner as it
+  switches, so the popup resizes and slides to the active trigger instead
+  of each item rendering its own popup.
+- Content cross-fades directionally as the active item changes, driven by
+  `data-activation-direction` (`left` / `right` / `up` / `down`) combined
+  with `data-starting-style` / `data-ending-style`.
+- `NavigationMenuLink` renders a real `<a>`. `closeOnClick` defaults to
+  `false` and `active` defaults to `false` (reflected as `data-active`).
+  Compose framework routers with the `render` prop, e.g.
+  `<NavigationMenuLink render={<Link href="/docs" />} />`.
+- The primitive's `Content` accepts `keepMounted` to keep panel markup in
+  the DOM (and in SSR output) for crawlers even while closed — compose it
+  directly when that matters, since `NavigationMenuContent` here doesn't
+  set it by default.
+- For panels taller than the viewport, cap height with
+  `max-h-[var(--available-height)]` and prefer `ScrollArea` over native
+  scrollbars inside the panel.
+- The Positioner needs an invisible `before:` hover bridge spanning the
+  `sideOffset` gap between the trigger row and the popup — without it,
+  moving the pointer from a trigger down into the popup crosses a gap with
+  no hoverable element and the menu closes.

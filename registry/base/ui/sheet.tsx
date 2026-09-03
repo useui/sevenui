@@ -24,9 +24,11 @@ function SheetContent({
   className,
   children,
   side = "right",
+  showCloseButton = true,
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Popup> & {
   side?: keyof typeof sheetSides;
+  showCloseButton?: boolean;
 }) {
   return (
     <SheetPrimitive.Portal>
@@ -40,22 +42,24 @@ function SheetContent({
         {...props}
       >
         {children}
-        <SheetPrimitive.Close
-          aria-label="Close"
-          className="absolute top-4 right-4 rounded-xs text-muted-foreground opacity-70 transition-opacity outline-none hover:opacity-100 focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-4"
+        {showCloseButton && (
+          <SheetPrimitive.Close
+            aria-label="Close"
+            className="absolute top-4 right-4 rounded-xs text-muted-foreground opacity-70 transition-opacity outline-none hover:opacity-100 focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none"
           >
-            <path d="M18 6 6 18M6 6l12 12" />
-          </svg>
-        </SheetPrimitive.Close>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="size-4"
+            >
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </SheetPrimitive.Close>
+        )}
       </SheetPrimitive.Popup>
     </SheetPrimitive.Portal>
   );

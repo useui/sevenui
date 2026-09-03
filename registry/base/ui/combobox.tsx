@@ -16,12 +16,11 @@ function ComboboxInput({
   ...props
 }: React.ComponentProps<typeof ComboboxPrimitive.Input>) {
   return (
-    <ComboboxPrimitive.InputGroup className="relative flex w-full items-center">
+    <ComboboxPrimitive.InputGroup
+      className={cn("relative flex w-full items-center", className)}
+    >
       <ComboboxPrimitive.Input
-        className={cn(
-          "flex h-9 w-full min-w-0 rounded-md border border-input bg-transparent py-1 pr-14 pl-3 text-base shadow-xs transition-colors outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-          className,
-        )}
+        className="flex h-9 w-full min-w-0 rounded-md border border-input bg-transparent py-1 pr-14 pl-3 text-base shadow-xs transition-colors outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
         {...props}
       />
       <div className="absolute right-2 flex items-center gap-1">

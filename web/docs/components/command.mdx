@@ -1,0 +1,96 @@
+---
+title: Command
+description: A fast, composable command palette built on the Base UI Autocomplete primitive.
+---
+
+<Component path="command/command-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/command
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+
+const fruits = [
+  { value: "apple", label: "Apple" },
+  { value: "banana", label: "Banana" },
+  { value: "blueberry", label: "Blueberry" },
+];
+
+export default function CommandDemo() {
+  return (
+    <Command items={fruits}>
+      <CommandInput placeholder="Type a command or search..." />
+      <CommandList>
+        {(item: (typeof fruits)[number]) => (
+          <CommandItem key={item.value} value={item}>
+            {item.label}
+          </CommandItem>
+        )}
+      </CommandList>
+      <CommandEmpty>No results found.</CommandEmpty>
+    </Command>
+  );
+}
+```
+
+## Dialog
+
+`CommandDialog` wraps `Command` in a Base UI Dialog so the palette can be
+toggled with a keyboard shortcut and rendered as a modal overlay. Because the
+dialog unmounts its content on close, filter and highlight state reset for
+free every time it reopens.
+
+<Component path="command/command-dialog" />
+
+## API reference
+
+Built from scratch on the [Base UI
+Autocomplete](https://base-ui.com/react/components/autocomplete) primitive in
+`inline` mode — this is SevenUI's Radix-free replacement for `cmdk`.
+
+**Data-driven filtering (intentional divergence from cmdk).** cmdk filters by
+reading each item's rendered DOM text. `Command` instead filters the `items`
+array you pass to the root — `CommandList` and `CommandGroup` take a
+**function child** (`(item) => ReactElement`) that Base UI calls once per
+item currently matching the input value, rather than a plain node. Items use
+the `{ value, label }` shape; the default filter is a locale-aware substring
+match against `.label`. Pass a custom `filter` function for fuzzy matching,
+or `filter={null}` together with a `filteredItems` prop to drive results from
+an async search yourself.
+
+**Keyboard model.** Virtual focus never leaves the input — the highlighted
+item is tracked via `aria-activedescendant`, not real DOM focus. Arrow keys
+move the highlight, Enter activates the highlighted item's `onClick`, and
+inside `CommandDialog`, Escape closes the dialog (inline Autocomplete mode
+disables Base UI's own dismissal so the keypress bubbles up to the Dialog
+root).
+
+The component ships with unit tests covering rendering, filtering, the empty
+state, and keyboard activation — see `tests/command.test.tsx`.
+
+| Component         | Renders                                                        |
+| ------------------ | --------------------------------------------------------------- |
+| `Command`          | `Autocomplete.Root` (`inline open autoHighlight="always" keepHighlight`) plus a styled container |
+| `CommandInput`      | `Autocomplete.Input` with a leading search icon                |
+| `CommandList`       | `Autocomplete.List` — takes a function child, one call per group/item |
+| `CommandGroup`      | `Autocomplete.Group` + `Autocomplete.GroupLabel` (`heading` prop) + `Autocomplete.Collection` |
+| `CommandItem`       | `Autocomplete.Item`                                             |
+| `CommandEmpty`      | `Autocomplete.Empty` — always mounted as a `role="status"` live region |
+| `CommandShortcut`   | A styled `<span>` for trailing keybinding hints                 |
+| `CommandSeparator`  | `Autocomplete.Separator`                                        |
+| `CommandDialog`     | A Base UI `Dialog.Root` wrapping `Command`, with `title` / `description` rendered as sr-only text |

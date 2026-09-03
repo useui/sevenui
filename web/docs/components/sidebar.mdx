@@ -1,0 +1,174 @@
+---
+title: Sidebar
+description: A composable, themeable sidebar with collapsible, mobile, and icon-only modes.
+---
+
+<Component path="sidebar/sidebar-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/sidebar
+```
+
+This is a multi-file item: it installs `components/ui/sidebar.tsx` alongside
+`hooks/use-mobile.ts`, the breakpoint hook the sidebar uses to switch into
+its mobile sheet.
+
+## Usage
+
+```tsx
+"use client";
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+
+export default function Layout() {
+  return (
+    <SidebarProvider>
+      <Sidebar collapsible="icon">
+        <SidebarHeader>{/* app switcher */}</SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Application</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton tooltip="Home" render={<a href="#" />}>
+                    <span>Home</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter>{/* user menu */}</SidebarFooter>
+      </Sidebar>
+      <SidebarInset>
+        <header className="flex h-12 items-center gap-2 border-b px-4">
+          <SidebarTrigger />
+        </header>
+        {/* page content */}
+      </SidebarInset>
+    </SidebarProvider>
+  );
+}
+```
+
+## API reference
+
+There is no Base UI sidebar primitive — the component is built from our own
+[Sheet](/docs/components/sheet), [Tooltip](/docs/components/tooltip), and
+plain elements, the same shape as shadcn/ui's sidebar. It composes with
+[Collapsible](/docs/components/collapsible) if you nest collapsible groups
+inside `SidebarGroup` yourself.
+
+### Provider and context
+
+- `SidebarProvider` wraps the whole layout (sidebar + page content) and owns
+  the open/closed state. It renders a `TooltipProvider delay={0}` internally
+  so every `SidebarMenuButton` tooltip shares one hover-delay group, plus a
+  wrapper `<div>` carrying the `--sidebar-width` / `--sidebar-width-icon` CSS
+  variables.
+- `open` / `defaultOpen` (default `true`) / `onOpenChange` control the
+  desktop expanded/collapsed state, same shape as a controlled/uncontrolled
+  Base UI root.
+- `useSidebar()` reads the context — `state` (`"expanded" | "collapsed"`),
+  `open`, `setOpen`, `openMobile`, `setOpenMobile`, `isMobile`, and
+  `toggleSidebar()`. It throws if called outside a `SidebarProvider`.
+- **Keyboard shortcut:** `⌘/Ctrl B` calls `toggleSidebar()` from anywhere on
+  the page.
+- **Cookie persistence:** every `setOpen` call writes a `sidebar_state`
+  cookie (`max-age` one week) so the desktop expanded/collapsed state
+  survives a reload. Read that cookie server-side and pass it as
+  `SidebarProvider`'s `defaultOpen` to avoid a flash of the wrong state on
+  first paint.
+- **Mobile behavior:** below the 768px breakpoint (`useIsMobile`, the
+  installed hook), `Sidebar` renders inside our [Sheet](/docs/components/sheet)
+  instead of the fixed desktop layout — `openMobile` / `setOpenMobile`
+  control it, and `SidebarTrigger` / `toggleSidebar()` target whichever mode
+  is active.
+
+### Sidebar
+
+| Prop          | Type                                    | Default        |
+| ------------- | ---------------------------------------- | -------------- |
+| `side`        | `"left" \| "right"`                      | `"left"`       |
+| `variant`     | `"sidebar" \| "floating" \| "inset"`     | `"sidebar"`    |
+| `collapsible` | `"offcanvas" \| "icon" \| "none"`        | `"offcanvas"`  |
+
+Pair `variant="inset"` with `SidebarInset` as the main content wrapper to get
+the card-like inset layout. `collapsible="none"` renders a plain, always-open
+sidebar with no rail, no offcanvas animation, and no mobile sheet.
+
+### SidebarMenuButton
+
+| Prop        | Type                                | Default     |
+| ----------- | ------------------------------------ | ----------- |
+| `isActive`  | `boolean`                            | `false`     |
+| `variant`   | `"default" \| "outline"`             | `"default"` |
+| `size`      | `"default" \| "sm" \| "lg"`          | `"default"` |
+| `tooltip`   | `React.ReactNode`                    | —           |
+| `render`    | `useRender.ComponentProps<"button">["render"]` | —  |
+
+Passing `tooltip` wraps the button in `Tooltip` / `TooltipTrigger` /
+`TooltipContent` automatically; the tooltip is forced `hidden` unless the
+sidebar is in its icon-only collapsed state on desktop, so it only appears
+once labels are hidden. `sidebarMenuButtonVariants` is also exported for
+styling other elements (e.g. a skeleton placeholder) to match.
+
+### Other parts
+
+`SidebarTrigger`, `SidebarRail`, `SidebarInset`, `SidebarInput`,
+`SidebarHeader`, `SidebarFooter`, `SidebarSeparator`, `SidebarContent`,
+`SidebarGroup`, `SidebarGroupLabel`, `SidebarGroupAction`,
+`SidebarGroupContent`, `SidebarMenu`, `SidebarMenuItem`, `SidebarMenuAction`,
+`SidebarMenuBadge`, `SidebarMenuSkeleton`, `SidebarMenuSub`,
+`SidebarMenuSubItem`, and `SidebarMenuSubButton` round out the surface —
+mirroring shadcn/ui's sidebar one-for-one, each a thin styled wrapper around
+a `<div>`/`<button>`/`<ul>`/`<li>`/`<a>`.
+
+### Divergences from shadcn/ui
+
+- **`render` instead of `asChild`.** `SidebarGroupLabel`, `SidebarGroupAction`,
+  `SidebarMenuButton`, `SidebarMenuAction`, and `SidebarMenuSubButton` accept
+  a `render` prop (via `useRender` from `@base-ui/react/use-render`) instead
+  of shadcn's `asChild` boolean — pass `render={<a href="/home" />}` rather
+  than wrapping children in `asChild`.
+- **`data-active` is a presence attribute**, styled with `data-[active]:` —
+  not `data-[active=true]` like shadcn/ui. Passing `isActive={false}` (or
+  omitting it) omits the attribute entirely rather than setting it to
+  `"false"`.
+- **Mobile detection** uses our own `useIsMobile` hook (installed alongside
+  the component as a `registry:hook` file), matching shadcn/ui's hook
+  one-for-one.
+- **Tooltip wiring** uses our Tooltip's Base UI-derived props —
+  `TooltipProvider delay={0}` (not `delayDuration={0}`) — since Tooltip here
+  wraps Base UI's Tooltip primitive rather than Radix.
+- **`data-sidebar`, `data-state`, `data-collapsible`, `data-variant`,
+  `data-side`, and `data-size`** are sidebar's own attributes, set by its own
+  code on plain elements — not Base UI state attributes — so the
+  value-carrying `group-data-[collapsible=icon]:`-style selectors used
+  throughout are intentional here, unlike other SevenUI components built
+  directly on Base UI primitives.
+
+### Theming
+
+Sidebar reads a dedicated set of `--sidebar-*` tokens, installed with the
+`theme` registry item: `--sidebar`, `--sidebar-foreground`,
+`--sidebar-primary`, `--sidebar-primary-foreground`, `--sidebar-accent`,
+`--sidebar-accent-foreground`, `--sidebar-border`, and `--sidebar-ring`.
+Override them to retheme the sidebar independently of the rest of the page.

@@ -1,0 +1,81 @@
+---
+title: Toolbar
+description: A container for grouping a set of controls, such as buttons, toggle groups, or links, built on the Base UI Toolbar primitive.
+---
+
+<Component path="toolbar/toolbar-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/toolbar
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import { Toggle } from "@/components/ui/toggle";
+import { ToggleGroup } from "@/components/ui/toggle-group";
+import {
+  Toolbar,
+  ToolbarButton,
+  ToolbarLink,
+  ToolbarSeparator,
+} from "@/components/ui/toolbar";
+
+export default function ToolbarDemo() {
+  return (
+    <Toolbar>
+      <ToggleGroup multiple defaultValue={["bold"]} aria-label="Text formatting">
+        <ToolbarButton render={<Toggle />} aria-label="Toggle bold" value="bold">
+          B
+        </ToolbarButton>
+      </ToggleGroup>
+      <ToolbarSeparator />
+      <ToolbarLink href="#">Edited 2 hours ago</ToolbarLink>
+    </Toolbar>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Toolbar](https://base-ui.com/react/components/toolbar)
+primitive — all its props apply. Toolbar is a Base UI bonus primitive absent
+from shadcn/ui, like Meter and Number Field, so there is no migration path to
+preserve.
+
+- `Toolbar` renders `<div role="toolbar">` (the Root). `orientation`
+  (default `'horizontal'`) sets the arrow-key axis; `loopFocus` (default
+  `true`) wraps focus to the other end once the end is reached; `disabled`
+  disables every item.
+- Arrow keys move roving focus across `ToolbarButton`, `ToolbarLink`, and
+  `ToolbarInput` items, skipping disabled ones. `Home`/`End` jump to the
+  first/last item.
+- `ToolbarButton` renders a native `<button>`, but — like `Tabs.Tab` and
+  `Accordion.Trigger` — it passes `focusableWhenDisabled: true` internally,
+  so a disabled button stays focusable and receives `aria-disabled="true"`
+  instead of the native `disabled` attribute. This keeps it reachable by
+  keyboard and lets tooltips still open on it. Style disabled state with
+  `data-[disabled]:`, not the `disabled:` Tailwind variant.
+- `ToolbarLink` renders a native `<a>`; `ToolbarInput` renders a native
+  `<input>`. Use at most **one** input, placed last in the toolbar — arrow
+  keys move focus between items, which conflicts with cursor movement inside
+  a text field.
+- `ToolbarGroup` visually and semantically groups related items (e.g. a set
+  of formatting toggles); give it an `aria-label` describing the group.
+- `ToolbarSeparator`'s `orientation` defaults to the **opposite** of the
+  toolbar's — a horizontal toolbar renders a vertical separator line, and
+  vice versa. Its `data-orientation` reflects the separator's own
+  orientation, not the toolbar's.
+- Composition follows the same `render`-based contracts as elsewhere: popup
+  triggers (AlertDialog, Dialog, Menu, Popover, Select) render **inside**
+  `ToolbarButton` — `<ToolbarButton render={<MenuTrigger />} />`. Tooltip is
+  **inverted** — `<TooltipTrigger render={<ToolbarButton />} />`. Toggle
+  buttons render as `<ToolbarButton render={<Toggle />} value="..." />` and
+  live inside a `ToggleGroup`, which owns the pressed state: give each button
+  a `value`, set the initially pressed ones with `defaultValue={[...]}`, and
+  add `multiple` for a multi-select group (omit it for an exclusive group
+  like text alignment).

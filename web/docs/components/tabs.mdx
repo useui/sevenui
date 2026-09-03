@@ -1,0 +1,61 @@
+---
+title: Tabs
+description: A set of layered sections of content — known as tab panels — that display one panel at a time, built on the Base UI Tabs primitive.
+---
+
+<Component path="tabs/tabs-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/tabs
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+export default function TabsDemo() {
+  return (
+    <Tabs defaultValue="account" className="w-full max-w-sm">
+      <TabsList className="w-full">
+        <TabsTrigger value="account">Account</TabsTrigger>
+        <TabsTrigger value="password">Password</TabsTrigger>
+      </TabsList>
+      <TabsContent value="account">Account content</TabsContent>
+      <TabsContent value="password">Password content</TabsContent>
+    </Tabs>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Tabs](https://base-ui.com/react/components/tabs)
+primitive — all its props apply.
+
+- `defaultValue` on `Tabs` (the Root) defaults to `0`, selecting the first
+  tab. Pass `value={null}` to deselect all tabs. `onValueChange(value,
+  eventDetails)` fires on selection change; `orientation` defaults to
+  `"horizontal"`.
+- Selected-tab styling hooks on `data-active` (presence). Base UI 1.7 Tabs
+  has no `data-selected` and no `data-state` attribute.
+- Although `TabsTrigger` renders a native `<button>`, a disabled trigger
+  stays focusable and receives `aria-disabled="true"` instead of the native
+  `disabled` attribute — style disabled state with `data-[disabled]:`, not
+  the `disabled:` Tailwind variant.
+- `activateOnFocus` on `TabsList` defaults to `false`: arrow keys move focus
+  between tabs and Enter/Space activates the focused tab. Set it to `true`
+  for automatic activation on focus. `loopFocus` (default `true`) controls
+  whether arrow-key navigation wraps at the ends of the list.
+- Render a tab as a link (or any other element) via the `render` prop, e.g.
+  `<TabsTrigger render={<a href="/account" />} nativeButton={false} />`.
+- `Tabs.Indicator` — an animated bar that tracks the active tab via
+  `--active-tab-left`/`--active-tab-width` (and the vertical-orientation
+  equivalents) CSS variables — is available from the Base UI primitive but
+  not wrapped by this registry. Compose it directly:
+  `import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"` and render
+  `<TabsPrimitive.Indicator>` inside `TabsList`.

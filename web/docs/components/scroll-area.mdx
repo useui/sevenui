@@ -1,0 +1,46 @@
+---
+title: Scroll Area
+description: Augments native scroll functionality for custom, cross-browser styling, built on the Base UI Scroll Area primitive.
+---
+
+<Component path="scroll-area/scroll-area-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/scroll-area
+```
+
+## Usage
+
+```tsx
+import { ScrollArea } from "@/components/ui/scroll-area";
+
+<ScrollArea className="h-72 w-48 rounded-md border">
+  <div className="p-4">Content</div>
+</ScrollArea>;
+```
+
+## API reference
+
+Built on the [Base UI Scroll Area](https://base-ui.com/react/components/scroll-area)
+primitive — all its props apply.
+
+- `ScrollArea` (our wrapper around Root/Viewport/Content/Corner) takes an
+  `orientation` prop — `"vertical"` (default), `"horizontal"`, or `"both"` —
+  controlling which `ScrollBar`(s) it renders. Children render inside the
+  Viewport's Content, so scrollbars can never be passed as children; use
+  `orientation` instead.
+- `ScrollBar` stays exported for composing the primitive parts directly, with
+  its own `orientation` prop (default `"vertical"`).
+- Scrollbars are overlay-style: they're invisible by default and appear on
+  hover or while scrolling, via the `data-hovering` and `data-scrolling`
+  attributes present on the `Scrollbar` part.
+- The Viewport becomes keyboard-focusable automatically whenever its content
+  overflows — no prop needed.
+- The Thumb's size is driven by Base UI-injected
+  `--scroll-area-thumb-height` / `--scroll-area-thumb-width` CSS variables;
+  don't set the thumb's height/width manually.
+- The Viewport exposes `--scroll-area-overflow-{x,y}-{start,end}` CSS
+  variables for building scroll-fade masks — compose them directly on a
+  custom viewport wrapper.

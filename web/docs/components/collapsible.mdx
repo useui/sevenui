@@ -1,0 +1,56 @@
+---
+title: Collapsible
+description: An interactive component which expands/collapses a panel, built on the Base UI Collapsible primitive.
+---
+
+<Component path="collapsible/collapsible-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/collapsible
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+
+export default function CollapsibleDemo() {
+  return (
+    <Collapsible>
+      <CollapsibleTrigger>Can I use this in my project?</CollapsibleTrigger>
+      <CollapsibleContent>
+        Yes. Free to use for personal and commercial projects.
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Collapsible](https://base-ui.com/react/components/collapsible)
+primitive — all its props apply.
+
+- `Collapsible` (the Root) renders a `<div>` and accepts `open`/`defaultOpen`
+  (default `false`) and `onOpenChange`, plus `disabled`.
+- Closed panel content unmounts by default. `keepMounted` and
+  `hiddenUntilFound` are **`Panel`** props here (unlike Accordion, where
+  they live on the Root) — pass them through `CollapsibleContent`.
+- Panel height animates through the `--collapsible-panel-height` CSS
+  variable — see the `h-[var(--collapsible-panel-height)]` /
+  `data-[starting-style]:h-0` / `data-[ending-style]:h-0` classes on
+  `CollapsibleContent`.
+- The open trigger is styled via `data-panel-open` (presence) on
+  `CollapsibleTrigger`.
+- Although `CollapsibleTrigger` renders a native `<button>`, a disabled
+  trigger stays focusable and receives `aria-disabled="true"` instead of
+  the native `disabled` attribute — style disabled state with
+  `data-[disabled]:`, not the `disabled:` Tailwind variant.

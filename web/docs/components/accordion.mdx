@@ -1,0 +1,65 @@
+---
+title: Accordion
+description: A vertically stacked set of interactive headings that each reveal an associated panel of content, built on the Base UI Accordion primitive.
+---
+
+<Component path="accordion/accordion-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/accordion
+```
+
+## Usage
+
+```tsx
+"use client";
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+export default function AccordionDemo() {
+  return (
+    <Accordion className="w-full max-w-md" defaultValue={["item-1"]}>
+      <AccordionItem value="item-1">
+        <AccordionTrigger>Is it accessible?</AccordionTrigger>
+        <AccordionContent>
+          Yes. It adheres to the WAI-ARIA design pattern.
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  );
+}
+```
+
+## API reference
+
+Built on the [Base UI Accordion](https://base-ui.com/react/components/accordion)
+primitive — all its props apply.
+
+- `value`/`defaultValue` on `Accordion` (the Root) are **arrays** of the open
+  item values, e.g. `defaultValue={["item-1"]}`, not a single value.
+- `multiple` (default `false`) allows more than one panel to be open at
+  once. Base UI 1.7 renamed this prop from `openMultiple` to `multiple`.
+- `AccordionTrigger` renders a native `<button>` inside an `<h3>` heading
+  (`Accordion.Header`). Override the heading level by passing `render` on
+  the primitive's `Header` when composing directly.
+- The open trigger is styled via `data-panel-open` (presence) on
+  `AccordionTrigger` — not `data-open`, which lives on `Item`/`Panel`/`Root`
+  instead.
+- Panel height animates through the `--accordion-panel-height` CSS
+  variable — see the `h-[var(--accordion-panel-height)]` /
+  `data-[starting-style]:h-0` / `data-[ending-style]:h-0` classes on
+  `AccordionContent`.
+- `hiddenUntilFound` (default `false`) renders closed panels with
+  `hidden="until-found"`, letting the browser's native find-in-page reveal
+  them.
+- Although `AccordionTrigger` renders a native `<button>`, a disabled
+  trigger stays focusable and receives `aria-disabled="true"` instead of
+  the native `disabled` attribute — style disabled state with
+  `data-[disabled]:`, not the `disabled:` Tailwind variant.

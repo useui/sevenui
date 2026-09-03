@@ -76,7 +76,10 @@ types.
 
 `ComboboxInput` renders the `Combobox.InputGroup` → `Combobox.Input` pair,
 with `ComboboxClear` and `ComboboxTrigger` positioned inside the group as
-inline controls. `ComboboxContent` renders through `Combobox.Portal` →
+inline controls. Its `className` styles the input group (the field
+container) — size the field with it, e.g. `className="w-64"`; the inner
+input always fills the group, keeping the inline controls anchored to the
+field's edge. `ComboboxContent` renders through `Combobox.Portal` →
 `Combobox.Positioner` → `Combobox.Popup`, mirroring `Select`.
 
 Multi-select (`multiple`) and the chip parts (`Combobox.Chips`,

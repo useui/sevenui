@@ -39,6 +39,14 @@
           "border": "oklch(0.922 0 0)",
           "input": "oklch(0.922 0 0)",
           "ring": "oklch(0.708 0 0)",
+          "sidebar": "oklch(0.985 0 0)",
+          "sidebar-foreground": "oklch(0.145 0 0)",
+          "sidebar-primary": "oklch(0.205 0 0)",
+          "sidebar-primary-foreground": "oklch(0.985 0 0)",
+          "sidebar-accent": "oklch(0.97 0 0)",
+          "sidebar-accent-foreground": "oklch(0.205 0 0)",
+          "sidebar-border": "oklch(0.922 0 0)",
+          "sidebar-ring": "oklch(0.708 0 0)",
           "radius": "0.625rem"
         },
         "dark": {
@@ -60,7 +68,15 @@
           "destructive-foreground": "oklch(0.985 0 0)",
           "border": "oklch(1 0 0 / 10%)",
           "input": "oklch(1 0 0 / 15%)",
-          "ring": "oklch(0.556 0 0)"
+          "ring": "oklch(0.556 0 0)",
+          "sidebar": "oklch(0.205 0 0)",
+          "sidebar-foreground": "oklch(0.985 0 0)",
+          "sidebar-primary": "oklch(0.488 0.243 264.376)",
+          "sidebar-primary-foreground": "oklch(0.985 0 0)",
+          "sidebar-accent": "oklch(0.269 0 0)",
+          "sidebar-accent-foreground": "oklch(0.985 0 0)",
+          "sidebar-border": "oklch(1 0 0 / 10%)",
+          "sidebar-ring": "oklch(0.556 0 0)"
         }
       }
     },
@@ -975,6 +991,235 @@
       ],
       "files": [
         { "path": "examples/toast/toast-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "description": "A set of layered sections of content — known as tab panels — that display one panel at a time, built on the Base UI Tabs primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/tabs.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "tabs-demo",
+      "type": "registry:component",
+      "title": "Tabs Demo",
+      "description": "Default tabs example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/tabs.json",
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/card.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        { "path": "examples/tabs/tabs-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "accordion",
+      "type": "registry:ui",
+      "title": "Accordion",
+      "description": "A vertically stacked set of interactive headings that each reveal an associated panel of content, built on the Base UI Accordion primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/accordion.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "accordion-demo",
+      "type": "registry:component",
+      "title": "Accordion Demo",
+      "description": "Default accordion example.",
+      "registryDependencies": ["https://sevenui.dev/r/accordion.json"],
+      "files": [
+        { "path": "examples/accordion/accordion-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "collapsible",
+      "type": "registry:ui",
+      "title": "Collapsible",
+      "description": "An interactive component which expands/collapses a panel, built on the Base UI Collapsible primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/collapsible.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "collapsible-demo",
+      "type": "registry:component",
+      "title": "Collapsible Demo",
+      "description": "Default collapsible example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/collapsible.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        { "path": "examples/collapsible/collapsible-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "scroll-area",
+      "type": "registry:ui",
+      "title": "Scroll Area",
+      "description": "Augments native scroll functionality for custom, cross-browser styling, built on the Base UI Scroll Area primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/scroll-area.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "scroll-area-demo",
+      "type": "registry:component",
+      "title": "Scroll Area Demo",
+      "description": "Default scroll area example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/scroll-area.json",
+        "https://sevenui.dev/r/separator.json"
+      ],
+      "files": [
+        { "path": "examples/scroll-area/scroll-area-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "meter",
+      "type": "registry:ui",
+      "title": "Meter",
+      "description": "Displays a value within a known range, built on the Base UI Meter primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/meter.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "meter-demo",
+      "type": "registry:component",
+      "title": "Meter Demo",
+      "description": "Default meter example.",
+      "registryDependencies": ["https://sevenui.dev/r/meter.json"],
+      "files": [
+        { "path": "examples/meter/meter-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "toolbar",
+      "type": "registry:ui",
+      "title": "Toolbar",
+      "description": "A container for grouping a set of controls, such as buttons, toggle groups, or links, built on the Base UI Toolbar primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/toolbar.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "toolbar-demo",
+      "type": "registry:component",
+      "title": "Toolbar Demo",
+      "description": "Default toolbar example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/toolbar.json",
+        "https://sevenui.dev/r/toggle.json",
+        "https://sevenui.dev/r/toggle-group.json"
+      ],
+      "files": [
+        { "path": "examples/toolbar/toolbar-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "navigation-menu",
+      "type": "registry:ui",
+      "title": "Navigation Menu",
+      "description": "A collection of links for navigating websites, sharing one animated popup between top-level menu triggers, built on the Base UI Navigation Menu primitive.",
+      "dependencies": ["@base-ui/react", "class-variance-authority"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/navigation-menu.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "navigation-menu-demo",
+      "type": "registry:component",
+      "title": "Navigation Menu Demo",
+      "description": "Default navigation menu example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/navigation-menu.json"
+      ],
+      "files": [
+        { "path": "examples/navigation-menu/navigation-menu-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "command",
+      "type": "registry:ui",
+      "title": "Command",
+      "description": "A fast, composable command palette built on the Base UI Autocomplete primitive.",
+      "dependencies": ["@base-ui/react"],
+      "registryDependencies": ["https://sevenui.dev/r/utils.json"],
+      "files": [
+        { "path": "registry/base/ui/command.tsx", "type": "registry:ui" }
+      ]
+    },
+    {
+      "name": "command-demo",
+      "type": "registry:component",
+      "title": "Command Demo",
+      "description": "Default command palette example.",
+      "registryDependencies": ["https://sevenui.dev/r/command.json"],
+      "files": [
+        { "path": "examples/command/command-demo.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "command-dialog",
+      "type": "registry:component",
+      "title": "Command Dialog",
+      "description": "Command palette rendered inside a dialog, toggled with ⌘K.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/command.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        { "path": "examples/command/command-dialog.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "sidebar",
+      "type": "registry:ui",
+      "title": "Sidebar",
+      "description": "A composable, themeable sidebar with collapsible, mobile, and icon-only modes.",
+      "dependencies": ["@base-ui/react", "class-variance-authority"],
+      "registryDependencies": [
+        "https://sevenui.dev/r/utils.json",
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/separator.json",
+        "https://sevenui.dev/r/sheet.json",
+        "https://sevenui.dev/r/tooltip.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/skeleton.json"
+      ],
+      "files": [
+        { "path": "registry/base/ui/sidebar.tsx", "type": "registry:ui" },
+        { "path": "registry/base/hooks/use-mobile.ts", "type": "registry:hook" }
+      ]
+    },
+    {
+      "name": "sidebar-demo",
+      "type": "registry:component",
+      "title": "Sidebar Demo",
+      "description": "Default sidebar example with a collapsible icon rail and application menu.",
+      "registryDependencies": ["https://sevenui.dev/r/sidebar.json"],
+      "files": [
+        { "path": "examples/sidebar/sidebar-demo.tsx", "type": "registry:component" }
       ]
     }
   ]

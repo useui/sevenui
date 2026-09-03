@@ -1,0 +1,37 @@
+---
+title: Meter
+description: Displays a value within a known range, built on the Base UI Meter primitive.
+---
+
+<Component path="meter/meter-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/meter
+```
+
+## Usage
+
+```tsx
+import { Meter, MeterLabel, MeterValue } from "@/components/ui/meter";
+
+<Meter value={65} className="max-w-sm grid-cols-2">
+  <MeterLabel>Storage used</MeterLabel>
+  <MeterValue className="text-right" />
+</Meter>;
+```
+
+## API reference
+
+Built on the [Base UI Meter](https://base-ui.com/react/components/meter)
+primitive — all its props apply. Meter is a Base UI bonus primitive absent
+from shadcn/ui, like Number Field and Toolbar, so there is no migration path
+to preserve.
+
+Renders `role="meter"` semantics for a value within a known range — use
+[Progress](/docs/components/progress) instead for task completion. `value` is
+required and non-nullable; unlike Progress, there is no indeterminate state.
+The default display is a percentage; pass `format` (`Intl.NumberFormatOptions`,
+e.g. `{ style: "unit", unit: "gigabyte" }`) to change it. `MeterLabel` wires
+`aria-labelledby` on the root automatically.
