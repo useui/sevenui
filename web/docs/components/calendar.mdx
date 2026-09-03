@@ -1,0 +1,54 @@
+---
+title: Calendar
+description: A date field component that lets users select dates or ranges.
+---
+
+<Component path="calendar/calendar-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/calendar
+```
+
+## Usage
+
+```tsx
+import { Calendar } from "@/components/ui/calendar";
+
+<Calendar mode="single" selected={date} onSelect={setDate} />;
+```
+
+## Examples
+
+### Range selection
+
+<Component path="calendar/calendar-range" />
+
+## API reference
+
+A thin styling wrapper over [react-day-picker](https://daypicker.dev)
+(pinned to `^10.0.1`) — all `DayPicker` props apply. v10 is the legacy-name
+release of `@daypicker/react` and ships the v9-shaped API; guides written
+for v8 do not apply here.
+
+- `mode="single" | "multiple" | "range"` controls the selection behavior.
+  There's no default — leave it undefined for a non-interactive calendar.
+- `buttonVariant` styles the previous/next month nav buttons with any of
+  SevenUI's `Button` variants (defaults to `"ghost"`). This prop does not
+  exist upstream — it's a SevenUI-only addition.
+- `startMonth` / `endMonth` bound the months a user can navigate to (v8's
+  `fromDate`/`toDate` are gone in v10).
+- `captionLayout="dropdown"` (or `"dropdown-years"`) swaps the label for
+  month/year dropdowns, auto-ranging 100 years back when `startMonth` isn't
+  set.
+- `numberOfMonths` renders multiple months side by side (default `1`).
+- Locales come from `react-day-picker/locale`, e.g.
+  `import { es } from "react-day-picker/locale"` passed to the `locale`
+  prop.
+- Time zones are handled with the `timeZone` prop and the re-exported
+  `TZDate` class.
+- Day cell state is styled through data attributes on the day cell —
+  `data-selected`, `data-today`, `data-outside`, `data-disabled` — and
+  range state through the `range_start`, `range_middle`, and `range_end`
+  `classNames` keys.

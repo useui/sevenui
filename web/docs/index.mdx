@@ -3,15 +3,16 @@ title: Introduction
 description: Base UI powered components, distributed through the shadcn registry.
 ---
 
-SevenUI is a registry of 50 components built exclusively on
+SevenUI is a registry of 54 components built on
 [Base UI](https://base-ui.com) primitives. Components are installed as
 source code into your project through the shadcn CLI — no runtime
 package to depend on.
 
 ## Why SevenUI
 
-- **Base UI only** — no Radix. Every component is built on
-  [Base UI](https://base-ui.com) primitives, with nothing else underneath.
+- **Base UI first** — no Radix, anywhere. Every interactive primitive is
+  [Base UI](https://base-ui.com); the only exceptions are four sanctioned,
+  Radix-free specialized libraries (calendar, carousel, chart, resizable).
 - **Drop-in shadcn compatibility** — works with the `shadcn` CLI and your
   existing `components.json` setup.
 - **Source distribution via the registry** — components install as
@@ -19,7 +20,7 @@ package to depend on.
 
 ## Component coverage
 
-SevenUI ships with 50 components across four waves:
+SevenUI ships with 54 components across five waves:
 
 - **Foundation wave** (15): button, badge, kbd, card, alert, separator,
   skeleton, spinner, aspect-ratio, textarea, table, breadcrumb, pagination,
@@ -31,11 +32,17 @@ SevenUI ships with 50 components across four waves:
   hover-card, tooltip, dropdown-menu, context-menu, menubar, toast.
 - **Navigation & composite wave** (9): tabs, accordion, collapsible,
   navigation-menu, scroll-area, toolbar, meter, command, sidebar.
+- **Third-party wrapper wave** (4): calendar, carousel, chart, resizable.
 
 Navigation and composition are complete — tabs, menus, a shared-popup
 navigation menu, a command palette, and a full sidebar system — with
-zero third-party UI libraries. No Radix, no cmdk, no vaul, no sonner:
-every primitive underneath is Base UI.
+zero Radix dependencies. No Radix, no cmdk, no vaul, no sonner: every
+component that can be built on Base UI alone uses Base UI and nothing
+else. The third-party wrapper wave adds exactly four specialized,
+Radix-free libraries — react-day-picker, embla-carousel, recharts, and
+react-resizable-panels — for the components that genuinely cannot be
+built on Base UI primitives, the same sanctioned choices shadcn makes.
+These four are the only non-Base-UI dependencies in the registry.
 
 Form components use Base UI-native form handling, with an optional
 `form-rhf` integration for [react-hook-form](https://react-hook-form.com).

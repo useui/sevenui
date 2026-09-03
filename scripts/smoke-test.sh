@@ -105,14 +105,42 @@ EOF
 SHADCN_BIN="$ROOT/node_modules/.bin/shadcn"
 (cd "$APP" && "$SHADCN_BIN" add --yes --overwrite \
   "http://localhost:$PORT/theme.json" \
-  "http://localhost:$PORT/button.json")
+  "http://localhost:$PORT/button.json" \
+  "http://localhost:$PORT/sidebar.json" \
+  "http://localhost:$PORT/calendar.json" \
+  "http://localhost:$PORT/chart.json")
+
+# Wave 5 contracts: multi-file item lands the hook under the hooks alias,
+# third-party deps land in the consumer package.json.
+test -f "$APP/src/hooks/use-mobile.ts" || { echo "use-mobile.ts missing" >&2; exit 1; }
+grep -q '"react-day-picker"' "$APP/package.json" || { echo "react-day-picker not installed" >&2; exit 1; }
+grep -q '"recharts"' "$APP/package.json" || { echo "recharts not installed" >&2; exit 1; }
 
 # 4. The installed code must typecheck in the consumer project
 cat > "$APP/src/main.tsx" <<'EOF'
+import { Bar, BarChart } from "recharts";
+
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
+import { SidebarProvider } from "@/components/ui/sidebar";
+
+const config = {
+  desktop: { label: "Desktop", color: "var(--chart-1)" },
+} satisfies ChartConfig;
 
 export function App() {
-  return <Button variant="outline">ok</Button>;
+  return (
+    <SidebarProvider>
+      <Button variant="outline">ok</Button>
+      <Calendar mode="single" />
+      <ChartContainer config={config}>
+        <BarChart data={[{ month: "Jan", desktop: 1 }]}>
+          <Bar dataKey="desktop" />
+        </BarChart>
+      </ChartContainer>
+    </SidebarProvider>
+  );
 }
 EOF
 (cd "$APP" && npx tsc --noEmit)

@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.5.0 — Third-party wrapper wave
+
+4 new components: calendar, carousel, chart, resizable — the components
+that cannot be built on Base UI alone. Each wraps the same Radix-free
+library shadcn uses, pinned to the installed major: react-day-picker 10
+(calendar), embla-carousel-react 8 (carousel), recharts 3 (chart, with
+Vitest tests and dual dark-mode CSS-var scoping), react-resizable-panels
+4 (resizable, the renamed Group/Panel/Separator API). Adds the --chart-*
+token set to the theme, a tabs indicator example, and extends the
+install smoke test to sidebar, calendar, and chart.
+
 ## v0.4.0 — Navigation & composite wave
 
 9 new components: tabs, accordion, collapsible, navigation-menu,

@@ -1,0 +1,59 @@
+---
+title: Carousel
+description: A carousel with motion and swipe built using Embla.
+---
+
+<Component path="carousel/carousel-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/carousel
+```
+
+## Usage
+
+```tsx
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+
+<Carousel>
+  <CarouselContent>
+    <CarouselItem>...</CarouselItem>
+    <CarouselItem>...</CarouselItem>
+    <CarouselItem>...</CarouselItem>
+  </CarouselContent>
+  <CarouselPrevious />
+  <CarouselNext />
+</Carousel>;
+```
+
+## API reference
+
+A thin wrapper over [embla-carousel-react](https://www.embla-carousel.com/)
+(pinned to `^8.6.0`) — `Carousel`, `CarouselContent`, `CarouselItem`,
+`CarouselPrevious`, and `CarouselNext` compose the embla viewport, track, and
+slides for you.
+
+- `opts` passes an embla `EmblaOptionsType` straight through (`loop`,
+  `align`, `dragFree`, and the rest of the [embla options](https://www.embla-carousel.com/api/options/)).
+- `plugins` passes an array of embla plugins straight through. None ship
+  with SevenUI — install one separately, e.g. `embla-carousel-autoplay`.
+- `orientation="horizontal" | "vertical"` (default `horizontal`) maps to
+  embla's `axis` option. Vertical carousels need an explicit height on
+  `CarouselContent`'s track — pass e.g. `className="h-[200px]"` since embla
+  measures the container.
+- `setApi` receives the underlying embla `CarouselApi` once it mounts, for
+  building dots, counters, or other custom controls — e.g.
+  `api.on("select", () => ...)` and `api.scrollTo(i)`.
+- Slide width is controlled with a `basis-*` utility on `CarouselItem`
+  (`basis-1/3` shows three slides per view).
+- Slide spacing is controlled with `-ml-*` on `CarouselContent` and a
+  matching `pl-*` on `CarouselItem` — embla reads margins, not the CSS
+  `gap` property, to detect edge spacing.
+- `ArrowLeft`/`ArrowRight` scroll the carousel when the region has focus.

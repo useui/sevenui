@@ -1,0 +1,82 @@
+---
+title: Chart
+description: Composable chart primitives built on Recharts.
+---
+
+<Component path="chart/chart-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/chart
+```
+
+## Usage
+
+```tsx
+import { Bar, BarChart } from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
+
+const chartConfig = {
+  desktop: { label: "Desktop", color: "var(--chart-1)" },
+} satisfies ChartConfig;
+
+const chartData = [{ month: "January", desktop: 186 }];
+
+<ChartContainer config={chartConfig} className="w-full max-w-md">
+  <BarChart data={chartData}>
+    <Bar dataKey="desktop" fill="var(--color-desktop)" />
+    <ChartTooltip content={<ChartTooltipContent />} />
+  </BarChart>
+</ChartContainer>;
+```
+
+## Examples
+
+### Line chart
+
+<Component path="chart/chart-line" />
+
+## API reference
+
+A thin wrapper over [Recharts](https://recharts.org) **v3** (pinned to
+`^3.10.1`) — charts compose from recharts primitives (`BarChart`,
+`LineChart`, `CartesianGrid`, `XAxis`, and the rest) inside a
+`ChartContainer`. We wrap the container, tooltip, and legend — not every
+chart type — so any recharts component works inside. v2 snippets you find
+online need porting to the v3 API.
+
+- `ChartContainer` takes a `config: ChartConfig` and renders recharts'
+  `ResponsiveContainer` inside a `data-chart`-scoped `div`, plus an injected
+  `<style>` tag (`ChartStyle`) that defines the series' CSS variables.
+- `ChartConfig` maps each series key to a `label`/`icon` and either a single
+  `color` or a per-theme `theme: { light, dark }` pair.
+- Series colors resolve as `var(--color-<key>)` inside the container,
+  scoped to that chart's `data-chart` id. Dark values apply under **both**
+  `.dark [data-chart=…]` (the shadcn consumer convention) and
+  `[data-theme="dark"] [data-chart=…]` (this docs site and Blume preview
+  convention) — this dual selector is SevenUI's one deliberate divergence
+  from upstream shadcn's chart.
+- `ChartTooltip` / `ChartLegend` are direct re-exports of recharts'
+  `Tooltip` / `Legend`; `ChartTooltipContent` and `ChartLegendContent` are
+  our styled `content` renderers, wired up as `content={<ChartTooltipContent />}`.
+- `ChartTooltipContent` accepts `hideLabel`, `hideIndicator`,
+  `indicator="line" | "dot" | "dashed"`, `nameKey`, and `labelKey`, on top
+  of recharts' own tooltip content props.
+- `ChartLegendContent` accepts `hideIcon` and `nameKey`, on top of
+  recharts' `payload`/`verticalAlign`.
+
+v3 gotchas you'll hit if you've used recharts v2:
+
+- Type custom tooltip content against the root-exported `TooltipContentProps`
+  — **not** `React.ComponentProps<typeof Tooltip>`, which is the v2 idiom
+  and does not describe the v3 content-renderer props.
+- Legend items sort alphabetically by default; pass `itemSorter={null}` on
+  `Legend` to preserve series order.
+- `accessibilityLayer` defaults to `true` in v3 — you no longer need to
+  pass it yourself.

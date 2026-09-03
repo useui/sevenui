@@ -1,0 +1,71 @@
+---
+title: Resizable
+description: Accessible resizable panel groups and layouts.
+---
+
+<Component path="resizable/resizable-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/resizable
+```
+
+## Usage
+
+```tsx
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+
+<div className="h-[200px] w-full">
+  <ResizablePanelGroup className="rounded-lg border">
+    <ResizablePanel defaultSize="50%">One</ResizablePanel>
+    <ResizableHandle withHandle />
+    <ResizablePanel defaultSize="50%">Two</ResizablePanel>
+  </ResizablePanelGroup>
+</div>;
+```
+
+## API reference
+
+A thin wrapper over [`react-resizable-panels`](https://github.com/bvaughn/react-resizable-panels)
+(pinned to `^4.12.3`) — `ResizablePanelGroup`, `ResizablePanel`, and
+`ResizableHandle` map directly to that library's `Group`, `Panel`, and
+`Separator`. All props of the underlying primitives apply.
+
+The v4 API differs from the `direction`/array-`layout` shape covered by most
+`react-resizable-panels` v2 tutorials:
+
+- Use `orientation="horizontal" | "vertical"` (default `horizontal`), not
+  `direction`.
+- `defaultSize`, `minSize`, `maxSize`, and `collapsedSize` take a
+  `number | string`. A bare number is **pixels** — always pass a percent
+  string like `defaultSize="50%"`. `px`/`em`/`rem`/`vh`/`vw` unit strings are also
+  accepted.
+- `onLayoutChange`/`onLayoutChanged` report layout as an **object keyed by
+  panel id**, not an array.
+- Imperative access goes through the `groupRef` (on `ResizablePanelGroup`)
+  and `panelRef` (on `ResizablePanel`) **props**, not a `ref` you attach
+  yourself.
+- `ResizableHandle` exposes its interaction state via
+  `data-separator="inactive" | "hover" | "focus" | "active" | "disabled"` —
+  style off that attribute rather than a class. Double-clicking a handle
+  resets its adjacent panels to their default size.
+- Keyboard: arrow keys resize the adjacent panels by 5% per press, Home/End
+  jump to the min/max size, and Enter toggles a collapsible panel's
+  collapsed state.
+- To persist layouts across sessions, compose the library's own
+  `useDefaultLayout` hook directly rather than reimplementing storage.
+
+Our wrapper adds one thing on top: `ResizablePanelGroup` stamps a
+`data-orientation` attribute (the library itself emits none), which
+`ResizableHandle` reads via the `group/resizable` class to flip its own
+styling — width/height and the drag-grip icon — between horizontal and
+vertical layouts.
+
+Because the `Group`'s inline `height: 100%` / `width: 100%` win over utility
+classes on the group itself, give a fixed-height layout its size on a
+**wrapper** element instead, as in the demo above.
