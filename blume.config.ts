@@ -7,7 +7,8 @@ import { defineConfig } from "blume";
 // Blume's MDX pipeline uses its own processor (no rehype hook), so outbound
 // links get rel="noopener noreferrer" in a post-build pass over the emitted
 // HTML instead. Anchors that already declare a rel are left untouched.
-const EXTERNAL_ANCHOR = /<a\s(?![^>]*\brel=)(?=[^>]*\bhref="https?:\/\/)(?![^>]*\bhref="https?:\/\/sevenui\.dev)/gu;
+const EXTERNAL_ANCHOR =
+  /<a\s(?![^>]*\brel=)(?=[^>]*\bhref="https?:\/\/)(?![^>]*\bhref="https?:\/\/sevenui\.dev)/gu;
 
 const addExternalLinkRel = async (dir: string): Promise<void> => {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
@@ -131,5 +132,21 @@ export default defineConfig({
         },
       ],
     },
+  },
+  analytics: {
+    scripts: [
+      {
+        src: "https://www.googletagmanager.com/gtag/js?id=G-8702Z28SMN",
+        strategy: "async",
+      },
+      {
+        content: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-8702Z28SMN');
+        `,
+      },
+    ],
   },
 });
