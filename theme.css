@@ -112,3 +112,33 @@
   mix-blend-mode: normal;
   animation: none;
 }
+
+/* Text selection follows the palette instead of the browser default; the
+   inverted pair stays legible in both themes. */
+::selection {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+/* Blume's search dialog has no config switch for the result-preview pane
+   (it's a per-reader ⌘J toggle), so it's retired here instead: the pane and
+   its footer hint are hidden and the dialog collapses to the single list
+   column. */
+[data-blume-search-grid] {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+[data-blume-search-grid] > div:first-child {
+  border-inline-end: none !important;
+}
+
+[data-blume-search-preview],
+span:has(> [data-blume-search-preview-kbd]) {
+  display: none !important;
+}
+
+/* The stock dialog is sized for two columns (62.5rem); with the preview
+   gone, a command-palette width fits the single list. */
+[data-blume-search-dialog] {
+  width: min(40rem, 94vw) !important;
+}
