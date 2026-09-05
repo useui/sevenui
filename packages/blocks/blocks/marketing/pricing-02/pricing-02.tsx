@@ -50,10 +50,14 @@ export default function Pricing02() {
         <h2 className="text-3xl font-semibold tracking-tight">Pricing that scales with you</h2>
         <Tabs value={billing} onValueChange={(value) => setBilling(value as string)}>
           <TabsList>
-            <TabsTrigger value="monthly">Monthly</TabsTrigger>
-            <TabsTrigger value="yearly">
+            {/* flex-none: the default flex-1 splits the w-fit list into equal
+                halves, which the wider yearly tab overflows. */}
+            <TabsTrigger value="monthly" className="flex-none px-3">
+              Monthly
+            </TabsTrigger>
+            <TabsTrigger value="yearly" className="flex-none px-3">
               Yearly
-              <Badge variant="secondary" className="ml-2">
+              <Badge variant="outline" className="ml-1.5">
                 2 months free
               </Badge>
             </TabsTrigger>
@@ -89,7 +93,7 @@ export default function Pricing02() {
                 variant={tier.highlighted ? "default" : "outline"}
                 className="w-full"
               >
-                Choose {tier.name}
+                {`Choose ${tier.name}`}
               </Button>
             </CardFooter>
           </Card>
