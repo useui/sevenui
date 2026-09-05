@@ -31,7 +31,7 @@
 // pixels wider than what actually renders inside it. Measuring that delta
 // once per box (not hardcoding "2") is what makes "1024px" in the badge
 // mean the block genuinely renders at 1024.
-import CopyCommand from "./copy-command.tsx";
+import CopyIconButton from "./copy-icon-button.tsx";
 
 interface Props {
   name: string;
@@ -162,39 +162,53 @@ const MAX_WIDTH = 1440;
           </span>
         </div>
       </div>
-      <div class="flex flex-wrap items-center justify-end gap-2">
-        <div class="min-w-0 max-w-56 flex-1">
-          <CopyCommand client:visible command={installCommand} />
-        </div>
-        <a
-          href={previewUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-sm hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-        >
-          Preview
-          <span class="sr-only"> {title} — opens in a new tab</span>
-          <svg
-            class="size-3.5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+      <div class="flex items-center gap-1">
+        <div class="group/tooltip relative">
+          <CopyIconButton client:visible command={installCommand} />
+          <span
+            class="pointer-events-none absolute top-full right-0 z-20 mt-1.5 rounded bg-foreground px-1.5 py-0.5 font-mono text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 group-focus-within/tooltip:opacity-100"
             aria-hidden="true"
           >
-            <path d="M7 17 17 7"></path>
-            <path d="M7 7h10v10"></path>
-          </svg>
-        </a>
-        <a
-          href={sourceUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="View source on GitHub"
-          class="inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-        >
+            {installCommand}
+          </span>
+        </div>
+        <div class="group/tooltip relative">
+          <a
+            href={previewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="peer inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            <span class="sr-only">Preview {title} — opens in a new tab</span>
+            <svg
+              class="size-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M7 17 17 7"></path>
+              <path d="M7 7h10v10"></path>
+            </svg>
+          </a>
+          <span
+            class="pointer-events-none absolute top-full right-0 z-20 mt-1.5 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
+            aria-hidden="true"
+          >
+            Open full-screen preview
+          </span>
+        </div>
+        <div class="group/tooltip relative">
+          <a
+            href={sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View source on GitHub"
+            class="peer inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
           <svg class="size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
             <path
               fill-rule="evenodd"
@@ -203,6 +217,13 @@ const MAX_WIDTH = 1440;
             ></path>
           </svg>
         </a>
+        <span
+          class="pointer-events-none absolute top-full right-0 z-20 mt-1.5 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
+          aria-hidden="true"
+        >
+          View source on GitHub
+        </span>
+        </div>
       </div>
     </div>
     <div class="relative" data-resize-frame>
