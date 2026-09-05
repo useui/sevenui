@@ -21,7 +21,9 @@ export default function Login03() {
       <div className="w-full max-w-xs">
         {step === "email" ? (
           <>
-            <h1 className="text-xl font-semibold tracking-tight">Sign in with a code</h1>
+            <h1 className="text-xl font-semibold tracking-tight">
+              Sign in with a code
+            </h1>
             <p className="mt-1 text-sm text-muted-foreground">
               We will email you a six-digit one-time code.
             </p>
@@ -48,7 +50,9 @@ export default function Login03() {
           </>
         ) : (
           <>
-            <h1 className="text-xl font-semibold tracking-tight">Check your inbox</h1>
+            <h1 className="text-xl font-semibold tracking-tight">
+              Check your inbox
+            </h1>
             <p className="mt-1 text-sm text-muted-foreground text-balance">
               We sent a six-digit code to{" "}
               <span className="font-medium text-foreground whitespace-nowrap">
@@ -72,19 +76,23 @@ export default function Login03() {
                     <InputOTPSlot aria-label="Digit 6 of 6" />
                   </InputOTPGroup>
                 </InputOTP>
-                <FieldDescription>Paste or type the code from your inbox.</FieldDescription>
+                <FieldDescription>
+                  Paste or type the code from your inbox.
+                </FieldDescription>
               </Field>
               <Button type="button" className="w-full">
                 Verify
               </Button>
-              <Button
-                type="button"
-                variant="link"
-                className="w-fit justify-self-start text-muted-foreground"
-                onClick={() => setStep("email")}
-              >
-                Use a different email
-              </Button>
+              <div className="flex justify-center">
+                <Button
+                  type="button"
+                  variant="link"
+                  className="text-muted-foreground"
+                  onClick={() => setStep("email")}
+                >
+                  Use a different email
+                </Button>
+              </div>
             </div>
           </>
         )}
