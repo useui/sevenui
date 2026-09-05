@@ -18,14 +18,20 @@ export default function Login03() {
 
   return (
     <div className="flex min-h-[560px] w-full items-center justify-center bg-background p-6">
-      <div className="w-full max-w-xs text-center">
+      <div className="w-full max-w-xs">
         {step === "email" ? (
           <>
             <h1 className="text-xl font-semibold tracking-tight">Sign in with a code</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               We will email you a six-digit one-time code.
             </p>
-            <div className="mt-8 grid gap-4 text-left">
+            <form
+              className="mt-8 grid gap-4 text-left"
+              onSubmit={(event) => {
+                event.preventDefault();
+                setStep("code");
+              }}
+            >
               <Field>
                 <FieldLabel>Email</FieldLabel>
                 <Input
@@ -35,17 +41,17 @@ export default function Login03() {
                   onChange={(event) => setEmail(event.target.value)}
                 />
               </Field>
-              <Button type="button" className="w-full" onClick={() => setStep("code")}>
+              <Button type="submit" className="w-full">
                 Send code
               </Button>
-            </div>
+            </form>
           </>
         ) : (
           <>
             <h1 className="text-xl font-semibold tracking-tight">Check your inbox</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-sm text-muted-foreground text-balance">
               We sent a six-digit code to{" "}
-              <span className="font-medium text-foreground break-all">
+              <span className="font-medium text-foreground whitespace-nowrap">
                 {email || "you@example.com"}
               </span>
               .
@@ -74,7 +80,7 @@ export default function Login03() {
               <Button
                 type="button"
                 variant="link"
-                className="text-muted-foreground"
+                className="w-fit justify-self-start text-muted-foreground"
                 onClick={() => setStep("email")}
               >
                 Use a different email
