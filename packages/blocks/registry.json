@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "sevenui-blocks",
+  "homepage": "https://sevenui.dev",
+  "items": [
+    {
+      "name": "login-01",
+      "type": "registry:block",
+      "title": "Login 01",
+      "description": "Card-based login form with email, password, and remember-me.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/card.json",
+        "https://sevenui.dev/r/checkbox.json",
+        "https://sevenui.dev/r/field.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        { "path": "blocks/auth/login-01/login-01.tsx", "type": "registry:component" }
+      ]
+    }
+  ]
+}

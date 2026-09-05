@@ -128,6 +128,27 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
 
+  packages/blocks:
+    devDependencies:
+      '@base-ui/react':
+        specifier: ^1.7.0
+        version: 1.7.0
+      '@types/react':
+        specifier: ^19.2.18
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19.2.5
+        version: 19.2.5
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
+      react-dom:
+        specifier: ^19.2.8
+        version: 19.2.8
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
   packages/registry:
     dependencies:
       '@base-ui/react':

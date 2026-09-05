@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "blume dev",
     "build": "pnpm build:registry && blume build",
-    "build:registry": "shadcn build -c ../../packages/registry -o ../../apps/web/public/r",
+    "build:registry": "shadcn build -c ../../packages/registry -o ../../apps/web/public/r && shadcn build -c ../../packages/blocks -o ../../apps/web/public/r/blocks",
     "preview": "blume preview",
     "typecheck": "tsc --noEmit"
   },

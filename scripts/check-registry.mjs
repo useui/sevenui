@@ -3,9 +3,13 @@ import { join } from "node:path";
 
 const REGISTRY_ROOT = "packages/registry";
 const DOCS_DIR = "apps/web/docs/components";
+const BLOCKS_ROOT = "packages/blocks";
 
 const registry = JSON.parse(
   readFileSync(join(REGISTRY_ROOT, "registry.json"), "utf8"),
+);
+const blocks = JSON.parse(
+  readFileSync(join(BLOCKS_ROOT, "registry.json"), "utf8"),
 );
 const errors = [];
 const itemNames = new Set(registry.items.map((i) => i.name));
@@ -73,8 +77,53 @@ for (const [mode, vars] of Object.entries(themeItem.cssVars)) {
   }
 }
 
+// ---- blocks registry ----
+const blockNames = new Set();
+for (const item of blocks.items) {
+  const where = `block "${item.name}"`;
+  if (item.type !== "registry:block") {
+    errors.push(`${where}: type must be "registry:block", got "${item.type}"`);
+  }
+  if (blockNames.has(item.name)) errors.push(`duplicate block name "${item.name}"`);
+  blockNames.add(item.name);
+  for (const file of item.files ?? []) {
+    if (file.type !== "registry:component") {
+      errors.push(`${where}: file ${file.path} must be registry:component`);
+    }
+    if (!existsSync(join(BLOCKS_ROOT, file.path))) {
+      errors.push(`${where}: missing file ${file.path}`);
+    }
+  }
+  for (const dep of item.registryDependencies ?? []) {
+    const match = dep.match(OWN_URL);
+    if (!match) {
+      errors.push(`${where}: registryDependencies must be full sevenui.dev /r/ URLs, got "${dep}"`);
+    } else if (!itemNames.has(match[1])) {
+      errors.push(`${where}: dependency "${match[1]}" is not a component registry item (blocks may not depend on blocks)`);
+    }
+  }
+}
+// Every block source file is registered
+const registeredBlockFiles = new Set(
+  blocks.items.flatMap((i) => (i.files ?? []).map((f) => f.path)),
+);
+for (const category of readdirSync(join(BLOCKS_ROOT, "blocks"), { withFileTypes: true })) {
+  if (!category.isDirectory()) continue;
+  for (const dir of readdirSync(join(BLOCKS_ROOT, "blocks", category.name), { withFileTypes: true })) {
+    if (!dir.isDirectory()) continue;
+    for (const f of readdirSync(join(BLOCKS_ROOT, "blocks", category.name, dir.name))) {
+      const p = `blocks/${category.name}/${dir.name}/${f}`;
+      if (f.endsWith(".tsx") && !registeredBlockFiles.has(p)) {
+        errors.push(`block file ${p} is not registered in ${BLOCKS_ROOT}/registry.json`);
+      }
+    }
+  }
+}
+
 if (errors.length > 0) {
   console.error(`Registry check failed:\n- ${errors.join("\n- ")}`);
   process.exit(1);
 }
-console.log(`Registry check passed (${registry.items.length} items).`);
+console.log(
+  `Registry check passed (${registry.items.length} items, ${blocks.items.length} blocks).`,
+);
