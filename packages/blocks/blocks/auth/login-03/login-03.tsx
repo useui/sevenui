@@ -4,6 +4,7 @@ import { Input } from "@/registry/base/ui/input";
 import {
   InputOTP,
   InputOTPGroup,
+  InputOTPSeparator,
   InputOTPSlot,
 } from "@/registry/base/ui/input-otp";
 
@@ -23,13 +24,16 @@ export default function Login03() {
           <Field>
             <FieldLabel>One-time code</FieldLabel>
             <InputOTP length={6}>
-              <InputOTPGroup className="w-full justify-between">
+              <InputOTPGroup>
                 <InputOTPSlot />
-                <InputOTPSlot />
-                <InputOTPSlot />
-                <InputOTPSlot />
-                <InputOTPSlot />
-                <InputOTPSlot />
+                <InputOTPSlot aria-label="Digit 2 of 6" />
+                <InputOTPSlot aria-label="Digit 3 of 6" />
+              </InputOTPGroup>
+              <InputOTPSeparator />
+              <InputOTPGroup>
+                <InputOTPSlot aria-label="Digit 4 of 6" />
+                <InputOTPSlot aria-label="Digit 5 of 6" />
+                <InputOTPSlot aria-label="Digit 6 of 6" />
               </InputOTPGroup>
             </InputOTP>
             <FieldDescription>Paste or type the code from your inbox.</FieldDescription>
