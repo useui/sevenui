@@ -64,11 +64,13 @@ const navigation = {
             <span class="text-foreground">{category.label}</span>
           </nav>
           <h1 class="mt-4 text-3xl font-semibold tracking-tight">{category.label}</h1>
-          <p class="mt-2 text-muted-foreground">{category.description}</p>
+          <p class="mt-2 text-muted-foreground">
+            {category.description} {category.items.length} {category.items.length === 1 ? "block" : "blocks"} in this category.
+          </p>
         </div>
       </header>
       <div class="px-6 py-12 lg:px-10">
-        <div class="grid gap-10">
+        <div class="divide-y divide-border">
           {category.items.map((item) => (
             <BlockFrame
               name={item.name}

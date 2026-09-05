@@ -1,10 +1,14 @@
 ---
-// One gallery card: title/description row with explicit Preview + Source
-// links, a resizable live-preview frame (drag or arrow-key the handle to
-// test the block's responsive layout), and the install command. The iframe
-// is inert (pointer-events none, plus the inert attribute + tabindex="-1"
-// so it's unreachable by mouse or keyboard) — interaction happens on the
-// preview route, opened via the Preview button.
+// One gallery card, top to bottom: a toolbar row (title/description left;
+// width presets, Preview, and Source right), a right-aligned install
+// command chip, then a resizable live-preview frame with a visible "track"
+// showing the frame's original extent as it's narrowed — the frame is the
+// last thing on the card. The iframe is inert (pointer-events none, plus
+// the inert attribute + tabindex="-1" so it's unreachable by mouse or
+// keyboard) — interaction happens on the preview route, opened via the
+// Preview button, or on the resizable frame itself (drag/keyboard/presets).
+import CopyCommand from "./copy-command.tsx";
+
 interface Props {
   name: string;
   title: string;
@@ -16,23 +20,93 @@ const { name, title, description, height, sourcePath } = Astro.props;
 const installCommand = `npx shadcn@latest add @sevenui/blocks/${name}`;
 const sourceUrl = `https://github.com/useui/sevenui/blob/main/packages/blocks/${sourcePath}`;
 const previewUrl = `/blocks/preview/${name}`;
+// Single source of truth for the resize bounds: interpolated into the
+// box's inline min/max-width AND its data-min/data-max attributes, which
+// the client script reads instead of hardcoding a second copy of these
+// numbers. MAX_WIDTH also caps the track/wrapper itself so the two agree
+// (see data-resize-wrapper below) — on very wide screens the frame stops
+// growing past 1440px instead of stretching unbounded.
+const MIN_WIDTH = 360;
+const MAX_WIDTH = 1440;
 ---
 
-<article class="flex flex-col gap-3">
-  <div class="flex items-start justify-between gap-4">
+<article class="flex flex-col gap-4 py-10" data-block-frame>
+  <div class="flex flex-wrap items-start justify-between gap-4">
     <div>
       <h2 class="text-sm font-medium">{title}</h2>
       <p class="text-sm text-muted-foreground">{description}</p>
     </div>
-    <div class="flex shrink-0 items-center gap-3">
+    <div class="flex flex-wrap items-center gap-2">
+      <div class="flex items-center gap-1" role="group" aria-label="Preview width presets">
+        <button
+          type="button"
+          data-preset="max"
+          aria-label="Preview at desktop width"
+          class="inline-flex size-8 items-center justify-center rounded-md border border-border hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        >
+          <svg
+            class="size-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="3" y="4" width="18" height="12" rx="1.5"></rect>
+            <path d="M8 20h8M12 16v4"></path>
+          </svg>
+        </button>
+        <button
+          type="button"
+          data-preset="768"
+          aria-label="Preview at tablet width (768px)"
+          class="inline-flex size-8 items-center justify-center rounded-md border border-border hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        >
+          <svg
+            class="size-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="5" y="2" width="14" height="20" rx="2"></rect>
+            <path d="M12 18h.01"></path>
+          </svg>
+        </button>
+        <button
+          type="button"
+          data-preset="400"
+          aria-label="Preview at phone width (400px)"
+          class="inline-flex size-8 items-center justify-center rounded-md border border-border hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        >
+          <svg
+            class="size-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="7" y="2" width="10" height="20" rx="2"></rect>
+            <path d="M12 18h.01"></path>
+          </svg>
+        </button>
+      </div>
       <a
         href={previewUrl}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label={`Open ${title} full-screen preview in a new tab`}
-        class="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-sm hover:bg-muted"
+        class="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-sm hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
       >
         Preview
+        <span class="sr-only"> {title} — opens in a new tab</span>
         <svg
           class="size-3.5"
           viewBox="0 0 24 24"
@@ -43,25 +117,35 @@ const previewUrl = `/blocks/preview/${name}`;
           stroke-linejoin="round"
           aria-hidden="true"
         >
-          <path d="M7 17 17 7" />
-          <path d="M7 7h10v10" />
+          <path d="M7 17 17 7"></path>
+          <path d="M7 7h10v10"></path>
         </svg>
       </a>
       <a
         href={sourceUrl}
         target="_blank"
         rel="noopener noreferrer"
-        class="text-sm text-muted-foreground underline-offset-4 hover:underline"
+        class="rounded-sm text-sm text-muted-foreground underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
       >
         Source
       </a>
     </div>
   </div>
-  <div class="w-full" data-resize-wrapper>
+  <div class="flex justify-end">
+    <div class="w-full max-w-sm">
+      <CopyCommand client:visible command={installCommand} />
+    </div>
+  </div>
+  <div
+    class="relative w-full max-w-[1440px] rounded-xl border border-dashed border-border bg-muted/30"
+    data-resize-wrapper
+  >
     <div
       class="relative overflow-hidden rounded-xl border border-border bg-background"
-      style="width: 100%; min-width: 360px; max-width: 100%;"
+      style={`width: 100%; min-width: ${MIN_WIDTH}px; max-width: min(100%, ${MAX_WIDTH}px);`}
       data-resize-box
+      data-min={MIN_WIDTH}
+      data-max={MAX_WIDTH}
     >
       <iframe
         src={previewUrl}
@@ -73,48 +157,101 @@ const previewUrl = `/blocks/preview/${name}`;
         tabindex="-1"
       ></iframe>
       <div
-        class="absolute top-1/2 right-0 h-12 w-1.5 -translate-y-1/2 cursor-ew-resize touch-none rounded-full bg-border transition-colors hover:bg-foreground/30 focus-visible:bg-foreground/50 focus-visible:outline-none"
+        class="group absolute inset-y-0 right-0 flex w-4 cursor-ew-resize touch-none items-center justify-center outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
         data-resize-handle
         role="separator"
         aria-orientation="vertical"
         aria-label="Resize preview"
+        aria-valuemin={MIN_WIDTH}
         tabindex="0"
       >
+        <span
+          class="h-12 w-1.5 rounded-full bg-border transition-colors group-hover:bg-foreground/30 group-focus-visible:bg-foreground/50"
+          aria-hidden="true"
+        ></span>
       </div>
     </div>
+    <span
+      class="pointer-events-none absolute top-2 right-2 z-10 rounded border border-border bg-background px-1.5 py-0.5 font-mono text-xs text-muted-foreground tabular-nums"
+      data-width-readout
+    >
+      100%
+    </span>
   </div>
-  <code
-    class="block overflow-x-auto rounded-md border border-border bg-muted px-3 py-2 text-xs"
-  >{installCommand}</code>
 </article>
 
 <script>
-  // Resizable preview frames: drag (pointer events + setPointerCapture) or
-  // ArrowLeft/ArrowRight (24px steps) resize the box that wraps each iframe,
-  // clamped between 360px and the wrapper's full rendered width. Astro
-  // dedupes this script to a single copy per page regardless of how many
-  // BlockFrame cards render. Plain DOM, no dependencies.
-  const MIN_WIDTH = 360;
-
-  function getWrapper(handle: Element): HTMLElement | null {
-    return handle.closest<HTMLElement>("[data-resize-wrapper]");
+  // Resizable preview frames: drag (pointer events + setPointerCapture),
+  // ArrowLeft/ArrowRight (24px steps), or a width preset resize the box
+  // that wraps each iframe, clamped between the box's own data-min/data-max
+  // (the single source of truth for both bounds — also feeds the inline
+  // min-width/max-width, see the component frontmatter) and the wrapper's
+  // full rendered width. The wrapper (track) itself is also CSS-capped at
+  // the same max via max-w-[1440px], so "the wrapper's rendered width" and
+  // "1440" agree without the script needing a second hardcoded number —
+  // Math.min(wrapper width, data-max) is defensive belt-and-suspenders on
+  // top of that CSS cap, not the only thing enforcing it.
+  //
+  // A ResizeObserver on each box keeps the width readout and the
+  // separator's aria-value* in sync for every trigger — drag, keyboard,
+  // presets, AND browser/viewport resize — chosen over a window "resize"
+  // listener because it also reacts when a shrinking track clamps the box
+  // via its own max-width, and it fires once on initial observe, covering
+  // the initial-load reading for free. Trade-off: it only re-measures when
+  // the box's own rendered size changes, so if the viewport grows while a
+  // box is pinned to a smaller preset (e.g. the 400px phone preset), the
+  // separator's aria-valuemax won't refresh until the next interaction
+  // with that card — acceptable for this simplification.
+  //
+  // Astro dedupes this script to a single copy per page regardless of how
+  // many BlockFrame cards render. Plain DOM, no dependencies.
+  function getWrapper(el: Element): HTMLElement | null {
+    return el.closest<HTMLElement>("[data-resize-wrapper]");
   }
 
-  function getBox(handle: Element): HTMLElement | null {
-    return handle.closest<HTMLElement>("[data-resize-box]");
+  function getBox(el: Element): HTMLElement | null {
+    return el.closest<HTMLElement>("[data-resize-box]");
+  }
+
+  function minWidth(box: HTMLElement): number {
+    return Number(box.dataset.min) || 360;
+  }
+
+  function maxWidth(box: HTMLElement): number {
+    return Number(box.dataset.max) || 1440;
   }
 
   function applyWidth(box: HTMLElement, wrapper: HTMLElement, px: number) {
-    const maxPx = wrapper.getBoundingClientRect().width;
-    const clamped = Math.min(Math.max(px, MIN_WIDTH), maxPx);
+    const maxPx = Math.min(wrapper.getBoundingClientRect().width, maxWidth(box));
+    const clamped = Math.min(Math.max(px, minWidth(box)), maxPx);
     box.style.width = `${clamped}px`;
   }
+
+  const readoutObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      const box = entry.target as HTMLElement;
+      const wrapper = getWrapper(box);
+      if (!wrapper) continue;
+      const readout = wrapper.querySelector<HTMLElement>("[data-width-readout]");
+      const handle = box.querySelector<HTMLElement>("[data-resize-handle]");
+      const width = Math.round(box.getBoundingClientRect().width);
+      const trackWidth = Math.min(Math.round(wrapper.getBoundingClientRect().width), maxWidth(box));
+      if (readout) readout.textContent = `${width}px`;
+      if (handle) {
+        handle.setAttribute("aria-valuenow", String(width));
+        handle.setAttribute("aria-valuemax", String(trackWidth));
+      }
+    }
+  });
+  document
+    .querySelectorAll<HTMLElement>("[data-resize-box]")
+    .forEach((box) => readoutObserver.observe(box));
 
   let dragging: { handle: HTMLElement; wrapper: HTMLElement; box: HTMLElement; pointerId: number } | null =
     null;
 
   document.addEventListener("pointerdown", (event) => {
-    const handle = (event.target as Element).closest?.("[data-resize-handle]");
+    const handle = (event.target as Element | null)?.closest?.("[data-resize-handle]");
     if (!handle) return;
     const wrapper = getWrapper(handle);
     const box = getBox(handle);
@@ -143,7 +280,7 @@ const previewUrl = `/blocks/preview/${name}`;
   document.addEventListener("pointercancel", endDrag);
 
   document.addEventListener("keydown", (event) => {
-    const handle = (event.target as Element).closest?.("[data-resize-handle]");
+    const handle = (event.target as Element | null)?.closest?.("[data-resize-handle]");
     if (!handle) return;
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
     const wrapper = getWrapper(handle);
@@ -153,5 +290,21 @@ const previewUrl = `/blocks/preview/${name}`;
     const current = box.getBoundingClientRect().width;
     const delta = event.key === "ArrowRight" ? 24 : -24;
     applyWidth(box, wrapper, current + delta);
+  });
+
+  document.addEventListener("click", (event) => {
+    const button = (event.target as Element | null)?.closest?.("[data-preset]");
+    if (!button) return;
+    const frame = button.closest<HTMLElement>("[data-block-frame]");
+    const box = frame?.querySelector<HTMLElement>("[data-resize-box]");
+    const wrapper = frame?.querySelector<HTMLElement>("[data-resize-wrapper]");
+    if (!box || !wrapper) return;
+    const preset = (button as HTMLElement).dataset.preset;
+    if (!preset) return;
+    // "max" (desktop) resolves to the same 1440px-or-wrapper-width cap
+    // applyWidth already enforces for every other trigger — Infinity always
+    // loses to that clamp, so this is just "as wide as allowed".
+    const px = preset === "max" ? Number.POSITIVE_INFINITY : Number(preset);
+    applyWidth(box, wrapper, px);
   });
 </script>

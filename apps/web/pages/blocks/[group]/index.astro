@@ -57,7 +57,9 @@ const navigation = {
             <span class="text-foreground">{group.label}</span>
           </nav>
           <h1 class="mt-4 text-3xl font-semibold tracking-tight">{group.label}</h1>
-          <p class="mt-2 text-muted-foreground">{group.description}</p>
+          <p class="mt-2 text-muted-foreground">
+            {group.description} {group.items.length} {group.items.length === 1 ? "block" : "blocks"} in this group.
+          </p>
         </div>
       </header>
       <div class="px-6 py-12 lg:px-10">
