@@ -406,9 +406,19 @@ const MAX_WIDTH = 1440;
       });
     }
   });
-  document
-    .querySelectorAll<HTMLIFrameElement>("[data-preview-wrap] iframe")
-    .forEach((iframe) => readoutObserver.observe(iframe));
+  // Per-page init. This module script runs ONCE per browser session —
+  // Blume's layouts mount Astro's ClientRouter, so cross-page navigation
+  // swaps the DOM without re-running scripts, and iframes on the new page
+  // would never be observed (readouts stuck at the SSR "100%"). Re-observe
+  // on every astro:page-load; observe() is idempotent per target, and the
+  // call at module scope still covers a load where no ClientRouter runs.
+  function initFrames() {
+    document
+      .querySelectorAll<HTMLIFrameElement>("[data-preview-wrap] iframe")
+      .forEach((iframe) => readoutObserver.observe(iframe));
+  }
+  initFrames();
+  document.addEventListener("astro:page-load", initFrames);
 
   let dragging: {
     handle: HTMLElement;
