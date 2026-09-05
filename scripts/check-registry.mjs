@@ -1,6 +1,12 @@
 import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { join } from "node:path";
 
-const registry = JSON.parse(readFileSync("registry.json", "utf8"));
+const REGISTRY_ROOT = "packages/registry";
+const DOCS_DIR = "web/docs/components";
+
+const registry = JSON.parse(
+  readFileSync(join(REGISTRY_ROOT, "registry.json"), "utf8"),
+);
 const errors = [];
 const itemNames = new Set(registry.items.map((i) => i.name));
 const OWN_URL = /^https:\/\/sevenui\.dev\/r\/([a-z0-9-]+)\.json$/;
@@ -9,7 +15,7 @@ for (const item of registry.items) {
   const where = `item "${item.name}"`;
 
   for (const file of item.files ?? []) {
-    if (!existsSync(file.path)) {
+    if (!existsSync(join(REGISTRY_ROOT, file.path))) {
       errors.push(`${where}: missing file ${file.path}`);
     }
   }
@@ -29,8 +35,8 @@ for (const item of registry.items) {
     if (!itemNames.has(`${item.name}-demo`)) {
       errors.push(`${where}: no "${item.name}-demo" example item`);
     }
-    if (!existsSync(`web/docs/components/${item.name}.mdx`)) {
-      errors.push(`${where}: no docs page web/docs/components/${item.name}.mdx`);
+    if (!existsSync(join(DOCS_DIR, `${item.name}.mdx`))) {
+      errors.push(`${where}: no docs page ${join(DOCS_DIR, `${item.name}.mdx`)}`);
     }
   }
 }
@@ -46,9 +52,9 @@ for (const item of registry.items) {
 const registeredFiles = new Set(
   registry.items.flatMap((i) => (i.files ?? []).map((f) => f.path)),
 );
-for (const dir of readdirSync("examples", { withFileTypes: true })) {
+for (const dir of readdirSync(join(REGISTRY_ROOT, "examples"), { withFileTypes: true })) {
   if (!dir.isDirectory()) continue;
-  for (const f of readdirSync(`examples/${dir.name}`)) {
+  for (const f of readdirSync(join(REGISTRY_ROOT, "examples", dir.name))) {
     const p = `examples/${dir.name}/${f}`;
     if (f.endsWith(".tsx") && !registeredFiles.has(p)) {
       errors.push(`example file ${p} is not registered in registry.json`);
@@ -58,7 +64,7 @@ for (const dir of readdirSync("examples", { withFileTypes: true })) {
 
 // Theme parity: every cssVars token appears in examples/theme.css with the same value
 const themeItem = registry.items.find((i) => i.name === "theme");
-const css = readFileSync("examples/theme.css", "utf8");
+const css = readFileSync(join(REGISTRY_ROOT, "examples/theme.css"), "utf8");
 for (const [mode, vars] of Object.entries(themeItem.cssVars)) {
   for (const [key, val] of Object.entries(vars)) {
     if (!css.includes(`--${key}: ${val};`)) {

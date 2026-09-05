@@ -50,7 +50,10 @@ export default defineConfig({
     root: "web/docs",
     pages: "web/pages",
   },
-  examples: { css: "examples/theme.css" },
+  examples: {
+    source: "packages/registry/examples",
+    css: "packages/registry/examples/theme.css",
+  },
   github: {
     owner: "useui",
     repo: "sevenui",

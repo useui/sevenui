@@ -10,7 +10,7 @@
     "noEmit": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "paths": { "@/*": ["./packages/registry/*"] }
+    "paths": { "@/*": ["./*"] }
   },
-  "include": ["scripts", "blume.config.ts"]
+  "include": ["registry", "examples", "tests", "vitest.config.ts"]
 }
