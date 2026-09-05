@@ -19,6 +19,70 @@
       "files": [
         { "path": "blocks/auth/login-01/login-01.tsx", "type": "registry:component" }
       ]
+    },
+    {
+      "name": "login-02",
+      "type": "registry:block",
+      "title": "Login 02",
+      "description": "Split-screen login with a quote panel and social sign-in.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/checkbox.json",
+        "https://sevenui.dev/r/field.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        { "path": "blocks/auth/login-02/login-02.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "login-03",
+      "type": "registry:block",
+      "title": "Login 03",
+      "description": "Minimal passwordless login with a one-time code.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/field.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/input-otp.json"
+      ],
+      "files": [
+        { "path": "blocks/auth/login-03/login-03.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "signup-01",
+      "type": "registry:block",
+      "title": "Signup 01",
+      "description": "Card-based signup with name, email, password, and terms.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/card.json",
+        "https://sevenui.dev/r/checkbox.json",
+        "https://sevenui.dev/r/field.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        { "path": "blocks/auth/signup-01/signup-01.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "signup-02",
+      "type": "registry:block",
+      "title": "Signup 02",
+      "description": "Split-screen signup with a product-benefits panel.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/checkbox.json",
+        "https://sevenui.dev/r/field.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        { "path": "blocks/auth/signup-02/signup-02.tsx", "type": "registry:component" }
+      ]
     }
   ]
 }
