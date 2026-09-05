@@ -4,6 +4,7 @@ import data from "blume:data";
 import BlocksSidebar from "../../../components/blocks-sidebar.astro";
 import CategoryIllustration from "../../../components/category-illustration.astro";
 import SiteFooter from "../../../components/site-footer.astro";
+import { SITE_TABS } from "../../../components/site-tabs.ts";
 import { groups } from "../_data";
 
 export function getStaticPaths() {
@@ -16,15 +17,7 @@ const { config } = data;
 
 const navigation = {
   ...data.navigation,
-  tabs: [
-    { label: "Docs", path: "/docs", href: "/docs" },
-    {
-      label: "Components",
-      path: "/docs/components",
-      href: "/docs/components/button",
-    },
-    { label: "Blocks", path: "/blocks", href: "/blocks" },
-  ],
+  tabs: SITE_TABS,
 };
 ---
 

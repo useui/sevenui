@@ -1,7 +1,8 @@
 ---
 // Landing page on Blume's PageLayout: the site chrome (header, theme,
 // search) comes from the layout; the shadcn component tokens the showcase
-// needs come from the root theme.css. Header tabs are scoped to this page.
+// needs come from the root theme.css. Header tabs come from the shared
+// SITE_TABS module, same as the docs header override and the blocks pages.
 //
 // The page is drawn as an exposed design canvas: a max-w-6xl column framed
 // by continuous 1px rails, full-width section separators, crop marks at the
@@ -15,6 +16,7 @@ import LandingShowcase from "../components/landing-showcase.tsx";
 import CopyCommand from "../components/copy-command.tsx";
 import LandingRuler from "../components/landing-ruler.astro";
 import ComponentWall from "../components/component-wall.astro";
+import { SITE_TABS } from "../components/site-tabs.ts";
 import registry from "../../../packages/registry/registry.json";
 
 const uiCount = registry.items.filter(
@@ -25,15 +27,7 @@ const { config } = data;
 
 const navigation = {
   ...data.navigation,
-  tabs: [
-    { label: "Docs", path: "/docs", href: "/docs" },
-    {
-      label: "Components",
-      path: "/docs/components",
-      href: "/docs/components/button",
-    },
-    { label: "Blocks", path: "/blocks", href: "/blocks" },
-  ],
+  tabs: SITE_TABS,
 };
 
 const installSteps = [
@@ -315,18 +309,6 @@ const footerComponents = [
 </PageLayout>
 
 <style>
-  /* Move the header tab links (Docs, Components) to the right-hand cluster.
-     Blume's header lays out [logo · selectors · tabs · spacer · search ·
-     icons] with no alignment option, so flex order does it: the tab nav
-     jumps past the spacer and the icon cluster follows it. */
-  :global([data-blume-header] > nav) {
-    order: 1;
-  }
-
-  :global([data-blume-header] > div:last-child) {
-    order: 2;
-  }
-
   /* One row of the exposed grid: the shared content column plus the two
      vertical rails. Rows stack, so per-row borders read as continuous
      lines. Rails and marks disappear below sm where they would hug the
