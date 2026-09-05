@@ -1,0 +1,63 @@
+---
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import data from "blume:data";
+import BlockFrame from "../../components/block-frame.astro";
+import { CATEGORIES, PREVIEW_HEIGHTS, sections } from "./_data";
+
+export function getStaticPaths() {
+  return CATEGORIES.map((category) => ({ params: { category: category.id } }));
+}
+
+const { category: categoryId } = Astro.params;
+const section = sections.find((entry) => entry.id === categoryId)!;
+const { config } = data;
+
+const navigation = {
+  ...data.navigation,
+  tabs: [
+    { label: "Docs", path: "/docs", href: "/docs" },
+    {
+      label: "Components",
+      path: "/docs/components",
+      href: "/docs/components/button",
+    },
+    { label: "Blocks", path: "/blocks", href: "/blocks" },
+  ],
+};
+---
+
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={navigation}
+  favicon={config.favicon}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  page={{ title: `${section.label} blocks — SevenUI`, route: `/blocks/${section.id}` }}
+>
+  <div class="mx-auto max-w-6xl px-6 py-12">
+    <a
+      href="/blocks"
+      class="text-sm text-muted-foreground underline-offset-4 hover:underline"
+    >
+      ← All blocks
+    </a>
+    <header class="mt-4 max-w-2xl">
+      <h1 class="text-3xl font-semibold tracking-tight">{section.label}</h1>
+      <p class="mt-2 text-muted-foreground">{section.description}</p>
+    </header>
+    <div class="mt-10 grid gap-10">
+      {section.items.map((item) => (
+        <BlockFrame
+          name={item.name}
+          title={item.title}
+          description={item.description}
+          height={PREVIEW_HEIGHTS[item.name] ?? 560}
+          sourcePath={item.files[0].path}
+        />
+      ))}
+    </div>
+  </div>
+</PageLayout>

@@ -1,8 +1,7 @@
 ---
 import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
-import BlockFrame from "../../components/block-frame.astro";
-import blocksRegistry from "../../../../packages/blocks/registry.json";
+import { sections } from "./_data";
 
 const { config } = data;
 
@@ -18,28 +17,6 @@ const navigation = {
     { label: "Blocks", path: "/blocks", href: "/blocks" },
   ],
 };
-
-const PREVIEW_HEIGHTS: Record<string, number> = {
-  "login-01": 560,
-  "login-02": 640,
-  "login-03": 560,
-  "signup-01": 640,
-  "signup-02": 640,
-  "hero-01": 480,
-  "hero-02": 480,
-  "pricing-01": 720,
-  "pricing-02": 760,
-};
-
-const CATEGORIES = [
-  { id: "auth", label: "Authentication", match: (name: string) => name.startsWith("login") || name.startsWith("signup") },
-  { id: "marketing", label: "Marketing", match: (name: string) => name.startsWith("hero") || name.startsWith("pricing") },
-];
-
-const sections = CATEGORIES.map((category) => ({
-  ...category,
-  items: blocksRegistry.items.filter((item) => category.match(item.name)),
-}));
 ---
 
 <PageLayout
@@ -61,21 +38,22 @@ const sections = CATEGORIES.map((category) => ({
         your project with one command — the source is yours.
       </p>
     </header>
-    {sections.map((section) => (
-      <section class="mt-12">
-        <h2 class="text-xl font-semibold tracking-tight">{section.label}</h2>
-        <div class="mt-6 grid gap-10">
-          {section.items.map((item) => (
-            <BlockFrame
-              name={item.name}
-              title={item.title}
-              description={item.description}
-              height={PREVIEW_HEIGHTS[item.name] ?? 560}
-              sourcePath={item.files[0].path}
-            />
-          ))}
-        </div>
-      </section>
-    ))}
+    <div class="mt-12 grid gap-6 sm:grid-cols-2">
+      {sections.map((section) => (
+        <a
+          href={`/blocks/${section.id}`}
+          class="flex flex-col gap-2 rounded-xl border border-border bg-background p-6 transition-colors hover:border-foreground/20"
+        >
+          <h2 class="text-lg font-semibold tracking-tight">{section.label}</h2>
+          <p class="text-sm text-muted-foreground">{section.description}</p>
+          <p class="text-sm text-muted-foreground">
+            {section.items.length} {section.items.length === 1 ? "block" : "blocks"}
+          </p>
+          <p class="text-sm text-muted-foreground">
+            {section.items.map((item) => item.title).join(", ")}
+          </p>
+        </a>
+      ))}
+    </div>
   </div>
 </PageLayout>

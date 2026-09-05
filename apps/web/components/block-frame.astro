@@ -18,8 +18,10 @@ const sourceUrl = `https://github.com/useui/sevenui/blob/main/packages/blocks/${
 <article class="flex flex-col gap-3">
   <a
     href={`/blocks/preview/${name}`}
+    target="_blank"
+    rel="noopener noreferrer"
     class="group relative block overflow-hidden rounded-xl border border-border bg-background"
-    aria-label={`Open ${title} full-screen preview`}
+    aria-label={`Open ${title} full-screen preview in a new tab`}
   >
     <iframe
       src={`/blocks/preview/${name}`}
@@ -31,10 +33,25 @@ const sourceUrl = `https://github.com/useui/sevenui/blob/main/packages/blocks/${
       tabindex="-1"
     ></iframe>
     <span
-      class="absolute inset-0 hidden items-end justify-end p-3 group-hover:flex group-focus-visible:flex"
+      class="absolute inset-0 hidden items-center justify-center bg-background/60 backdrop-blur-[2px] group-hover:flex group-focus-visible:flex"
     >
-      <span class="rounded-md border border-border bg-background px-2 py-1 text-xs">
+      <span
+        class="flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-sm shadow-sm"
+      >
         Open preview
+        <svg
+          class="size-3.5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M7 17 17 7" />
+          <path d="M7 7h10v10" />
+        </svg>
       </span>
     </span>
   </a>
@@ -45,6 +62,7 @@ const sourceUrl = `https://github.com/useui/sevenui/blob/main/packages/blocks/${
     </div>
     <a
       href={sourceUrl}
+      target="_blank"
       rel="noopener noreferrer"
       class="shrink-0 text-sm text-muted-foreground underline-offset-4 hover:underline"
     >
