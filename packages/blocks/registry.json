@@ -40,7 +40,7 @@
       "name": "login-03",
       "type": "registry:block",
       "title": "Login 03",
-      "description": "Minimal passwordless login with a one-time code.",
+      "description": "Two-step passwordless login: email first, then a one-time code.",
       "registryDependencies": [
         "https://sevenui.dev/r/button.json",
         "https://sevenui.dev/r/field.json",
