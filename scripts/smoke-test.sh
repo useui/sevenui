@@ -23,7 +23,7 @@ trap cleanup EXIT
 
 # 1. Local registry with URLs rewritten to localhost
 mkdir -p "$WORK/registry"
-for f in "$ROOT"/public/r/*.json; do
+for f in "$ROOT"/apps/web/public/r/*.json; do
   sed "s|https://sevenui.dev/r/|http://localhost:$PORT/|g" "$f" \
     > "$WORK/registry/$(basename "$f")"
 done
@@ -102,7 +102,7 @@ EOF
 # `@latest` would re-resolve to whatever the registry serves at run time, which
 # both makes the test's behavior drift out from under us and pulls an
 # unreviewed package off the network on every run (supply-chain exposure).
-SHADCN_BIN="$ROOT/node_modules/.bin/shadcn"
+SHADCN_BIN="$ROOT/apps/web/node_modules/.bin/shadcn"
 (cd "$APP" && "$SHADCN_BIN" add --yes --overwrite \
   "http://localhost:$PORT/theme.json" \
   "http://localhost:$PORT/button.json" \

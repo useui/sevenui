@@ -2,7 +2,7 @@ import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 const REGISTRY_ROOT = "packages/registry";
-const DOCS_DIR = "web/docs/components";
+const DOCS_DIR = "apps/web/docs/components";
 
 const registry = JSON.parse(
   readFileSync(join(REGISTRY_ROOT, "registry.json"), "utf8"),

@@ -2,6 +2,7 @@ packages:
   - apps/*
   - packages/*
 
+# Blume SSR prerender externalizes registry deps; hoist them so Node's ancestor walk from apps/web/dist can resolve them.
 publicHoistPattern:
   - '@base-ui/react'
   - class-variance-authority

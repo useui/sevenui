@@ -1,0 +1,21 @@
+{
+  "name": "@sevenui/web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "blume dev",
+    "build": "pnpm build:registry && blume build",
+    "build:registry": "shadcn build -c ../../packages/registry -o ../../apps/web/public/r",
+    "preview": "blume preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "blume": "^1.5.3",
+    "shadcn": "^4.19.1",
+    "typescript": "^7.0.2"
+  }
+}

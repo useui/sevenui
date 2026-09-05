@@ -7,22 +7,13 @@
     "node": ">=22.12"
   },
   "scripts": {
-    "dev": "blume dev",
-    "build": "pnpm build:registry && blume build",
-    "build:registry": "shadcn build -c packages/registry -o ../../public/r",
-    "preview": "blume preview",
-    "typecheck": "tsc --noEmit && pnpm -r typecheck",
+    "dev": "pnpm --filter @sevenui/web dev",
+    "build": "pnpm --filter @sevenui/web build",
+    "build:registry": "pnpm --filter @sevenui/web build:registry",
+    "preview": "pnpm --filter @sevenui/web preview",
+    "typecheck": "pnpm -r typecheck",
     "check:registry": "node scripts/check-registry.mjs",
     "test": "pnpm --filter @sevenui/registry test",
     "test:smoke": "bash scripts/smoke-test.sh"
-  },
-  "dependencies": {
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8"
-  },
-  "devDependencies": {
-    "blume": "^1.5.3",
-    "shadcn": "^4.19.1",
-    "typescript": "^7.0.2"
   }
 }
