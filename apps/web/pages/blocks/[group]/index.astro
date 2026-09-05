@@ -1,0 +1,76 @@
+---
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import data from "blume:data";
+import BlocksSidebar from "../../../components/blocks-sidebar.astro";
+import CategoryIllustration from "../../../components/category-illustration.astro";
+import { groups } from "../_data";
+
+export function getStaticPaths() {
+  return groups.map((group) => ({ params: { group: group.id } }));
+}
+
+const { group: groupId } = Astro.params;
+const group = groups.find((entry) => entry.id === groupId)!;
+const { config } = data;
+
+const navigation = {
+  ...data.navigation,
+  tabs: [
+    { label: "Docs", path: "/docs", href: "/docs" },
+    {
+      label: "Components",
+      path: "/docs/components",
+      href: "/docs/components/button",
+    },
+    { label: "Blocks", path: "/blocks", href: "/blocks" },
+  ],
+};
+---
+
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={navigation}
+  favicon={config.favicon}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  page={{ title: `${group.label} blocks — SevenUI`, route: `/blocks/${group.id}` }}
+>
+  <div class="mx-auto max-w-6xl px-6 py-12">
+    <nav class="text-sm text-muted-foreground" aria-label="Breadcrumb">
+      <a href="/blocks" class="hover:text-foreground hover:underline">Blocks</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-foreground">{group.label}</span>
+    </nav>
+    <header class="mt-4 max-w-2xl">
+      <h1 class="text-3xl font-semibold tracking-tight">{group.label}</h1>
+      <p class="mt-2 text-muted-foreground">{group.description}</p>
+    </header>
+    <div class="mt-10 lg:grid lg:grid-cols-[220px_1fr] lg:gap-10">
+      <BlocksSidebar activeGroup={group.id} />
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:mt-0">
+        {group.categories.map((category) => (
+          <a
+            href={`/blocks/${group.id}/${category.id}`}
+            class="flex flex-col gap-3 rounded-xl border border-border bg-background p-4 transition-colors hover:border-foreground/20"
+          >
+            <div class="flex aspect-[11/6] items-center justify-center overflow-hidden rounded-lg bg-muted/40">
+              <div class="w-3/4">
+                <CategoryIllustration category={category.id} />
+              </div>
+            </div>
+            <div>
+              <h2 class="text-sm font-medium">{category.label}</h2>
+              <p class="text-sm text-muted-foreground">{category.description}</p>
+              <p class="mt-1 text-sm text-muted-foreground">
+                {category.items.length} {category.items.length === 1 ? "block" : "blocks"}
+              </p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</PageLayout>

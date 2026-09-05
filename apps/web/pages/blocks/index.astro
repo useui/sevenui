@@ -1,7 +1,9 @@
 ---
 import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
-import { sections } from "./_data";
+import BlocksSidebar from "../../components/blocks-sidebar.astro";
+import CategoryIllustration from "../../components/category-illustration.astro";
+import { groups } from "./_data";
 
 const { config } = data;
 
@@ -38,22 +40,41 @@ const navigation = {
         your project with one command — the source is yours.
       </p>
     </header>
-    <div class="mt-12 grid gap-6 sm:grid-cols-2">
-      {sections.map((section) => (
-        <a
-          href={`/blocks/${section.id}`}
-          class="flex flex-col gap-2 rounded-xl border border-border bg-background p-6 transition-colors hover:border-foreground/20"
-        >
-          <h2 class="text-lg font-semibold tracking-tight">{section.label}</h2>
-          <p class="text-sm text-muted-foreground">{section.description}</p>
-          <p class="text-sm text-muted-foreground">
-            {section.items.length} {section.items.length === 1 ? "block" : "blocks"}
-          </p>
-          <p class="text-sm text-muted-foreground">
-            {section.items.map((item) => item.title).join(", ")}
-          </p>
-        </a>
-      ))}
+    <div class="mt-12 lg:grid lg:grid-cols-[220px_1fr] lg:gap-10">
+      <BlocksSidebar />
+      <div class="mt-8 flex flex-col gap-12 lg:mt-0">
+        {groups.map((group) => (
+          <section>
+            <h2 class="text-lg font-semibold tracking-tight">
+              <a href={`/blocks/${group.id}`} class="hover:underline">
+                {group.label}
+              </a>
+            </h2>
+            <p class="mt-1 text-sm text-muted-foreground">{group.description}</p>
+            <div class="mt-4 grid gap-6 sm:grid-cols-2">
+              {group.categories.map((category) => (
+                <a
+                  href={`/blocks/${group.id}/${category.id}`}
+                  class="flex flex-col gap-3 rounded-xl border border-border bg-background p-4 transition-colors hover:border-foreground/20"
+                >
+                  <div class="flex aspect-[11/6] items-center justify-center overflow-hidden rounded-lg bg-muted/40">
+                    <div class="w-3/4">
+                      <CategoryIllustration category={category.id} />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 class="text-sm font-medium">{category.label}</h3>
+                    <p class="text-sm text-muted-foreground">{category.description}</p>
+                    <p class="mt-1 text-sm text-muted-foreground">
+                      {category.items.length} {category.items.length === 1 ? "block" : "blocks"}
+                    </p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
     </div>
   </div>
 </PageLayout>
