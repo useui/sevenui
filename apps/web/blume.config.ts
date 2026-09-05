@@ -42,15 +42,18 @@ export default defineConfig({
   title: "SevenUI",
   description:
     "Base UI powered components, distributed through the shadcn registry.",
-  logo: "web/assets/logomark.svg",
+  logo: "assets/logomark.svg",
   theme: { accent: "blue", radius: "md", mode: "system" },
   deployment: { site: "https://sevenui.dev" },
   basePath: "/docs",
   content: {
-    root: "web/docs",
-    pages: "web/pages",
+    root: "docs",
+    pages: "pages",
   },
-  examples: { css: "examples/theme.css" },
+  examples: {
+    source: "../../packages/registry/examples",
+    css: "../../packages/registry/examples/theme.css",
+  },
   github: {
     owner: "useui",
     repo: "sevenui",

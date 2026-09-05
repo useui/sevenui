@@ -1,3 +1,20 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Blume SSR prerender externalizes registry deps; hoist them so Node's ancestor walk from apps/web/dist can resolve them.
+publicHoistPattern:
+  - '@base-ui/react'
+  - class-variance-authority
+  - clsx
+  - embla-carousel-react
+  - react-day-picker
+  - react-hook-form
+  - react-is
+  - react-resizable-panels
+  - recharts
+  - tailwind-merge
+
 allowBuilds:
   '@scarf/scarf': false
   esbuild: true

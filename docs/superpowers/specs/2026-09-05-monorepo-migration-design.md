@@ -41,7 +41,7 @@ sevenui/
 ├── apps/web/                      # Blume docs site + landing
 │   ├── blume.config.ts            # content.root: "docs", pages: "pages"
 │   ├── theme.css                  # moved from repo root (Blume "user theme.css" injection)
-│   ├── docs/                      # ← web/docs (incl. archived version snapshots v0.1.0–v0.4.0)
+│   ├── docs/                      # ← web/docs (archived versions exist as config entries only; no snapshot dirs)
 │   ├── pages/                     # ← web/pages
 │   ├── assets/                    # ← web/assets
 │   ├── components/                # ← web/components (landing components)
@@ -88,7 +88,7 @@ Generated dirs (`.blume/`, `dist/`) regenerate under `apps/web/`; `.gitignore` u
 1. `apps/web/examples` → symlink to `../../packages/registry/examples`.
 2. Last resort: examples stay under `apps/web` and `shadcn build` runs with cwd `apps/web` — only acceptable if `registry.json`'s recorded paths can still resolve unchanged; the spike outcome gets written back into this spec before planning proceeds.
 
-Known operational traps carried into the plan (from wave memory): `examples/theme.css` edits need a dev-server restart; use `blume build --isolated` while dev runs; preview iframes auto-size; Blume header/search workarounds from the landing redesign live in `apps/web/pages`/`components` and move verbatim.
+Known operational traps carried into the plan (from wave memory): `examples/theme.css` edits need a dev-server restart; use `blume build --isolated` while dev runs; preview iframes auto-size; Blume header/search workarounds from the landing redesign live in `apps/web/pages`/`components` and move verbatim. Execution finding (2026-09-05): pnpm-workspace.yaml needs a publicHoistPattern block listing the registry package's dependency names — Blume's SSR prerender externalizes those deps and resolves them via Node's ancestor node_modules walk from apps/web/dist/, which cannot see packages/registry/node_modules under the isolated linker.
 
 ## Scripts, Tests, CI
 

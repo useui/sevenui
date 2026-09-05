@@ -1,5 +1,13 @@
 # Changelog
 
+## Monorepo restructure (no release)
+
+Internal restructure into a pnpm workspace: the Blume docs site moved to
+apps/web and the component sources, examples, registry.json, and tests to
+packages/registry, as the prerequisite for the blocks phase. No
+user-facing change: every /r/<name>.json is byte-identical to v0.5.0
+output and all /docs URLs are unchanged, so no version tag is cut.
+
 ## v0.5.0 — Third-party wrapper wave
 
 4 new components: calendar, carousel, chart, resizable — the components

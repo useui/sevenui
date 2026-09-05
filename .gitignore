@@ -1,7 +1,7 @@
 node_modules/
 dist/
 .blume/
-public/r/
+apps/web/public/r/
 *.log
 .DS_Store
 .blume-verify/

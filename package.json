@@ -7,38 +7,13 @@
     "node": ">=22.12"
   },
   "scripts": {
-    "dev": "blume dev",
-    "build": "pnpm build:registry && blume build",
-    "build:registry": "shadcn build",
-    "preview": "blume preview",
-    "typecheck": "tsc --noEmit",
+    "dev": "pnpm --filter @sevenui/web dev",
+    "build": "pnpm --filter @sevenui/web build",
+    "build:registry": "pnpm --filter @sevenui/web build:registry",
+    "preview": "pnpm --filter @sevenui/web preview",
+    "typecheck": "pnpm -r typecheck",
     "check:registry": "node scripts/check-registry.mjs",
-    "test": "vitest run",
+    "test": "pnpm --filter @sevenui/registry test",
     "test:smoke": "bash scripts/smoke-test.sh"
-  },
-  "dependencies": {
-    "@base-ui/react": "^1.7.0",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "embla-carousel-react": "^8.6.0",
-    "react": "^19.2.8",
-    "react-day-picker": "^10.0.1",
-    "react-dom": "^19.2.8",
-    "react-is": "^19.0.0",
-    "react-resizable-panels": "^4.12.3",
-    "recharts": "^3.10.1",
-    "tailwind-merge": "^3.6.0"
-  },
-  "devDependencies": {
-    "@testing-library/react": "^16.3.3",
-    "@testing-library/user-event": "^14.6.6",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.5",
-    "blume": "^1.5.3",
-    "jsdom": "^30.0.1",
-    "react-hook-form": "^7.87.0",
-    "shadcn": "^4.19.1",
-    "typescript": "^7.0.2",
-    "vitest": "^4.1.11"
   }
 }
