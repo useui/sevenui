@@ -1,11 +1,18 @@
 ---
 // One gallery card, top to bottom: the block's title (h2) + description as
 // a plain header, then a resizable live-preview frame with a visible
-// "track" showing the frame's original extent as it's narrowed. Every
-// control — width presets, the install command, Preview, and the GitHub
-// link — lives in a toolbar bar attached to the top of the frame itself,
-// so it resizes/scrolls with the frame instead of sitting in the card
-// header.
+// "track" showing the frame's original extent as it's narrowed — a plain
+// bg-muted/30 tint, no outline of its own. (An earlier version traced the
+// track's edge with a broken/segmented border, but with the toolbar now
+// a full-track fixed bar and the handle sitting outside the box, that
+// outline just collided with those corners and no longer carried its own
+// meaning; the fixed bar + framed box + external handle already make the
+// track's extent obvious geometrically, so the tint alone is enough.) The
+// toolbar (width presets, the install command, Preview, and the GitHub
+// link) is attached to the top of the track and spans its FULL width —
+// it does not resize with the frame, only the framed box below it does.
+// The drag/resize handle sits OUTSIDE that box, in the track's own
+// vacated area to its right, tracking the box's live edge.
 //
 // The iframe is INTERACTIVE by deliberate product decision (reverses an
 // earlier a11y-motivated "inert" choice, now accepted by the owner): click
@@ -16,6 +23,14 @@
 // scoped <style> below suppresses the iframe's pointer-events for exactly
 // the duration of a drag, driven by the same data-dragging flag the script
 // already toggles on the iframe's wrapper.
+//
+// Source of truth for every width measurement (readout, aria-value*,
+// preset bucketing, the min/max clamp) is the IFRAME's own content width,
+// not the resize box's border-box width — the box is border-box with a
+// border on every side, so its rendered width is always a couple of
+// pixels wider than what actually renders inside it. Measuring that delta
+// once per box (not hardcoding "2") is what makes "1024px" in the badge
+// mean the block genuinely renders at 1024.
 import CopyCommand from "./copy-command.tsx";
 
 interface Props {
@@ -29,14 +44,19 @@ const { name, title, description, height, sourcePath } = Astro.props;
 const installCommand = `npx shadcn@latest add @sevenui/blocks/${name}`;
 const sourceUrl = `https://github.com/useui/sevenui/blob/main/packages/blocks/${sourcePath}`;
 const previewUrl = `/blocks/preview/${name}`;
-// Single source of truth for the resize bounds: interpolated into the
-// box's inline min/max-width AND its data-min/data-max attributes, which
-// the client script reads instead of hardcoding a second copy of these
-// numbers. MAX_WIDTH also caps the track/wrapper itself so the two agree
-// (see data-resize-wrapper below) — on very wide screens the frame stops
-// growing past 1440px instead of stretching unbounded. The same three
-// numbers define the preset/active-range boundaries: mobile ≤ 384,
-// tablet 385–1023, desktop ≥ 1024 (up to the 1440 cap).
+// Single source of truth for the resize bounds, now expressed in IFRAME
+// width (not box width) — interpolated into the box's data-min/data-max
+// attributes, which the client script reads and converts to the
+// equivalent box width using a runtime-measured border delta (the exact
+// box↔iframe offset can't be known at build time). The box's own inline
+// min-width is a coarse CSS-level safety net; its max-width is just 100%
+// of the track, and the TRACK's max-width is calc(MAX_WIDTH + 2px) — the
+// +2px is the box's two 1px borders, so the iframe inside can genuinely
+// reach MAX_WIDTH instead of being silently capped 2px short (the script's
+// clamp is what enforces the precise iframe bound; the CSS is only the
+// outer ceiling). The same three numbers define the preset/active-
+// range boundaries: mobile ≤ 384, tablet 385–1023, desktop ≥ 1024 (up to
+// the 1440 cap) — all now iframe-width ranges.
 const MIN_WIDTH = 360;
 const MAX_WIDTH = 1440;
 ---
@@ -47,178 +67,204 @@ const MAX_WIDTH = 1440;
     <p class="text-sm text-muted-foreground">{description}</p>
   </div>
   <div
-    class="relative w-full max-w-[1440px] rounded-xl border border-dashed border-border bg-muted/30"
+    class="relative w-full rounded-xl bg-muted/30"
+    style={`max-width: calc(${MAX_WIDTH}px + 2px);`}
     data-resize-wrapper
   >
-    <div
-      class="relative overflow-hidden rounded-xl border border-border bg-background"
-      style={`width: 100%; min-width: ${MIN_WIDTH}px; max-width: min(100%, ${MAX_WIDTH}px);`}
-      data-resize-box
-      data-min={MIN_WIDTH}
-      data-max={MAX_WIDTH}
-    >
-      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-muted/30 px-3 py-1.5">
-        <div class="flex items-center gap-1" role="group" aria-label="Preview width presets">
-          <div class="group/tooltip relative">
-            <button
-              type="button"
-              data-preset="384"
-              aria-pressed="false"
-              aria-label="Preview at mobile width (384px)"
-              class="peer inline-flex size-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring data-[active=true]:bg-muted data-[active=true]:text-foreground"
-            >
-              <svg
-                class="size-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <rect x="7" y="2" width="10" height="20" rx="2"></rect>
-                <path d="M12 18h.01"></path>
-              </svg>
-            </button>
-            <span
-              class="pointer-events-none absolute top-full left-0 z-20 mt-1.5 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
-              aria-hidden="true"
-            >
-              Mobile: ≤ 384px
-            </span>
-          </div>
-          <div class="group/tooltip relative">
-            <button
-              type="button"
-              data-preset="768"
-              aria-pressed="false"
-              aria-label="Preview at tablet width (768px)"
-              class="peer inline-flex size-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring data-[active=true]:bg-muted data-[active=true]:text-foreground"
-            >
-              <svg
-                class="size-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <rect x="5" y="2" width="14" height="20" rx="2"></rect>
-                <path d="M12 18h.01"></path>
-              </svg>
-            </button>
-            <span
-              class="pointer-events-none absolute top-full left-0 z-20 mt-1.5 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
-              aria-hidden="true"
-            >
-              Tablet: 385–1023px
-            </span>
-          </div>
-          <div class="group/tooltip relative">
-            <button
-              type="button"
-              data-preset="max"
-              aria-pressed="true"
-              data-active="true"
-              aria-label="Preview at desktop width"
-              class="peer inline-flex size-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring data-[active=true]:bg-muted data-[active=true]:text-foreground"
-            >
-              <svg
-                class="size-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <rect x="3" y="4" width="18" height="12" rx="1.5"></rect>
-                <path d="M8 20h8M12 16v4"></path>
-              </svg>
-            </button>
-            <span
-              class="pointer-events-none absolute top-full left-0 z-20 mt-1.5 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
-              aria-hidden="true"
-            >
-              Desktop: ≥ 1024px
-            </span>
-          </div>
-        </div>
-        <div class="flex flex-wrap items-center justify-end gap-2">
-          <div class="min-w-0 max-w-56 flex-1">
-            <CopyCommand client:visible command={installCommand} />
-          </div>
-          <a
-            href={previewUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-sm hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+    <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl border border-border bg-muted/30 px-3 py-1.5">
+      <div class="flex items-center gap-1" role="group" aria-label="Preview width presets">
+        <div class="group/tooltip relative">
+          <button
+            type="button"
+            data-preset="384"
+            aria-pressed="false"
+            aria-label="Preview at mobile width (384px)"
+            class="peer inline-flex size-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring data-[active=true]:bg-muted data-[active=true]:text-foreground"
           >
-            Preview
-            <span class="sr-only"> {title} — opens in a new tab</span>
             <svg
-              class="size-3.5"
+              class="size-4"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
+              stroke-width="1.5"
               stroke-linecap="round"
               stroke-linejoin="round"
               aria-hidden="true"
             >
-              <path d="M7 17 17 7"></path>
-              <path d="M7 7h10v10"></path>
+              <rect x="7" y="2" width="10" height="20" rx="2"></rect>
+              <path d="M12 18h.01"></path>
             </svg>
-          </a>
-          <a
-            href={sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="View source on GitHub"
-            class="inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          </button>
+          <span
+            class="pointer-events-none absolute top-full left-0 z-20 mt-1.5 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
+            aria-hidden="true"
           >
-            <svg class="size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z"
-              ></path>
+            Mobile: ≤ 384px
+          </span>
+        </div>
+        <div class="group/tooltip relative">
+          <button
+            type="button"
+            data-preset="768"
+            aria-pressed="false"
+            aria-label="Preview at tablet width (768px)"
+            class="peer inline-flex size-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring data-[active=true]:bg-muted data-[active=true]:text-foreground"
+          >
+            <svg
+              class="size-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="5" y="2" width="14" height="20" rx="2"></rect>
+              <path d="M12 18h.01"></path>
             </svg>
-          </a>
+          </button>
+          <span
+            class="pointer-events-none absolute top-full left-0 z-20 mt-1.5 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
+            aria-hidden="true"
+          >
+            Tablet: 385–1023px
+          </span>
+        </div>
+        <div class="group/tooltip relative">
+          <button
+            type="button"
+            data-preset="max"
+            aria-pressed="true"
+            data-active="true"
+            aria-label="Preview at desktop width"
+            class="peer inline-flex size-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring data-[active=true]:bg-muted data-[active=true]:text-foreground"
+          >
+            <svg
+              class="size-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="4" width="18" height="12" rx="1.5"></rect>
+              <path d="M8 20h8M12 16v4"></path>
+            </svg>
+          </button>
+          <span
+            class="pointer-events-none absolute top-full left-0 z-20 mt-1.5 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
+            aria-hidden="true"
+          >
+            Desktop: ≥ 1024px
+          </span>
         </div>
       </div>
-      <div class="relative" data-preview-wrap>
-        <iframe
-          src={previewUrl}
-          title={`${title} preview`}
-          loading="lazy"
-          style={`height: ${height}px`}
-          class="w-full"
-        ></iframe>
-        <div
-          class="peer absolute inset-y-0 right-0 flex w-4 cursor-ew-resize touch-none items-center justify-center outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
-          data-resize-handle
-          role="separator"
-          aria-orientation="vertical"
-          aria-label="Resize preview"
-          aria-valuemin={MIN_WIDTH}
-          tabindex="0"
-        >
-          <span
-            class="h-12 w-1.5 rounded-full bg-border transition-colors peer-hover:bg-foreground/30 peer-focus-visible:bg-foreground/50"
-            aria-hidden="true"
-          ></span>
+      <div class="flex flex-wrap items-center justify-end gap-2">
+        <div class="min-w-0 max-w-56 flex-1">
+          <CopyCommand client:visible command={installCommand} />
         </div>
-        <span
-          class="pointer-events-none absolute top-2 right-2 z-10 rounded bg-foreground px-1.5 py-0.5 font-mono text-xs text-background tabular-nums opacity-0 transition-opacity duration-150 peer-hover:opacity-100 peer-focus-visible:opacity-100"
-          data-width-readout
+        <a
+          href={previewUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-sm hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
-          100%
-        </span>
+          Preview
+          <span class="sr-only"> {title} — opens in a new tab</span>
+          <svg
+            class="size-3.5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M7 17 17 7"></path>
+            <path d="M7 7h10v10"></path>
+          </svg>
+        </a>
+        <a
+          href={sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="View source on GitHub"
+          class="inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        >
+          <svg class="size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z"
+            ></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <div class="relative" data-resize-frame>
+      <!-- Clip layer: rounds and clips the track area's outer bottom
+           corners. The box inside keeps SQUARE corners, so when it is
+           narrowed its inner bottom-right corner meets the track with a
+           flat edge (no orphaned rounding mid-track); at the track's own
+           edges this layer clips both the box and the underlay ring to
+           the shared rounded silhouette. The handle lives OUTSIDE this
+           layer so its straddling half is never clipped. -->
+      <div class="overflow-hidden rounded-b-xl">
+        <!-- Track outline: a decorative OVERLAY ring framing the full
+             track area, painted ABOVE the box (z-10, pointer-events
+             none). At full width it traces the exact same 1px perimeter
+             as the box's own border — including the rounded bottom
+             corners the square-cornered box cannot draw once the clip
+             layer shaves them — so the eye reads one continuous edge.
+             Narrowed, the ring frames the vacated area while the box's
+             own border draws the inner edge. Never affects the box's
+             geometry or the script's width math. -->
+        <div
+          class="pointer-events-none absolute inset-0 z-10 rounded-b-xl border border-t-0 border-border"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="relative overflow-hidden border border-t-0 border-border bg-background"
+          style={`width: 100%; min-width: ${MIN_WIDTH}px; max-width: 100%;`}
+          data-resize-box
+          data-min={MIN_WIDTH}
+          data-max={MAX_WIDTH}
+        >
+          <div class="relative" data-preview-wrap>
+            <iframe
+              src={previewUrl}
+              title={`${title} preview`}
+              loading="lazy"
+              style={`height: ${height}px`}
+              class="w-full"
+            ></iframe>
+            <span
+              class="pointer-events-none absolute top-2 right-2 z-10 rounded bg-foreground px-1.5 py-0.5 font-mono text-xs text-background tabular-nums opacity-0 transition-opacity duration-150"
+              data-width-readout
+            >
+              100%
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="group absolute top-1/2 z-10 flex h-12 w-4 -translate-y-1/2 cursor-ew-resize touch-none items-center justify-center outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+        style="left: calc(100% - 0.5rem);"
+        data-resize-handle
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="Resize preview"
+        aria-valuemin={MIN_WIDTH}
+        tabindex="0"
+      >
+        <span
+          class="h-12 w-1.5 rounded-full bg-border transition-colors group-hover:bg-foreground/30 group-focus-visible:bg-foreground/50"
+          aria-hidden="true"
+        ></span>
       </div>
     </div>
   </div>
@@ -237,27 +283,43 @@ const MAX_WIDTH = 1440;
   [data-dragging="true"] [data-width-readout] {
     opacity: 1;
   }
+
+  /* The handle now lives OUTSIDE the resize box (a sibling in the track,
+     not a descendant of it), so it can no longer reach the readout via a
+     plain Tailwind peer-hover/peer-focus-visible sibling selector — the
+     readout is nested two levels down inside a DIFFERENT sibling (the
+     box). :has() on their shared ancestor (data-resize-frame) bridges
+     that gap regardless of DOM order. */
+  [data-resize-frame]:has([data-resize-handle]:hover) [data-width-readout],
+  [data-resize-frame]:has([data-resize-handle]:focus-visible) [data-width-readout] {
+    opacity: 1;
+  }
 </style>
 
 <script>
   // Resizable preview frames: drag (pointer events + setPointerCapture),
   // ArrowLeft/ArrowRight (24px steps), or a width preset resize the box
-  // that wraps each iframe, clamped between the box's own data-min/data-max
-  // (the single source of truth for both bounds — also feeds the inline
-  // min-width/max-width, see the component frontmatter) and the wrapper's
-  // full rendered width. The wrapper (track) itself is also CSS-capped at
-  // the same max via max-w-[1440px], so "the wrapper's rendered width" and
-  // "1440" agree without the script needing a second hardcoded number —
-  // Math.min(wrapper width, data-max) is defensive belt-and-suspenders on
-  // top of that CSS cap, not the only thing enforcing it.
+  // so that the IFRAME inside it — not the box itself — lands at the
+  // target width, clamped between the box's own data-min/data-max (now
+  // IFRAME-width bounds; single source of truth, see the component
+  // frontmatter) and whatever the track can actually offer.
   //
-  // A ResizeObserver on each box keeps the width readout, the separator's
-  // aria-value*, AND each preset button's active/pressed state in sync for
-  // every trigger — drag, keyboard, presets, AND browser/viewport resize —
+  // Every lookup (box, iframe, handle) is keyed off the shared
+  // data-resize-wrapper (the track) rather than a direct DOM relationship,
+  // because the handle is a SIBLING of the box now (outside it, in the
+  // track's own area), not a descendant — a plain .closest() from the
+  // handle can no longer reach the box.
+  //
+  // A ResizeObserver on each IFRAME (not the box — the box is border-box
+  // with a border on every side, so its rendered width is always a few
+  // px wider than what actually renders inside it) keeps the width
+  // readout, the separator's aria-value*, the external handle's position,
+  // AND each preset button's active/pressed state in sync for every
+  // trigger — drag, keyboard, presets, AND browser/viewport resize —
   // chosen over a window "resize" listener because it also reacts when a
   // shrinking track clamps the box via its own max-width, and it fires
   // once on initial observe, covering the initial-load reading for free.
-  // Trade-off: it only re-measures when the box's own rendered size
+  // Trade-off: it only re-measures when the iframe's own rendered size
   // changes, so if the viewport grows while a box is pinned to a smaller
   // preset (e.g. the 384px mobile preset), the separator's aria-valuemax
   // won't refresh until the next interaction with that card — acceptable
@@ -270,7 +332,15 @@ const MAX_WIDTH = 1440;
   }
 
   function getBox(el: Element): HTMLElement | null {
-    return el.closest<HTMLElement>("[data-resize-box]");
+    return getWrapper(el)?.querySelector<HTMLElement>("[data-resize-box]") ?? null;
+  }
+
+  function getIframe(el: Element): HTMLIFrameElement | null {
+    return getWrapper(el)?.querySelector<HTMLIFrameElement>("iframe") ?? null;
+  }
+
+  function getHandle(el: Element): HTMLElement | null {
+    return getWrapper(el)?.querySelector<HTMLElement>("[data-resize-handle]") ?? null;
   }
 
   function minWidth(box: HTMLElement): number {
@@ -281,10 +351,42 @@ const MAX_WIDTH = 1440;
     return Number(box.dataset.max) || 1440;
   }
 
-  function applyWidth(box: HTMLElement, wrapper: HTMLElement, px: number) {
-    const maxPx = Math.min(wrapper.getBoundingClientRect().width, maxWidth(box));
-    const clamped = Math.min(Math.max(px, minWidth(box)), maxPx);
-    box.style.width = `${clamped}px`;
+  // The box is border-box with a border on every side, so its own
+  // rendered width is always a fixed few px wider than the iframe's real
+  // content width inside it. Measuring this once per box (rather than
+  // hardcoding "2") keeps every width computation exact regardless of the
+  // box's actual border-width, and cached so a hot drag loop doesn't
+  // re-read layout on every pointermove.
+  const borderDeltaCache = new WeakMap<HTMLElement, number>();
+  function borderDelta(box: HTMLElement, iframe: HTMLIFrameElement): number {
+    let delta = borderDeltaCache.get(box);
+    if (delta === undefined) {
+      delta = box.offsetWidth - iframe.clientWidth;
+      borderDeltaCache.set(box, delta);
+    }
+    return delta;
+  }
+
+  // Resize the box so the IFRAME lands at exactly targetIframePx, clamped
+  // to [data-min, data-max] (iframe-width bounds) and to whatever width
+  // the track can actually offer the iframe once the border delta is
+  // subtracted.
+  function applyWidth(
+    box: HTMLElement,
+    wrapper: HTMLElement,
+    iframe: HTMLIFrameElement,
+    targetIframePx: number,
+  ) {
+    const delta = borderDelta(box, iframe);
+    const trackMaxIframePx = wrapper.getBoundingClientRect().width - delta;
+    const maxIframePx = Math.min(trackMaxIframePx, maxWidth(box));
+    const clampedIframePx = Math.min(Math.max(targetIframePx, minWidth(box)), maxIframePx);
+    box.style.width = `${clampedIframePx + delta}px`;
+    // Keep the straddling handle glued to the box edge synchronously —
+    // the ResizeObserver reconciles a tick later, but during a fast drag
+    // this is what keeps the handle from visibly trailing the edge.
+    const handle = getHandle(box);
+    if (handle) handle.style.left = `${clampedIframePx + delta - 8}px`;
   }
 
   // Which preset's range contains this width: mobile ≤384, tablet
@@ -298,17 +400,25 @@ const MAX_WIDTH = 1440;
 
   const readoutObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
-      const box = entry.target as HTMLElement;
-      const wrapper = getWrapper(box);
-      if (!wrapper) continue;
-      const readout = wrapper.querySelector<HTMLElement>("[data-width-readout]");
-      const handle = box.querySelector<HTMLElement>("[data-resize-handle]");
-      const width = Math.round(box.getBoundingClientRect().width);
-      const trackWidth = Math.min(Math.round(wrapper.getBoundingClientRect().width), maxWidth(box));
+      const iframe = entry.target as HTMLIFrameElement;
+      const box = getBox(iframe);
+      const wrapper = getWrapper(iframe);
+      if (!box || !wrapper) continue;
+      const handle = getHandle(iframe);
+      const readout = box.querySelector<HTMLElement>("[data-width-readout]");
+      const width = Math.round(entry.contentRect.width);
+      const delta = borderDelta(box, iframe);
+      const trackMaxIframePx = Math.round(wrapper.getBoundingClientRect().width - delta);
+      const trackWidth = Math.min(trackMaxIframePx, maxWidth(box));
       if (readout) readout.textContent = `${width}px`;
       if (handle) {
         handle.setAttribute("aria-valuenow", String(width));
         handle.setAttribute("aria-valuemax", String(trackWidth));
+        // Keep the external handle straddling the box's live right edge
+        // (half over the border, half over the track) — it's a sibling
+        // positioned in the frame region, so nothing moves it
+        // automatically. 8 = half the 16px hit zone.
+        handle.style.left = `${box.getBoundingClientRect().width - 8}px`;
       }
       const bucket = presetBucket(width);
       box.querySelectorAll<HTMLElement>("[data-preset]").forEach((button) => {
@@ -323,20 +433,31 @@ const MAX_WIDTH = 1440;
     }
   });
   document
-    .querySelectorAll<HTMLElement>("[data-resize-box]")
-    .forEach((box) => readoutObserver.observe(box));
+    .querySelectorAll<HTMLIFrameElement>("[data-preview-wrap] iframe")
+    .forEach((iframe) => readoutObserver.observe(iframe));
 
-  let dragging: { handle: HTMLElement; wrapper: HTMLElement; box: HTMLElement; pointerId: number } | null =
-    null;
+  let dragging: {
+    handle: HTMLElement;
+    wrapper: HTMLElement;
+    box: HTMLElement;
+    iframe: HTMLIFrameElement;
+    pointerId: number;
+    grabOffset: number;
+  } | null = null;
 
   document.addEventListener("pointerdown", (event) => {
     const handle = (event.target as Element | null)?.closest?.("[data-resize-handle]");
     if (!handle) return;
     const wrapper = getWrapper(handle);
     const box = getBox(handle);
-    if (!wrapper || !box) return;
+    const iframe = getIframe(handle);
+    if (!wrapper || !box || !iframe) return;
     (handle as HTMLElement).setPointerCapture(event.pointerId);
-    dragging = { handle: handle as HTMLElement, wrapper, box, pointerId: event.pointerId };
+    // Remember where on the handle the user grabbed relative to the box's
+    // right edge, so the edge follows the pointer without the initial jump
+    // a raw clientX mapping would cause on a straddling handle.
+    const grabOffset = box.getBoundingClientRect().right - event.clientX;
+    dragging = { handle: handle as HTMLElement, wrapper, box, iframe, pointerId: event.pointerId, grabOffset };
     // data-dragging goes on the iframe's wrapper (an ANCESTOR of the
     // iframe), not the readout — the scoped <style> above needs an
     // ancestor-of-iframe selector to suppress the iframe's pointer-events
@@ -349,7 +470,12 @@ const MAX_WIDTH = 1440;
   document.addEventListener("pointermove", (event) => {
     if (!dragging || event.pointerId !== dragging.pointerId) return;
     const rect = dragging.wrapper.getBoundingClientRect();
-    applyWidth(dragging.box, dragging.wrapper, event.clientX - rect.left);
+    const delta = borderDelta(dragging.box, dragging.iframe);
+    // The pointer drives the box's right edge, preserving the grab point
+    // on the straddling handle; convert to the equivalent iframe target
+    // by removing the border delta.
+    const targetBoxPx = event.clientX + dragging.grabOffset - rect.left;
+    applyWidth(dragging.box, dragging.wrapper, dragging.iframe, targetBoxPx - delta);
   });
 
   function endDrag(event: PointerEvent) {
@@ -370,11 +496,12 @@ const MAX_WIDTH = 1440;
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
     const wrapper = getWrapper(handle);
     const box = getBox(handle);
-    if (!wrapper || !box) return;
+    const iframe = getIframe(handle);
+    if (!wrapper || !box || !iframe) return;
     event.preventDefault();
-    const current = box.getBoundingClientRect().width;
+    const currentIframePx = iframe.getBoundingClientRect().width;
     const delta = event.key === "ArrowRight" ? 24 : -24;
-    applyWidth(box, wrapper, current + delta);
+    applyWidth(box, wrapper, iframe, currentIframePx + delta);
   });
 
   document.addEventListener("click", (event) => {
@@ -382,13 +509,14 @@ const MAX_WIDTH = 1440;
     if (!button) return;
     const box = getBox(button);
     const wrapper = getWrapper(button);
-    if (!box || !wrapper) return;
+    const iframe = getIframe(button);
+    if (!box || !wrapper || !iframe) return;
     const preset = (button as HTMLElement).dataset.preset;
     if (!preset) return;
     // "max" (desktop) resolves to the same 1440px-or-wrapper-width cap
     // applyWidth already enforces for every other trigger — Infinity always
     // loses to that clamp, so this is just "as wide as allowed".
     const px = preset === "max" ? Number.POSITIVE_INFINITY : Number(preset);
-    applyWidth(box, wrapper, px);
+    applyWidth(box, wrapper, iframe, px);
   });
 </script>
