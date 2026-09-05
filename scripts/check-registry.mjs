@@ -102,6 +102,23 @@ for (const item of blocks.items) {
       errors.push(`${where}: dependency "${match[1]}" is not a component registry item (blocks may not depend on blocks)`);
     }
   }
+
+  // Every house-alias import must be declared as a registryDependency
+  const deps = new Set(item.registryDependencies ?? []);
+  for (const file of item.files ?? []) {
+    const filePath = join(BLOCKS_ROOT, file.path);
+    if (!existsSync(filePath)) continue;
+    const source = readFileSync(filePath, "utf8");
+    for (const match of source.matchAll(/@\/registry\/base\/ui\/([a-z0-9-]+)/g)) {
+      const importedName = match[1];
+      const depUrl = `https://sevenui.dev/r/${importedName}.json`;
+      if (!deps.has(depUrl)) {
+        errors.push(
+          `${where}: file ${file.path} imports "${importedName}" but registryDependencies is missing "${depUrl}"`,
+        );
+      }
+    }
+  }
 }
 if (!existsSync("apps/web/pages/blocks/preview/[slug].astro")) {
   errors.push("blocks preview route apps/web/pages/blocks/preview/[slug].astro is missing");
