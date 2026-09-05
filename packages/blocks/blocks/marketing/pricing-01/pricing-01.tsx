@@ -51,7 +51,9 @@ export default function Pricing01() {
   return (
     <section className="w-full px-6 py-16">
       <div className="mx-auto max-w-5xl text-center">
-        <h2 className="text-3xl font-semibold tracking-tight">Simple pricing</h2>
+        <h2 className="text-3xl font-semibold tracking-tight">
+          Simple pricing
+        </h2>
         <p className="mt-2 text-muted-foreground">
           Free to start. Upgrade when the blocks pay for themselves.
         </p>
@@ -60,7 +62,9 @@ export default function Pricing01() {
         {tiers.map((tier) => (
           <Card
             key={tier.name}
-            className={tier.highlighted ? "border-primary shadow-sm" : undefined}
+            className={
+              tier.highlighted ? "border-primary shadow-sm" : undefined
+            }
           >
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -93,7 +97,7 @@ export default function Pricing01() {
                 ))}
               </ul>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="mt-auto">
               <Button variant={tier.variant} className="w-full">
                 {tier.cta}
               </Button>

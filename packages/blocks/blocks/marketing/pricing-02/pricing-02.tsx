@@ -47,7 +47,9 @@ export default function Pricing02() {
   return (
     <section className="w-full px-6 py-16">
       <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 text-center">
-        <h2 className="text-3xl font-semibold tracking-tight">Pricing that scales with you</h2>
+        <h2 className="text-3xl font-semibold tracking-tight">
+          Pricing that scales with you
+        </h2>
         <Tabs
           value={billing}
           onValueChange={(value) => setBilling(value as "monthly" | "yearly")}
@@ -71,7 +73,9 @@ export default function Pricing02() {
         {tiers.map((tier) => (
           <Card
             key={tier.name}
-            className={tier.highlighted ? "border-primary shadow-sm" : undefined}
+            className={
+              tier.highlighted ? "border-primary shadow-sm" : undefined
+            }
           >
             <CardHeader>
               <div className="flex items-center justify-between">
