@@ -153,8 +153,9 @@ export default defineConfig({
     ],
   },
   versions: {
-    current: { label: "v0.5.0", badge: "Latest" },
+    current: { label: "v0.6.0", badge: "Latest" },
     archived: [
+      { id: "v0.5.0", label: "v0.5.0" },
       { id: "v0.4.0", label: "v0.4.0" },
       { id: "v0.3.0", label: "v0.3.0" },
       { id: "v0.2.0", label: "v0.2.0" },
