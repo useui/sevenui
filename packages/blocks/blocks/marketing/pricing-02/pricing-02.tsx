@@ -42,14 +42,17 @@ const tiers = [
 ];
 
 export default function Pricing02() {
-  const [billing, setBilling] = React.useState("monthly");
+  const [billing, setBilling] = React.useState<"monthly" | "yearly">("monthly");
   const yearly = billing === "yearly";
   return (
     <section className="w-full px-6 py-16">
       <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 text-center">
         <h2 className="text-3xl font-semibold tracking-tight">Pricing that scales with you</h2>
-        <Tabs value={billing} onValueChange={(value) => setBilling(value as string)}>
-          <TabsList>
+        <Tabs
+          value={billing}
+          onValueChange={(value) => setBilling(value as "monthly" | "yearly")}
+        >
+          <TabsList aria-label="Billing period">
             {/* flex-none: the default flex-1 splits the w-fit list into equal
                 halves, which the wider yearly tab overflows. */}
             <TabsTrigger value="monthly" className="flex-none px-3">
@@ -71,9 +74,12 @@ export default function Pricing02() {
             className={tier.highlighted ? "border-primary shadow-sm" : undefined}
           >
             <CardHeader>
-              <CardTitle>{tier.name}</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle>{tier.name}</CardTitle>
+                {tier.highlighted ? <Badge>Popular</Badge> : null}
+              </div>
               <CardDescription>{tier.description}</CardDescription>
-              <p className="pt-2 text-3xl font-semibold">
+              <p className="pt-2 text-3xl font-semibold tabular-nums">
                 ${yearly ? tier.yearly : tier.monthly}
                 <span className="text-sm font-normal text-muted-foreground">
                   {" "}
@@ -88,7 +94,7 @@ export default function Pricing02() {
                 ))}
               </ul>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="mt-auto">
               <Button
                 variant={tier.highlighted ? "default" : "outline"}
                 className="w-full"
