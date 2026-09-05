@@ -5,10 +5,17 @@
 // control — width presets, the install command, Preview, and the GitHub
 // link — lives in a toolbar bar attached to the top of the frame itself,
 // so it resizes/scrolls with the frame instead of sitting in the card
-// header. The iframe is inert (pointer-events none, plus the inert
-// attribute + tabindex="-1" so it's unreachable by mouse or keyboard) —
-// interaction happens on the preview route, opened via the Preview button,
-// or on the resizable frame itself (drag/keyboard/presets).
+// header.
+//
+// The iframe is INTERACTIVE by deliberate product decision (reverses an
+// earlier a11y-motivated "inert" choice, now accepted by the owner): click
+// inputs, toggle pricing tabs, type into OTP slots, right in the gallery.
+// Tab order descends into the iframe's contents. Because a cross-document
+// iframe can swallow pointermove during a resize drag (setPointerCapture
+// doesn't reliably retarget across that boundary in every engine), the
+// scoped <style> below suppresses the iframe's pointer-events for exactly
+// the duration of a drag, driven by the same data-dragging flag the script
+// already toggles on the iframe's wrapper.
 import CopyCommand from "./copy-command.tsx";
 
 interface Props {
@@ -75,7 +82,7 @@ const MAX_WIDTH = 1440;
               </svg>
             </button>
             <span
-              class="pointer-events-none absolute top-full left-1/2 z-20 mt-1.5 -translate-x-1/2 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
+              class="pointer-events-none absolute top-full left-0 z-20 mt-1.5 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
               aria-hidden="true"
             >
               Mobile: ≤ 384px
@@ -104,7 +111,7 @@ const MAX_WIDTH = 1440;
               </svg>
             </button>
             <span
-              class="pointer-events-none absolute top-full left-1/2 z-20 mt-1.5 -translate-x-1/2 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
+              class="pointer-events-none absolute top-full left-0 z-20 mt-1.5 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
               aria-hidden="true"
             >
               Tablet: 385–1023px
@@ -134,7 +141,7 @@ const MAX_WIDTH = 1440;
               </svg>
             </button>
             <span
-              class="pointer-events-none absolute top-full left-1/2 z-20 mt-1.5 -translate-x-1/2 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
+              class="pointer-events-none absolute top-full left-0 z-20 mt-1.5 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
               aria-hidden="true"
             >
               Desktop: ≥ 1024px
@@ -184,15 +191,13 @@ const MAX_WIDTH = 1440;
           </a>
         </div>
       </div>
-      <div class="relative">
+      <div class="relative" data-preview-wrap>
         <iframe
           src={previewUrl}
           title={`${title} preview`}
           loading="lazy"
           style={`height: ${height}px`}
-          class="pointer-events-none w-full"
-          inert
-          tabindex="-1"
+          class="w-full"
         ></iframe>
         <div
           class="peer absolute inset-y-0 right-0 flex w-4 cursor-ew-resize touch-none items-center justify-center outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
@@ -209,7 +214,7 @@ const MAX_WIDTH = 1440;
           ></span>
         </div>
         <span
-          class="pointer-events-none absolute top-2 right-2 z-10 rounded bg-foreground px-1.5 py-0.5 font-mono text-xs text-background tabular-nums opacity-0 transition-opacity duration-150 peer-hover:opacity-100 peer-focus-visible:opacity-100 data-[dragging=true]:opacity-100"
+          class="pointer-events-none absolute top-2 right-2 z-10 rounded bg-foreground px-1.5 py-0.5 font-mono text-xs text-background tabular-nums opacity-0 transition-opacity duration-150 peer-hover:opacity-100 peer-focus-visible:opacity-100"
           data-width-readout
         >
           100%
@@ -218,6 +223,21 @@ const MAX_WIDTH = 1440;
     </div>
   </div>
 </article>
+
+<style>
+  /* Drag-in-progress suppression: while data-dragging is set on the
+     iframe's wrapper (toggled by the script below in pointerdown/endDrag),
+     the iframe itself stops receiving pointer events so a fast drag can't
+     get swallowed by the now-interactive cross-document iframe — restored
+     the instant the drag ends. The width readout stays visible for the
+     same duration even if the pointer strays off the handle mid-drag. */
+  [data-dragging="true"] iframe {
+    pointer-events: none;
+  }
+  [data-dragging="true"] [data-width-readout] {
+    opacity: 1;
+  }
+</style>
 
 <script>
   // Resizable preview frames: drag (pointer events + setPointerCapture),
@@ -317,7 +337,11 @@ const MAX_WIDTH = 1440;
     if (!wrapper || !box) return;
     (handle as HTMLElement).setPointerCapture(event.pointerId);
     dragging = { handle: handle as HTMLElement, wrapper, box, pointerId: event.pointerId };
-    box.querySelector<HTMLElement>("[data-width-readout]")?.setAttribute("data-dragging", "true");
+    // data-dragging goes on the iframe's wrapper (an ANCESTOR of the
+    // iframe), not the readout — the scoped <style> above needs an
+    // ancestor-of-iframe selector to suppress the iframe's pointer-events
+    // during the drag; setting it on a sibling wouldn't match.
+    box.querySelector<HTMLElement>("[data-preview-wrap]")?.setAttribute("data-dragging", "true");
     document.body.style.userSelect = "none";
     event.preventDefault();
   });
@@ -333,7 +357,7 @@ const MAX_WIDTH = 1440;
     if (dragging.handle.hasPointerCapture(event.pointerId)) {
       dragging.handle.releasePointerCapture(event.pointerId);
     }
-    dragging.box.querySelector<HTMLElement>("[data-width-readout]")?.removeAttribute("data-dragging");
+    dragging.box.querySelector<HTMLElement>("[data-preview-wrap]")?.removeAttribute("data-dragging");
     dragging = null;
     document.body.style.userSelect = "";
   }

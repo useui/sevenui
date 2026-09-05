@@ -64,3 +64,49 @@ const { config } = data;
     padding: 0 !important;
   }
 </style>
+
+<script data-mode={config.theme.mode} is:inline>
+  // Live theme sync for the blocks gallery: this page also renders inside
+  // an interactive <iframe> on /blocks/**, and toggling the site's theme
+  // in the parent tab shouldn't require reloading every open preview.
+  //
+  // Blume's own theme toggle (apps/web/node_modules/blume/src/components/
+  // layout/Header.astro, the `clickScript` template literal) writes
+  // localStorage["blume-theme"] SYNCHRONOUSLY on click, immediately after
+  // setting document.documentElement.dataset.theme — confirmed by reading
+  // that source, not assumed. Because this preview route is same-origin
+  // with the gallery, the browser fires a native `storage` event in this
+  // document (a different browsing context) whenever the parent tab
+  // writes that key — no postMessage/MutationObserver plumbing needed;
+  // the native event is exactly the right primitive here, so that's the
+  // ONE mechanism this implements.
+  //
+  // The resolution logic below is a byte-for-byte copy of the branch in
+  // Blume's own THEME_INIT_SCRIPT (apps/web/node_modules/blume/src/
+  // components/layout/head-scripts.ts) — same localStorage key, same
+  // "system" → prefers-color-scheme fallback, same data-mode source (read
+  // from this script's own tag, same as Blume's). That boot script (still
+  // present, untouched, via this page's own <PageLayout themeMode=...>)
+  // already handles the initial load and Astro view-transition swaps
+  // correctly — this script only adds the *live* update path for a frame
+  // that's already open when a toggle happens elsewhere. A lazily-loaded
+  // iframe (BlockFrame's <iframe loading="lazy">) that first loads AFTER
+  // a toggle needs no extra handling either: it runs the same boot script
+  // fresh at that point, and localStorage already holds the new value by
+  // then, so it boots straight into the current theme.
+  (() => {
+    const mode = document.currentScript?.dataset.mode ?? "system";
+    const apply = () => {
+      const stored = localStorage.getItem("blume-theme");
+      const system = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = stored ?? (mode === "system" ? system : mode);
+    };
+    addEventListener("storage", (event) => {
+      // event.key is null when localStorage.clear() fires; treat that as
+      // "re-resolve", same as an explicit blume-theme change. Ignore
+      // writes to any other key.
+      if (event.key !== "blume-theme" && event.key !== null) return;
+      apply();
+    });
+  })();
+</script>
