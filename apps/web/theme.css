@@ -18,7 +18,18 @@
  * use var() indirection, so the dark values flow through automatically;
  * they are repeated in the dark block anyway to stay independent of
  * stylesheet order against Blume's own dark defaults.
+ *
+ * Blume's own generated Tailwind entry only scans its own package source
+ * plus this app's `apps/web/**` tree for utility classes. The `/blocks`
+ * gallery and preview routes render components that live outside that
+ * tree, in `packages/blocks/**`, so their block-only utilities (e.g.
+ * hero-02's `aspect-[4/3]`) are invisible to that scan unless registered
+ * here explicitly. This file's raw text is spliced into the generated
+ * Tailwind entry at apps/web/.blume/src/generated/app.css, so the path
+ * below is relative to *that* generated file's location, not to this
+ * file's own location in the repo.
  */
+@source "../../../../../packages/blocks/blocks/**/*.tsx";
 
 /* Blume inlines this file into its generated Tailwind entry at
    apps/web/.blume/src/generated/app.css, and its @source scan covers only

@@ -103,6 +103,9 @@ for (const item of blocks.items) {
     }
   }
 }
+if (!existsSync("apps/web/pages/blocks/preview/[slug].astro")) {
+  errors.push("blocks preview route apps/web/pages/blocks/preview/[slug].astro is missing");
+}
 // Every block source file is registered
 const registeredBlockFiles = new Set(
   blocks.items.flatMap((i) => (i.files ?? []).map((f) => f.path)),

@@ -1,0 +1,66 @@
+---
+// Full-screen block render: iframe source for the gallery and a shareable
+// URL. PageLayout guarantees the site theme + Tailwind pipeline; the header
+// is hidden with page-scoped CSS (same chrome-workaround family as the
+// landing) so the block renders edge-to-edge.
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import data from "blume:data";
+import blocksRegistry from "../../../../../packages/blocks/registry.json";
+
+import Login01 from "../../../../../packages/blocks/blocks/auth/login-01/login-01";
+import Login02 from "../../../../../packages/blocks/blocks/auth/login-02/login-02";
+import Login03 from "../../../../../packages/blocks/blocks/auth/login-03/login-03";
+import Signup01 from "../../../../../packages/blocks/blocks/auth/signup-01/signup-01";
+import Signup02 from "../../../../../packages/blocks/blocks/auth/signup-02/signup-02";
+import Hero01 from "../../../../../packages/blocks/blocks/marketing/hero-01/hero-01";
+import Hero02 from "../../../../../packages/blocks/blocks/marketing/hero-02/hero-02";
+import Pricing01 from "../../../../../packages/blocks/blocks/marketing/pricing-01/pricing-01";
+import Pricing02 from "../../../../../packages/blocks/blocks/marketing/pricing-02/pricing-02";
+
+export function getStaticPaths() {
+  return blocksRegistry.items.map((item) => ({ params: { slug: item.name } }));
+}
+
+const { slug } = Astro.params;
+const item = blocksRegistry.items.find((entry) => entry.name === slug);
+const { config } = data;
+---
+
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={data.navigation}
+  favicon={config.favicon}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  page={{ title: `${item?.title ?? slug} — SevenUI Blocks`, route: `/blocks/preview/${slug}` }}
+>
+  {
+    /* Astro's client-hydration analysis needs a literal component
+       reference per island — a runtime lookup table (`BLOCKS[slug]`)
+       breaks that static analysis at build time ("NoMatchingImport").
+       Each static path only matches one branch, so exactly one island
+       renders per page. */
+  }
+  {slug === "login-01" && <Login01 client:load />}
+  {slug === "login-02" && <Login02 client:load />}
+  {slug === "login-03" && <Login03 client:load />}
+  {slug === "signup-01" && <Signup01 client:load />}
+  {slug === "signup-02" && <Signup02 client:load />}
+  {slug === "hero-01" && <Hero01 client:load />}
+  {slug === "hero-02" && <Hero02 client:load />}
+  {slug === "pricing-01" && <Pricing01 client:load />}
+  {slug === "pricing-02" && <Pricing02 client:load />}
+</PageLayout>
+
+<style is:global>
+  /* Chromeless render: this page is an iframe source. */
+  header {
+    display: none !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+</style>

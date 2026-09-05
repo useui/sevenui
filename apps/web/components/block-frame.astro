@@ -1,0 +1,54 @@
+---
+// One gallery card: scaled live preview (iframe onto the full-screen route),
+// title row, install command, and links. The iframe is inert (pointer-events
+// none) — interaction happens on the preview route.
+interface Props {
+  name: string;
+  title: string;
+  description: string;
+  height: number;
+  sourcePath: string; // registry item files[0].path, e.g. blocks/auth/login-01/login-01.tsx
+}
+const { name, title, description, height, sourcePath } = Astro.props;
+const installCommand = `npx shadcn@latest add @sevenui/blocks/${name}`;
+const sourceUrl = `https://github.com/useui/sevenui/blob/main/packages/blocks/${sourcePath}`;
+---
+
+<article class="flex flex-col gap-3">
+  <a
+    href={`/blocks/preview/${name}`}
+    class="group relative block overflow-hidden rounded-xl border border-border bg-background"
+    aria-label={`Open ${title} full-screen preview`}
+  >
+    <iframe
+      src={`/blocks/preview/${name}`}
+      title={`${title} preview`}
+      loading="lazy"
+      style={`height: ${height}px`}
+      class="pointer-events-none w-full"
+    ></iframe>
+    <span
+      class="absolute inset-0 hidden items-end justify-end p-3 group-hover:flex"
+    >
+      <span class="rounded-md border border-border bg-background px-2 py-1 text-xs">
+        Open preview
+      </span>
+    </span>
+  </a>
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h3 class="text-sm font-medium">{title}</h3>
+      <p class="text-sm text-muted-foreground">{description}</p>
+    </div>
+    <a
+      href={sourceUrl}
+      rel="noopener noreferrer"
+      class="shrink-0 text-sm text-muted-foreground underline-offset-4 hover:underline"
+    >
+      Source
+    </a>
+  </div>
+  <code
+    class="block overflow-x-auto rounded-md border border-border bg-muted px-3 py-2 text-xs"
+  >{installCommand}</code>
+</article>

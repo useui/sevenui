@@ -1,0 +1,81 @@
+---
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import data from "blume:data";
+import BlockFrame from "../../components/block-frame.astro";
+import blocksRegistry from "../../../../packages/blocks/registry.json";
+
+const { config } = data;
+
+const navigation = {
+  ...data.navigation,
+  tabs: [
+    { label: "Docs", path: "/docs", href: "/docs" },
+    {
+      label: "Components",
+      path: "/docs/components",
+      href: "/docs/components/button",
+    },
+    { label: "Blocks", path: "/blocks", href: "/blocks" },
+  ],
+};
+
+const PREVIEW_HEIGHTS: Record<string, number> = {
+  "login-01": 560,
+  "login-02": 640,
+  "login-03": 560,
+  "signup-01": 640,
+  "signup-02": 640,
+  "hero-01": 480,
+  "hero-02": 480,
+  "pricing-01": 720,
+  "pricing-02": 760,
+};
+
+const CATEGORIES = [
+  { id: "auth", label: "Authentication", match: (name: string) => name.startsWith("login") || name.startsWith("signup") },
+  { id: "marketing", label: "Marketing", match: (name: string) => name.startsWith("hero") || name.startsWith("pricing") },
+];
+
+const sections = CATEGORIES.map((category) => ({
+  ...category,
+  items: blocksRegistry.items.filter((item) => category.match(item.name)),
+}));
+---
+
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={navigation}
+  favicon={config.favicon}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  page={{ title: "Blocks — SevenUI", route: "/blocks" }}
+>
+  <div class="mx-auto max-w-6xl px-6 py-12">
+    <header class="max-w-2xl">
+      <h1 class="text-3xl font-semibold tracking-tight">Blocks</h1>
+      <p class="mt-2 text-muted-foreground">
+        Ready-made sections composed from SevenUI components. Copy them into
+        your project with one command — the source is yours.
+      </p>
+    </header>
+    {sections.map((section) => (
+      <section class="mt-12">
+        <h2 class="text-xl font-semibold tracking-tight">{section.label}</h2>
+        <div class="mt-6 grid gap-10">
+          {section.items.map((item) => (
+            <BlockFrame
+              name={item.name}
+              title={item.title}
+              description={item.description}
+              height={PREVIEW_HEIGHTS[item.name] ?? 560}
+              sourcePath={item.files[0].path}
+            />
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</PageLayout>
