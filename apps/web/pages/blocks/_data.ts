@@ -53,6 +53,39 @@ export const PREVIEW_HEIGHTS: Record<string, number> = {
   "pricing-02": 760,
 };
 
+// How the preview route stages each block. Blocks ship without any stage
+// wrapper — the installed source is the component alone — so the framing
+// that used to be baked into the block source lives here, applied only
+// inside the preview iframe (where svh equals the iframe height).
+// "centered": narrow blocks (cards) centered in the frame with padding.
+// "filled": full-width blocks; the stage guarantees frame height and
+// vertically centers content shorter than the frame (split-screens carry
+// their own min-h-svh and simply fill it).
+export type PreviewStage = "centered" | "filled";
+
+export const PREVIEW_STAGES: Record<string, PreviewStage> = {
+  "login-01": "centered",
+  "login-02": "filled",
+  "login-03": "centered",
+  "signup-01": "centered",
+  "signup-02": "filled",
+  "hero-01": "filled",
+  "hero-02": "filled",
+  "pricing-01": "filled",
+  "pricing-02": "filled",
+};
+
+// Every block must declare how the preview stages it — a missing entry
+// would silently fall back and render a card block un-centered.
+const unstaged = (blocksRegistry.items as RegistryItem[])
+  .filter((item) => !(item.name in PREVIEW_STAGES))
+  .map((item) => item.name);
+if (unstaged.length > 0) {
+  throw new Error(
+    `Blocks registry item(s) ${unstaged.map((name) => `"${name}"`).join(", ")} have no PREVIEW_STAGES entry in apps/web/pages/blocks/_data.ts.`,
+  );
+}
+
 export const GROUPS: GroupDefinition[] = [
   {
     id: "application",

@@ -6,7 +6,7 @@ import { Label } from "@/registry/base/ui/label";
 
 export default function Login02() {
   return (
-    <div className="grid min-h-[640px] w-full bg-background lg:grid-cols-2">
+    <div className="grid min-h-svh w-full lg:grid-cols-2">
       <div className="flex items-center justify-center p-8">
         <div className="w-full max-w-sm">
           <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>

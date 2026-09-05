@@ -5,8 +5,8 @@ import { Button } from "@/registry/base/ui/button";
 
 export default function Hero02() {
   return (
-    <section className="w-full bg-background">
-      <div className="mx-auto grid min-h-[480px] max-w-6xl items-center gap-10 px-6 py-16 lg:grid-cols-2">
+    <section className="w-full">
+      <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 py-16 lg:grid-cols-2">
         <div className="flex flex-col items-start gap-5">
           <Badge variant="outline">Changelog — v0.6.0</Badge>
           <h1 className="text-4xl font-semibold tracking-tight text-balance">

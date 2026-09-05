@@ -3,8 +3,8 @@ import { Button } from "@/registry/base/ui/button";
 
 export default function Hero01() {
   return (
-    <section className="w-full bg-background">
-      <div className="mx-auto flex min-h-[480px] max-w-3xl flex-col items-center justify-center gap-6 px-6 py-20 text-center">
+    <section className="w-full">
+      <div className="mx-auto flex max-w-3xl flex-col items-center justify-center gap-6 px-6 py-20 text-center">
         <Badge variant="secondary">Now in public beta</Badge>
         <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
           Ship accessible interfaces in a fraction of the time

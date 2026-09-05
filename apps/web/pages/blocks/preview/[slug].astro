@@ -6,6 +6,7 @@
 import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
 import blocksRegistry from "../../../../../packages/blocks/registry.json";
+import { PREVIEW_STAGES } from "../_data";
 
 import Login01 from "../../../../../packages/blocks/blocks/auth/login-01/login-01";
 import Login02 from "../../../../../packages/blocks/blocks/auth/login-02/login-02";
@@ -24,6 +25,16 @@ export function getStaticPaths() {
 const { slug } = Astro.params;
 const item = blocksRegistry.items.find((entry) => entry.name === slug);
 const { config } = data;
+
+// Blocks ship stage-free (the installed source is the component alone), so
+// the preview provides the stage the block used to carry: centering for
+// card-sized blocks, guaranteed frame height for full-width ones. svh here
+// is the iframe's own height, so the stage always matches the frame.
+const STAGE_CLASSES: Record<string, string> = {
+  centered: "flex min-h-svh w-full items-center justify-center p-6",
+  filled: "grid min-h-svh w-full items-center",
+};
+const stageClass = STAGE_CLASSES[PREVIEW_STAGES[slug ?? ""] ?? "filled"];
 ---
 
 <PageLayout
@@ -44,15 +55,17 @@ const { config } = data;
        Each static path only matches one branch, so exactly one island
        renders per page. */
   }
-  {slug === "login-01" && <Login01 client:load />}
-  {slug === "login-02" && <Login02 client:load />}
-  {slug === "login-03" && <Login03 client:load />}
-  {slug === "signup-01" && <Signup01 client:load />}
-  {slug === "signup-02" && <Signup02 client:load />}
-  {slug === "hero-01" && <Hero01 client:load />}
-  {slug === "hero-02" && <Hero02 client:load />}
-  {slug === "pricing-01" && <Pricing01 client:load />}
-  {slug === "pricing-02" && <Pricing02 client:load />}
+  <div class={stageClass}>
+    {slug === "login-01" && <Login01 client:load />}
+    {slug === "login-02" && <Login02 client:load />}
+    {slug === "login-03" && <Login03 client:load />}
+    {slug === "signup-01" && <Signup01 client:load />}
+    {slug === "signup-02" && <Signup02 client:load />}
+    {slug === "hero-01" && <Hero01 client:load />}
+    {slug === "hero-02" && <Hero02 client:load />}
+    {slug === "pricing-01" && <Pricing01 client:load />}
+    {slug === "pricing-02" && <Pricing02 client:load />}
+  </div>
 </PageLayout>
 
 <style is:global>

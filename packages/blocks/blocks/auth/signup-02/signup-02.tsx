@@ -6,7 +6,7 @@ import { Label } from "@/registry/base/ui/label";
 
 export default function Signup02() {
   return (
-    <div className="grid min-h-[640px] w-full bg-background lg:grid-cols-2">
+    <div className="grid min-h-svh w-full lg:grid-cols-2">
       <div className="hidden flex-col justify-between border-r border-border bg-muted p-10 lg:flex">
         <div className="text-lg font-semibold tracking-tight">SevenUI</div>
         <ul className="space-y-3 text-sm text-muted-foreground">

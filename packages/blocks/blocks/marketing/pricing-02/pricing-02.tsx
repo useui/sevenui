@@ -45,7 +45,7 @@ export default function Pricing02() {
   const [billing, setBilling] = React.useState("monthly");
   const yearly = billing === "yearly";
   return (
-    <section className="w-full bg-background px-6 py-16">
+    <section className="w-full px-6 py-16">
       <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 text-center">
         <h2 className="text-3xl font-semibold tracking-tight">Pricing that scales with you</h2>
         <Tabs value={billing} onValueChange={(value) => setBilling(value as string)}>
