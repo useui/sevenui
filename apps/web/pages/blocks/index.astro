@@ -1,0 +1,90 @@
+---
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import data from "blume:data";
+import BlocksSidebar from "../../components/blocks-sidebar.astro";
+import CategoryIllustration from "../../components/category-illustration.astro";
+import SiteFooter from "../../components/site-footer.astro";
+import { SITE_TABS } from "../../components/site-tabs.ts";
+import { groups } from "./_data";
+
+const { config } = data;
+
+const description =
+  "Ready-made sections composed from SevenUI components. Copy them into your project with one command — the source is yours.";
+
+// Computed (not hardcoded) so the directory's count sentence stays correct
+// as groups/categories/items change — mirrors the group/category pages'
+// own "{description} {count} in this {group|category}." pattern.
+const totalBlocks = groups.reduce((sum, group) => sum + group.items.length, 0);
+const totalCategories = groups.reduce((sum, group) => sum + group.categories.length, 0);
+
+const navigation = {
+  ...data.navigation,
+  tabs: SITE_TABS,
+};
+---
+
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={navigation}
+  favicon={config.favicon}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  searchEnabled={config.search.enabled}
+  siteUrl={config.site}
+  ogEnabled={config.og.enabled}
+  page={{ title: "Blocks — SevenUI", description, route: "/blocks" }}
+>
+  <div class="lg:grid lg:grid-cols-[260px_minmax(0,1fr)]">
+    <BlocksSidebar />
+    <div class="min-w-0">
+      <header class="border-b border-border px-6 py-12 lg:px-10">
+        <div class="max-w-2xl">
+          <h1 class="text-3xl font-semibold tracking-tight">Blocks</h1>
+          <p class="mt-2 text-muted-foreground">
+            {description} {totalBlocks} {totalBlocks === 1 ? "block" : "blocks"} in {totalCategories} {totalCategories === 1 ? "category" : "categories"}.
+          </p>
+        </div>
+      </header>
+      <div class="px-6 py-12 lg:px-10">
+        <div class="flex max-w-5xl flex-col gap-12">
+          {groups.map((group) => (
+            <section>
+              <h2 class="text-lg font-semibold tracking-tight">
+                <a href={`/blocks/${group.id}`} class="hover:underline">
+                  {group.label}
+                </a>
+              </h2>
+              <p class="mt-1 text-sm text-muted-foreground">{group.description}</p>
+              <div class="mt-4 grid gap-6 sm:grid-cols-2">
+                {group.categories.map((category) => (
+                  <a
+                    href={`/blocks/${group.id}/${category.id}`}
+                    class="flex flex-col gap-3 rounded-xl border border-border bg-background p-4 transition-colors hover:border-foreground/20"
+                  >
+                    <div class="flex aspect-[11/6] items-center justify-center overflow-hidden rounded-lg bg-muted/40">
+                      <div class="w-3/4">
+                        <CategoryIllustration category={category.id} />
+                      </div>
+                    </div>
+                    <div>
+                      <h3 class="text-sm font-medium">{category.label}</h3>
+                      <p class="text-sm text-muted-foreground">{category.description}</p>
+                      <p class="mt-1 text-sm text-muted-foreground">
+                        {category.items.length} {category.items.length === 1 ? "block" : "blocks"}
+                      </p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer slot="footer"><SiteFooter /></footer>
+</PageLayout>

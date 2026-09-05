@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Group, Panel, Separator } from "react-resizable-panels";
+import { GripVerticalIcon } from "lucide-react";
 
 import { cn } from "@/registry/base/lib/utils";
 
@@ -37,22 +38,7 @@ function ResizableHandle({
     >
       {withHandle && (
         <div className="z-10 flex h-4 w-3 shrink-0 items-center justify-center rounded-xs border bg-border group-data-[orientation=vertical]/resizable:rotate-90">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-2.5"
-          >
-            <circle cx="9" cy="5" r="1" />
-            <circle cx="9" cy="12" r="1" />
-            <circle cx="9" cy="19" r="1" />
-            <circle cx="15" cy="5" r="1" />
-            <circle cx="15" cy="12" r="1" />
-            <circle cx="15" cy="19" r="1" />
-          </svg>
+          <GripVerticalIcon className="size-2.5" />
         </div>
       )}
     </Separator>

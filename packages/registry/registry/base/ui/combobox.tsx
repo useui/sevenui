@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox";
+import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react";
 
 import { cn } from "@/registry/base/lib/utils";
 
@@ -44,17 +45,7 @@ function ComboboxTrigger({
       )}
       {...props}
     >
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="size-4 opacity-50"
-      >
-        <path d="m6 9 6 6 6-6" />
-      </svg>
+      <ChevronDownIcon className="size-4 opacity-50" />
     </ComboboxPrimitive.Trigger>
   );
 }
@@ -72,17 +63,7 @@ function ComboboxClear({
       )}
       {...props}
     >
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="size-4"
-      >
-        <path d="M18 6 6 18M6 6l12 12" />
-      </svg>
+      <XIcon className="size-4" />
     </ComboboxPrimitive.Clear>
   );
 }
@@ -138,17 +119,7 @@ function ComboboxItem({
     >
       <span className="absolute right-2 flex size-3.5 items-center justify-center">
         <ComboboxPrimitive.ItemIndicator>
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-4"
-          >
-            <path d="M20 6 9 17l-5-5" />
-          </svg>
+          <CheckIcon className="size-4" />
         </ComboboxPrimitive.ItemIndicator>
       </span>
       {children}

@@ -8,6 +8,7 @@ publicHoistPattern:
   - class-variance-authority
   - clsx
   - embla-carousel-react
+  - lucide-react
   - react-day-picker
   - react-hook-form
   - react-is

@@ -3,13 +3,33 @@ import { join } from "node:path";
 
 const REGISTRY_ROOT = "packages/registry";
 const DOCS_DIR = "apps/web/docs/components";
+const BLOCKS_ROOT = "packages/blocks";
 
 const registry = JSON.parse(
   readFileSync(join(REGISTRY_ROOT, "registry.json"), "utf8"),
 );
+const blocks = JSON.parse(
+  readFileSync(join(BLOCKS_ROOT, "registry.json"), "utf8"),
+);
 const errors = [];
 const itemNames = new Set(registry.items.map((i) => i.name));
 const OWN_URL = /^https:\/\/sevenui\.dev\/r\/([a-z0-9-]+)\.json$/;
+
+// An item whose files import lucide-react must declare it as an npm dependency
+function checkLucideDep(item, root, where) {
+  const usesLucide = (item.files ?? []).some((file) => {
+    const filePath = join(root, file.path);
+    return (
+      existsSync(filePath) &&
+      readFileSync(filePath, "utf8").includes('from "lucide-react"')
+    );
+  });
+  if (usesLucide && !(item.dependencies ?? []).includes("lucide-react")) {
+    errors.push(
+      `${where}: imports lucide-react but dependencies is missing "lucide-react"`,
+    );
+  }
+}
 
 for (const item of registry.items) {
   const where = `item "${item.name}"`;
@@ -30,6 +50,8 @@ for (const item of registry.items) {
       errors.push(`${where}: dependency "${match[1]}" is not a registry item`);
     }
   }
+
+  checkLucideDep(item, REGISTRY_ROOT, where);
 
   if (item.type === "registry:ui") {
     if (!itemNames.has(`${item.name}-demo`)) {
@@ -73,8 +95,75 @@ for (const [mode, vars] of Object.entries(themeItem.cssVars)) {
   }
 }
 
+// ---- blocks registry ----
+const blockNames = new Set();
+for (const item of blocks.items) {
+  const where = `block "${item.name}"`;
+  if (item.type !== "registry:block") {
+    errors.push(`${where}: type must be "registry:block", got "${item.type}"`);
+  }
+  if (blockNames.has(item.name)) errors.push(`duplicate block name "${item.name}"`);
+  blockNames.add(item.name);
+  for (const file of item.files ?? []) {
+    if (file.type !== "registry:component") {
+      errors.push(`${where}: file ${file.path} must be registry:component`);
+    }
+    if (!existsSync(join(BLOCKS_ROOT, file.path))) {
+      errors.push(`${where}: missing file ${file.path}`);
+    }
+  }
+  for (const dep of item.registryDependencies ?? []) {
+    const match = dep.match(OWN_URL);
+    if (!match) {
+      errors.push(`${where}: registryDependencies must be full sevenui.dev /r/ URLs, got "${dep}"`);
+    } else if (!itemNames.has(match[1])) {
+      errors.push(`${where}: dependency "${match[1]}" is not a component registry item (blocks may not depend on blocks)`);
+    }
+  }
+
+  checkLucideDep(item, BLOCKS_ROOT, where);
+
+  // Every house-alias import must be declared as a registryDependency
+  const deps = new Set(item.registryDependencies ?? []);
+  for (const file of item.files ?? []) {
+    const filePath = join(BLOCKS_ROOT, file.path);
+    if (!existsSync(filePath)) continue;
+    const source = readFileSync(filePath, "utf8");
+    for (const match of source.matchAll(/@\/registry\/base\/ui\/([a-z0-9-]+)/g)) {
+      const importedName = match[1];
+      const depUrl = `https://sevenui.dev/r/${importedName}.json`;
+      if (!deps.has(depUrl)) {
+        errors.push(
+          `${where}: file ${file.path} imports "${importedName}" but registryDependencies is missing "${depUrl}"`,
+        );
+      }
+    }
+  }
+}
+if (!existsSync("apps/web/pages/blocks/preview/[slug].astro")) {
+  errors.push("blocks preview route apps/web/pages/blocks/preview/[slug].astro is missing");
+}
+// Every block source file is registered
+const registeredBlockFiles = new Set(
+  blocks.items.flatMap((i) => (i.files ?? []).map((f) => f.path)),
+);
+for (const category of readdirSync(join(BLOCKS_ROOT, "blocks"), { withFileTypes: true })) {
+  if (!category.isDirectory()) continue;
+  for (const dir of readdirSync(join(BLOCKS_ROOT, "blocks", category.name), { withFileTypes: true })) {
+    if (!dir.isDirectory()) continue;
+    for (const f of readdirSync(join(BLOCKS_ROOT, "blocks", category.name, dir.name))) {
+      const p = `blocks/${category.name}/${dir.name}/${f}`;
+      if (f.endsWith(".tsx") && !registeredBlockFiles.has(p)) {
+        errors.push(`block file ${p} is not registered in ${BLOCKS_ROOT}/registry.json`);
+      }
+    }
+  }
+}
+
 if (errors.length > 0) {
   console.error(`Registry check failed:\n- ${errors.join("\n- ")}`);
   process.exit(1);
 }
-console.log(`Registry check passed (${registry.items.length} items).`);
+console.log(
+  `Registry check passed (${registry.items.length} items, ${blocks.items.length} blocks).`,
+);

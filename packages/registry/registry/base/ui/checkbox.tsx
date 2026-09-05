@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox";
+import { CheckIcon, MinusIcon } from "lucide-react";
 
 import { cn } from "@/registry/base/lib/utils";
 
@@ -18,27 +19,14 @@ function Checkbox({
       {...props}
     >
       <CheckboxPrimitive.Indicator className="flex items-center justify-center text-current">
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+        <CheckIcon
+          strokeWidth={3}
           className="size-3 in-data-[indeterminate]:hidden"
-        >
-          <path d="M20 6 9 17l-5-5" />
-        </svg>
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-          strokeLinecap="round"
+        />
+        <MinusIcon
+          strokeWidth={3}
           className="hidden size-3 in-data-[indeterminate]:block"
-        >
-          <path d="M5 12h14" />
-        </svg>
+        />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   );

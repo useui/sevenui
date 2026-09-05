@@ -4,6 +4,7 @@ import * as React from "react";
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react";
+import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 
 import { cn } from "@/registry/base/lib/utils";
 import { Button } from "@/registry/base/ui/button";
@@ -177,17 +178,7 @@ function CarouselPrevious({
       onClick={scrollPrev}
       {...props}
     >
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="m12 19-7-7 7-7" />
-        <path d="M19 12H5" />
-      </svg>
+      <ArrowLeftIcon />
       <span className="sr-only">Previous slide</span>
     </Button>
   );
@@ -215,17 +206,7 @@ function CarouselNext({
       onClick={scrollNext}
       {...props}
     >
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M5 12h14" />
-        <path d="m12 5 7 7-7 7" />
-      </svg>
+      <ArrowRightIcon />
       <span className="sr-only">Next slide</span>
     </Button>
   );

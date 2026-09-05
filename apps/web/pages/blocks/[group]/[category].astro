@@ -1,0 +1,81 @@
+---
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import data from "blume:data";
+import BlockFrame from "../../../components/block-frame.astro";
+import BlocksSidebar from "../../../components/blocks-sidebar.astro";
+import SiteFooter from "../../../components/site-footer.astro";
+import { SITE_TABS } from "../../../components/site-tabs.ts";
+import { groups, PREVIEW_HEIGHTS } from "../_data";
+
+export function getStaticPaths() {
+  return groups.flatMap((group) =>
+    group.categories.map((category) => ({
+      params: { group: group.id, category: category.id },
+    })),
+  );
+}
+
+const { group: groupId, category: categoryId } = Astro.params;
+const group = groups.find((entry) => entry.id === groupId)!;
+const category = group.categories.find((entry) => entry.id === categoryId)!;
+const { config } = data;
+
+const navigation = {
+  ...data.navigation,
+  tabs: SITE_TABS,
+};
+---
+
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={navigation}
+  favicon={config.favicon}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  searchEnabled={config.search.enabled}
+  siteUrl={config.site}
+  ogEnabled={config.og.enabled}
+  page={{
+    title: `${category.label} blocks — SevenUI`,
+    description: category.description,
+    route: `/blocks/${group.id}/${category.id}`,
+  }}
+>
+  <div class="lg:grid lg:grid-cols-[260px_minmax(0,1fr)]">
+    <BlocksSidebar activeGroup={group.id} activeCategory={category.id} />
+    <div class="min-w-0">
+      <header class="border-b border-border px-6 py-12 lg:px-10">
+        <div class="max-w-2xl">
+          <nav class="text-sm text-muted-foreground" aria-label="Breadcrumb">
+            <a href="/blocks" class="hover:text-foreground hover:underline">Blocks</a>
+            <span class="mx-1.5">/</span>
+            <a href={`/blocks/${group.id}`} class="hover:text-foreground hover:underline">{group.label}</a>
+            <span class="mx-1.5">/</span>
+            <span class="text-foreground">{category.label}</span>
+          </nav>
+          <h1 class="mt-4 text-3xl font-semibold tracking-tight">{category.label}</h1>
+          <p class="mt-2 text-muted-foreground">
+            {category.description} {category.items.length} {category.items.length === 1 ? "block" : "blocks"} in this category.
+          </p>
+        </div>
+      </header>
+      <div class="px-6 py-12 lg:px-10">
+        <div class="divide-y divide-border">
+          {category.items.map((item) => (
+            <BlockFrame
+              name={item.name}
+              title={item.title}
+              description={item.description}
+              height={PREVIEW_HEIGHTS[item.name] ?? 560}
+              sourcePath={item.files[0].path}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer slot="footer"><SiteFooter /></footer>
+</PageLayout>

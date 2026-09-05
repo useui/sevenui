@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.6.0 — Free blocks wave
+
+First blocks release: 9 ready-made sections in two categories —
+authentication (login-01/02/03, signup-01/02) and marketing (hero-01/02,
+pricing-01/02) — served under the new tiered path /r/blocks/<name>.json
+from the new packages/blocks workspace package. The site gains a /blocks
+gallery with full-screen previews. Component registry output is untouched
+and byte-identical; the smoke test now installs a block end to end.
+
 ## Monorepo restructure (no release)
 
 Internal restructure into a pnpm workspace: the Blume docs site moved to

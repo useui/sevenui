@@ -27,6 +27,11 @@ for f in "$ROOT"/apps/web/public/r/*.json; do
   sed "s|https://sevenui.dev/r/|http://localhost:$PORT/|g" "$f" \
     > "$WORK/registry/$(basename "$f")"
 done
+mkdir -p "$WORK/registry/blocks"
+for f in "$ROOT"/apps/web/public/r/blocks/*.json; do
+  sed "s|https://sevenui.dev/r/|http://localhost:$PORT/|g" "$f" \
+    > "$WORK/registry/blocks/$(basename "$f")"
+done
 # Use --directory instead of `(cd ... && python3 ...) &` so that $! is the
 # actual server PID. A backgrounded `(cd X && cmd) &` runs cmd inside a
 # subshell wrapper process; on this machine the subshell PID and the python3
@@ -108,13 +113,21 @@ SHADCN_BIN="$ROOT/apps/web/node_modules/.bin/shadcn"
   "http://localhost:$PORT/button.json" \
   "http://localhost:$PORT/sidebar.json" \
   "http://localhost:$PORT/calendar.json" \
-  "http://localhost:$PORT/chart.json")
+  "http://localhost:$PORT/chart.json" \
+  "http://localhost:$PORT/blocks/login-01.json")
 
 # Wave 5 contracts: multi-file item lands the hook under the hooks alias,
 # third-party deps land in the consumer package.json.
 test -f "$APP/src/hooks/use-mobile.ts" || { echo "use-mobile.ts missing" >&2; exit 1; }
 grep -q '"react-day-picker"' "$APP/package.json" || { echo "react-day-picker not installed" >&2; exit 1; }
 grep -q '"recharts"' "$APP/package.json" || { echo "recharts not installed" >&2; exit 1; }
+
+# Blocks contract: block file lands in components/, its registryDependencies
+# chain pulls the component files.
+test -f "$APP/src/components/login-01.tsx" || { echo "login-01.tsx missing" >&2; exit 1; }
+test -f "$APP/src/components/ui/card.tsx" || { echo "card.tsx (block dep) missing" >&2; exit 1; }
+grep -q 'from "@/components/ui/card"' "$APP/src/components/login-01.tsx" \
+  || { echo "block import not rewritten to consumer alias" >&2; exit 1; }
 
 # 4. The installed code must typecheck in the consumer project
 cat > "$APP/src/main.tsx" <<'EOF'
@@ -124,6 +137,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import Login01 from "@/components/login-01";
 
 const config = {
   desktop: { label: "Desktop", color: "var(--chart-1)" },
@@ -139,6 +153,7 @@ export function App() {
           <Bar dataKey="desktop" />
         </BarChart>
       </ChartContainer>
+      <Login01 />
     </SidebarProvider>
   );
 }
