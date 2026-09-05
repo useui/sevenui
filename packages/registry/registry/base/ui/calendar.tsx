@@ -3,6 +3,12 @@
 import * as React from "react";
 import type { VariantProps } from "class-variance-authority";
 import { DayPicker, getDefaultClassNames } from "react-day-picker";
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+} from "lucide-react";
 
 import { cn } from "@/registry/base/lib/utils";
 import { buttonVariants } from "@/registry/base/ui/button";
@@ -18,26 +24,19 @@ function CalendarChevron({
   disabled?: boolean;
   orientation?: "up" | "down" | "left" | "right";
 }) {
-  const paths = {
-    up: "m18 15-6-6-6 6",
-    down: "m6 9 6 6 6-6",
-    left: "m15 18-6-6 6-6",
-    right: "m9 18 6-6-6-6",
+  const icons = {
+    up: ChevronUpIcon,
+    down: ChevronDownIcon,
+    left: ChevronLeftIcon,
+    right: ChevronRightIcon,
   } as const;
+  const Icon = icons[orientation];
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+    <Icon
       aria-hidden="true"
       className={cn("size-4", className)}
       style={style}
-    >
-      <path d={paths[orientation]} />
-    </svg>
+    />
   );
 }
 

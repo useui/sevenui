@@ -15,6 +15,22 @@ const errors = [];
 const itemNames = new Set(registry.items.map((i) => i.name));
 const OWN_URL = /^https:\/\/sevenui\.dev\/r\/([a-z0-9-]+)\.json$/;
 
+// An item whose files import lucide-react must declare it as an npm dependency
+function checkLucideDep(item, root, where) {
+  const usesLucide = (item.files ?? []).some((file) => {
+    const filePath = join(root, file.path);
+    return (
+      existsSync(filePath) &&
+      readFileSync(filePath, "utf8").includes('from "lucide-react"')
+    );
+  });
+  if (usesLucide && !(item.dependencies ?? []).includes("lucide-react")) {
+    errors.push(
+      `${where}: imports lucide-react but dependencies is missing "lucide-react"`,
+    );
+  }
+}
+
 for (const item of registry.items) {
   const where = `item "${item.name}"`;
 
@@ -34,6 +50,8 @@ for (const item of registry.items) {
       errors.push(`${where}: dependency "${match[1]}" is not a registry item`);
     }
   }
+
+  checkLucideDep(item, REGISTRY_ROOT, where);
 
   if (item.type === "registry:ui") {
     if (!itemNames.has(`${item.name}-demo`)) {
@@ -102,6 +120,8 @@ for (const item of blocks.items) {
       errors.push(`${where}: dependency "${match[1]}" is not a component registry item (blocks may not depend on blocks)`);
     }
   }
+
+  checkLucideDep(item, BLOCKS_ROOT, where);
 
   // Every house-alias import must be declared as a registryDependency
   const deps = new Set(item.registryDependencies ?? []);

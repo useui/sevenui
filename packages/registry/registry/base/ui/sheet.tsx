@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
+import { XIcon } from "lucide-react";
 
 import { cn } from "@/registry/base/lib/utils";
 
@@ -47,17 +48,7 @@ function SheetContent({
             aria-label="Close"
             className="absolute top-4 right-4 rounded-xs text-muted-foreground opacity-70 transition-opacity outline-none hover:opacity-100 focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none"
           >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="size-4"
-            >
-              <path d="M18 6 6 18M6 6l12 12" />
-            </svg>
+            <XIcon className="size-4" />
           </SheetPrimitive.Close>
         )}
       </SheetPrimitive.Popup>

@@ -1,3 +1,5 @@
+import { ChevronRightIcon } from "lucide-react";
+
 import { Badge } from "@/registry/base/ui/badge";
 import { Button } from "@/registry/base/ui/button";
 
@@ -18,16 +20,7 @@ export default function Hero02() {
             <Button size="lg">Browse blocks</Button>
             <Button size="lg" variant="ghost">
               Read the docs
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                className="size-4"
-              >
-                <path d="M6 3l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <ChevronRightIcon aria-hidden="true" strokeWidth={1.5} className="size-4" />
             </Button>
           </div>
         </div>

@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete";
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
+import { SearchIcon } from "lucide-react";
 
 import { cn } from "@/registry/base/lib/utils";
 
@@ -39,18 +40,7 @@ function CommandInput({
 }: React.ComponentProps<typeof AutocompletePrimitive.Input>) {
   return (
     <div className="flex items-center gap-2 border-b px-3">
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="size-4 shrink-0 opacity-50"
-      >
-        <circle cx="11" cy="11" r="8" />
-        <path d="m21 21-4.3-4.3" />
-      </svg>
+      <SearchIcon className="size-4 shrink-0 opacity-50" />
       <AutocompletePrimitive.Input
         className={cn(
           "flex h-10 w-full bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",

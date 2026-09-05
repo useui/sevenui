@@ -2,6 +2,8 @@
 
 import * as React from "react";
 
+import { ChevronsUpDownIcon } from "lucide-react";
+
 import { Button } from "@/registry/base/ui/button";
 import {
   Collapsible,
@@ -25,17 +27,7 @@ export default function CollapsibleDemo() {
         <CollapsibleTrigger
           render={<Button variant="ghost" size="icon" className="size-8" />}
         >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-4"
-          >
-            <path d="m7 15 5 5 5-5M7 9l5-5 5 5" />
-          </svg>
+          <ChevronsUpDownIcon className="size-4" />
           <span className="sr-only">Toggle</span>
         </CollapsibleTrigger>
       </div>

@@ -3,6 +3,7 @@
 import * as React from "react";
 import { NavigationMenu as NavigationMenuPrimitive } from "@base-ui/react/navigation-menu";
 import { cva } from "class-variance-authority";
+import { ChevronDownIcon } from "lucide-react";
 
 import { cn } from "@/registry/base/lib/utils";
 
@@ -79,17 +80,7 @@ function NavigationMenuTrigger({
     >
       {children}
       <NavigationMenuPrimitive.Icon className="relative top-[1px] transition-transform duration-200 data-[popup-open]:rotate-180">
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="size-3"
-        >
-          <path d="m6 9 6 6 6-6" />
-        </svg>
+        <ChevronDownIcon className="size-3" />
       </NavigationMenuPrimitive.Icon>
     </NavigationMenuPrimitive.Trigger>
   );

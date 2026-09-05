@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar";
+import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
 
 import { cn } from "@/registry/base/lib/utils";
 
@@ -114,17 +115,7 @@ function MenubarCheckboxItem({
     >
       <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
         <MenuPrimitive.CheckboxItemIndicator>
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-4"
-          >
-            <path d="M20 6 9 17l-5-5" />
-          </svg>
+          <CheckIcon className="size-4" />
         </MenuPrimitive.CheckboxItemIndicator>
       </span>
       {children}
@@ -144,9 +135,7 @@ function MenubarRadioItem({
     >
       <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
         <MenuPrimitive.RadioItemIndicator>
-          <svg viewBox="0 0 24 24" fill="currentColor" className="size-2">
-            <circle cx="12" cy="12" r="10" />
-          </svg>
+          <CircleIcon fill="currentColor" stroke="none" className="size-2" />
         </MenuPrimitive.RadioItemIndicator>
       </span>
       {children}
@@ -219,17 +208,7 @@ function MenubarSubTrigger({
       {...props}
     >
       {children}
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="ml-auto size-4"
-      >
-        <path d="m9 18 6-6-6-6" />
-      </svg>
+      <ChevronRightIcon className="ml-auto size-4" />
     </MenuPrimitive.SubmenuTrigger>
   );
 }

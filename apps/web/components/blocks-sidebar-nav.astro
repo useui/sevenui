@@ -1,6 +1,7 @@
 ---
 // Group/category tree shared by the desktop sidebar column and the
 // mobile "Categories" disclosure in blocks-sidebar.astro.
+import { ChevronRight } from "@lucide/astro";
 import { groups } from "../pages/blocks/_data";
 
 interface Props {
@@ -17,18 +18,10 @@ const { activeGroup, activeCategory } = Astro.props;
         class="flex cursor-pointer list-none items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-foreground [&::-webkit-details-marker]:hidden"
       >
         <span class="flex items-center gap-1.5">
-          <svg
+          <ChevronRight
             class="size-3.5 shrink-0 text-muted-foreground transition-transform duration-150 group-open:rotate-90"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
             aria-hidden="true"
-          >
-            <path d="M9 6l6 6-6 6" />
-          </svg>
+          />
           {group.label}
         </span>
         <span class="text-xs text-muted-foreground">{group.items.length}</span>

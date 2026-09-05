@@ -102,6 +102,7 @@
       "type": "registry:block",
       "title": "Hero 02",
       "description": "Split hero with copy on the left and a decorative panel.",
+      "dependencies": ["lucide-react"],
       "registryDependencies": [
         "https://sevenui.dev/r/badge.json",
         "https://sevenui.dev/r/button.json"
@@ -115,6 +116,7 @@
       "type": "registry:block",
       "title": "Pricing 01",
       "description": "Three-tier pricing cards with a highlighted popular plan.",
+      "dependencies": ["lucide-react"],
       "registryDependencies": [
         "https://sevenui.dev/r/badge.json",
         "https://sevenui.dev/r/button.json",

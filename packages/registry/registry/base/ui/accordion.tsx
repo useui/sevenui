@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
+import { ChevronDownIcon } from "lucide-react";
 
 import { cn } from "@/registry/base/lib/utils";
 
@@ -34,17 +35,7 @@ function AccordionTrigger({
         {...props}
       >
         {children}
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-200 group-data-[panel-open]:rotate-180"
-        >
-          <path d="m6 9 6 6 6-6" />
-        </svg>
+        <ChevronDownIcon className="pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-200 group-data-[panel-open]:rotate-180" />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
   );

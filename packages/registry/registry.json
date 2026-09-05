@@ -228,7 +228,7 @@
       "type": "registry:ui",
       "title": "Input OTP",
       "description": "Displays an OTP input field built on the Base UI OTPField primitive.",
-      "dependencies": ["@base-ui/react"],
+      "dependencies": ["@base-ui/react", "lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/utils.json"],
       "files": [
         { "path": "registry/base/ui/input-otp.tsx", "type": "registry:ui" }
@@ -332,6 +332,7 @@
       "type": "registry:ui",
       "title": "Spinner",
       "description": "Displays a loading indicator.",
+      "dependencies": ["lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/utils.json"],
       "files": [
         { "path": "registry/base/ui/spinner.tsx", "type": "registry:ui" }
@@ -548,7 +549,7 @@
       "type": "registry:ui",
       "title": "Checkbox",
       "description": "Displays a checkbox built on the Base UI Checkbox primitive.",
-      "dependencies": ["@base-ui/react"],
+      "dependencies": ["@base-ui/react", "lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/utils.json"],
       "files": [
         { "path": "registry/base/ui/checkbox.tsx", "type": "registry:ui" }
@@ -643,6 +644,7 @@
       "type": "registry:component",
       "title": "Toggle Group Demo",
       "description": "Default toggle group example.",
+      "dependencies": ["lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/toggle-group.json"],
       "files": [
         { "path": "examples/toggle-group/toggle-group-demo.tsx", "type": "registry:component" }
@@ -674,7 +676,7 @@
       "type": "registry:ui",
       "title": "Number Field",
       "description": "Displays a number field built on the Base UI Number Field primitive.",
-      "dependencies": ["@base-ui/react"],
+      "dependencies": ["@base-ui/react", "lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/utils.json"],
       "files": [
         { "path": "registry/base/ui/number-field.tsx", "type": "registry:ui" }
@@ -695,7 +697,7 @@
       "type": "registry:ui",
       "title": "Select",
       "description": "Displays a select menu built on the Base UI Select primitive.",
-      "dependencies": ["@base-ui/react"],
+      "dependencies": ["@base-ui/react", "lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/utils.json"],
       "files": [
         { "path": "registry/base/ui/select.tsx", "type": "registry:ui" }
@@ -716,7 +718,7 @@
       "type": "registry:ui",
       "title": "Combobox",
       "description": "An input combined with a filterable popup list, built on the Base UI Combobox primitive.",
-      "dependencies": ["@base-ui/react"],
+      "dependencies": ["@base-ui/react", "lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/utils.json"],
       "files": [
         { "path": "registry/base/ui/combobox.tsx", "type": "registry:ui" }
@@ -811,7 +813,7 @@
       "type": "registry:ui",
       "title": "Dialog",
       "description": "A window overlaid on either the primary window or another dialog window, rendering the content underneath inert, built on the Base UI Dialog primitive.",
-      "dependencies": ["@base-ui/react"],
+      "dependencies": ["@base-ui/react", "lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/utils.json"],
       "files": [
         { "path": "registry/base/ui/dialog.tsx", "type": "registry:ui" }
@@ -864,7 +866,7 @@
       "type": "registry:ui",
       "title": "Sheet",
       "description": "An edge-positioned panel that slides in from the side of the screen, built on the Base UI Dialog primitive.",
-      "dependencies": ["@base-ui/react"],
+      "dependencies": ["@base-ui/react", "lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/utils.json"],
       "files": [
         { "path": "registry/base/ui/sheet.tsx", "type": "registry:ui" }
@@ -914,7 +916,7 @@
       "type": "registry:ui",
       "title": "Dropdown Menu",
       "description": "Displays a menu to the user — such as a set of actions or functions — triggered by a button, built on the Base UI Menu primitive.",
-      "dependencies": ["@base-ui/react"],
+      "dependencies": ["@base-ui/react", "lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/utils.json"],
       "files": [
         { "path": "registry/base/ui/dropdown-menu.tsx", "type": "registry:ui" }
@@ -938,7 +940,7 @@
       "type": "registry:ui",
       "title": "Context Menu",
       "description": "Displays a menu to the user — such as a set of actions or functions — triggered by right click or touch long-press, built on the Base UI Menu primitive.",
-      "dependencies": ["@base-ui/react"],
+      "dependencies": ["@base-ui/react", "lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/utils.json"],
       "files": [
         { "path": "registry/base/ui/context-menu.tsx", "type": "registry:ui" }
@@ -961,7 +963,7 @@
       "type": "registry:ui",
       "title": "Menubar",
       "description": "A horizontal menu bar with multiple menus — such as File, Edit, and View — built on the Base UI Menu primitive.",
-      "dependencies": ["@base-ui/react"],
+      "dependencies": ["@base-ui/react", "lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/utils.json"],
       "files": [
         { "path": "registry/base/ui/menubar.tsx", "type": "registry:ui" }
@@ -984,7 +986,7 @@
       "type": "registry:ui",
       "title": "Toast",
       "description": "A sonner-style, module-level toast API for showing brief, non-blocking notifications, built on the Base UI Toast primitive.",
-      "dependencies": ["@base-ui/react"],
+      "dependencies": ["@base-ui/react", "lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/utils.json"],
       "files": [
         { "path": "registry/base/ui/toast.tsx", "type": "registry:ui" }
@@ -1045,7 +1047,7 @@
       "type": "registry:ui",
       "title": "Accordion",
       "description": "A vertically stacked set of interactive headings that each reveal an associated panel of content, built on the Base UI Accordion primitive.",
-      "dependencies": ["@base-ui/react"],
+      "dependencies": ["@base-ui/react", "lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/utils.json"],
       "files": [
         { "path": "registry/base/ui/accordion.tsx", "type": "registry:ui" }
@@ -1077,6 +1079,7 @@
       "type": "registry:component",
       "title": "Collapsible Demo",
       "description": "Default collapsible example.",
+      "dependencies": ["lucide-react"],
       "registryDependencies": [
         "https://sevenui.dev/r/collapsible.json",
         "https://sevenui.dev/r/button.json"
@@ -1146,6 +1149,7 @@
       "type": "registry:component",
       "title": "Toolbar Demo",
       "description": "Default toolbar example.",
+      "dependencies": ["lucide-react"],
       "registryDependencies": [
         "https://sevenui.dev/r/toolbar.json",
         "https://sevenui.dev/r/toggle.json",
@@ -1160,7 +1164,7 @@
       "type": "registry:ui",
       "title": "Navigation Menu",
       "description": "A collection of links for navigating websites, sharing one animated popup between top-level menu triggers, built on the Base UI Navigation Menu primitive.",
-      "dependencies": ["@base-ui/react", "class-variance-authority"],
+      "dependencies": ["@base-ui/react", "class-variance-authority", "lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/utils.json"],
       "files": [
         { "path": "registry/base/ui/navigation-menu.tsx", "type": "registry:ui" }
@@ -1183,7 +1187,7 @@
       "type": "registry:ui",
       "title": "Command",
       "description": "A fast, composable command palette built on the Base UI Autocomplete primitive.",
-      "dependencies": ["@base-ui/react"],
+      "dependencies": ["@base-ui/react", "lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/utils.json"],
       "files": [
         { "path": "registry/base/ui/command.tsx", "type": "registry:ui" }
@@ -1194,6 +1198,7 @@
       "type": "registry:component",
       "title": "Command Demo",
       "description": "Default command palette example.",
+      "dependencies": ["lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/command.json"],
       "files": [
         { "path": "examples/command/command-demo.tsx", "type": "registry:component" }
@@ -1217,7 +1222,7 @@
       "type": "registry:ui",
       "title": "Sidebar",
       "description": "A composable, themeable sidebar with collapsible, mobile, and icon-only modes.",
-      "dependencies": ["@base-ui/react", "class-variance-authority"],
+      "dependencies": ["@base-ui/react", "class-variance-authority", "lucide-react"],
       "registryDependencies": [
         "https://sevenui.dev/r/utils.json",
         "https://sevenui.dev/r/button.json",
@@ -1237,6 +1242,7 @@
       "type": "registry:component",
       "title": "Sidebar Demo",
       "description": "Default sidebar example with a collapsible icon rail and application menu.",
+      "dependencies": ["lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/sidebar.json"],
       "files": [
         { "path": "examples/sidebar/sidebar-demo.tsx", "type": "registry:component" }
@@ -1247,7 +1253,7 @@
       "type": "registry:ui",
       "title": "Resizable",
       "description": "Accessible resizable panel groups and layouts.",
-      "dependencies": ["react-resizable-panels@^4.12.3"],
+      "dependencies": ["react-resizable-panels@^4.12.3", "lucide-react"],
       "registryDependencies": ["https://sevenui.dev/r/utils.json"],
       "files": [
         { "path": "registry/base/ui/resizable.tsx", "type": "registry:ui" }
@@ -1268,7 +1274,7 @@
       "type": "registry:ui",
       "title": "Carousel",
       "description": "A carousel with motion and swipe built using Embla.",
-      "dependencies": ["embla-carousel-react@^8.6.0"],
+      "dependencies": ["embla-carousel-react@^8.6.0", "lucide-react"],
       "registryDependencies": [
         "https://sevenui.dev/r/utils.json",
         "https://sevenui.dev/r/button.json"
@@ -1295,7 +1301,7 @@
       "type": "registry:ui",
       "title": "Calendar",
       "description": "A date field component that lets users select dates or ranges.",
-      "dependencies": ["react-day-picker@^10.0.1"],
+      "dependencies": ["react-day-picker@^10.0.1", "lucide-react"],
       "registryDependencies": [
         "https://sevenui.dev/r/utils.json",
         "https://sevenui.dev/r/button.json"

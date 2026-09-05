@@ -111,6 +111,12 @@ importers:
 
   apps/web:
     dependencies:
+      '@lucide/astro':
+        specifier: ^1.41.0
+        version: 1.41.0(astro@7.2.10(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.4.0)(@vercel/functions@3.9.5)(jiti@2.7.0)(yaml@2.9.0))
+      lucide-react:
+        specifier: ^1.41.0
+        version: 1.41.0(react@19.2.8)
       react:
         specifier: ^19.2.8
         version: 19.2.8
@@ -139,6 +145,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.5
         version: 19.2.5
+      lucide-react:
+        specifier: ^1.41.0
+        version: 1.41.0
       react:
         specifier: ^19.2.8
         version: 19.2.8
@@ -163,6 +172,9 @@ importers:
       embla-carousel-react:
         specifier: ^8.6.0
         version: 8.6.0(react@19.2.8)
+      lucide-react:
+        specifier: ^1.41.0
+        version: 1.41.0(react@19.2.8)
       react:
         specifier: ^19.2.8
         version: 19.2.8
@@ -1154,6 +1166,11 @@ packages:
     engines: {node: '>= 10.16.0'}
     peerDependencies:
       jsep: ^0.4.0||^1.0.0
+
+  '@lucide/astro@1.41.0':
+    resolution: {integrity: sha512-B6i+gssCkaI9o2mTGLslHOSNyFUv5i6bqxATozpFepdT5XH/n3gjcH4jQ6efqMRGIrqaKsFr5TRwgfKEMqlHiQ==}
+    peerDependencies:
+      astro: ^4 || ^5 || ^6 || ^7
 
   '@mapbox/node-pre-gyp@2.0.3':
     resolution: {integrity: sha512-uwPAhccfFJlsfCxMYTwOdVfOz3xqyj8xYL3zJj8f0pb30tLohnnFPhLuqp4/qoEz8sNxe4SESZedcBojRefIzg==}
@@ -4167,6 +4184,11 @@ packages:
   lru_map@0.4.1:
     resolution: {integrity: sha512-I+lBvqMMFfqaV8CJCISjI3wbjmwVu/VyOoU7+qtu9d7ioW5klMgsTTiUOUp+DJvfTTzKXoPbyC6YfgkNcyPSOg==}
 
+  lucide-react@1.41.0:
+    resolution: {integrity: sha512-6lksP35l6KszDKUeRTi4LV7i6DEe0Yzl2ALJm9j4c5xEYN91GdW1xGsawGMOg2mgjF5GHBVX8pKX9kP+cWsP3Q==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   lz-string@1.5.0:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
     hasBin: true
@@ -7000,6 +7022,10 @@ snapshots:
   '@jsep-plugin/ternary@1.1.4(jsep@1.4.0)':
     dependencies:
       jsep: 1.4.0
+
+  '@lucide/astro@1.41.0(astro@7.2.10(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.4.0)(@vercel/functions@3.9.5)(jiti@2.7.0)(yaml@2.9.0))':
+    dependencies:
+      astro: 7.2.10(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.4.0)(@vercel/functions@3.9.5)(jiti@2.7.0)(yaml@2.9.0)
 
   '@mapbox/node-pre-gyp@2.0.3':
     dependencies:
@@ -10324,6 +10350,10 @@ snapshots:
       yallist: 3.1.1
 
   lru_map@0.4.1: {}
+
+  lucide-react@1.41.0(react@19.2.8):
+    dependencies:
+      react: 19.2.8
 
   lz-string@1.5.0: {}
 

@@ -1,3 +1,5 @@
+import { CheckIcon } from "lucide-react";
+
 import { Badge } from "@/registry/base/ui/badge";
 import { Button } from "@/registry/base/ui/button";
 import {
@@ -45,21 +47,6 @@ const tiers = [
   },
 ];
 
-function CheckIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      className="size-4 shrink-0 text-primary"
-    >
-      <path d="M3 8.5l3.5 3.5L13 5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 export default function Pricing01() {
   return (
     <section className="w-full bg-background px-6 py-16">
@@ -96,7 +83,11 @@ export default function Pricing01() {
               <ul className="grid gap-2.5 text-sm">
                 {tier.features.map((feature) => (
                   <li key={feature} className="flex items-center gap-2">
-                    <CheckIcon />
+                    <CheckIcon
+                      aria-hidden="true"
+                      strokeWidth={1.5}
+                      className="size-4 shrink-0 text-primary"
+                    />
                     {feature}
                   </li>
                 ))}

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { NumberField as NumberFieldPrimitive } from "@base-ui/react/number-field";
+import { MinusIcon, PlusIcon } from "lucide-react";
 
 import { cn } from "@/registry/base/lib/utils";
 
@@ -56,15 +57,7 @@ function NumberFieldDecrement({
       className={cn(stepperClasses, "border-r border-input", className)}
       {...props}
     >
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      >
-        <path d="M5 12h14" />
-      </svg>
+      <MinusIcon />
     </NumberFieldPrimitive.Decrement>
   );
 }
@@ -93,15 +86,7 @@ function NumberFieldIncrement({
       className={cn(stepperClasses, "border-l border-input", className)}
       {...props}
     >
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      >
-        <path d="M12 5v14M5 12h14" />
-      </svg>
+      <PlusIcon />
     </NumberFieldPrimitive.Increment>
   );
 }

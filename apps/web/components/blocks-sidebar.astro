@@ -10,6 +10,7 @@
 // sidebar (node_modules/blume/src/components/layout/RootLayout.astro),
 // whose nav drawer uses the same `lg:sticky lg:top-16
 // lg:h-[calc(100dvh-4rem)]` pairing for its 4rem-tall header.
+import { ChevronRight } from "@lucide/astro";
 import BlocksSidebarNav from "./blocks-sidebar-nav.astro";
 
 interface Props {
@@ -27,18 +28,10 @@ const { activeGroup, activeCategory } = Astro.props;
       class="flex cursor-pointer list-none items-center justify-between gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground [&::-webkit-details-marker]:hidden"
     >
       <span>Categories</span>
-      <svg
+      <ChevronRight
         class="size-3.5 shrink-0 text-muted-foreground transition-transform duration-150 group-open:rotate-90"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
         aria-hidden="true"
-      >
-        <path d="M9 6l6 6-6 6" />
-      </svg>
+      />
     </summary>
     <nav class="mt-2" aria-label="Block categories">
       <BlocksSidebarNav activeGroup={activeGroup} activeCategory={activeCategory} />

@@ -7,6 +7,7 @@
 // Cell borders: each cell draws its end + bottom edge; the inner grid is
 // pulled 1px past the clipping wrapper so the outermost borders vanish
 // instead of doubling up against the section rails.
+import { ArrowRight } from "@lucide/astro";
 import registry from "../../../packages/registry/registry.json";
 
 const SPECIAL_NAMES: Record<string, string> = {
@@ -49,19 +50,10 @@ const components = registry.items
       class="group flex items-center justify-between gap-2 border-e border-b border-border bg-muted/40 px-4 py-4 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:z-10 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
     >
       <span class="truncate">Browse the docs</span>
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+      <ArrowRight
         class="size-3.5 shrink-0 transition-transform group-hover:translate-x-0.5"
         aria-hidden="true"
-      >
-        <path d="M5 12h14" />
-        <path d="m13 6 6 6-6 6" />
-      </svg>
+      />
     </a>
   </nav>
 </div>

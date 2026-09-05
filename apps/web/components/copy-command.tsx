@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { CheckIcon, CopyIcon } from "lucide-react";
 
 /** A one-line shell command with a copy button and brief "copied" feedback. */
 export default function CopyCommand({ command }: { command: string }) {
@@ -29,30 +30,9 @@ export default function CopyCommand({ command }: { command: string }) {
         className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
       >
         {copied ? (
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-4"
-          >
-            <path d="M20 6 9 17l-5-5" />
-          </svg>
+          <CheckIcon className="size-4" />
         ) : (
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-4"
-          >
-            <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-          </svg>
+          <CopyIcon className="size-4" />
         )}
       </button>
     </div>

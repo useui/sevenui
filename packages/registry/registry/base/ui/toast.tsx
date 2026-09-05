@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Toast as ToastPrimitive } from "@base-ui/react/toast";
+import { CircleAlertIcon, CircleCheckIcon, XIcon } from "lucide-react";
 
 import { cn } from "@/registry/base/lib/utils";
 
@@ -64,32 +65,10 @@ function ToastList() {
     >
       <ToastPrimitive.Content className="flex w-full items-start gap-3 overflow-hidden transition-opacity duration-300 data-[behind]:opacity-0 data-[expanded]:opacity-100">
         {toastItem.type === "success" && (
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="mt-0.5 size-4 shrink-0"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <path d="m9 12 2 2 4-4" />
-          </svg>
+          <CircleCheckIcon className="mt-0.5 size-4 shrink-0" />
         )}
         {toastItem.type === "error" && (
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="mt-0.5 size-4 shrink-0 text-destructive"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 8v4M12 16h.01" />
-          </svg>
+          <CircleAlertIcon className="mt-0.5 size-4 shrink-0 text-destructive" />
         )}
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <ToastPrimitive.Title className="text-sm leading-none font-medium" />
@@ -100,17 +79,7 @@ function ToastList() {
           aria-label="Close"
           className="shrink-0 rounded-xs text-muted-foreground opacity-70 transition-opacity outline-none hover:opacity-100 focus-visible:ring-2 focus-visible:ring-ring/50"
         >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-4"
-          >
-            <path d="M18 6 6 18M6 6l12 12" />
-          </svg>
+          <XIcon className="size-4" />
         </ToastPrimitive.Close>
       </ToastPrimitive.Content>
     </ToastPrimitive.Root>
