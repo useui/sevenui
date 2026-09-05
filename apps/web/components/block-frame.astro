@@ -1,8 +1,10 @@
 ---
-// One gallery card: scaled live preview (iframe onto the full-screen route),
-// title row, install command, and links. The iframe is inert (pointer-events
-// none, plus the inert attribute + tabindex="-1" so it's unreachable by
-// mouse or keyboard) — interaction happens on the preview route.
+// One gallery card: title/description row with explicit Preview + Source
+// links, a resizable live-preview frame (drag or arrow-key the handle to
+// test the block's responsive layout), and the install command. The iframe
+// is inert (pointer-events none, plus the inert attribute + tabindex="-1"
+// so it's unreachable by mouse or keyboard) — interaction happens on the
+// preview route, opened via the Preview button.
 interface Props {
   name: string;
   title: string;
@@ -13,32 +15,24 @@ interface Props {
 const { name, title, description, height, sourcePath } = Astro.props;
 const installCommand = `npx shadcn@latest add @sevenui/blocks/${name}`;
 const sourceUrl = `https://github.com/useui/sevenui/blob/main/packages/blocks/${sourcePath}`;
+const previewUrl = `/blocks/preview/${name}`;
 ---
 
 <article class="flex flex-col gap-3">
-  <a
-    href={`/blocks/preview/${name}`}
-    target="_blank"
-    rel="noopener noreferrer"
-    class="group relative block overflow-hidden rounded-xl border border-border bg-background"
-    aria-label={`Open ${title} full-screen preview in a new tab`}
-  >
-    <iframe
-      src={`/blocks/preview/${name}`}
-      title={`${title} preview`}
-      loading="lazy"
-      style={`height: ${height}px`}
-      class="pointer-events-none w-full"
-      inert
-      tabindex="-1"
-    ></iframe>
-    <span
-      class="absolute inset-0 hidden items-center justify-center bg-background/60 backdrop-blur-[2px] group-hover:flex group-focus-visible:flex"
-    >
-      <span
-        class="flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-sm shadow-sm"
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h2 class="text-sm font-medium">{title}</h2>
+      <p class="text-sm text-muted-foreground">{description}</p>
+    </div>
+    <div class="flex shrink-0 items-center gap-3">
+      <a
+        href={previewUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Open ${title} full-screen preview in a new tab`}
+        class="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-sm hover:bg-muted"
       >
-        Open preview
+        Preview
         <svg
           class="size-3.5"
           viewBox="0 0 24 24"
@@ -52,24 +46,112 @@ const sourceUrl = `https://github.com/useui/sevenui/blob/main/packages/blocks/${
           <path d="M7 17 17 7" />
           <path d="M7 7h10v10" />
         </svg>
-      </span>
-    </span>
-  </a>
-  <div class="flex items-start justify-between gap-4">
-    <div>
-      <h3 class="text-sm font-medium">{title}</h3>
-      <p class="text-sm text-muted-foreground">{description}</p>
+      </a>
+      <a
+        href={sourceUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-sm text-muted-foreground underline-offset-4 hover:underline"
+      >
+        Source
+      </a>
     </div>
-    <a
-      href={sourceUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      class="shrink-0 text-sm text-muted-foreground underline-offset-4 hover:underline"
+  </div>
+  <div class="w-full" data-resize-wrapper>
+    <div
+      class="relative overflow-hidden rounded-xl border border-border bg-background"
+      style="width: 100%; min-width: 360px; max-width: 100%;"
+      data-resize-box
     >
-      Source
-    </a>
+      <iframe
+        src={previewUrl}
+        title={`${title} preview`}
+        loading="lazy"
+        style={`height: ${height}px`}
+        class="pointer-events-none w-full"
+        inert
+        tabindex="-1"
+      ></iframe>
+      <div
+        class="absolute top-1/2 right-0 h-12 w-1.5 -translate-y-1/2 cursor-ew-resize touch-none rounded-full bg-border transition-colors hover:bg-foreground/30 focus-visible:bg-foreground/50 focus-visible:outline-none"
+        data-resize-handle
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="Resize preview"
+        tabindex="0"
+      >
+      </div>
+    </div>
   </div>
   <code
     class="block overflow-x-auto rounded-md border border-border bg-muted px-3 py-2 text-xs"
   >{installCommand}</code>
 </article>
+
+<script>
+  // Resizable preview frames: drag (pointer events + setPointerCapture) or
+  // ArrowLeft/ArrowRight (24px steps) resize the box that wraps each iframe,
+  // clamped between 360px and the wrapper's full rendered width. Astro
+  // dedupes this script to a single copy per page regardless of how many
+  // BlockFrame cards render. Plain DOM, no dependencies.
+  const MIN_WIDTH = 360;
+
+  function getWrapper(handle: Element): HTMLElement | null {
+    return handle.closest<HTMLElement>("[data-resize-wrapper]");
+  }
+
+  function getBox(handle: Element): HTMLElement | null {
+    return handle.closest<HTMLElement>("[data-resize-box]");
+  }
+
+  function applyWidth(box: HTMLElement, wrapper: HTMLElement, px: number) {
+    const maxPx = wrapper.getBoundingClientRect().width;
+    const clamped = Math.min(Math.max(px, MIN_WIDTH), maxPx);
+    box.style.width = `${clamped}px`;
+  }
+
+  let dragging: { handle: HTMLElement; wrapper: HTMLElement; box: HTMLElement; pointerId: number } | null =
+    null;
+
+  document.addEventListener("pointerdown", (event) => {
+    const handle = (event.target as Element).closest?.("[data-resize-handle]");
+    if (!handle) return;
+    const wrapper = getWrapper(handle);
+    const box = getBox(handle);
+    if (!wrapper || !box) return;
+    (handle as HTMLElement).setPointerCapture(event.pointerId);
+    dragging = { handle: handle as HTMLElement, wrapper, box, pointerId: event.pointerId };
+    document.body.style.userSelect = "none";
+    event.preventDefault();
+  });
+
+  document.addEventListener("pointermove", (event) => {
+    if (!dragging || event.pointerId !== dragging.pointerId) return;
+    const rect = dragging.wrapper.getBoundingClientRect();
+    applyWidth(dragging.box, dragging.wrapper, event.clientX - rect.left);
+  });
+
+  function endDrag(event: PointerEvent) {
+    if (!dragging || event.pointerId !== dragging.pointerId) return;
+    if (dragging.handle.hasPointerCapture(event.pointerId)) {
+      dragging.handle.releasePointerCapture(event.pointerId);
+    }
+    dragging = null;
+    document.body.style.userSelect = "";
+  }
+  document.addEventListener("pointerup", endDrag);
+  document.addEventListener("pointercancel", endDrag);
+
+  document.addEventListener("keydown", (event) => {
+    const handle = (event.target as Element).closest?.("[data-resize-handle]");
+    if (!handle) return;
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    const wrapper = getWrapper(handle);
+    const box = getBox(handle);
+    if (!wrapper || !box) return;
+    event.preventDefault();
+    const current = box.getBoundingClientRect().width;
+    const delta = event.key === "ArrowRight" ? 24 : -24;
+    applyWidth(box, wrapper, current + delta);
+  });
+</script>
