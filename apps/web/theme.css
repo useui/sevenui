@@ -20,6 +20,14 @@
  * stylesheet order against Blume's own dark defaults.
  */
 
+/* Blume inlines this file into its generated Tailwind entry at
+   apps/web/.blume/src/generated/app.css, and its @source scan covers only
+   the app root (apps/web). Since the monorepo split, the registry sources
+   the landing/docs import live outside that root, so their utility classes
+   were dropped from the site sheet. The path is relative to the generated
+   entry file and reaches back to packages/registry. */
+@source "../../../../../packages/registry/registry";
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);

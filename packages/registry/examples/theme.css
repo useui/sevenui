@@ -1,3 +1,12 @@
+/* Blume inlines this file into its generated examples Tailwind entry at
+   apps/web/.blume/src/generated/examples.css, and its @source scan covers
+   only the app root (apps/web). Since the monorepo split, the registry
+   sources live outside that root, so their utility classes are never
+   generated for the preview frames. These paths are relative to the
+   generated entry file and reach back to packages/registry. */
+@source "../../../../../packages/registry/registry";
+@source "../../../../../packages/registry/examples";
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
