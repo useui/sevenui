@@ -41,7 +41,7 @@ sevenui/
 ├── apps/web/                      # Blume docs site + landing
 │   ├── blume.config.ts            # content.root: "docs", pages: "pages"
 │   ├── theme.css                  # moved from repo root (Blume "user theme.css" injection)
-│   ├── docs/                      # ← web/docs (incl. archived version snapshots v0.1.0–v0.4.0)
+│   ├── docs/                      # ← web/docs (archived versions exist as config entries only; no snapshot dirs)
 │   ├── pages/                     # ← web/pages
 │   ├── assets/                    # ← web/assets
 │   ├── components/                # ← web/components (landing components)
