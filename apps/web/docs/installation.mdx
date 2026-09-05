@@ -30,3 +30,26 @@ work without the namespace config:
 ```bash
 npx shadcn@latest add https://sevenui.dev/r/button.json
 ```
+
+## Blocks
+
+Blocks are ready-made sections — login forms, heroes, pricing tables —
+composed entirely from SevenUI components. They live under a tiered path:
+components at `/r/<name>.json`, blocks at `/r/blocks/<name>.json`.
+
+Browse them at [sevenui.dev/blocks](https://sevenui.dev/blocks), then install
+with the same `@sevenui` namespace configured above:
+
+```bash
+npx shadcn@latest add @sevenui/blocks/login-01
+```
+
+The direct URL also works without any `components.json` config:
+
+```bash
+npx shadcn@latest add https://sevenui.dev/r/blocks/login-01.json
+```
+
+The block file lands in your `components/` directory and its component
+dependencies land in `components/ui/` — wire the block into your own page
+or router; blocks never assume a framework-specific file layout.
