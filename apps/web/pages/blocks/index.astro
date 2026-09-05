@@ -3,9 +3,13 @@ import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
 import BlocksSidebar from "../../components/blocks-sidebar.astro";
 import CategoryIllustration from "../../components/category-illustration.astro";
+import SiteFooter from "../../components/site-footer.astro";
 import { groups } from "./_data";
 
 const { config } = data;
+
+const description =
+  "Ready-made sections composed from SevenUI components. Copy them into your project with one command — the source is yours.";
 
 const navigation = {
   ...data.navigation,
@@ -30,51 +34,56 @@ const navigation = {
   favicon={config.favicon}
   fontCssVars={data.fontCssVars}
   themeMode={config.theme.mode}
-  page={{ title: "Blocks — SevenUI", route: "/blocks" }}
+  searchEnabled={config.search.enabled}
+  siteUrl={config.site}
+  ogEnabled={config.og.enabled}
+  page={{ title: "Blocks — SevenUI", description, route: "/blocks" }}
 >
-  <div class="mx-auto max-w-6xl px-6 py-12">
-    <header class="max-w-2xl">
-      <h1 class="text-3xl font-semibold tracking-tight">Blocks</h1>
-      <p class="mt-2 text-muted-foreground">
-        Ready-made sections composed from SevenUI components. Copy them into
-        your project with one command — the source is yours.
-      </p>
-    </header>
-    <div class="mt-12 lg:grid lg:grid-cols-[220px_1fr] lg:gap-10">
-      <BlocksSidebar />
-      <div class="mt-8 flex flex-col gap-12 lg:mt-0">
-        {groups.map((group) => (
-          <section>
-            <h2 class="text-lg font-semibold tracking-tight">
-              <a href={`/blocks/${group.id}`} class="hover:underline">
-                {group.label}
-              </a>
-            </h2>
-            <p class="mt-1 text-sm text-muted-foreground">{group.description}</p>
-            <div class="mt-4 grid gap-6 sm:grid-cols-2">
-              {group.categories.map((category) => (
-                <a
-                  href={`/blocks/${group.id}/${category.id}`}
-                  class="flex flex-col gap-3 rounded-xl border border-border bg-background p-4 transition-colors hover:border-foreground/20"
-                >
-                  <div class="flex aspect-[11/6] items-center justify-center overflow-hidden rounded-lg bg-muted/40">
-                    <div class="w-3/4">
-                      <CategoryIllustration category={category.id} />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 class="text-sm font-medium">{category.label}</h3>
-                    <p class="text-sm text-muted-foreground">{category.description}</p>
-                    <p class="mt-1 text-sm text-muted-foreground">
-                      {category.items.length} {category.items.length === 1 ? "block" : "blocks"}
-                    </p>
-                  </div>
+  <div class="lg:grid lg:grid-cols-[260px_minmax(0,1fr)]">
+    <BlocksSidebar />
+    <div class="min-w-0">
+      <header class="border-b border-border px-6 py-12 lg:px-10">
+        <div class="max-w-2xl">
+          <h1 class="text-3xl font-semibold tracking-tight">Blocks</h1>
+          <p class="mt-2 text-muted-foreground">{description}</p>
+        </div>
+      </header>
+      <div class="px-6 py-12 lg:px-10">
+        <div class="flex max-w-5xl flex-col gap-12">
+          {groups.map((group) => (
+            <section>
+              <h2 class="text-lg font-semibold tracking-tight">
+                <a href={`/blocks/${group.id}`} class="hover:underline">
+                  {group.label}
                 </a>
-              ))}
-            </div>
-          </section>
-        ))}
+              </h2>
+              <p class="mt-1 text-sm text-muted-foreground">{group.description}</p>
+              <div class="mt-4 grid gap-6 sm:grid-cols-2">
+                {group.categories.map((category) => (
+                  <a
+                    href={`/blocks/${group.id}/${category.id}`}
+                    class="flex flex-col gap-3 rounded-xl border border-border bg-background p-4 transition-colors hover:border-foreground/20"
+                  >
+                    <div class="flex aspect-[11/6] items-center justify-center overflow-hidden rounded-lg bg-muted/40">
+                      <div class="w-3/4">
+                        <CategoryIllustration category={category.id} />
+                      </div>
+                    </div>
+                    <div>
+                      <h3 class="text-sm font-medium">{category.label}</h3>
+                      <p class="text-sm text-muted-foreground">{category.description}</p>
+                      <p class="mt-1 text-sm text-muted-foreground">
+                        {category.items.length} {category.items.length === 1 ? "block" : "blocks"}
+                      </p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
       </div>
     </div>
   </div>
+  <footer slot="footer"><SiteFooter /></footer>
 </PageLayout>

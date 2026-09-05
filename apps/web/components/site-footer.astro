@@ -1,0 +1,100 @@
+---
+// Plain site footer for pages that don't use the landing's exposed-grid
+// chrome (currently the blocks gallery). Same content, link targets, and
+// copy as the landing footer (apps/web/pages/index.astro, ~lines 224-314),
+// but without the landing's decorative `.l-row`/`.l-marks` rail-and-crop-mark
+// treatment — just a plain bordered footer.
+//
+// NOTE: this duplicates the landing footer's link lists. The landing page
+// keeps its own crop-marked footer markup untouched (out of scope here); a
+// shared extraction for both is left for a future landing refactor.
+import { Logomark } from "./logomark.tsx";
+
+const footerComponents = [
+  "button",
+  "input",
+  "select",
+  "combobox",
+  "checkbox",
+  "switch",
+  "slider",
+  "table",
+];
+---
+
+<div class="border-t border-border">
+  <div class="mx-auto grid max-w-6xl gap-10 px-6 py-14 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="flex flex-col gap-3">
+      <span class="inline-flex items-center gap-2 font-semibold">
+        <Logomark className="h-5 w-auto" /> SevenUI
+      </span>
+      <p class="max-w-xs text-sm text-muted-foreground">
+        Base UI powered components, distributed through the shadcn registry.
+      </p>
+    </div>
+    <nav aria-label="Components" class="flex flex-col gap-2 text-sm">
+      <span class="mb-1 font-medium">Components</span>
+      {
+        footerComponents.map((name) => (
+          <a
+            class="text-muted-foreground transition-colors hover:text-foreground"
+            href={`/docs/components/${name}`}
+          >
+            {name.charAt(0).toUpperCase() + name.slice(1).replace("-", " ")}
+          </a>
+        ))
+      }
+      <a class="text-muted-foreground transition-colors hover:text-foreground" href="/docs">
+        All components →
+      </a>
+    </nav>
+    <nav aria-label="Resources" class="flex flex-col gap-2 text-sm">
+      <span class="mb-1 font-medium">Resources</span>
+      <a class="text-muted-foreground transition-colors hover:text-foreground" href="/docs">
+        Documentation
+      </a>
+      <a class="text-muted-foreground transition-colors hover:text-foreground" href="/docs/installation">
+        Installation
+      </a>
+      <a class="text-muted-foreground transition-colors hover:text-foreground" href="/docs/theming">
+        Theming
+      </a>
+      <a
+        class="text-muted-foreground transition-colors hover:text-foreground"
+        href="https://github.com/useui/sevenui"
+        rel="noopener noreferrer"
+      >
+        GitHub
+      </a>
+    </nav>
+    <nav aria-label="Built with" class="flex flex-col gap-2 text-sm">
+      <span class="mb-1 font-medium">Built on</span>
+      <a
+        class="text-muted-foreground transition-colors hover:text-foreground"
+        href="https://base-ui.com"
+        rel="noopener noreferrer"
+      >
+        Base UI
+      </a>
+      <a
+        class="text-muted-foreground transition-colors hover:text-foreground"
+        href="https://ui.shadcn.com/docs/registry"
+        rel="noopener noreferrer"
+      >
+        shadcn registry
+      </a>
+      <a
+        class="text-muted-foreground transition-colors hover:text-foreground"
+        href="https://tailwindcss.com"
+        rel="noopener noreferrer"
+      >
+        Tailwind CSS
+      </a>
+    </nav>
+  </div>
+  <div class="border-t border-border">
+    <p class="mx-auto max-w-6xl px-6 py-6 text-xs text-muted-foreground">
+      MIT License © 2026 SevenUI
+    </p>
+  </div>
+</div>

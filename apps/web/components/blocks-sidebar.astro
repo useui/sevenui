@@ -2,7 +2,14 @@
 // Category sidebar for the /blocks gallery (directory, group, and category
 // pages). One <details> per group listing its categories with block counts.
 // Below `lg` the whole tree collapses into a single "Categories" disclosure;
-// at `lg` and up it renders as an always-visible left column.
+// at `lg` and up it renders as an always-visible left column, flush against
+// the viewport edge, separated from the content column by a border (docs-
+// style structural line, not the landing's decorative rail/crop-mark
+// apparatus), and sticky so it stays visible while the content scrolls.
+// The sticky offset (`top-16` / `100dvh-4rem`) mirrors Blume's own docs
+// sidebar (node_modules/blume/src/components/layout/RootLayout.astro),
+// whose nav drawer uses the same `lg:sticky lg:top-16
+// lg:h-[calc(100dvh-4rem)]` pairing for its 4rem-tall header.
 import BlocksSidebarNav from "./blocks-sidebar-nav.astro";
 
 interface Props {
@@ -12,7 +19,9 @@ interface Props {
 const { activeGroup, activeCategory } = Astro.props;
 ---
 
-<div>
+<div
+  class="border-b border-border px-6 py-6 lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)] lg:overflow-y-auto lg:border-b-0 lg:border-r lg:px-5 lg:py-8"
+>
   <details class="group lg:hidden">
     <summary
       class="flex cursor-pointer list-none items-center justify-between gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground [&::-webkit-details-marker]:hidden"
