@@ -11,6 +11,12 @@ const { config } = data;
 const description =
   "Ready-made sections composed from SevenUI components. Copy them into your project with one command — the source is yours.";
 
+// Computed (not hardcoded) so the directory's count sentence stays correct
+// as groups/categories/items change — mirrors the group/category pages'
+// own "{description} {count} in this {group|category}." pattern.
+const totalBlocks = groups.reduce((sum, group) => sum + group.items.length, 0);
+const totalCategories = groups.reduce((sum, group) => sum + group.categories.length, 0);
+
 const navigation = {
   ...data.navigation,
   tabs: [
@@ -45,7 +51,9 @@ const navigation = {
       <header class="border-b border-border px-6 py-12 lg:px-10">
         <div class="max-w-2xl">
           <h1 class="text-3xl font-semibold tracking-tight">Blocks</h1>
-          <p class="mt-2 text-muted-foreground">{description}</p>
+          <p class="mt-2 text-muted-foreground">
+            {description} {totalBlocks} {totalBlocks === 1 ? "block" : "blocks"} in {totalCategories} {totalCategories === 1 ? "category" : "categories"}.
+          </p>
         </div>
       </header>
       <div class="px-6 py-12 lg:px-10">

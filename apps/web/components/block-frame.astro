@@ -1,12 +1,14 @@
 ---
-// One gallery card, top to bottom: a toolbar row (title/description left;
-// width presets, Preview, and Source right), a right-aligned install
-// command chip, then a resizable live-preview frame with a visible "track"
-// showing the frame's original extent as it's narrowed — the frame is the
-// last thing on the card. The iframe is inert (pointer-events none, plus
-// the inert attribute + tabindex="-1" so it's unreachable by mouse or
-// keyboard) — interaction happens on the preview route, opened via the
-// Preview button, or on the resizable frame itself (drag/keyboard/presets).
+// One gallery card, top to bottom: the block's title (h2) + description as
+// a plain header, then a resizable live-preview frame with a visible
+// "track" showing the frame's original extent as it's narrowed. Every
+// control — width presets, the install command, Preview, and the GitHub
+// link — lives in a toolbar bar attached to the top of the frame itself,
+// so it resizes/scrolls with the frame instead of sitting in the card
+// header. The iframe is inert (pointer-events none, plus the inert
+// attribute + tabindex="-1" so it's unreachable by mouse or keyboard) —
+// interaction happens on the preview route, opened via the Preview button,
+// or on the resizable frame itself (drag/keyboard/presets).
 import CopyCommand from "./copy-command.tsx";
 
 interface Props {
@@ -25,116 +27,17 @@ const previewUrl = `/blocks/preview/${name}`;
 // the client script reads instead of hardcoding a second copy of these
 // numbers. MAX_WIDTH also caps the track/wrapper itself so the two agree
 // (see data-resize-wrapper below) — on very wide screens the frame stops
-// growing past 1440px instead of stretching unbounded.
+// growing past 1440px instead of stretching unbounded. The same three
+// numbers define the preset/active-range boundaries: mobile ≤ 384,
+// tablet 385–1023, desktop ≥ 1024 (up to the 1440 cap).
 const MIN_WIDTH = 360;
 const MAX_WIDTH = 1440;
 ---
 
-<article class="flex flex-col gap-4 py-10" data-block-frame>
-  <div class="flex flex-wrap items-start justify-between gap-4">
-    <div>
-      <h2 class="text-sm font-medium">{title}</h2>
-      <p class="text-sm text-muted-foreground">{description}</p>
-    </div>
-    <div class="flex flex-wrap items-center gap-2">
-      <div class="flex items-center gap-1" role="group" aria-label="Preview width presets">
-        <button
-          type="button"
-          data-preset="max"
-          aria-label="Preview at desktop width"
-          class="inline-flex size-8 items-center justify-center rounded-md border border-border hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-        >
-          <svg
-            class="size-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <rect x="3" y="4" width="18" height="12" rx="1.5"></rect>
-            <path d="M8 20h8M12 16v4"></path>
-          </svg>
-        </button>
-        <button
-          type="button"
-          data-preset="768"
-          aria-label="Preview at tablet width (768px)"
-          class="inline-flex size-8 items-center justify-center rounded-md border border-border hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-        >
-          <svg
-            class="size-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <rect x="5" y="2" width="14" height="20" rx="2"></rect>
-            <path d="M12 18h.01"></path>
-          </svg>
-        </button>
-        <button
-          type="button"
-          data-preset="400"
-          aria-label="Preview at phone width (400px)"
-          class="inline-flex size-8 items-center justify-center rounded-md border border-border hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-        >
-          <svg
-            class="size-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <rect x="7" y="2" width="10" height="20" rx="2"></rect>
-            <path d="M12 18h.01"></path>
-          </svg>
-        </button>
-      </div>
-      <a
-        href={previewUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-sm hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-      >
-        Preview
-        <span class="sr-only"> {title} — opens in a new tab</span>
-        <svg
-          class="size-3.5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M7 17 17 7"></path>
-          <path d="M7 7h10v10"></path>
-        </svg>
-      </a>
-      <a
-        href={sourceUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="rounded-sm text-sm text-muted-foreground underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-      >
-        Source
-      </a>
-    </div>
-  </div>
-  <div class="flex justify-end">
-    <div class="w-full max-w-sm">
-      <CopyCommand client:visible command={installCommand} />
-    </div>
+<article class="flex flex-col gap-4 py-10">
+  <div>
+    <h2 class="text-sm font-medium">{title}</h2>
+    <p class="text-sm text-muted-foreground">{description}</p>
   </div>
   <div
     class="relative w-full max-w-[1440px] rounded-xl border border-dashed border-border bg-muted/30"
@@ -147,36 +50,172 @@ const MAX_WIDTH = 1440;
       data-min={MIN_WIDTH}
       data-max={MAX_WIDTH}
     >
-      <iframe
-        src={previewUrl}
-        title={`${title} preview`}
-        loading="lazy"
-        style={`height: ${height}px`}
-        class="pointer-events-none w-full"
-        inert
-        tabindex="-1"
-      ></iframe>
-      <div
-        class="group absolute inset-y-0 right-0 flex w-4 cursor-ew-resize touch-none items-center justify-center outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
-        data-resize-handle
-        role="separator"
-        aria-orientation="vertical"
-        aria-label="Resize preview"
-        aria-valuemin={MIN_WIDTH}
-        tabindex="0"
-      >
+      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-muted/30 px-3 py-1.5">
+        <div class="flex items-center gap-1" role="group" aria-label="Preview width presets">
+          <div class="group/tooltip relative">
+            <button
+              type="button"
+              data-preset="384"
+              aria-pressed="false"
+              aria-label="Preview at mobile width (384px)"
+              class="peer inline-flex size-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring data-[active=true]:bg-muted data-[active=true]:text-foreground"
+            >
+              <svg
+                class="size-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="7" y="2" width="10" height="20" rx="2"></rect>
+                <path d="M12 18h.01"></path>
+              </svg>
+            </button>
+            <span
+              class="pointer-events-none absolute top-full left-1/2 z-20 mt-1.5 -translate-x-1/2 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
+              aria-hidden="true"
+            >
+              Mobile: ≤ 384px
+            </span>
+          </div>
+          <div class="group/tooltip relative">
+            <button
+              type="button"
+              data-preset="768"
+              aria-pressed="false"
+              aria-label="Preview at tablet width (768px)"
+              class="peer inline-flex size-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring data-[active=true]:bg-muted data-[active=true]:text-foreground"
+            >
+              <svg
+                class="size-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="5" y="2" width="14" height="20" rx="2"></rect>
+                <path d="M12 18h.01"></path>
+              </svg>
+            </button>
+            <span
+              class="pointer-events-none absolute top-full left-1/2 z-20 mt-1.5 -translate-x-1/2 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
+              aria-hidden="true"
+            >
+              Tablet: 385–1023px
+            </span>
+          </div>
+          <div class="group/tooltip relative">
+            <button
+              type="button"
+              data-preset="max"
+              aria-pressed="true"
+              data-active="true"
+              aria-label="Preview at desktop width"
+              class="peer inline-flex size-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring data-[active=true]:bg-muted data-[active=true]:text-foreground"
+            >
+              <svg
+                class="size-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="3" y="4" width="18" height="12" rx="1.5"></rect>
+                <path d="M8 20h8M12 16v4"></path>
+              </svg>
+            </button>
+            <span
+              class="pointer-events-none absolute top-full left-1/2 z-20 mt-1.5 -translate-x-1/2 rounded bg-foreground px-1.5 py-0.5 text-xs whitespace-nowrap text-background opacity-0 transition-opacity duration-150 group-hover/tooltip:opacity-100 peer-focus-visible:opacity-100"
+              aria-hidden="true"
+            >
+              Desktop: ≥ 1024px
+            </span>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center justify-end gap-2">
+          <div class="min-w-0 max-w-56 flex-1">
+            <CopyCommand client:visible command={installCommand} />
+          </div>
+          <a
+            href={previewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-sm hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            Preview
+            <span class="sr-only"> {title} — opens in a new tab</span>
+            <svg
+              class="size-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M7 17 17 7"></path>
+              <path d="M7 7h10v10"></path>
+            </svg>
+          </a>
+          <a
+            href={sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View source on GitHub"
+            class="inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            <svg class="size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z"
+              ></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="relative">
+        <iframe
+          src={previewUrl}
+          title={`${title} preview`}
+          loading="lazy"
+          style={`height: ${height}px`}
+          class="pointer-events-none w-full"
+          inert
+          tabindex="-1"
+        ></iframe>
+        <div
+          class="peer absolute inset-y-0 right-0 flex w-4 cursor-ew-resize touch-none items-center justify-center outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+          data-resize-handle
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize preview"
+          aria-valuemin={MIN_WIDTH}
+          tabindex="0"
+        >
+          <span
+            class="h-12 w-1.5 rounded-full bg-border transition-colors peer-hover:bg-foreground/30 peer-focus-visible:bg-foreground/50"
+            aria-hidden="true"
+          ></span>
+        </div>
         <span
-          class="h-12 w-1.5 rounded-full bg-border transition-colors group-hover:bg-foreground/30 group-focus-visible:bg-foreground/50"
-          aria-hidden="true"
-        ></span>
+          class="pointer-events-none absolute top-2 right-2 z-10 rounded bg-foreground px-1.5 py-0.5 font-mono text-xs text-background tabular-nums opacity-0 transition-opacity duration-150 peer-hover:opacity-100 peer-focus-visible:opacity-100 data-[dragging=true]:opacity-100"
+          data-width-readout
+        >
+          100%
+        </span>
       </div>
     </div>
-    <span
-      class="pointer-events-none absolute top-2 right-2 z-10 rounded border border-border bg-background px-1.5 py-0.5 font-mono text-xs text-muted-foreground tabular-nums"
-      data-width-readout
-    >
-      100%
-    </span>
   </div>
 </article>
 
@@ -192,16 +231,17 @@ const MAX_WIDTH = 1440;
   // Math.min(wrapper width, data-max) is defensive belt-and-suspenders on
   // top of that CSS cap, not the only thing enforcing it.
   //
-  // A ResizeObserver on each box keeps the width readout and the
-  // separator's aria-value* in sync for every trigger — drag, keyboard,
-  // presets, AND browser/viewport resize — chosen over a window "resize"
-  // listener because it also reacts when a shrinking track clamps the box
-  // via its own max-width, and it fires once on initial observe, covering
-  // the initial-load reading for free. Trade-off: it only re-measures when
-  // the box's own rendered size changes, so if the viewport grows while a
-  // box is pinned to a smaller preset (e.g. the 400px phone preset), the
-  // separator's aria-valuemax won't refresh until the next interaction
-  // with that card — acceptable for this simplification.
+  // A ResizeObserver on each box keeps the width readout, the separator's
+  // aria-value*, AND each preset button's active/pressed state in sync for
+  // every trigger — drag, keyboard, presets, AND browser/viewport resize —
+  // chosen over a window "resize" listener because it also reacts when a
+  // shrinking track clamps the box via its own max-width, and it fires
+  // once on initial observe, covering the initial-load reading for free.
+  // Trade-off: it only re-measures when the box's own rendered size
+  // changes, so if the viewport grows while a box is pinned to a smaller
+  // preset (e.g. the 384px mobile preset), the separator's aria-valuemax
+  // won't refresh until the next interaction with that card — acceptable
+  // for this simplification.
   //
   // Astro dedupes this script to a single copy per page regardless of how
   // many BlockFrame cards render. Plain DOM, no dependencies.
@@ -227,6 +267,15 @@ const MAX_WIDTH = 1440;
     box.style.width = `${clamped}px`;
   }
 
+  // Which preset's range contains this width: mobile ≤384, tablet
+  // 385–1023, desktop ≥1024. Matches each button's own data-preset value
+  // ("384" | "768" | "max") so the caller can compare directly.
+  function presetBucket(width: number): "384" | "768" | "max" {
+    if (width <= 384) return "384";
+    if (width <= 1023) return "768";
+    return "max";
+  }
+
   const readoutObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
       const box = entry.target as HTMLElement;
@@ -241,6 +290,16 @@ const MAX_WIDTH = 1440;
         handle.setAttribute("aria-valuenow", String(width));
         handle.setAttribute("aria-valuemax", String(trackWidth));
       }
+      const bucket = presetBucket(width);
+      box.querySelectorAll<HTMLElement>("[data-preset]").forEach((button) => {
+        const isActive = button.dataset.preset === bucket;
+        button.setAttribute("aria-pressed", String(isActive));
+        if (isActive) {
+          button.dataset.active = "true";
+        } else {
+          delete button.dataset.active;
+        }
+      });
     }
   });
   document
@@ -258,6 +317,7 @@ const MAX_WIDTH = 1440;
     if (!wrapper || !box) return;
     (handle as HTMLElement).setPointerCapture(event.pointerId);
     dragging = { handle: handle as HTMLElement, wrapper, box, pointerId: event.pointerId };
+    box.querySelector<HTMLElement>("[data-width-readout]")?.setAttribute("data-dragging", "true");
     document.body.style.userSelect = "none";
     event.preventDefault();
   });
@@ -273,6 +333,7 @@ const MAX_WIDTH = 1440;
     if (dragging.handle.hasPointerCapture(event.pointerId)) {
       dragging.handle.releasePointerCapture(event.pointerId);
     }
+    dragging.box.querySelector<HTMLElement>("[data-width-readout]")?.removeAttribute("data-dragging");
     dragging = null;
     document.body.style.userSelect = "";
   }
@@ -295,9 +356,8 @@ const MAX_WIDTH = 1440;
   document.addEventListener("click", (event) => {
     const button = (event.target as Element | null)?.closest?.("[data-preset]");
     if (!button) return;
-    const frame = button.closest<HTMLElement>("[data-block-frame]");
-    const box = frame?.querySelector<HTMLElement>("[data-resize-box]");
-    const wrapper = frame?.querySelector<HTMLElement>("[data-resize-wrapper]");
+    const box = getBox(button);
+    const wrapper = getWrapper(button);
     if (!box || !wrapper) return;
     const preset = (button as HTMLElement).dataset.preset;
     if (!preset) return;
