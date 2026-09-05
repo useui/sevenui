@@ -83,6 +83,62 @@
       "files": [
         { "path": "blocks/auth/signup-02/signup-02.tsx", "type": "registry:component" }
       ]
+    },
+    {
+      "name": "hero-01",
+      "type": "registry:block",
+      "title": "Hero 01",
+      "description": "Centered hero with badge, headline, and dual call-to-action.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/badge.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        { "path": "blocks/marketing/hero-01/hero-01.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "hero-02",
+      "type": "registry:block",
+      "title": "Hero 02",
+      "description": "Split hero with copy on the left and a decorative panel.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/badge.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        { "path": "blocks/marketing/hero-02/hero-02.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "pricing-01",
+      "type": "registry:block",
+      "title": "Pricing 01",
+      "description": "Three-tier pricing cards with a highlighted popular plan.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/badge.json",
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/card.json",
+        "https://sevenui.dev/r/separator.json"
+      ],
+      "files": [
+        { "path": "blocks/marketing/pricing-01/pricing-01.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "pricing-02",
+      "type": "registry:block",
+      "title": "Pricing 02",
+      "description": "Pricing cards with a monthly/yearly billing toggle.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/badge.json",
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/card.json",
+        "https://sevenui.dev/r/tabs.json"
+      ],
+      "files": [
+        { "path": "blocks/marketing/pricing-02/pricing-02.tsx", "type": "registry:component" }
+      ]
     }
   ]
 }
