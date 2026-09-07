@@ -9,7 +9,7 @@ import {
   TabsTrigger,
 } from "@/registry/base/ui/tabs";
 
-const tabClassName = "data-[active]:bg-transparent data-[active]:shadow-none";
+const tabClassName = "!bg-transparent !shadow-none";
 
 export default function TabsIndicatorDemo() {
   return (
@@ -29,13 +29,20 @@ export default function TabsIndicatorDemo() {
       <TabsContent value="overview">
         <p className="text-sm text-muted-foreground">
           The indicator slides between tabs using the --active-tab-* variables.
+          (Overview)
         </p>
       </TabsContent>
       <TabsContent value="reports">
-        <p className="text-sm text-muted-foreground">Reports content.</p>
+        <p className="text-sm text-muted-foreground">
+          The indicator slides between tabs using the --active-tab-* variables.
+          (Reports)
+        </p>
       </TabsContent>
       <TabsContent value="settings">
-        <p className="text-sm text-muted-foreground">Settings content.</p>
+        <p className="text-sm text-muted-foreground">
+          The indicator slides between tabs using the --active-tab-* variables.
+          (Settings)
+        </p>
       </TabsContent>
     </Tabs>
   );

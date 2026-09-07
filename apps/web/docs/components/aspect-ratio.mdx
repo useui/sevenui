@@ -23,8 +23,11 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 ## API reference
 
-Plain `<div>`; no primitive. All `<div>` props apply. SevenUI adds:
+### AspectRatio
 
-| Prop    | Type     | Default |
-| ------- | -------- | ------- |
-| `ratio` | `number` | `1`     |
+Extends `div` — the ratio is applied via CSS `aspect-ratio`, so the
+element needs a constrained width from its parent.
+
+| Prop    | Type     | Default    |
+| ------- | -------- | ---------- |
+| `ratio` | `number` | — required |

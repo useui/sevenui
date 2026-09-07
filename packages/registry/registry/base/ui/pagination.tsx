@@ -1,13 +1,19 @@
 import * as React from "react";
+import { cn } from "cn";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MoreHorizontalIcon,
+} from "lucide-react";
 
-import { cn } from "@/registry/base/lib/utils";
-import { buttonVariants } from "@/registry/base/ui/button";
+import { Button } from "@/registry/base/ui/button";
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
     <nav
       role="navigation"
       aria-label="pagination"
+      data-slot="pagination"
       className={cn("mx-auto flex w-full justify-center", className)}
       {...props}
     />
@@ -20,20 +26,21 @@ function PaginationContent({
 }: React.ComponentProps<"ul">) {
   return (
     <ul
-      className={cn("flex flex-row items-center gap-1", className)}
+      data-slot="pagination-content"
+      className={cn("flex items-center gap-0.5", className)}
       {...props}
     />
   );
 }
 
-function PaginationItem(props: React.ComponentProps<"li">) {
-  return <li {...props} />;
+function PaginationItem({ ...props }: React.ComponentProps<"li">) {
+  return <li data-slot="pagination-item" {...props} />;
 }
 
-type PaginationLinkProps = React.ComponentProps<"a"> & {
+type PaginationLinkProps = {
   isActive?: boolean;
-  size?: "default" | "sm" | "lg" | "icon";
-};
+} & Pick<React.ComponentProps<typeof Button>, "size"> &
+  React.ComponentProps<"a">;
 
 function PaginationLink({
   className,
@@ -42,47 +49,55 @@ function PaginationLink({
   ...props
 }: PaginationLinkProps) {
   return (
-    <a
-      aria-current={isActive ? "page" : undefined}
-      className={cn(
-        buttonVariants({ variant: isActive ? "outline" : "ghost", size }),
-        className,
-      )}
-      {...props}
+    <Button
+      variant={isActive ? "outline" : "ghost"}
+      size={size}
+      className={cn(className)}
+      nativeButton={false}
+      render={
+        <a
+          aria-current={isActive ? "page" : undefined}
+          data-slot="pagination-link"
+          data-active={isActive}
+          {...props}
+        />
+      }
     />
   );
 }
 
 function PaginationPrevious({
   className,
+  text = "Previous",
   ...props
-}: React.ComponentProps<typeof PaginationLink>) {
+}: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
   return (
     <PaginationLink
       aria-label="Go to previous page"
       size="default"
-      className={cn("gap-1 px-2.5", className)}
+      className={cn("pl-1.5!", className)}
       {...props}
     >
-      <span>‹</span>
-      <span className="hidden sm:block">Previous</span>
+      <ChevronLeftIcon data-icon="inline-start" className="cn-rtl-flip" />
+      <span className="hidden sm:block">{text}</span>
     </PaginationLink>
   );
 }
 
 function PaginationNext({
   className,
+  text = "Next",
   ...props
-}: React.ComponentProps<typeof PaginationLink>) {
+}: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
   return (
     <PaginationLink
       aria-label="Go to next page"
       size="default"
-      className={cn("gap-1 px-2.5", className)}
+      className={cn("pr-1.5!", className)}
       {...props}
     >
-      <span className="hidden sm:block">Next</span>
-      <span>›</span>
+      <span className="hidden sm:block">{text}</span>
+      <ChevronRightIcon data-icon="inline-end" className="cn-rtl-flip" />
     </PaginationLink>
   );
 }
@@ -94,10 +109,15 @@ function PaginationEllipsis({
   return (
     <span
       aria-hidden
-      className={cn("flex size-9 items-center justify-center", className)}
+      data-slot="pagination-ellipsis"
+      className={cn(
+        "flex size-8 items-center justify-center [&_svg:not([class*='size-'])]:size-4",
+        className,
+      )}
       {...props}
     >
-      …<span className="sr-only">More pages</span>
+      <MoreHorizontalIcon />
+      <span className="sr-only">More pages</span>
     </span>
   );
 }
@@ -105,9 +125,9 @@ function PaginationEllipsis({
 export {
   Pagination,
   PaginationContent,
+  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
-  PaginationPrevious,
   PaginationNext,
-  PaginationEllipsis,
+  PaginationPrevious,
 };

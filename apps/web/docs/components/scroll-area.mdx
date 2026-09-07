@@ -21,26 +21,41 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 </ScrollArea>;
 ```
 
+## Examples
+
+### Horizontal
+
+Content wider than the container (`w-max`) scrolls on the x-axis with
+`orientation="horizontal"`.
+
+<Component path="scroll-area/scroll-area-horizontal" />
+
 ## API reference
 
-Built on the [Base UI Scroll Area](https://base-ui.com/react/components/scroll-area)
-primitive — all its props apply.
+### ScrollArea
 
-- `ScrollArea` (our wrapper around Root/Viewport/Content/Corner) takes an
-  `orientation` prop — `"vertical"` (default), `"horizontal"`, or `"both"` —
-  controlling which `ScrollBar`(s) it renders. Children render inside the
-  Viewport's Content, so scrollbars can never be passed as children; use
-  `orientation` instead.
-- `ScrollBar` stays exported for composing the primitive parts directly, with
-  its own `orientation` prop (default `"vertical"`).
-- Scrollbars are overlay-style: they're invisible by default and appear on
-  hover or while scrolling, via the `data-hovering` and `data-scrolling`
-  attributes present on the `Scrollbar` part.
-- The Viewport becomes keyboard-focusable automatically whenever its content
-  overflows — no prop needed.
-- The Thumb's size is driven by Base UI-injected
-  `--scroll-area-thumb-height` / `--scroll-area-thumb-width` CSS variables;
-  don't set the thumb's height/width manually.
-- The Viewport exposes `--scroll-area-overflow-{x,y}-{start,end}` CSS
-  variables for building scroll-fade masks — compose them directly on a
-  custom viewport wrapper.
+Extends the
+[Base UI Scroll Area](https://base-ui.com/react/components/scroll-area)
+Root — all its props apply. Children render inside the Viewport; the
+matching scrollbar(s) and the Corner are included automatically, so
+scrollbars are never passed as children. The Viewport becomes
+keyboard-focusable automatically whenever its content overflows.
+
+| Prop          | Type                                       | Default      |
+| ------------- | ------------------------------------------ | ------------ |
+| `orientation` | `"vertical" \| "horizontal" \| "both"`     | `"vertical"` |
+
+### ScrollBar
+
+Extends the Base UI Scrollbar part (thumb included).
+
+| Prop          | Type                             | Default      |
+| ------------- | -------------------------------- | ------------ |
+| `orientation` | `"vertical" \| "horizontal"`     | `"vertical"` |
+
+Scrollbars are overlay-style: invisible until hover or scroll (via the
+`data-hovering` / `data-scrolling` attributes). The thumb sizes itself
+through Base UI's `--scroll-area-thumb-height` / `-width` variables —
+don't set its dimensions manually. The Viewport also exposes
+`--scroll-area-overflow-{x,y}-{start,end}` variables for scroll-fade
+masks.

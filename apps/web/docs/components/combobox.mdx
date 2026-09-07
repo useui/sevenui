@@ -52,36 +52,71 @@ export default function ComboboxDemo() {
 }
 ```
 
+## Examples
+
+### Multiple with chips
+
+Selected items render as removable chips inside `ComboboxChips`. Anchor
+the popup to the chips container with `useComboboxAnchor`:
+`ref={anchor}` on the chips, `anchor={anchor}` on the content.
+
+<Component path="combobox/combobox-multiple" />
+
 ## API reference
 
-Built on the [Base UI Combobox](https://base-ui.com/react/components/combobox)
-primitive — all its props apply.
+### Combobox
 
-Key props on the Root (`Combobox`):
+Extends the
+[Base UI Combobox](https://base-ui.com/react/components/combobox) Root —
+all its props apply.
 
-- `items` — an array of items (or `{ label, value }` entries) to filter
-  against as the user types; required for automatic filtering and for
-  `ComboboxEmpty` to know when the list has no matches
-- `multiple` — allow selecting more than one item; the value becomes an array
-  (chip rendering for multi-select is not included in this component yet)
-- `value` / `defaultValue` — the controlled or uncontrolled selected value
-- `onValueChange` — callback fired when the selected value changes
-- `disabled`, `required`, `readOnly` — standard field states
+| Prop                     | Type                                    | Default |
+| ------------------------ | --------------------------------------- | ------- |
+| `items`                  | item array (or `{ label, value }[]`)    | —       |
+| `value` / `defaultValue` | item (array when `multiple`)            | —       |
+| `onValueChange`          | `(value) => void`                       | —       |
+| `multiple`               | `boolean`                               | `false` |
+| `disabled` / `required` / `readOnly` | `boolean`                   | `false` |
 
-`ComboboxList` takes a **function child** — `(item) => ReactElement` — instead
-of a plain node. Base UI calls it once per item currently matching the input
-value (computed from the Root's `items` prop) and expects a `ComboboxItem`
-back for each one, so filtering re-renders the list automatically as the user
-types.
+`items` drives the automatic filtering as the user types and lets
+`ComboboxEmpty` know when nothing matches.
 
-`ComboboxInput` renders the `Combobox.InputGroup` → `Combobox.Input` pair,
-with `ComboboxClear` and `ComboboxTrigger` positioned inside the group as
-inline controls. Its `className` styles the input group (the field
-container) — size the field with it, e.g. `className="w-64"`; the inner
-input always fills the group, keeping the inline controls anchored to the
-field's edge. `ComboboxContent` renders through `Combobox.Portal` →
-`Combobox.Positioner` → `Combobox.Popup`, mirroring `Select`.
+### ComboboxList
 
-Multi-select (`multiple`) and the chip parts (`Combobox.Chips`,
-`Combobox.Chip`, `Combobox.ChipRemove`) are available on the primitive but are
-out of scope for this component — they'll land in a future update.
+Takes a **function child** — `(item) => ReactElement` — called once per
+item currently matching the input value; return a `ComboboxItem` for
+each, so filtering re-renders the list automatically.
+
+### ComboboxInput
+
+Renders the `Combobox.InputGroup` → `Combobox.Input` pair, with
+`ComboboxClear` and `ComboboxTrigger` positioned inside the group as
+inline controls. Its `className` styles the field container — size the
+field with it (e.g. `className="w-64"`).
+
+### ComboboxContent
+
+Renders through `Combobox.Portal` → `Combobox.Positioner` →
+`Combobox.Popup`, mirroring `Select`.
+
+| Prop                        | Type                        | Default    |
+| --------------------------- | --------------------------- | ---------- |
+| `side` / `align`            | positioner placement        | `"bottom"` / `"start"` |
+| `sideOffset` / `alignOffset`| `number`                    | `6` / `0`  |
+| `anchor`                    | element ref to anchor to    | trigger    |
+
+### ComboboxChips, ComboboxChip, ComboboxChipsInput
+
+Multi-select chips: `ComboboxChips` is the bordered container (attach
+the `useComboboxAnchor` ref here), `ComboboxChip` renders one selected
+item with a built-in remove button, and `ComboboxChipsInput` is the
+inline filter input.
+
+| Prop (`ComboboxChip`) | Type      | Default |
+| --------------------- | --------- | ------- |
+| `showRemove`          | `boolean` | `true`  |
+
+### ComboboxItem, ComboboxGroup, ComboboxLabel, ComboboxCollection, ComboboxEmpty, ComboboxSeparator, ComboboxValue, ComboboxTrigger
+
+Styled Base UI parts. `useComboboxAnchor()` is exported as a convenience
+ref hook for the chips anchoring pattern.

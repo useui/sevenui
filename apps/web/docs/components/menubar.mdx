@@ -93,34 +93,45 @@ export default function MenubarDemo() {
 
 ## API reference
 
-Built on the [Base UI Menubar](https://base-ui.com/react/components/menubar)
-component, which coordinates a row of individual
-[Base UI Menu](https://base-ui.com/react/components/menu) instances — all
-their props apply.
+### Menubar
 
-- `Menubar` (the flat component this file's `Menubar` wraps) is not a
-  `.Root` — it renders a plain `<div role="menubar">` directly and takes
-  no namespaced parts of its own. Its props are `modal` (defaults to
-  `true`), `disabled`, `orientation` (defaults to `"horizontal"`), and
-  `loopFocus` (defaults to `true`, wrapping arrow-key navigation at the
-  ends of the bar).
-- Each `MenubarMenu` is an ordinary `Menu.Root` from `@base-ui/react/menu`
-  — the same primitive `dropdown-menu` and `context-menu` build on — so
-  menu items share the same data attributes, `closeOnClick` defaults, and
-  checkbox/radio behavior.
-- The menubar coordinates its sibling menus through context: once one menu
-  is open, hovering a different `MenubarTrigger` switches the open menu to
-  it automatically. No `openOnHover` prop is needed (or read) on
-  `MenubarTrigger`.
-- `MenubarTrigger` styles its open state with `data-popup-open` and its
-  pressed state with `data-pressed`, in addition to the usual
-  `data-highlighted` / `data-disabled` attributes shared with menu items.
-- `MenubarContent`'s `Positioner` only exposes `sideOffset` and
-  `alignOffset` — a positioner parented to a menubar trigger automatically
-  defaults to `side="bottom" align="start"`, so there is no `side` / `align`
-  prop to pass.
-- Submenus are composed with `MenubarSub` (which wraps `SubmenuRoot`) plus
-  `MenubarSubTrigger` and `MenubarSubContent`, identical to dropdown-menu.
+Extends the
+[Base UI Menubar](https://base-ui.com/react/components/menubar)
+component — not a `.Root`: it renders a plain `<div role="menubar">`
+directly, coordinating a row of individual Menu instances.
+
+| Prop          | Type                         | Default        |
+| ------------- | ---------------------------- | -------------- |
+| `modal`       | `boolean`                    | `true`         |
+| `disabled`    | `boolean`                    | `false`        |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` |
+| `loopFocus`   | `boolean` — arrow keys wrap  | `true`         |
+
+### MenubarMenu
+
+An ordinary `Menu.Root` from `@base-ui/react/menu` — the same primitive
+[Dropdown Menu](/docs/components/dropdown-menu) builds on, so items
+share the same data attributes, `closeOnClick` defaults, and
+checkbox/radio behavior documented there.
+
+### MenubarTrigger
+
+The menubar coordinates sibling menus through context: once one menu is
+open, hovering a different trigger switches the open menu automatically
+— no `openOnHover` prop is needed (or read). Open state styles via
+`data-popup-open`, pressed state via `data-pressed`.
+
+### MenubarContent
+
+The Positioner only exposes `sideOffset` and `alignOffset` — parented to
+a menubar trigger it automatically defaults to `side="bottom"
+align="start"`, so there is no `side`/`align` prop to pass.
+
+### MenubarSub, MenubarSubTrigger, MenubarSubContent, and item parts
+
+Submenus are identical to dropdown-menu's (`SubmenuRoot`-based). Item,
+CheckboxItem, RadioGroup/RadioItem, Label, Separator, and Shortcut
+mirror their dropdown-menu counterparts.
 
 ## Usage guidance
 

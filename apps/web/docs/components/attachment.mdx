@@ -1,0 +1,101 @@
+---
+title: Attachment
+description: Displays file attachments with media previews and actions.
+---
+
+<Component path="attachment/attachment-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/attachment
+```
+
+## Usage
+
+```tsx
+import { FileTextIcon } from "lucide-react";
+
+import {
+  Attachment,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentMedia,
+  AttachmentTitle,
+} from "@/components/ui/attachment";
+
+export function ReportAttachment() {
+  return (
+    <Attachment>
+      <AttachmentMedia>
+        <FileTextIcon />
+      </AttachmentMedia>
+      <AttachmentContent>
+        <AttachmentTitle>quarterly-report.pdf</AttachmentTitle>
+        <AttachmentDescription>1.2 MB · PDF</AttachmentDescription>
+      </AttachmentContent>
+    </Attachment>
+  );
+}
+```
+
+Built for chat composers, message threads, and upload lists. Wrap
+multiple attachments in `AttachmentGroup` for a snap-scrolling row. The
+`state` prop drives the upload lifecycle styling: `idle` renders a
+dashed border, `uploading`/`processing` shimmer the title, and `error`
+turns the media and description destructive.
+
+## Examples
+
+### Image cards
+
+`orientation="vertical"` turns attachments into image-first cards —
+suited for photo pickers and gallery uploads.
+
+<Component path="attachment/attachment-image" />
+
+### Actions and upload state
+
+`AttachmentActions` holds buttons that stay clickable above the
+full-card `AttachmentTrigger` (the trigger sits behind them in stacking
+order). Icon-only actions and triggers need `aria-label`s.
+
+<Component path="attachment/attachment-actions" />
+
+## API reference
+
+### Attachment
+
+Extends `div`.
+
+| Prop          | Type                                                          | Default        |
+| ------------- | ------------------------------------------------------------- | -------------- |
+| `size`        | `"default" \| "sm" \| "xs"`                                   | `"default"`    |
+| `orientation` | `"horizontal" \| "vertical"`                                  | `"horizontal"` |
+| `state`       | `"idle" \| "uploading" \| "processing" \| "error" \| "done"`  | `"done"`       |
+
+### AttachmentMedia
+
+Extends `div`.
+
+| Prop      | Type                  | Default  |
+| --------- | --------------------- | -------- |
+| `variant` | `"icon" \| "image"`   | `"icon"` |
+
+`image` expects an `img` child and dims it while uploading; `icon` sizes
+a single icon (or a spinner during uploads).
+
+### AttachmentAction
+
+Extends [Button](/docs/components/button) — all Button props apply.
+Defaults to `variant="ghost"` and `size="icon-xs"`.
+
+### AttachmentTrigger
+
+An invisible full-card `button` (swap the element via the Base UI
+`render` prop, for example `render={<a href="…" />}`). Give it an
+`aria-label` describing the open/preview action.
+
+### AttachmentGroup, AttachmentContent, AttachmentTitle, AttachmentDescription, AttachmentActions
+
+Structural wrappers (`div`/`span`) accepting standard element props.

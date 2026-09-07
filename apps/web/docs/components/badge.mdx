@@ -19,10 +19,36 @@ import { Badge } from "@/components/ui/badge";
 <Badge variant="outline">Badge</Badge>;
 ```
 
+## Examples
+
+### As link
+
+Render the badge as a real anchor via the `render` prop — hover styles
+for links are built into each variant.
+
+<Component path="badge/badge-link" />
+
+### With icon
+
+A direct `svg` child is sized automatically.
+
+<Component path="badge/badge-icon" />
+
+### Processing
+
+<Component path="badge/badge-processing" />
+
 ## API reference
 
-Plain `<span>`; no primitive. SevenUI props:
+### Badge
 
-| Prop      | Type                                                   | Default     |
-| --------- | ------------------------------------------------------ | ----------- |
-| `variant` | `"default" \| "secondary" \| "destructive" \| "outline"` | `"default"` |
+Renders a `span` by default; swap the element with the Base UI `render`
+prop (for example `render={<a href="…" />}` — link hover styles are
+built in).
+
+| Prop      | Type                                                                          | Default     |
+| --------- | ----------------------------------------------------------------------------- | ----------- |
+| `variant` | `"default" \| "secondary" \| "destructive" \| "outline" \| "ghost" \| "link"` | `"default"` |
+| `render`  | `React.ReactElement`                                                          | `span`      |
+
+`badgeVariants` is also exported for styling custom elements.

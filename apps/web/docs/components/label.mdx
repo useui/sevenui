@@ -25,12 +25,15 @@ import { Input } from "@/components/ui/input";
 
 ## API reference
 
-Styled native `<label>` element. Base UI ships no Label primitive; use `FieldLabel` inside a `Field` for automatic validation integration.
+### Label
 
-| Component | Description                    |
-| --------- | ------------------------------ |
-| `Label`   | Styled native `<label>` element. |
+Extends the native `<label>` element. It dims automatically when its
+control is disabled — both as a sibling after the control
+(`peer-disabled`) and with the control nested inside
+(`has-[:disabled]`). Prefer the sibling pattern with `htmlFor`. Base UI
+ships no Label primitive; inside a [Field](/docs/components/field), use
+`FieldLabel` for automatic wiring instead.
 
-| Prop    | Type   | Default | Description                  |
-| ------- | ------ | ------- | ---------------------------- |
-| `htmlFor` | string | —       | ID of the associated input.   |
+| Prop      | Type                                            | Default |
+| --------- | ----------------------------------------------- | ------- |
+| `htmlFor` | `string` — or nest the control inside instead   | —       |

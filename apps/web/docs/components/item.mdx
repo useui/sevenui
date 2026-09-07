@@ -1,0 +1,89 @@
+---
+title: Item
+description: A flexible list item with media, content, and actions.
+---
+
+<Component path="item/item-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/item
+```
+
+## Usage
+
+```tsx
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item";
+
+export function Notification() {
+  return (
+    <Item variant="outline">
+      <ItemMedia variant="icon">{/* icon */}</ItemMedia>
+      <ItemContent>
+        <ItemTitle>Title</ItemTitle>
+        <ItemDescription>Description</ItemDescription>
+      </ItemContent>
+      <ItemActions>{/* buttons */}</ItemActions>
+    </Item>
+  );
+}
+```
+
+Item is a general-purpose content row — for form inputs use
+[Field](/docs/components/field) instead. `ItemHeader` and `ItemFooter`
+span the full width above and below the media/content row.
+
+## Examples
+
+### Variants
+
+<Component path="item/item-variants" />
+
+### Group
+
+`ItemGroup` renders a `role="list"` stack; `ItemSeparator` divides rows.
+An item becomes a link through the `render` prop.
+
+<Component path="item/item-group" />
+
+## API reference
+
+### Item
+
+Renders a `div` by default; swap the element with the Base UI `render`
+prop (for example `render={<a href="…" />}` for link rows).
+
+| Prop      | Type                                  | Default     |
+| --------- | ------------------------------------- | ----------- |
+| `variant` | `"default" \| "outline" \| "muted"`   | `"default"` |
+| `size`    | `"default" \| "sm" \| "xs"`           | `"default"` |
+| `render`  | `React.ReactElement`                  | `div`       |
+
+### ItemMedia
+
+Extends `div`. Aligns itself to the first line when a description is
+present.
+
+| Prop      | Type                                | Default     |
+| --------- | ----------------------------------- | ----------- |
+| `variant` | `"default" \| "icon" \| "image"`    | `"default"` |
+
+`icon` sizes a single icon; `image` renders a rounded, size-aware
+thumbnail; `default` leaves media (avatars etc.) unstyled.
+
+### ItemSeparator
+
+Extends [Separator](/docs/components/separator), fixed to horizontal.
+
+### ItemGroup, ItemContent, ItemTitle, ItemDescription, ItemActions, ItemHeader, ItemFooter
+
+Structural wrappers extending `div` (description renders a `p`). They
+accept standard element props and `className`.

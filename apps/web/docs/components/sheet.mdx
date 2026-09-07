@@ -61,25 +61,40 @@ export default function SheetDemo() {
 }
 ```
 
+## Examples
+
+### Sides
+
+<Component path="sheet/sheet-side" />
+
 ## API reference
 
-Built on the [Base UI Dialog](https://base-ui.com/react/components/dialog)
-primitive — Sheet is a positioned Dialog rather than a distinct primitive.
-Per Base UI's own guidance, an edge panel without swipe gestures is just a
-Dialog pinned to a screen edge; reach for a `drawer` component instead when
-you need gesture-driven dragging.
+### Sheet
 
-- `side` — lives on `SheetContent`, accepts `"top" | "right" | "bottom" |
-  "left"` and defaults to `"right"`; each side has a static Tailwind class
-  pair controlling position, size, and the translate transform it animates
-  from
-- `showCloseButton` — SevenUI addition on `SheetContent`, defaults to
-  `true`; set to `false` to omit the built-in close button
-- All Dialog root props apply since `Sheet` is `SheetPrimitive.Root`:
-  - `modal` — accepts `true | false | 'trap-focus'` and defaults to `true`
-  - `disablePointerDismissal` — defaults to `false`; set it to keep the
-    sheet open on an outside press instead of dismissing it
-  - `onOpenChange` — controlled open state callback
-- No `Viewport` part is used — the Popup is `position: fixed` against a
-  screen edge and slides via the `translate` utilities, animated by
-  `transition-transform`
+Extends the [Base UI Dialog](https://base-ui.com/react/components/dialog)
+Root — Sheet is a positioned Dialog rather than a distinct primitive.
+Per Base UI's own guidance, an edge panel without swipe gestures is just
+a Dialog pinned to a screen edge; reach for
+[Drawer](/docs/components/drawer) when you need gesture-driven dragging.
+
+| Prop                      | Type                            | Default |
+| ------------------------- | ------------------------------- | ------- |
+| `open` / `defaultOpen`    | `boolean`                       | `false` |
+| `onOpenChange`            | `(open: boolean) => void`       | —       |
+| `modal`                   | `true \| false \| "trap-focus"` | `true`  |
+| `disablePointerDismissal` | `boolean`                       | `false` |
+
+### SheetContent
+
+No `Viewport` part is used — the Popup is `position: fixed` against a
+screen edge and slides via translate utilities, animated by
+`transition-transform`.
+
+| Prop              | Type                                     | Default   |
+| ----------------- | ---------------------------------------- | --------- |
+| `side`            | `"top" \| "right" \| "bottom" \| "left"` | `"right"` |
+| `showCloseButton` | `boolean` — built-in ✕                   | `true`    |
+
+### SheetTrigger, SheetClose, SheetHeader, SheetFooter, SheetTitle, SheetDescription, SheetOverlay, SheetPortal
+
+Styled parts; trigger and close accept the `render` prop.

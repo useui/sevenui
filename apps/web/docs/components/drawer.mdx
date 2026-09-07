@@ -55,32 +55,49 @@ export default function DrawerDemo() {
 }
 ```
 
+## Examples
+
+### Snap points
+
+<Component path="drawer/drawer-snap-points" />
+
 ## API reference
 
-Built on the [Base UI Drawer](https://base-ui.com/react/components/drawer)
-primitive — Drawer is a real, standalone Base UI component (not `Dialog`
-composed with the [vaul](https://vaul.emilkowal.ski) library), and is the
-Radix-free replacement for the classic shadcn/vaul drawer.
+### Drawer
 
-- `Drawer.Viewport` is mandatory in the composition — it owns the
-  swipe-gesture engine, and without it swipe-to-dismiss silently does
-  nothing. `Drawer.Content` sits inside the popup, re-enables text
-  selection, and carries the scrollable area.
-- Swipe-to-dismiss is enabled by default, dragging **down**. Change the
-  axis with `swipeDirection` (`"down" | "up" | "left" | "right"`) on the
-  root.
-- All Dialog root props apply since `Drawer` is `DrawerPrimitive.Root`:
-  - `modal` — accepts `true | false | 'trap-focus'` and defaults to `true`
-  - `disablePointerDismissal` — defaults to `false`; set it to keep the
-    drawer open on an outside press instead of dismissing it
-  - `onOpenChange` — controlled open state callback
-- Add `data-base-ui-swipe-ignore` to an element inside the popup to opt it
-  out of swipe handling — interactive elements (buttons, inputs, links)
-  are ignored automatically, which is why dragging the demo's Cancel
-  button does not start a swipe.
-- Snap points (`snapPoints`, `snapPoint`, `defaultSnapPoint`,
-  `onSnapPointChange`, `snapToSequentialPoints`), swipe-to-open via
-  `Drawer.SwipeArea`, and the nested-drawer indent effect
-  (`Drawer.Indent` / `Drawer.IndentBackground`) all exist on the
-  primitive but are not wrapped by this component in v1 — compose
-  `DrawerPrimitive` directly from `@base-ui/react/drawer` for those.
+Extends the [Base UI Drawer](https://base-ui.com/react/components/drawer)
+Root — a real, standalone Base UI component (no
+[vaul](https://vaul.emilkowal.ski)); the Radix-free replacement for the
+classic shadcn/vaul drawer. All Dialog-style root props apply, plus the
+drawer-specific ones:
+
+| Prop                      | Type                                    | Default  |
+| ------------------------- | --------------------------------------- | -------- |
+| `open` / `defaultOpen`    | `boolean`                               | `false`  |
+| `onOpenChange`            | `(open: boolean) => void`               | —        |
+| `swipeDirection`          | `"down" \| "up" \| "left" \| "right"`   | `"down"` |
+| `snapPoints`              | `number[]` — resting heights (0–1)      | —        |
+| `showSwipeHandle`         | `boolean` — grab handle in the content  | `false`  |
+| `modal`                   | `true \| false \| "trap-focus"`         | `true`   |
+| `disablePointerDismissal` | `boolean`                               | `false`  |
+
+### DrawerContent
+
+Includes the mandatory `Drawer.Viewport` internally — it owns the
+swipe-gesture engine (without it, swipe-to-dismiss silently does
+nothing). Add `data-base-ui-swipe-ignore` to an element inside to opt it
+out of swipe handling; interactive elements (buttons, inputs, links) are
+ignored automatically.
+
+### DrawerSwipeHandle
+
+The grab handle bar — rendered automatically when `showSwipeHandle` is
+set on the root, or compose it manually.
+
+### DrawerTrigger, DrawerClose, DrawerHeader, DrawerFooter, DrawerTitle, DrawerDescription, DrawerOverlay, DrawerPortal
+
+Styled parts; trigger and close accept the `render` prop. Advanced
+primitive features (`snapPoint`/`onSnapPointChange` control,
+`Drawer.SwipeArea` swipe-to-open, the nested-drawer
+`Drawer.Indent` effect) remain available by composing
+`@base-ui/react/drawer` directly.

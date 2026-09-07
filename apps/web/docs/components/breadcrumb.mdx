@@ -40,18 +40,30 @@ import {
 </Breadcrumb>;
 ```
 
+## Examples
+
+### Custom separator
+
+`BreadcrumbSeparator` renders a chevron by default; pass children to
+swap it.
+
+<Component path="breadcrumb/breadcrumb-separator" />
+
 ## API reference
 
-Semantic navigation structure using `<nav>`, `<ol>`, and `<li>` elements with aria attributes. SevenUI exports:
+### BreadcrumbLink
 
-| Component                | Description                                                              |
-| ----------------------- | ----------------------------------------------------------------------- |
-| `Breadcrumb`           | Container with `aria-label="breadcrumb"` on `<nav>`.                    |
-| `BreadcrumbList`       | Ordered list container with flex layout and gap.                        |
-| `BreadcrumbItem`       | List item wrapper with inline-flex layout.                              |
-| `BreadcrumbLink`       | Link element with hover transition color effect.                        |
-| `BreadcrumbPage`       | Current page indicator with `role="link"` and `aria-current="page"`.   |
-| `BreadcrumbSeparator`  | Visual separator between items (default slash).                         |
-| `BreadcrumbEllipsis`   | Ellipsis indicator for skipped items.                                   |
+Renders an `a` by default; swap the element with the Base UI `render`
+prop to integrate a router link, e.g.
+`render={<Link href="/docs" />}`.
 
-All components accept standard HTML props and an optional `className` override.
+| Prop     | Type                 | Default |
+| -------- | -------------------- | ------- |
+| `render` | `React.ReactElement` | `a`     |
+
+### Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage, BreadcrumbSeparator, BreadcrumbEllipsis
+
+Semantic wrappers extending `nav` (labeled "breadcrumb"), `ol`, `li`,
+and `span`. `BreadcrumbPage` marks the current page with
+`aria-current="page"`; the separator (chevron by default) and ellipsis
+take custom children and are hidden from assistive tech.

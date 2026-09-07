@@ -43,35 +43,47 @@ export default function NavigationMenuDemo() {
 
 ## API reference
 
-Built on the [Base UI Navigation Menu](https://base-ui.com/react/components/navigation-menu)
-primitive — all its props apply.
+### NavigationMenu
 
-- `value` / `defaultValue` / `onValueChange`, `delay` (default **50ms**),
-  `closeDelay` (default 50ms), and `orientation` all live on
-  `NavigationMenu` (the Root) — unlike our other overlay components, where
-  hover-open timing lives on the trigger.
-- Every panel shares **one** popup. Each `NavigationMenuContent` portals
-  its content into the single Viewport inside the shared Popup; the
-  trigger imperatively measures the incoming panel and writes
-  `--popup-width` / `--popup-height` onto the Popup and
-  `--positioner-width` / `--positioner-height` onto the Positioner as it
-  switches, so the popup resizes and slides to the active trigger instead
-  of each item rendering its own popup.
-- Content cross-fades directionally as the active item changes, driven by
-  `data-activation-direction` (`left` / `right` / `up` / `down`) combined
-  with `data-starting-style` / `data-ending-style`.
-- `NavigationMenuLink` renders a real `<a>`. `closeOnClick` defaults to
-  `false` and `active` defaults to `false` (reflected as `data-active`).
-  Compose framework routers with the `render` prop, e.g.
-  `<NavigationMenuLink render={<Link href="/docs" />} />`.
-- The primitive's `Content` accepts `keepMounted` to keep panel markup in
-  the DOM (and in SSR output) for crawlers even while closed — compose it
-  directly when that matters, since `NavigationMenuContent` here doesn't
-  set it by default.
-- For panels taller than the viewport, cap height with
-  `max-h-[var(--available-height)]` and prefer `ScrollArea` over native
-  scrollbars inside the panel.
-- The Positioner needs an invisible `before:` hover bridge spanning the
-  `sideOffset` gap between the trigger row and the popup — without it,
-  moving the pointer from a trigger down into the popup crosses a gap with
-  no hoverable element and the menu closes.
+Extends the
+[Base UI Navigation Menu](https://base-ui.com/react/components/navigation-menu)
+Root. Hover-open timing lives **here**, unlike our other overlays where
+it lives on the trigger.
+
+| Prop                     | Type                         | Default        |
+| ------------------------ | ---------------------------- | -------------- |
+| `value` / `defaultValue` | `string`                     | —              |
+| `onValueChange`          | `(value) => void`            | —              |
+| `delay` / `closeDelay`   | `number`                     | `50` (ms) each |
+| `orientation`            | `"horizontal" \| "vertical"` | `"horizontal"` |
+
+### NavigationMenuContent
+
+Every panel shares **one** popup: each content portals into the single
+Viewport inside the shared Popup, and the trigger writes
+`--popup-width`/`--popup-height` (and positioner equivalents) as it
+switches, so the popup resizes and slides to the active trigger. Content
+cross-fades directionally via `data-activation-direction`
+(`left`/`right`/`up`/`down`) combined with
+`data-starting-style`/`data-ending-style`. The primitive's `keepMounted`
+(for SSR/crawler-visible closed panels) is not set by default — compose
+the primitive directly when that matters. For tall panels, cap height
+with `max-h-[var(--available-height)]` and prefer
+[Scroll Area](/docs/components/scroll-area) inside.
+
+### NavigationMenuLink
+
+Renders a real `<a>`. Compose framework routers with the `render` prop:
+`<NavigationMenuLink render={<Link href="/docs" />} />`.
+
+| Prop           | Type                            | Default |
+| -------------- | ------------------------------- | ------- |
+| `closeOnClick` | `boolean`                       | `false` |
+| `active`       | `boolean` — sets `data-active`  | `false` |
+
+### NavigationMenuList, NavigationMenuItem, NavigationMenuTrigger, NavigationMenuPositioner, NavigationMenuIndicator
+
+Styled parts. The Positioner carries an invisible `before:` hover bridge
+spanning the `sideOffset` gap — without it, moving the pointer from a
+trigger into the popup would cross a non-hoverable gap and close the
+menu.

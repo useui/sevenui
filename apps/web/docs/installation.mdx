@@ -31,6 +31,21 @@ work without the namespace config:
 npx shadcn@latest add https://sevenui.dev/r/button.json
 ```
 
+## Animations
+
+Overlay components (dialog, menus, popover, select, …) animate through
+SevenUI's own enter/exit utilities (`animate-in`, `fade-in-0`,
+`zoom-in-95`, `slide-in-from-*`, …) — no animation package is involved.
+The `@utility` and `@keyframes` definitions live in a single
+`animations` registry item that every animated component depends on, so
+the shadcn CLI merges them into your stylesheet automatically. Speed and
+easing compose with Tailwind core's `duration-*` / `ease-*` utilities.
+
+If you copy component source manually instead of using the CLI, copy the
+`css` block from `https://sevenui.dev/r/animations.json` into your
+global stylesheet too — the accordion additionally ships its own
+`accordion-down` / `accordion-up` keyframes in its item the same way.
+
 ## Blocks
 
 Blocks are ready-made sections — login forms, heroes, pricing tables —

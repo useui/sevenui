@@ -34,6 +34,10 @@ export default function TabsDemo() {
 
 ## Examples
 
+### Line variant
+
+<Component path="tabs/tabs-line" />
+
 ### With animated indicator
 
 <Component path="tabs/tabs-indicator" />
@@ -43,28 +47,53 @@ active tab via the `--active-tab-left`/`--active-tab-width` CSS variables.
 
 ## API reference
 
-Built on the [Base UI Tabs](https://base-ui.com/react/components/tabs)
-primitive — all its props apply.
+### Tabs
 
-- `defaultValue` on `Tabs` (the Root) defaults to `0`, selecting the first
-  tab. Pass `value={null}` to deselect all tabs. `onValueChange(value,
-  eventDetails)` fires on selection change; `orientation` defaults to
-  `"horizontal"`.
-- Selected-tab styling hooks on `data-active` (presence). Base UI 1.7 Tabs
-  has no `data-selected` and no `data-state` attribute.
-- Although `TabsTrigger` renders a native `<button>`, a disabled trigger
-  stays focusable and receives `aria-disabled="true"` instead of the native
-  `disabled` attribute — style disabled state with `data-[disabled]:`, not
-  the `disabled:` Tailwind variant.
-- `activateOnFocus` on `TabsList` defaults to `false`: arrow keys move focus
-  between tabs and Enter/Space activates the focused tab. Set it to `true`
-  for automatic activation on focus. `loopFocus` (default `true`) controls
-  whether arrow-key navigation wraps at the ends of the list.
-- Render a tab as a link (or any other element) via the `render` prop, e.g.
-  `<TabsTrigger render={<a href="/account" />} nativeButton={false} />`.
-- `Tabs.Indicator` — an animated bar that tracks the active tab via
-  `--active-tab-left`/`--active-tab-width` (and the vertical-orientation
-  equivalents) CSS variables — is available from the Base UI primitive but
-  not wrapped by this registry. Compose it directly:
-  `import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"` and render
-  `<TabsPrimitive.Indicator>` inside `TabsList`.
+Extends the [Base UI Tabs](https://base-ui.com/react/components/tabs)
+Root — all its props apply. Selected-tab styling hooks on `data-active`
+(presence); Base UI 1.7 Tabs has no `data-selected` and no `data-state`.
+
+| Prop                     | Type                            | Default        |
+| ------------------------ | ------------------------------- | -------------- |
+| `value` / `defaultValue` | tab value (`null` deselects all) | `0` (first tab) |
+| `onValueChange`          | `(value, eventDetails) => void` | —              |
+| `orientation`            | `"horizontal" \| "vertical"`    | `"horizontal"` |
+
+### TabsList
+
+| Prop              | Type                                    | Default     |
+| ----------------- | --------------------------------------- | ----------- |
+| `variant`         | `"default" \| "line"` — pill or underline style | `"default"` |
+| `activateOnFocus` | `boolean` — activate on arrow-key focus | `false`     |
+| `loopFocus`       | `boolean` — arrow keys wrap             | `true`      |
+
+With the default `activateOnFocus: false`, arrow keys move focus and
+Enter/Space activates.
+
+### TabsTrigger
+
+Renders a native `<button>`, but a disabled trigger stays focusable and
+receives `aria-disabled="true"` instead of the native `disabled`
+attribute — style disabled state with `data-disabled:`, not the
+`disabled:` Tailwind variant.
+
+| Prop           | Type                                                     | Default |
+| -------------- | -------------------------------------------------------- | ------- |
+| `value`        | tab value (required)                                     | —       |
+| `disabled`     | `boolean`                                                | `false` |
+| `render`       | `React.ReactElement` — e.g. `render={<a href="/account" />}` | `button` |
+| `nativeButton` | `boolean` — set `false` when `render` isn't a button     | `true`  |
+
+### TabsContent
+
+The panel for one tab `value`; unselected panels are hidden.
+
+| Prop          | Type                                              | Default |
+| ------------- | ------------------------------------------------- | ------- |
+| `value`       | tab value (required)                              | —       |
+| `keepMounted` | `boolean` — keep inactive panel markup in the DOM | `false` |
+
+The primitive's animated `Tabs.Indicator` (tracking the active tab via
+`--active-tab-left`/`--active-tab-width` CSS variables) is not wrapped —
+the "animated indicator" example above composes
+`@base-ui/react/tabs` directly inside `TabsList`.

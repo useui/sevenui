@@ -84,30 +84,57 @@ export default function DropdownMenuDemo() {
 
 ## API reference
 
-Built on the [Base UI Menu](https://base-ui.com/react/components/menu)
-primitive — all its props apply.
+### DropdownMenu
 
-- `modal` / `loopFocus` / `closeParentOnEsc` — live on `DropdownMenu` (the
-  Root). `modal` defaults to `true`; `loopFocus` (not `loop`) controls
-  whether arrow-key navigation wraps at the ends of the menu and defaults
-  to `true`; `closeParentOnEsc` (not `closeParent`) controls whether Escape
-  inside a submenu also closes the parent menu.
-- `openOnHover` / `delay` — live on `DropdownMenuTrigger` (and
-  `DropdownMenuSubTrigger` for submenus), not the Root. `delay` defaults
-  to 100ms once hover-opening is enabled.
-- `closeOnClick` defaults differ by part: `true` on `DropdownMenuItem`, but
-  `false` on `DropdownMenuCheckboxItem` and `DropdownMenuRadioItem` — so
-  toggling a checkbox or picking a radio option keeps the menu open.
-- Only `DropdownMenuTrigger` renders a native `<button>`. Item,
-  CheckboxItem, RadioItem, and SubTrigger all render `<div>` elements, so
-  disabled styling is applied via the `data-disabled` attribute rather
-  than the `disabled` HTML attribute.
-- `DropdownMenuRadioItem` requires a `value` prop.
-- `DropdownMenuLabel` must be placed inside `DropdownMenuGroup` or
-  `DropdownMenuRadioGroup` — Base UI wires the group's `aria-labelledby`
-  to it and throws otherwise.
-- Submenus are composed with `DropdownMenuSub` (which wraps `SubmenuRoot`,
-  not a nested `DropdownMenu` root) plus `DropdownMenuSubTrigger` and
-  `DropdownMenuSubContent`. Submenu positioning is automatic and
-  RTL-aware — it defaults to `side="inline-end" align="start"` and should
-  not be overridden with a hardcoded `side="right"`.
+Extends the [Base UI Menu](https://base-ui.com/react/components/menu)
+Root — all its props apply.
+
+| Prop                   | Type                                          | Default |
+| ---------------------- | --------------------------------------------- | ------- |
+| `open` / `defaultOpen` | `boolean`                                     | `false` |
+| `onOpenChange`         | `(open: boolean) => void`                     | —       |
+| `modal`                | `boolean`                                     | `true`  |
+| `loopFocus`            | `boolean` — arrow keys wrap (not `loop`)      | `true`  |
+| `closeParentOnEsc`     | `boolean` — Esc in a submenu closes the parent | —      |
+
+### DropdownMenuTrigger
+
+The only part rendering a native `<button>`; accepts the `render` prop.
+Hover-opening lives here (and on `DropdownMenuSubTrigger`), not the
+Root.
+
+| Prop          | Type      | Default    |
+| ------------- | --------- | ---------- |
+| `openOnHover` | `boolean` | `false`    |
+| `delay`       | `number`  | `100` (ms) |
+
+### DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioItem
+
+All render `<div>` elements — disabled styling comes from the
+`data-disabled` attribute, not the `disabled` HTML attribute.
+`closeOnClick` defaults differ: `true` on `Item`, `false` on
+`CheckboxItem`/`RadioItem`, so toggling options keeps the menu open.
+
+| Prop                         | Type                             | Default     |
+| ---------------------------- | -------------------------------- | ----------- |
+| `variant` (Item)             | `"default" \| "destructive"`     | `"default"` |
+| `inset`                      | `boolean` — align with checkables | `false`    |
+| `checked` / `onCheckedChange` (CheckboxItem) | `boolean` / callback | —          |
+| `value` (RadioItem)          | `string` (required)              | —           |
+
+### DropdownMenuLabel, DropdownMenuGroup, DropdownMenuRadioGroup
+
+`DropdownMenuLabel` must be placed inside `DropdownMenuGroup` or
+`DropdownMenuRadioGroup` — Base UI wires the group's `aria-labelledby`
+to it and throws otherwise. `DropdownMenuRadioGroup` takes
+`value`/`onValueChange`.
+
+### DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent
+
+Submenus wrap `SubmenuRoot` (not a nested root). Positioning is
+automatic and RTL-aware — it defaults to `side="inline-end"
+align="start"`; don't override with a hardcoded `side="right"`.
+
+### DropdownMenuContent, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuPortal
+
+Styled parts; the shortcut is a plain `span` for trailing hints.

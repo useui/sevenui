@@ -5,10 +5,11 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "blume";
 
 // Blume's MDX pipeline uses its own processor (no rehype hook), so outbound
-// links get rel="noopener noreferrer" in a post-build pass over the emitted
-// HTML instead. Anchors that already declare a rel are left untouched.
+// links get target="_blank" rel="noopener noreferrer" in a post-build pass
+// over the emitted HTML instead. Anchors that already declare a rel or
+// target are left untouched.
 const EXTERNAL_ANCHOR =
-  /<a\s(?![^>]*\brel=)(?=[^>]*\bhref="https?:\/\/)(?![^>]*\bhref="https?:\/\/sevenui\.dev)/gu;
+  /<a\s(?![^>]*\brel=)(?![^>]*\btarget=)(?=[^>]*\bhref="https?:\/\/)(?![^>]*\bhref="https?:\/\/sevenui\.dev)/gu;
 
 const addExternalLinkRel = async (dir: string): Promise<void> => {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
@@ -19,7 +20,7 @@ const addExternalLinkRel = async (dir: string): Promise<void> => {
       const html = await readFile(path, "utf-8");
       const patched = html.replace(
         EXTERNAL_ANCHOR,
-        '<a rel="noopener noreferrer" ',
+        '<a target="_blank" rel="noopener noreferrer" ',
       );
       if (patched !== html) {
         await writeFile(path, patched);
@@ -81,10 +82,13 @@ export default defineConfig({
             "/components/alert",
             "/components/alert-dialog",
             "/components/aspect-ratio",
+            "/components/attachment",
             "/components/avatar",
             "/components/badge",
             "/components/breadcrumb",
+            "/components/bubble",
             "/components/button",
+            "/components/button-group",
             "/components/calendar",
             "/components/card",
             "/components/carousel",
@@ -95,23 +99,32 @@ export default defineConfig({
             "/components/command",
             "/components/context-menu",
             "/components/dialog",
+            "/components/direction",
             "/components/drawer",
             "/components/dropdown-menu",
+            "/components/empty",
             "/components/field",
             "/components/form",
             "/components/form-rhf",
             "/components/hover-card",
             "/components/input",
+            "/components/input-group",
             "/components/input-otp",
+            "/components/item",
             "/components/kbd",
             "/components/label",
+            "/components/marker",
             "/components/menubar",
+            "/components/message",
+            "/components/message-scroller",
             "/components/meter",
+            "/components/native-select",
             "/components/navigation-menu",
             "/components/number-field",
             "/components/pagination",
             "/components/popover",
             "/components/progress",
+            "/components/questionnaire",
             "/components/radio-group",
             "/components/resizable",
             "/components/scroll-area",

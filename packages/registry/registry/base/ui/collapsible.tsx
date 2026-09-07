@@ -1,22 +1,27 @@
 "use client";
 
-import * as React from "react";
 import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible";
+import { cn } from "cn";
 
-import { cn } from "@/registry/base/lib/utils";
+function Collapsible({ ...props }: CollapsiblePrimitive.Root.Props) {
+  return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />;
+}
 
-const Collapsible = CollapsiblePrimitive.Root;
-
-const CollapsibleTrigger = CollapsiblePrimitive.Trigger;
+function CollapsibleTrigger({ ...props }: CollapsiblePrimitive.Trigger.Props) {
+  return (
+    <CollapsiblePrimitive.Trigger data-slot="collapsible-trigger" {...props} />
+  );
+}
 
 function CollapsibleContent({
   className,
   ...props
-}: React.ComponentProps<typeof CollapsiblePrimitive.Panel>) {
+}: CollapsiblePrimitive.Panel.Props) {
   return (
     <CollapsiblePrimitive.Panel
+      data-slot="collapsible-content"
       className={cn(
-        "h-[var(--collapsible-panel-height)] overflow-hidden transition-[height] duration-200 ease-out data-[ending-style]:h-0 data-[starting-style]:h-0 [&[hidden]:not([hidden='until-found'])]:hidden",
+        "overflow-hidden data-open:animate-collapsible-down data-closed:animate-collapsible-up",
         className,
       )}
       {...props}

@@ -14,11 +14,34 @@ npx shadcn@latest add @sevenui/kbd
 ## Usage
 
 ```tsx
-import { Kbd } from "@/components/ui/kbd";
+import { Kbd, KbdGroup } from "@/components/ui/kbd";
 
-<Kbd>⌘K</Kbd>;
+<KbdGroup>
+  <Kbd>⌘</Kbd>
+  <Kbd>K</Kbd>
+</KbdGroup>;
 ```
+
+## Examples
+
+### In a button
+
+<Component path="kbd/kbd-button" />
+
+### In an input
+
+<Component path="kbd/kbd-input" />
+
+### In a tooltip
+
+Keys invert automatically on the dark tooltip surface.
+
+<Component path="kbd/kbd-tooltip" />
 
 ## API reference
 
-Plain `<kbd>`; no primitive. No props beyond `<kbd>`.
+### Kbd and KbdGroup
+
+Extend the native `<kbd>` element — no props beyond it. `Kbd` renders a
+single key (it inverts automatically inside tooltips); `KbdGroup` lays
+out a key combination with tight spacing.

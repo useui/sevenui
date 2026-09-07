@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Form as FormPrimitive } from "@base-ui/react/form";
 
-import { cn } from "@/registry/base/lib/utils";
+import { cn } from "cn";
 
 function Form({
   className,

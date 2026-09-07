@@ -19,9 +19,37 @@ import { Input } from "@/components/ui/input";
 <Input type="email" placeholder="name@example.com" />;
 ```
 
+## Examples
+
+### File
+
+<Component path="input/input-file" />
+
+### Required
+
+<Component path="input/input-required" />
+
+### Disabled
+
+<Component path="input/input-disabled" />
+
+### Invalid
+
+<Component path="input/input-invalid" />
+
 ## API reference
 
-Built on the [Base UI Input](https://base-ui.com/react/components/input)
-primitive — all its props apply. The component automatically responds to invalid
-field state through the `data-[invalid]` attribute, styling the border and ring
-in destructive colors for Field integration.
+### Input
+
+Extends the [Base UI Input](https://base-ui.com/react/components/input)
+primitive — all native `input` props apply.
+
+| Prop           | Type                                          | Default  |
+| -------------- | --------------------------------------------- | -------- |
+| `type`         | `"text" \| "email" \| "file" \| "password" \| …` | `"text"` |
+| `disabled`     | `boolean`                                     | `false`  |
+| `required`     | `boolean`                                     | `false`  |
+| `aria-invalid` | `boolean` — destructive border and ring       | —        |
+
+Inside a [Field](/docs/components/field), invalid state is wired
+automatically.

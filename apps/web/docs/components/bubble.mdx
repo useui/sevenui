@@ -1,0 +1,82 @@
+---
+title: Bubble
+description: Chat message bubbles for conversational interfaces.
+---
+
+<Component path="bubble/bubble-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/bubble
+```
+
+## Usage
+
+```tsx
+import { Bubble, BubbleContent } from "@/components/ui/bubble";
+
+export function Reply() {
+  return (
+    <Bubble align="end">
+      <BubbleContent>Yes — see you at 3pm.</BubbleContent>
+    </Bubble>
+  );
+}
+```
+
+Bubble is scoped to the visible message surface. Pair it with
+[Message](/docs/components/message) for row layout (avatar, header,
+footer) and `BubbleGroup` for consecutive bubbles from one sender. Make
+a bubble interactive by rendering its content as a real element:
+`<BubbleContent render={<button />}>`.
+
+## Examples
+
+### Variants
+
+The `ghost` variant drops the background, padding, and max-width — meant
+for assistant/AI content that should span the full column.
+
+<Component path="bubble/bubble-variants" />
+
+### Reactions
+
+`BubbleReactions` overlaps the bubble edge; position it with `side` and
+`align`.
+
+<Component path="bubble/bubble-reactions" />
+
+## API reference
+
+### Bubble
+
+Extends `div`.
+
+| Prop      | Type                                                                                       | Default     |
+| --------- | ------------------------------------------------------------------------------------------ | ----------- |
+| `variant` | `"default" \| "secondary" \| "muted" \| "tinted" \| "outline" \| "ghost" \| "destructive"` | `"default"` |
+| `align`   | `"start" \| "end"`                                                                         | `"start"`   |
+
+### BubbleContent
+
+The message surface. Supports the Base UI `render` prop to become a
+`button` or `a` for interactive bubbles (hover and focus styles are
+built in).
+
+| Prop     | Type                 | Default |
+| -------- | -------------------- | ------- |
+| `render` | `React.ReactElement` | `div`   |
+
+### BubbleReactions
+
+Extends `div`. Absolutely positioned over the bubble's edge.
+
+| Prop    | Type                  | Default    |
+| ------- | --------------------- | ---------- |
+| `side`  | `"top" \| "bottom"`   | `"bottom"` |
+| `align` | `"start" \| "end"`    | `"end"`    |
+
+### BubbleGroup
+
+Extends `div`. Stacks consecutive bubbles with tight spacing.

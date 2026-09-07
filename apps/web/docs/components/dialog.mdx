@@ -63,21 +63,72 @@ export default function DialogDemo() {
 
 ## API reference
 
-Built on the [Base UI Dialog](https://base-ui.com/react/components/dialog)
-primitive — all its props apply.
+### Dialog
 
-- `modal` — lives on `Dialog` (the Root), accepts `true | false | 'trap-focus'`
-  and defaults to `true`
-- `disablePointerDismissal` — lives on `Dialog` (the Root), defaults to
-  `false`; set it to keep the dialog open on an outside press instead of
-  dismissing it (Base UI has no `dismissible` prop)
-- `initialFocus` / `finalFocus` — pass through `DialogContent` to the
-  underlying Popup to control where focus lands on open and where it
-  returns to on close
-- `showCloseButton` — SevenUI addition on `DialogContent`, defaults to
-  `true`; set to `false` to omit the built-in close button
-- Nested dialogs — a dialog with another dialog open inside it exposes
-  `data-nested-dialog-open` on its Popup and the `--nested-dialogs` CSS
-  variable, useful for dimming or scaling background dialogs
-- Content is centered by a `Dialog.Viewport` — long content scrolls the
-  viewport, not the page
+Extends the [Base UI Dialog](https://base-ui.com/react/components/dialog)
+Root — all its props apply. Base UI has no `dismissible` prop; use
+`disablePointerDismissal` instead.
+
+| Prop                       | Type                                        | Default |
+| -------------------------- | ------------------------------------------- | ------- |
+| `open` / `defaultOpen`     | `boolean`                                   | `false` |
+| `onOpenChange`             | `(open, eventDetails) => void`              | —       |
+| `onOpenChangeComplete`     | fires after animations finish               | —       |
+| `modal`                    | `true \| false \| "trap-focus"`             | `true`  |
+| `disablePointerDismissal`  | `boolean` — outside press keeps it open     | `false` |
+| `actionsRef`               | ref with imperative `close()`/`unmount()`   | —       |
+| `handle`                   | `Dialog.Handle` — pairs with detached triggers | —    |
+| `triggerId` / `defaultTriggerId` | `string \| null` — which trigger opened it | — |
+
+### Detached triggers (createHandle)
+
+The primitive's
+[`Dialog.createHandle()`](https://base-ui.com/react/components/dialog#detached-triggers)
+connects triggers and a dialog that are **not** co-located in the tree:
+create a handle, pass it to any number of `DialogTrigger`s (optionally
+with a typed `payload` and `id`) and to the `Dialog` root. The root's
+children can be a render function receiving `{ payload }`, so one
+dialog renders trigger-specific content. Our wrappers pass these props
+straight through:
+
+```tsx
+import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
+
+const editDialog = DialogPrimitive.createHandle<{ id: string }>();
+
+<DialogTrigger handle={editDialog} payload={{ id: "42" }} render={<Button>Edit</Button>} />
+// ...anywhere else in the app:
+<Dialog handle={editDialog}>{/* content */}</Dialog>
+```
+
+### DialogContent
+
+Content is centered by a `Dialog.Viewport` — long content scrolls the
+viewport, not the page. A dialog with another dialog open inside it
+exposes `data-nested-dialog-open` on its Popup and the
+`--nested-dialogs` CSS variable, useful for dimming or scaling
+background dialogs.
+
+| Prop                        | Type                     | Default |
+| --------------------------- | ------------------------ | ------- |
+| `showCloseButton`           | `boolean` — built-in ✕   | `true`  |
+| `initialFocus` / `finalFocus` | focus target on open/close | —     |
+
+### DialogFooter
+
+Extends `div` — the muted footer bar.
+
+| Prop              | Type                                     | Default |
+| ----------------- | ---------------------------------------- | ------- |
+| `showCloseButton` | `boolean` — appends an outline Close button | `false` |
+
+### DialogTrigger, DialogClose, DialogHeader, DialogTitle, DialogDescription, DialogOverlay, DialogPortal
+
+Styled Base UI parts. Trigger (a `button`; also takes `handle` /
+`payload` / `id` for detached use) and Close accept the `render` prop
+for custom elements (e.g. `render={<Button />}`). `DialogPortal` takes
+`container` and `keepMounted` (default `false`); `DialogOverlay` is the
+Backdrop — nested dialogs hide the parent's backdrop automatically
+(`forceRender` on the primitive overrides that). Title renders an
+`<h2>`, Description a `<p>` — keep both for accessible labeling, or
+render them `sr-only`.

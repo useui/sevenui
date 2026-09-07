@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Toolbar as ToolbarPrimitive } from "@base-ui/react/toolbar";
 
-import { cn } from "@/registry/base/lib/utils";
+import { cn } from "cn";
 
 function Toolbar({
   className,

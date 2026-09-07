@@ -33,16 +33,51 @@ import {
 </Card>;
 ```
 
+## Examples
+
+### Login form
+
+`CardAction` places the "Sign up" button in the header's top-right
+corner.
+
+<Component path="card/card-login" />
+
+### Stats
+
+Compact metric cards using `size="sm"` with trend badges as header
+actions.
+
+<Component path="card/card-stats" />
+
+### With image
+
+A first-child image renders edge-to-edge with rounded top corners.
+
+<Component path="card/card-image" />
+
+### Settings
+
+<Component path="card/card-notifications" />
+
+### Project
+
+<Component path="card/card-project" />
+
 ## API reference
 
-Plain `<div>` elements with semantic layout. SevenUI exports:
+### Card
 
-| Component        | Description                                      |
-| ---------------- | ------------------------------------------------ |
-| `Card`           | Container element with border, shadow, and gap. |
-| `CardHeader`     | Header section with grid layout.                 |
-| `CardTitle`      | Title text with semibold weight.                 |
-| `CardDescription` | Subtitle text in muted foreground color.        |
-| `CardAction`     | Right-aligned action element.                    |
-| `CardContent`    | Main content area with horizontal padding.       |
-| `CardFooter`     | Footer section with flex layout.                 |
+Extends `div`. The container also handles edge-to-edge images: an `img`
+as first or last child gets rounded corners and no padding.
+
+| Prop   | Type                  | Default     |
+| ------ | --------------------- | ----------- |
+| `size` | `"default" \| "sm"`   | `"default"` |
+
+`sm` tightens the internal spacing for compact cards.
+
+### CardHeader, CardTitle, CardDescription, CardAction, CardContent, CardFooter
+
+Structural wrappers extending `div`. `CardHeader` switches to a
+two-column grid when a `CardAction` is present, placing the action in
+the top-right corner.

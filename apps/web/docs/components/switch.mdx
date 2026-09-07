@@ -25,7 +25,18 @@ import { Label } from "@/components/ui/label";
 
 ## API reference
 
-Built on the [Base UI Switch](https://base-ui.com/react/components/switch)
-primitive — all its props apply. The component supports the `uncheckedValue`
-prop for form submission and fires the `onCheckedChange` callback with the
-new checked state on user interaction.
+### Switch
+
+Extends the
+[Base UI Switch](https://base-ui.com/react/components/switch) Root — all
+its props apply: `checked`/`defaultChecked`, `onCheckedChange`,
+`name`/`value` and `uncheckedValue` for form submission. The thumb is
+built in.
+
+| Prop                         | Type                         | Default     |
+| ---------------------------- | ---------------------------- | ----------- |
+| `size`                       | `"default" \| "sm"`          | `"default"` |
+| `checked` / `defaultChecked` | `boolean`                    | `false`     |
+| `onCheckedChange`            | `(checked: boolean) => void` | —           |
+| `disabled`                   | `boolean`                    | `false`     |
+| `name` / `value`             | `string` — form submission   | —           |

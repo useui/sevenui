@@ -22,16 +22,27 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 </Alert>;
 ```
 
+## Examples
+
+### With action
+
+`AlertAction` pins a control — a dismiss button, an undo — to the
+alert's top-right corner.
+
+<Component path="alert/alert-action" />
+
 ## API reference
 
-Plain `<div>` elements with grid layout and semantic alert role. SevenUI exports:
+### Alert
 
-| Component         | Description                                    |
-| ----------------- | ---------------------------------------------- |
-| `Alert`           | Container with grid layout and alert role.     |
-| `AlertTitle`      | Title text with medium weight.                 |
-| `AlertDescription` | Description text in muted foreground color.   |
+Extends `div` with `role="alert"`. A direct `svg` child becomes the
+leading icon spanning both text rows.
 
-| Prop      | Type                              | Default     |
-| --------- | --------------------------------- | ----------- |
-| `variant` | `"default" \| "destructive"`      | `"default"` |
+| Prop      | Type                            | Default     |
+| --------- | ------------------------------- | ----------- |
+| `variant` | `"default" \| "destructive"`    | `"default"` |
+
+### AlertTitle, AlertDescription, AlertAction
+
+Structural wrappers extending `div`. `AlertAction` pins its content
+(typically a small button) to the alert's top-right corner.

@@ -1,12 +1,14 @@
-import * as React from "react";
+"use client";
 
-import { cn } from "@/registry/base/lib/utils";
+import * as React from "react";
+import { cn } from "cn";
 
 function Label({ className, ...props }: React.ComponentProps<"label">) {
   return (
     <label
+      data-slot="label"
       className={cn(
-        "flex select-none items-center gap-2 text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-50 group-data-[disabled]:pointer-events-none group-data-[disabled]:opacity-50",
+        "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 has-data-disabled:opacity-50",
         className,
       )}
       {...props}

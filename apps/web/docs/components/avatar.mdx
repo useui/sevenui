@@ -22,8 +22,41 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 </Avatar>;
 ```
 
+## Examples
+
+### Group
+
+`AvatarGroup` stacks avatars with overlap and background rings;
+`AvatarGroupCount` renders the overflow counter. Sizes inside the group
+follow the avatars' `size`.
+
+<Component path="avatar/avatar-group" />
+
 ## API reference
 
-Built on the [Base UI Avatar](https://base-ui.com/react/components/avatar)
-primitive — all its props apply. The `Fallback` component supports a `delay`
-prop to control when the fallback is shown (in milliseconds).
+### Avatar
+
+Extends the
+[Base UI Avatar](https://base-ui.com/react/components/avatar) Root —
+all its props apply.
+
+| Prop   | Type                          | Default     |
+| ------ | ----------------------------- | ----------- |
+| `size` | `"default" \| "sm" \| "lg"`   | `"default"` |
+
+### AvatarImage and AvatarFallback
+
+Extend the Base UI Image and Fallback parts. The image swaps to the
+fallback on load failure; `AvatarFallback` accepts a `delay` prop (ms)
+to avoid flashing it while the image loads.
+
+### AvatarBadge
+
+Extends `span`. A status dot pinned to the bottom-right corner, sized
+automatically per avatar `size` (fits a small icon on `default`/`lg`).
+Color it with `className` and label it with `aria-label`.
+
+### AvatarGroup and AvatarGroupCount
+
+Structural wrappers extending `div` — the group overlaps its avatars,
+the count renders a same-sized circle for the "+N" overflow.

@@ -1,0 +1,62 @@
+---
+title: Message
+description: Chat message layout with avatar, content, header, and footer.
+---
+
+<Component path="message/message-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/message
+```
+
+## Usage
+
+```tsx
+import { Bubble, BubbleContent } from "@/components/ui/bubble";
+import {
+  Message,
+  MessageAvatar,
+  MessageContent,
+  MessageHeader,
+} from "@/components/ui/message";
+
+export function IncomingMessage() {
+  return (
+    <Message>
+      <MessageAvatar>{/* avatar */}</MessageAvatar>
+      <MessageContent>
+        <MessageHeader>Emma · 09:41</MessageHeader>
+        <Bubble variant="muted">
+          <BubbleContent>Hello!</BubbleContent>
+        </Bubble>
+      </MessageContent>
+    </Message>
+  );
+}
+```
+
+Message owns the row layout — avatar, alignment, header, and footer —
+while the visible surface is rendered inside it, typically with
+[Bubble](/docs/components/bubble). Wrap conversations in
+[Message Scroller](/docs/components/message-scroller) for scrolling.
+The avatar anchors to the bottom of the row and shifts up when a footer
+is present.
+
+## API reference
+
+### Message
+
+Extends `div`. The row wrapper; `align="end"` reverses the row for
+outgoing messages and end-aligns the content's children.
+
+| Prop    | Type                  | Default   |
+| ------- | --------------------- | --------- |
+| `align` | `"start" \| "end"`    | `"start"` |
+
+### MessageGroup, MessageAvatar, MessageContent, MessageHeader, MessageFooter
+
+Structural wrappers extending `div`. `MessageGroup` stacks consecutive
+messages from one sender; `MessageHeader` and `MessageFooter` render
+muted meta rows above and below the surface.

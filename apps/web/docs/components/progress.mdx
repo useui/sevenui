@@ -19,8 +19,32 @@ import { Progress } from "@/components/ui/progress";
 <Progress value={33} />;
 ```
 
+## Examples
+
+### With label and value
+
+Children render above the built-in bar — compose `ProgressLabel` and
+`ProgressValue` into a row.
+
+<Component path="progress/progress-label" />
+
 ## API reference
 
-Built on the [Base UI Progress](https://base-ui.com/react/components/progress)
-primitive — all its props apply. Pass `value={null}` to render the progress
-bar in an indeterminate state.
+### Progress
+
+Extends the
+[Base UI Progress](https://base-ui.com/react/components/progress) Root —
+all its props (`value`, `min`, `max`, `format`, …) apply. Pass
+`value={null}` for an indeterminate state. The track and indicator are
+rendered automatically; children appear above them.
+
+### ProgressLabel and ProgressValue
+
+Extend the Base UI Label and Value parts. The label wires
+`aria-labelledby` on the root; the value renders the formatted current
+value (percentage by default).
+
+### ProgressTrack and ProgressIndicator
+
+Styled Base UI parts, exported for fully custom compositions — the
+default `Progress` already includes one of each.

@@ -124,11 +124,10 @@ sidebar with no rail, no offcanvas animation, and no mobile sheet.
 | `tooltip`   | `React.ReactNode`                    | —           |
 | `render`    | `useRender.ComponentProps<"button">["render"]` | —  |
 
-Passing `tooltip` wraps the button in `Tooltip` / `TooltipTrigger` /
-`TooltipContent` automatically; the tooltip is forced `hidden` unless the
-sidebar is in its icon-only collapsed state on desktop, so it only appears
-once labels are hidden. `sidebarMenuButtonVariants` is also exported for
-styling other elements (e.g. a skeleton placeholder) to match.
+Passing `tooltip` (a string or `TooltipContent` props) wraps the button
+in `Tooltip` / `TooltipTrigger` / `TooltipContent` automatically; the
+tooltip is forced `hidden` unless the sidebar is in its icon-only
+collapsed state on desktop, so it only appears once labels are hidden.
 
 ### Other parts
 

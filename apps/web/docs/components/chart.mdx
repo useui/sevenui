@@ -57,11 +57,8 @@ online need porting to the v3 API.
 - `ChartConfig` maps each series key to a `label`/`icon` and either a single
   `color` or a per-theme `theme: { light, dark }` pair.
 - Series colors resolve as `var(--color-<key>)` inside the container,
-  scoped to that chart's `data-chart` id. Dark values apply under **both**
-  `.dark [data-chart=…]` (the shadcn consumer convention) and
-  `[data-theme="dark"] [data-chart=…]` (this docs site and Blume preview
-  convention) — this dual selector is SevenUI's one deliberate divergence
-  from upstream shadcn's chart.
+  scoped to that chart's `data-chart` id. Dark values apply under the
+  `.dark [data-chart=…]` selector (the shadcn consumer convention).
 - `ChartTooltip` / `ChartLegend` are direct re-exports of recharts'
   `Tooltip` / `Legend`; `ChartTooltipContent` and `ChartLegendContent` are
   our styled `content` renderers, wired up as `content={<ChartTooltipContent />}`.

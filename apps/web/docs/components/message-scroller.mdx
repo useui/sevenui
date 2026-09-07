@@ -1,0 +1,115 @@
+---
+title: Message Scroller
+description: Auto-scrolling chat viewport built on the shadcn MessageScroller primitive.
+---
+
+<Component path="message-scroller/message-scroller-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/message-scroller
+```
+
+Depends on the `@shadcn/react` package, installed automatically.
+
+## Usage
+
+```tsx
+import {
+  MessageScroller,
+  MessageScrollerButton,
+  MessageScrollerContent,
+  MessageScrollerItem,
+  MessageScrollerProvider,
+  MessageScrollerViewport,
+} from "@/components/ui/message-scroller";
+
+export function Chat({ messages }: { messages: { id: string; text: string }[] }) {
+  return (
+    <MessageScrollerProvider autoScroll>
+      <MessageScroller className="h-96">
+        <MessageScrollerViewport aria-label="Conversation">
+          <MessageScrollerContent>
+            {messages.map((message) => (
+              <MessageScrollerItem key={message.id} messageId={message.id}>
+                {/* message row */}
+              </MessageScrollerItem>
+            ))}
+          </MessageScrollerContent>
+        </MessageScrollerViewport>
+        <MessageScrollerButton />
+      </MessageScroller>
+    </MessageScrollerProvider>
+  );
+}
+```
+
+A chat scroll container that follows streaming output while the reader
+sits at the live edge, disengages the moment they scroll away, and
+preserves the visible rows when older history loads above. Rows are real
+DOM (no virtualization); `content-visibility: auto` keeps hundreds of
+turns cheap. Give items stable `messageId`s for reliable anchoring and
+jump-to.
+
+## API reference
+
+### MessageScrollerProvider
+
+Headless root owning scroll state and commands.
+
+| Prop                     | Type                                   | Default |
+| ------------------------ | -------------------------------------- | ------- |
+| `autoScroll`             | `boolean`                              | `true`  |
+| `defaultScrollPosition`  | `"start" \| "end" \| "last-anchor"`    | `"end"` |
+| `scrollEdgeThreshold`    | `number`                               | —       |
+| `scrollPreviousItemPeek` | `number`                               | —       |
+| `scrollMargin`           | `number`                               | —       |
+
+Use `defaultScrollPosition="last-anchor"` when reopening saved threads;
+`scrollPreviousItemPeek` keeps a slice of the previous turn visible above
+a new anchor.
+
+### MessageScroller and MessageScrollerContent
+
+The styled frame (positions the scroll button) and the transcript
+column. Extend `div` via the primitive.
+
+### MessageScrollerViewport
+
+The scrollable element. Label it with `aria-label`.
+
+| Prop                      | Type      | Default |
+| ------------------------- | --------- | ------- |
+| `preserveScrollOnPrepend` | `boolean` | `true`  |
+
+### MessageScrollerItem
+
+Wraps each row for measurement and visibility tracking.
+
+| Prop           | Type      | Default |
+| -------------- | --------- | ------- |
+| `messageId`    | `string`  | —       |
+| `scrollAnchor` | `boolean` | `false` |
+
+Mark conversation-turn boundaries (typically user messages) with
+`scrollAnchor`.
+
+### MessageScrollerButton
+
+Scroll control rendered through [Button](/docs/components/button)
+(`secondary` / `icon-sm` by default, swap via `render`, `variant`,
+`size`). Hidden and inert while there is nothing to scroll toward.
+
+| Prop        | Type                  | Default |
+| ----------- | --------------------- | ------- |
+| `direction` | `"start" \| "end"`    | `"end"` |
+
+### Hooks
+
+- `useMessageScroller()` — returns `scrollToMessage(messageId)`,
+  `scrollToEnd()`, `scrollToStart()` for external controls.
+- `useMessageScrollerVisibility()` — `currentAnchorId` and
+  `visibleMessageIds` for position tracking (costs nothing until used).
+- `useMessageScrollerScrollable()` — whether the viewport can scroll
+  toward `start` / `end`.

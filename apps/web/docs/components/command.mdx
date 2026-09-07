@@ -63,6 +63,29 @@ Built from scratch on the [Base UI
 Autocomplete](https://base-ui.com/react/components/autocomplete) primitive in
 `inline` mode — this is SevenUI's Radix-free replacement for `cmdk`.
 
+### Command
+
+Extends the Autocomplete Root (locked to
+`inline open autoHighlight="always" keepHighlight`).
+
+| Prop            | Type                                      | Default            |
+| --------------- | ----------------------------------------- | ------------------ |
+| `items`         | grouped item data passed to render props  | —                  |
+| `filter`        | custom match function (`null` disables)   | substring on label |
+| `filteredItems` | externally computed results               | —                  |
+
+### CommandDialog
+
+Wraps `Command` in the [Dialog](/docs/components/dialog) component with
+sr-only title and description.
+
+| Prop              | Type              | Default                          |
+| ----------------- | ----------------- | -------------------------------- |
+| `title`           | `string`          | `"Command Palette"`              |
+| `description`     | `string`          | `"Search for a command to run..."` |
+| `showCloseButton` | `boolean`         | `false`                          |
+| `className`       | `string` — on the DialogContent | —                  |
+
 **Data-driven filtering (intentional divergence from cmdk).** cmdk filters by
 reading each item's rendered DOM text. `Command` instead filters the `items`
 array you pass to the root — `CommandList` and `CommandGroup` take a
@@ -86,11 +109,11 @@ state, and keyboard activation — see `packages/registry/tests/command.test.tsx
 | Component         | Renders                                                        |
 | ------------------ | --------------------------------------------------------------- |
 | `Command`          | `Autocomplete.Root` (`inline open autoHighlight="always" keepHighlight`) plus a styled container |
-| `CommandInput`      | `Autocomplete.Input` with a leading search icon                |
+| `CommandInput`      | `Autocomplete.Input` inside an [Input Group](/docs/components/input-group) with a trailing search-icon addon |
 | `CommandList`       | `Autocomplete.List` — takes a function child, one call per group/item |
 | `CommandGroup`      | `Autocomplete.Group` + `Autocomplete.GroupLabel` (`heading` prop) + `Autocomplete.Collection` |
-| `CommandItem`       | `Autocomplete.Item`                                             |
+| `CommandItem`       | `Autocomplete.Item` — highlighted state via `data-highlighted`  |
 | `CommandEmpty`      | `Autocomplete.Empty` — always mounted as a `role="status"` live region |
 | `CommandShortcut`   | A styled `<span>` for trailing keybinding hints                 |
 | `CommandSeparator`  | `Autocomplete.Separator`                                        |
-| `CommandDialog`     | A Base UI `Dialog.Root` wrapping `Command`, with `title` / `description` rendered as sr-only text |
+| `CommandDialog`     | The [Dialog](/docs/components/dialog) component wrapping `Command`, with `title` / `description` rendered as sr-only text |

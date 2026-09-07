@@ -50,9 +50,9 @@ The v4 API differs from the `direction`/array-`layout` shape covered by most
 - Imperative access goes through the `groupRef` (on `ResizablePanelGroup`)
   and `panelRef` (on `ResizablePanel`) **props**, not a `ref` you attach
   yourself.
-- `ResizableHandle` exposes its interaction state via
-  `data-separator="inactive" | "hover" | "focus" | "active" | "disabled"` —
-  style off that attribute rather than a class. Double-clicking a handle
+- `ResizableHandle` takes a `withHandle` prop (default `false`) that
+  renders a visible drag-grip; the bar itself styles off the
+  `aria-orientation` attribute the library sets. Double-clicking a handle
   resets its adjacent panels to their default size.
 - Keyboard: arrow keys resize the adjacent panels by 5% per press, Home/End
   jump to the min/max size, and Enter toggles a collapsible panel's
@@ -60,11 +60,9 @@ The v4 API differs from the `direction`/array-`layout` shape covered by most
 - To persist layouts across sessions, compose the library's own
   `useDefaultLayout` hook directly rather than reimplementing storage.
 
-Our wrapper adds one thing on top: `ResizablePanelGroup` stamps a
-`data-orientation` attribute (the library itself emits none), which
-`ResizableHandle` reads via the `group/resizable` class to flip its own
-styling — width/height and the drag-grip icon — between horizontal and
-vertical layouts.
+The wrappers are thin passthroughs — orientation styling on both the
+group (`aria-[orientation=vertical]:flex-col`) and the handle reads the
+`aria-orientation` attribute the library sets itself.
 
 Because the `Group`'s inline `height: 100%` / `width: 100%` win over utility
 classes on the group itself, give a fixed-height layout its size on a

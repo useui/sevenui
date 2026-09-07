@@ -34,23 +34,46 @@ export default function CollapsibleDemo() {
 }
 ```
 
+## Examples
+
+### File tree
+
+Nested collapsibles with the open state styled through
+`data-panel-open` on the trigger (the rotating chevron).
+
+<Component path="collapsible/collapsible-file-tree" />
+
 ## API reference
 
-Built on the [Base UI Collapsible](https://base-ui.com/react/components/collapsible)
-primitive — all its props apply.
+### Collapsible
 
-- `Collapsible` (the Root) renders a `<div>` and accepts `open`/`defaultOpen`
-  (default `false`) and `onOpenChange`, plus `disabled`.
-- Closed panel content unmounts by default. `keepMounted` and
-  `hiddenUntilFound` are **`Panel`** props here (unlike Accordion, where
-  they live on the Root) — pass them through `CollapsibleContent`.
-- Panel height animates through the `--collapsible-panel-height` CSS
-  variable — see the `h-[var(--collapsible-panel-height)]` /
-  `data-[starting-style]:h-0` / `data-[ending-style]:h-0` classes on
-  `CollapsibleContent`.
-- The open trigger is styled via `data-panel-open` (presence) on
-  `CollapsibleTrigger`.
-- Although `CollapsibleTrigger` renders a native `<button>`, a disabled
-  trigger stays focusable and receives `aria-disabled="true"` instead of
-  the native `disabled` attribute — style disabled state with
-  `data-[disabled]:`, not the `disabled:` Tailwind variant.
+Extends the
+[Base UI Collapsible](https://base-ui.com/react/components/collapsible)
+Root (a `<div>`).
+
+| Prop                   | Type                      | Default |
+| ---------------------- | ------------------------- | ------- |
+| `open` / `defaultOpen` | `boolean`                 | `false` |
+| `onOpenChange`         | `(open: boolean) => void` | —       |
+| `disabled`             | `boolean`                 | `false` |
+
+### CollapsibleTrigger
+
+Open state styles via `data-panel-open` (presence). A disabled trigger
+stays focusable with `aria-disabled="true"` — style it with
+`data-disabled:`, not `disabled:`.
+
+### CollapsibleContent
+
+Closed content unmounts by default. `keepMounted` and `hiddenUntilFound`
+are **Panel** props here (unlike Accordion, where they live on the
+Root) — pass them through this component. Open/close animates via the
+`animate-collapsible-down` / `animate-collapsible-up` utilities, whose
+keyframes (driven by the Base UI-set `--collapsible-panel-height`
+variable) ship in this component's registry item — the CLI merges them
+into your CSS, same as the accordion's.
+
+| Prop               | Type      | Default |
+| ------------------ | --------- | ------- |
+| `keepMounted`      | `boolean` | `false` |
+| `hiddenUntilFound` | `boolean` | `false` |

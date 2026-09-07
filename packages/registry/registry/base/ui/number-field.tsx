@@ -4,7 +4,7 @@ import * as React from "react";
 import { NumberField as NumberFieldPrimitive } from "@base-ui/react/number-field";
 import { MinusIcon, PlusIcon } from "lucide-react";
 
-import { cn } from "@/registry/base/lib/utils";
+import { cn } from "cn";
 
 function NumberField({
   className,

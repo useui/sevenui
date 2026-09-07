@@ -1,0 +1,76 @@
+---
+title: Empty
+description: Displays an empty state with media, title, description, and actions.
+---
+
+<Component path="empty/empty-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/empty
+```
+
+## Usage
+
+```tsx
+import { FolderOpenIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+
+export function NoProjects() {
+  return (
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <FolderOpenIcon />
+        </EmptyMedia>
+        <EmptyTitle>No projects yet</EmptyTitle>
+        <EmptyDescription>Create your first project to begin.</EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <Button size="sm">Create project</Button>
+      </EmptyContent>
+    </Empty>
+  );
+}
+```
+
+The component is pure composition: `EmptyHeader` holds media, title, and
+description; `EmptyContent` holds actions such as buttons, links, or an
+input group. Add `border` or background utilities on `Empty` to frame it.
+
+## Examples
+
+### With avatar
+
+`EmptyMedia` with the default variant renders arbitrary media — here an
+avatar for a person-centric empty state.
+
+<Component path="empty/empty-avatar" />
+
+## API reference
+
+### EmptyMedia
+
+Extends `div`.
+
+| Prop      | Type                    | Default     |
+| --------- | ----------------------- | ----------- |
+| `variant` | `"default" \| "icon"`   | `"default"` |
+
+The `icon` variant renders a muted square tile sized for a single icon;
+`default` leaves the media unstyled for avatars and images.
+
+### Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent
+
+Structural wrappers extending `div` — they accept standard div props and
+`className` for layout tweaks.

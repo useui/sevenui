@@ -42,12 +42,25 @@ import { Toggle } from "@/components/ui/toggle";
 <Toggle size="lg">Large</Toggle>
 ```
 
+## Examples
+
+### Variants and sizes
+
+<Component path="toggle/toggle-variants" />
+
 ## API reference
 
-Built on the [Base UI Toggle](https://base-ui.com/react/components/toggle)
-primitive — all its props apply. SevenUI adds:
+### Toggle
 
-| Prop      | Type                           | Default     |
-| --------- | ------------------------------ | ----------- |
-| `variant` | `"default" \| "outline"`       | `"default"` |
-| `size`    | `"default" \| "sm" \| "lg"`    | `"default"` |
+Extends the [Base UI Toggle](https://base-ui.com/react/components/toggle)
+primitive — all its props apply. Give icon-only toggles an `aria-label`.
+
+| Prop                         | Type                          | Default     |
+| ---------------------------- | ----------------------------- | ----------- |
+| `variant`                    | `"default" \| "outline"`      | `"default"` |
+| `size`                       | `"default" \| "sm" \| "lg"`   | `"default"` |
+| `pressed` / `defaultPressed` | `boolean`                     | `false`     |
+| `onPressedChange`            | `(pressed: boolean) => void`  | —           |
+| `disabled`                   | `boolean`                     | `false`     |
+
+`toggleVariants` is also exported for styling custom elements.

@@ -19,6 +19,29 @@ import { Textarea } from "@/components/ui/textarea";
 <Textarea placeholder="Enter your message..." />;
 ```
 
+## Examples
+
+### Required
+
+<Component path="textarea/textarea-required" />
+
+### Disabled
+
+<Component path="textarea/textarea-disabled" />
+
+### Invalid
+
+<Component path="textarea/textarea-invalid" />
+
 ## API reference
 
-Plain `<textarea>`; no primitive. No props beyond `<textarea>`.
+### Textarea
+
+Extends the native `<textarea>` element — no props beyond it.
+
+| Prop           | Type                                     | Default |
+| -------------- | ---------------------------------------- | ------- |
+| `rows`         | `number` — initial height                | —       |
+| `disabled`     | `boolean`                                | `false` |
+| `required`     | `boolean`                                | `false` |
+| `aria-invalid` | `boolean` — destructive border and ring  | —       |

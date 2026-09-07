@@ -54,23 +54,50 @@ export default function SelectDemo() {
 }
 ```
 
+## Examples
+
+### Groups
+
+Grouped options with labels, a separator, and the small trigger size.
+
+<Component path="select/select-groups" />
+
 ## API reference
 
-Built on the [Base UI Select](https://base-ui.com/react/components/select)
-primitive — all its props apply.
+### Select
 
-Key props on the Root (`Select`):
+Extends the [Base UI Select](https://base-ui.com/react/components/select)
+Root — all its props apply.
 
-- `items` — a `Record<string, ReactNode>` or an array of `{ label, value }`
-  entries; when specified, `SelectValue` renders the matching item's label
-  instead of the raw value
-- `multiple` — allow selecting more than one item; the value becomes an array
-- `value` / `defaultValue` — the controlled or uncontrolled selected value
-- `onValueChange` — callback fired when the selected value changes
-- `disabled`, `required`, `readOnly` — standard field states
+| Prop                     | Type                                                        | Default |
+| ------------------------ | ----------------------------------------------------------- | ------- |
+| `items`                  | `Record<string, ReactNode> \| { label, value }[]`           | —       |
+| `value` / `defaultValue` | item value (array when `multiple`)                          | —       |
+| `onValueChange`          | `(value) => void`                                           | —       |
+| `multiple`               | `boolean`                                                   | `false` |
+| `disabled` / `required` / `readOnly` | `boolean`                                       | `false` |
 
-`SelectContent` renders through `Select.Portal` → `Select.Positioner` →
-`Select.Popup`, and always sets `alignItemWithTrigger={false}` on the
-Positioner so the popup opens as a plain dropdown below the trigger instead
-of the Base UI default (`alignItemWithTrigger={true}`), which overlaps the
-selected item on the trigger like a native macOS select.
+When `items` is given, `SelectValue` renders the matching item's label
+instead of the raw value.
+
+### SelectTrigger
+
+Extends the Base UI Trigger.
+
+| Prop   | Type                  | Default     |
+| ------ | --------------------- | ----------- |
+| `size` | `"default" \| "sm"`   | `"default"` |
+
+### SelectContent
+
+Renders through `Select.Portal` → `Select.Positioner` → `Select.Popup`,
+and always sets `alignItemWithTrigger={false}` on the Positioner so the
+popup opens as a plain dropdown below the trigger instead of the Base UI
+default, which overlaps the selected item on the trigger like a native
+macOS select.
+
+### SelectValue, SelectItem, SelectGroup, SelectLabel, SelectSeparator, SelectScrollUpButton, SelectScrollDownButton
+
+Styled Base UI parts. `SelectItem` takes the option `value` (and
+`disabled`); the scroll buttons appear automatically when the list
+overflows.

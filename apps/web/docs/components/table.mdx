@@ -54,15 +54,16 @@ import {
 
 ## API reference
 
-Semantic HTML table elements with Tailwind styling. SevenUI exports:
+### Table
 
-| Component      | Description                                                                  |
-| -------------- | ---------------------------------------------------------------------------- |
-| `Table`        | Wrapper element with horizontal scroll support and caption positioning.     |
-| `TableHeader`  | Header section (thead) with bottom border on header rows.                   |
-| `TableBody`    | Body section (tbody) with bottom border on all rows except the last.        |
-| `TableFooter`  | Footer section (tfoot) with top border and muted background.                |
-| `TableRow`     | Row element (tr) with border, hover effects, and selection state styling.   |
-| `TableHead`    | Header cell element (th) with padding, font weight, and alignment.           |
-| `TableCell`    | Data cell element (td) with padding and alignment.                          |
-| `TableCaption` | Caption element positioned above the table with muted foreground styling.   |
+Extends the native `<table>` element, wrapped in an overflow container
+(`data-slot="table-container"`) so wide tables scroll horizontally
+instead of breaking the page.
+
+### TableHeader, TableBody, TableFooter, TableRow, TableHead, TableCell, TableCaption
+
+Extend their semantic HTML counterparts (`thead`, `tbody`, `tfoot`,
+`tr`, `th`, `td`, `caption`) — no props beyond them. Rows highlight on
+hover and style themselves via `data-state="selected"` or an expanded
+child; cells with a leading checkbox drop their right padding
+automatically.

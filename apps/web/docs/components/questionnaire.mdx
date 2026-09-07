@@ -1,0 +1,129 @@
+---
+title: Questionnaire
+description: Multi-step questionnaire flow built on the shadcn Questionnaire primitive.
+---
+
+<Component path="questionnaire/questionnaire-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/questionnaire
+```
+
+Depends on the `@shadcn/react` package, installed automatically.
+
+## Usage
+
+```tsx
+import {
+  Questionnaire,
+  QuestionnaireActions,
+  QuestionnaireChoice,
+  QuestionnaireChoices,
+  QuestionnaireItem,
+  QuestionnaireNext,
+  QuestionnairePrevious,
+  QuestionnaireSubmit,
+  QuestionnaireTitle,
+} from "@/components/ui/questionnaire";
+
+export function Survey() {
+  return (
+    <Questionnaire
+      onSubmit={(event) => {
+        event.preventDefault();
+        const answers = new FormData(event.currentTarget);
+      }}
+    >
+      <QuestionnaireItem name="role" required>
+        <QuestionnaireTitle>What is your role?</QuestionnaireTitle>
+        <QuestionnaireChoices>
+          <QuestionnaireChoice value="designer">Designer</QuestionnaireChoice>
+          <QuestionnaireChoice value="developer">Developer</QuestionnaireChoice>
+        </QuestionnaireChoices>
+      </QuestionnaireItem>
+      {/* more items… */}
+      <QuestionnaireActions>
+        <QuestionnairePrevious />
+        <QuestionnaireNext />
+        <QuestionnaireSubmit />
+      </QuestionnaireActions>
+    </Questionnaire>
+  );
+}
+```
+
+The root renders a real `<form>`: each `QuestionnaireItem` is a
+`fieldset` named question, progression and validation are managed
+internally, and answers arrive as `FormData` in `onSubmit` (use
+`getAll` for `multiple` items). Navigation buttons show and hide
+themselves — Next hides on the last step, Submit appears there, Skip
+only renders on non-required items.
+
+## API reference
+
+### Questionnaire
+
+Extends `form`.
+
+| Prop           | Type                                             | Default |
+| -------------- | ------------------------------------------------ | ------- |
+| `defaultItem`  | `string`                                         | —       |
+| `item`         | `string`                                         | —       |
+| `onItemChange` | `(item: string) => void`                         | —       |
+| `items`        | `readonly QuestionnaireItemDefinition[]`         | —       |
+| `shortcuts`    | `"letters" \| "numbers"`                         | —       |
+| `onSubmit`     | `React.FormEventHandler<HTMLFormElement>`        | —       |
+
+`item`/`onItemChange` control the active step externally (by item
+name); `shortcuts` enables keyboard selection and shows the shortcut
+chips on choices.
+
+### QuestionnaireItem
+
+Extends `fieldset`. One question per item; only the active one is
+shown.
+
+| Prop             | Type                                                        | Default |
+| ---------------- | ----------------------------------------------------------- | ------- |
+| `name`           | `string` (required)                                         | —       |
+| `multiple`       | `boolean` — checkbox behavior instead of radio              | `false` |
+| `required`       | `boolean`                                                   | `false` |
+| `invalid`        | `boolean` — force invalid styling (external validation)     | —       |
+| `onStatusChange` | `(status: "unanswered" \| "answered" \| "skipped") => void` | —       |
+
+### QuestionnaireChoice
+
+Extends `label`; the hidden input, indicator (radio dot / check), label,
+and shortcut chip are built in.
+
+| Prop                         | Type                                        | Default |
+| ---------------------------- | ------------------------------------------- | ------- |
+| `value`                      | `string` (required)                         | —       |
+| `checked` / `defaultChecked` | `boolean`                                   | —       |
+| `disabled`                   | `boolean`                                   | `false` |
+| `onChange`                   | `React.ChangeEventHandler<HTMLInputElement>` | —       |
+
+### QuestionnaireInput
+
+Freeform answer field for the active item.
+
+| Prop   | Type                                                       | Default  |
+| ------ | ---------------------------------------------------------- | -------- |
+| `type` | `"text" \| "email" \| "number" \| "date" \| "tel" \| …`    | `"text"` |
+
+### QuestionnairePrevious, QuestionnaireSkip, QuestionnaireNext, QuestionnaireSubmit
+
+Navigation buttons styled through
+[Button](/docs/components/button)'s variants (`variant` and `size`
+props apply; Previous/Skip default to `outline`). They disable and hide
+themselves based on position and item state. Default labels can be
+replaced via `children`.
+
+### QuestionnaireProgress, QuestionnaireTitle, QuestionnaireDescription, QuestionnaireChoiceDescription, QuestionnaireError, QuestionnaireActions
+
+Presentation parts: progress ("x of y", with `{ current, total, first,
+last }` available via the render prop), the question heading
+(`legend`) and description, per-choice helper text, the validation
+message slot, and the action-row grid.

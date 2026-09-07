@@ -50,23 +50,36 @@ import {
 </Pagination>;
 ```
 
+## Examples
+
+### Simple
+
+Previous/next only — for feeds and detail pages where numbered links
+add noise.
+
+<Component path="pagination/pagination-simple" />
+
 ## API reference
 
-Semantic pagination using `<nav>`, `<ul>`, and `<li>` elements with aria attributes. SevenUI exports:
+### PaginationLink
 
-| Component              | Description                                                                |
-| ---------------------- | -------------------------------------------------------------------------- |
-| `Pagination`          | Container with `aria-label="pagination"` on `<nav>`.                     |
-| `PaginationContent`   | Unordered list container with flex layout and gap.                        |
-| `PaginationItem`      | List item wrapper for pagination elements.                                |
-| `PaginationLink`      | Clickable page number with optional active state.                         |
-| `PaginationPrevious`  | Previous page button with `aria-label` and chevron symbol.               |
-| `PaginationNext`      | Next page button with `aria-label` and chevron symbol.                   |
-| `PaginationEllipsis`  | Ellipsis indicator for skipped pages.                                     |
+An `a` element styled through [Button](/docs/components/button) —
+`ghost` normally, `outline` when active.
 
-| Prop        | Type                                | Default   | Description                                              |
-| ----------- | ----------------------------------- | --------- | -------------------------------------------------------- |
-| `isActive`  | `boolean`                           | `false`   | Highlights the current page with outline variant.       |
-| `size`      | `"default" \| "sm" \| "lg" \| "icon"` | `"icon"`  | Button size variant (only on `PaginationLink`).         |
+| Prop       | Type          | Default  |
+| ---------- | ------------- | -------- |
+| `isActive` | `boolean`     | `false`  |
+| `size`     | Button sizes  | `"icon"` |
 
-All components accept standard HTML props and an optional `className` override.
+### PaginationPrevious and PaginationNext
+
+Extend `PaginationLink` with a chevron and a label.
+
+| Prop   | Type     | Default                     |
+| ------ | -------- | --------------------------- |
+| `text` | `string` | `"Previous"` / `"Next"`     |
+
+### Pagination, PaginationContent, PaginationItem, PaginationEllipsis
+
+Semantic wrappers extending `nav` (labeled "pagination"), `ul`, `li`,
+and `span`; the ellipsis is hidden from assistive tech.

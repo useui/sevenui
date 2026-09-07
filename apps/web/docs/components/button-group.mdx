@@ -1,0 +1,76 @@
+---
+title: Button Group
+description: Groups related buttons with shared borders and separators.
+---
+
+<Component path="button-group/button-group-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/button-group
+```
+
+## Usage
+
+```tsx
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+
+export function Actions() {
+  return (
+    <ButtonGroup>
+      <Button variant="outline">Archive</Button>
+      <Button variant="outline">Snooze</Button>
+      <Button variant="outline">Report</Button>
+    </ButtonGroup>
+  );
+}
+```
+
+Direct children with a `data-slot` (buttons, inputs, select triggers) get
+their corner radius and borders merged automatically. Nest multiple
+`ButtonGroup`s to keep separate clusters spaced apart. Outline buttons
+rarely need separators — their own borders divide them; use
+`ButtonGroupSeparator` with filled variants like `secondary`.
+
+## Examples
+
+### Split button
+
+A split button pairs a primary action with a `ButtonGroupSeparator` and a
+dropdown trigger for secondary actions.
+
+<Component path="button-group/button-group-separator" />
+
+## API reference
+
+### ButtonGroup
+
+Extends `div` with `role="group"`. Label it with `aria-label` or
+`aria-labelledby` when the grouping is meaningful to screen readers.
+
+| Prop          | Type                           | Default        |
+| ------------- | ------------------------------ | -------------- |
+| `orientation` | `"horizontal" \| "vertical"`   | `"horizontal"` |
+
+### ButtonGroupSeparator
+
+Extends [Separator](/docs/components/separator) — all Separator props
+apply. Sized to stretch across the group.
+
+| Prop          | Type                           | Default      |
+| ------------- | ------------------------------ | ------------ |
+| `orientation` | `"horizontal" \| "vertical"`   | `"vertical"` |
+
+### ButtonGroupText
+
+Static text styled to sit flush between buttons. Supports the Base UI
+`render` prop to swap the underlying element (for example a `label`).
+
+| Prop     | Type                 | Default |
+| -------- | -------------------- | ------- |
+| `render` | `React.ReactElement` | `div`   |
+
+`buttonGroupVariants` is also exported for composing the group styles
+onto your own elements.

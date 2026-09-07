@@ -25,12 +25,34 @@ import { Button } from "@/components/ui/button";
 
 <Component path="button/button-variants" />
 
+### Sizes
+
+Text sizes pair with `icon-*` counterparts for icon-only buttons — give
+those an `aria-label`.
+
+<Component path="button/button-sizes" />
+
+### Disabled
+
+<Component path="button/button-disabled" />
+
+### Loading
+
+Pair `disabled` with the [Spinner](/docs/components/spinner) component
+while an action is in flight.
+
+<Component path="button/button-loading" />
+
 ## API reference
 
-Built on the [Base UI Button](https://base-ui.com/react/components/button)
-primitive — all its props apply. SevenUI adds:
+### Button
 
-| Prop      | Type                                                                       | Default     |
-| --------- | -------------------------------------------------------------------------- | ----------- |
-| `variant` | `"default" \| "destructive" \| "outline" \| "secondary" \| "ghost" \| "link"` | `"default"` |
-| `size`    | `"default" \| "sm" \| "lg" \| "icon"`                                       | `"default"` |
+Extends the [Base UI Button](https://base-ui.com/react/components/button)
+primitive — all its props (including `render` and `disabled`) apply.
+
+| Prop      | Type                                                                                     | Default     |
+| --------- | ---------------------------------------------------------------------------------------- | ----------- |
+| `variant` | `"default" \| "outline" \| "secondary" \| "ghost" \| "destructive" \| "link"`            | `"default"` |
+| `size`    | `"default" \| "xs" \| "sm" \| "lg" \| "icon" \| "icon-xs" \| "icon-sm" \| "icon-lg"`     | `"default"` |
+
+`buttonVariants` is also exported for styling custom elements.

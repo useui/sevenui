@@ -77,29 +77,90 @@ export default function ContextMenuDemo() {
 
 ## API reference
 
-Built on the [Base UI Context Menu](https://base-ui.com/react/components/context-menu)
-primitive — all its props apply. Every part imports from
-`@base-ui/react/context-menu`, which re-exports the same Menu part objects
-used by dropdown-menu plus its own `Root` and `Trigger`, so context menus
-share all Menu item semantics (data attributes, `closeOnClick` defaults,
-checkbox/radio behavior) with `dropdown-menu`.
+Every part imports from `@base-ui/react/context-menu`, which re-exports
+the same Menu part objects used by
+[Dropdown Menu](/docs/components/dropdown-menu) plus its own Root and
+Trigger — so items share all Menu semantics: `data-disabled` styling,
+the `closeOnClick` defaults, `variant`/`inset` on items, and the
+checkbox/radio behavior documented there.
 
-- The menu opens on right click (desktop) or touch long-press (mobile) —
-  there is no click-to-open trigger.
-- `ContextMenuTrigger` renders a plain `<div>` — the area a user right-clicks
-  or long-presses — not a button. It accepts no positioning props beyond the
-  shared `className` / `render` / `children` trio.
-- `ContextMenu` (the Root) omits `modal`: context menus are always modal
-  internally.
-- Positioning is pointer-anchored and automatic. `ContextMenuContent`
-  deliberately exposes no `side` / `align` / `offset` props — Base UI
-  anchors the popup to the pointer with built-in corner offsets
-  (`align="start"`, `alignOffset={2}`, `sideOffset={-5}`,
-  `position: fixed`), and passing `side` explicitly would disable that
-  behavior. There is no `Viewport` part on this subpath.
-- Submenus are composed with `ContextMenuSub` (which wraps `SubmenuRoot`)
-  plus `ContextMenuSubTrigger` and `ContextMenuSubContent`, identical to
-  dropdown-menu.
+### ContextMenu
+
+Extends the
+[Base UI Context Menu](https://base-ui.com/react/components/context-menu)
+Root. Opens on right click (desktop) or touch long-press (mobile) —
+there is no click-to-open trigger. Omits `modal`: context menus are
+always modal internally.
+
+| Prop                    | Type                                   | Default      |
+| ----------------------- | -------------------------------------- | ------------ |
+| `open` / `defaultOpen`  | `boolean`                              | `false`      |
+| `onOpenChange`          | `(open, eventDetails) => void`         | —            |
+| `onOpenChangeComplete`  | fires after animations finish          | —            |
+| `highlightItemOnHover`  | `boolean`                              | `true`       |
+| `loopFocus`             | `boolean` — arrow keys wrap            | `true`       |
+| `actionsRef`            | ref with imperative `close()`/`unmount()` | —         |
+| `disabled`              | `boolean`                              | `false`      |
+| `orientation`           | arrow-key axis                         | `"vertical"` |
+
+Keyboard: arrow keys navigate, Enter/Space activates, Escape closes the
+current level, Tab exits, and typing jumps to items by first character
+(override an item's matched text with its `label` prop).
+
+### ContextMenuTrigger
+
+Renders a plain `<div>` — the area a user right-clicks or long-presses —
+not a button. Accepts no positioning props beyond `className` /
+`render` / `children`; exposes `data-popup-open` while the menu is
+open.
+
+### ContextMenuContent
+
+Pointer-anchored and automatic: it deliberately exposes **no**
+`side`/`align`/offset props — Base UI anchors the popup to the pointer
+with built-in corner offsets, and passing `side` explicitly would
+disable that behavior.
+
+### ContextMenuItem
+
+Renders a `<div>` (set `nativeButton` when rendering a real button via
+`render`); disabled styling via `data-disabled`.
+
+| Prop           | Type                                     | Default     |
+| -------------- | ---------------------------------------- | ----------- |
+| `variant`      | `"default" \| "destructive"`             | `"default"` |
+| `inset`        | `boolean` — align with checkable items   | `false`     |
+| `closeOnClick` | `boolean`                                | `true`      |
+| `disabled`     | `boolean`                                | `false`     |
+| `label`        | `string` — typeahead text override       | —           |
+
+### ContextMenuCheckboxItem and ContextMenuRadioGroup / ContextMenuRadioItem
+
+Checkbox items take `checked` / `defaultChecked` /
+`onCheckedChange(checked, eventDetails)`; the radio group takes
+`value` / `defaultValue` / `onValueChange` and each radio item a
+required `value`. Both item kinds default `closeOnClick` to **`false`**
+so toggling keeps the menu open; state styles via
+`data-checked` / `data-unchecked`.
+
+### ContextMenuSub, ContextMenuSubTrigger, ContextMenuSubContent
+
+Identical to dropdown-menu's submenu composition (`SubmenuRoot`-based,
+automatic RTL-aware positioning). The sub trigger hover-opens by
+default:
+
+| Prop                | Type      | Default    |
+| ------------------- | --------- | ---------- |
+| `openOnHover`       | `boolean` | `true`     |
+| `delay`             | `number`  | `100` (ms) |
+| `closeDelay`        | `number`  | `0` (ms)   |
+| `closeParentOnEsc`  | `boolean` | `false`    |
+
+### ContextMenuGroup, ContextMenuLabel, ContextMenuSeparator, ContextMenuShortcut
+
+`ContextMenuLabel` must sit inside a group (Base UI wires
+`aria-labelledby`); the separator takes an `orientation` (default
+`"horizontal"`); the shortcut is a plain `span`.
 
 ## Usage guidance
 

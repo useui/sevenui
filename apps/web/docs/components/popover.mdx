@@ -56,19 +56,42 @@ export default function PopoverDemo() {
 
 ## API reference
 
-Built on the [Base UI Popover](https://base-ui.com/react/components/popover)
-primitive — all its props apply.
+### Popover
 
-- `modal` — lives on `Popover` (the Root), accepts `true | false | 'trap-focus'`
-  and defaults to `false`; `true` only traps focus if a `Close` part is
-  rendered inside `PopoverContent`, since there's otherwise no way to
-  dismiss the popover with the keyboard
-- `openOnHover` / `delay` — live on `PopoverTrigger`, not Root; `openOnHover`
-  defaults to `false`, `delay` defaults to 300ms and `closeDelay` defaults to
-  0ms once hover-opening is enabled
-- `initialFocus` / `finalFocus` — pass through `PopoverContent` to the
-  underlying Popup to control where focus lands on open and where it
-  returns to on close
-- For custom anchoring (e.g. anchoring to a rect or a different element than
-  the trigger), compose the `Popover` primitive directly and pass an
-  `anchor` prop to its `Positioner` instead of using `PopoverContent`
+Extends the [Base UI Popover](https://base-ui.com/react/components/popover)
+Root — all its props apply.
+
+| Prop                   | Type                            | Default |
+| ---------------------- | ------------------------------- | ------- |
+| `open` / `defaultOpen` | `boolean`                       | `false` |
+| `onOpenChange`         | `(open: boolean) => void`       | —       |
+| `modal`                | `true \| false \| "trap-focus"` | `false` |
+
+`modal: true` only traps focus if a `Close` part is rendered inside
+`PopoverContent` — otherwise there's no way to dismiss with the
+keyboard.
+
+### PopoverTrigger
+
+Hover-opening lives here, not on the Root.
+
+| Prop          | Type      | Default          |
+| ------------- | --------- | ---------------- |
+| `openOnHover` | `boolean` | `false`          |
+| `delay`       | `number`  | `300` (ms)       |
+| `closeDelay`  | `number`  | `0` (ms)         |
+
+### PopoverContent
+
+| Prop                          | Type                        | Default                |
+| ----------------------------- | --------------------------- | ---------------------- |
+| `side` / `align`              | positioner placement        | `"bottom"` / `"center"` |
+| `initialFocus` / `finalFocus` | focus target on open/close  | —                      |
+
+For custom anchoring (a rect, or a different element than the trigger),
+compose the `Popover` primitive directly and pass `anchor` to its
+`Positioner` instead of using `PopoverContent`.
+
+### PopoverHeader, PopoverTitle, PopoverDescription
+
+Styled layout parts extending `div`/the Base UI Title and Description.

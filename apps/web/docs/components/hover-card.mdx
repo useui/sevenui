@@ -53,18 +53,33 @@ export default function HoverCardDemo() {
 
 ## API reference
 
-Built on the [Base UI Preview Card](https://base-ui.com/react/components/preview-card)
-primitive — all its props apply.
+### HoverCard
 
-- `HoverCardTrigger` renders a real link (`<a>` element) and needs an `href`
-  — preview cards exist to preview link destinations, so the trigger is
-  typed as `React.ComponentPropsWithRef<'a'>`
-- `delay` / `closeDelay` — live on `HoverCardTrigger`; `delay` defaults to
-  600ms before the card opens, `closeDelay` defaults to 300ms before it
-  closes after the pointer leaves
-- Hover-open is built in — there's no `openOnHover` prop like `Popover`
-- `HoverCard` (the Root) has no `modal` prop
-- `HoverCardContent`'s `side` prop defaults to `bottom`
-- Not accessible to touch or screen-reader users by design — preview cards
-  are a progressive enhancement over the underlying link, which remains
-  fully operable on its own
+Extends the
+[Base UI Preview Card](https://base-ui.com/react/components/preview-card)
+Root — no `modal` prop; hover-open is built in. Not accessible to touch
+or screen-reader users **by design** — preview cards are a progressive
+enhancement over the underlying link, which remains fully operable on
+its own.
+
+| Prop                   | Type                      | Default |
+| ---------------------- | ------------------------- | ------- |
+| `open` / `defaultOpen` | `boolean`                 | `false` |
+| `onOpenChange`         | `(open: boolean) => void` | —       |
+
+### HoverCardTrigger
+
+Renders a real link (`<a>`) and needs an `href` — preview cards exist to
+preview link destinations.
+
+| Prop         | Type     | Default    |
+| ------------ | -------- | ---------- |
+| `href`       | `string` | — required |
+| `delay`      | `number` | `600` (ms) |
+| `closeDelay` | `number` | `300` (ms) |
+
+### HoverCardContent
+
+| Prop             | Type                 | Default                 |
+| ---------------- | -------------------- | ----------------------- |
+| `side` / `align` | positioner placement | `"bottom"` / `"center"` |

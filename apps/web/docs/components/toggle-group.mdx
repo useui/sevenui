@@ -47,15 +47,38 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 </ToggleGroup>;
 ```
 
+## Examples
+
+### Multiple
+
+An outline, multi-select formatting group — `multiple` allows several
+pressed items at once.
+
+<Component path="toggle-group/toggle-group-multiple" />
+
 ## API reference
 
-Built on the [Base UI ToggleGroup](https://base-ui.com/react/components/toggle-group)
-and [Base UI Toggle](https://base-ui.com/react/components/toggle) primitives —
-all their props apply. Note that `ToggleGroup` uses a `multiple` prop to control
-selection behavior, and the value is always an array of strings (even in single-selection
-mode, e.g., `defaultValue={["center"]}`).
+### ToggleGroup
 
-| Prop       | Type                        | Default     |
-| ---------- | --------------------------- | ----------- |
-| `multiple` | `boolean`                   | `false`     |
-| `value`    | `string[]`                  | -           |
+Extends the
+[Base UI Toggle Group](https://base-ui.com/react/components/toggle-group)
+primitive — all its props apply. The value is **always an array of
+strings**, even in single-selection mode
+(`defaultValue={["center"]}`). `variant` and `size` cascade to every
+item.
+
+| Prop                     | Type                            | Default        |
+| ------------------------ | ------------------------------- | -------------- |
+| `multiple`               | `boolean`                       | `false`        |
+| `value` / `defaultValue` | `string[]`                      | —              |
+| `onValueChange`          | `(value: string[]) => void`     | —              |
+| `variant`                | `"default" \| "outline"`        | `"default"`    |
+| `size`                   | `"default" \| "sm" \| "lg"`     | `"default"`    |
+| `spacing`                | `number` — gap between items    | `2`            |
+| `orientation`            | `"horizontal" \| "vertical"`    | `"horizontal"` |
+
+### ToggleGroupItem
+
+Extends the [Toggle](/docs/components/toggle) component — requires a
+`value`; variant and size come from the group. Give icon-only items an
+`aria-label`.

@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/registry/base/lib/utils";
+import { cn } from "cn";
 import {
   NavigationMenu,
   NavigationMenuContent,

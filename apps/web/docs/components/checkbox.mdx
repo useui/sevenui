@@ -23,9 +23,32 @@ import { Label } from "@/components/ui/label";
 </Label>;
 ```
 
+## Examples
+
+### Indeterminate
+
+A parent checkbox reflecting a partial selection — `indeterminate` is
+independent of `checked` and controlled by you.
+
+<Component path="checkbox/checkbox-indeterminate" />
+
+### Disabled
+
+<Component path="checkbox/checkbox-disabled" />
+
 ## API reference
 
-Built on the [Base UI Checkbox](https://base-ui.com/react/components/checkbox)
-primitive — all its props apply. The component supports the `indeterminate` state
-for mixed selection scenarios and fires the `onCheckedChange` callback with the
-new checked state on user interaction.
+### Checkbox
+
+Extends the
+[Base UI Checkbox](https://base-ui.com/react/components/checkbox) Root —
+all its props apply. The check indicator is built in; pair with
+[Label](/docs/components/label) for the click-target text.
+
+| Prop                         | Type                          | Default |
+| ---------------------------- | ----------------------------- | ------- |
+| `checked` / `defaultChecked` | `boolean`                     | `false` |
+| `onCheckedChange`            | `(checked: boolean) => void`  | —       |
+| `indeterminate`              | `boolean`                     | `false` |
+| `disabled`                   | `boolean`                     | `false` |
+| `name` / `value`             | `string` — form submission    | —       |

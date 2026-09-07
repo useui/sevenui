@@ -1,0 +1,62 @@
+---
+title: Marker
+description: An inline marker with icon and content for annotating UI.
+---
+
+<Component path="marker/marker-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/marker
+```
+
+## Usage
+
+```tsx
+import { Marker, MarkerContent, MarkerIcon } from "@/components/ui/marker";
+import { UserPlusIcon } from "lucide-react";
+
+export function JoinedNote() {
+  return (
+    <Marker>
+      <MarkerIcon>
+        <UserPlusIcon />
+      </MarkerIcon>
+      <MarkerContent>Alex joined the conversation</MarkerContent>
+    </Marker>
+  );
+}
+```
+
+Markers annotate flows — typically conversation threads next to
+[Message](/docs/components/message) — with inline status notes, date
+separators, or row boundaries. Add `role="status"` when the marker
+announces progress; links and buttons work inside the content.
+
+## Examples
+
+### Variants
+
+`separator` centers the label between divider lines (date breaks);
+`border` underlines the row (for example an unread boundary).
+
+<Component path="marker/marker-variants" />
+
+## API reference
+
+### Marker
+
+Renders a `div` by default; swap the element with the Base UI `render`
+prop to make the whole marker a link or button.
+
+| Prop      | Type                                      | Default     |
+| --------- | ----------------------------------------- | ----------- |
+| `variant` | `"default" \| "separator" \| "border"`    | `"default"` |
+| `render`  | `React.ReactElement`                      | `div`       |
+
+### MarkerIcon and MarkerContent
+
+Extend `span`. `MarkerIcon` is decorative (`aria-hidden`) — give the
+marker an `aria-label` if it would otherwise be icon-only.
+`markerVariants` is also exported for styling custom elements.

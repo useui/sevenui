@@ -39,9 +39,45 @@ import { Label } from "@/components/ui/label";
 </RadioGroup>;
 ```
 
+## Examples
+
+### Cards
+
+Wrap each item in a styled [Label](/docs/components/label) — the
+`has-data-checked:` variant styles the selected card.
+
+<Component path="radio-group/radio-group-card" />
+
+### Disabled
+
+<Component path="radio-group/radio-group-disabled" />
+
+### Invalid
+
+<Component path="radio-group/radio-group-invalid" />
+
 ## API reference
 
-Built on the [Base UI Radio](https://base-ui.com/react/components/radio) and
-[Base UI RadioGroup](https://base-ui.com/react/components/radio-group) primitives —
-all their props apply. The `name` prop lives on the `RadioGroup` component,
-while individual `RadioGroupItem` components require a `value` prop.
+### RadioGroup
+
+Extends the
+[Base UI Radio Group](https://base-ui.com/react/components/radio-group)
+primitive — all its props apply.
+
+| Prop                       | Type                       | Default |
+| -------------------------- | -------------------------- | ------- |
+| `value` / `defaultValue`   | `string`                   | —       |
+| `onValueChange`            | `(value: string) => void`  | —       |
+| `name`                     | `string` — form submission | —       |
+| `disabled`                 | `boolean` — whole group    | `false` |
+
+### RadioGroupItem
+
+Extends the [Base UI Radio](https://base-ui.com/react/components/radio)
+Root — the dot indicator is built in. Pair with
+[Label](/docs/components/label) for the click-target text.
+
+| Prop       | Type                  | Default |
+| ---------- | --------------------- | ------- |
+| `value`    | `string` (required)   | —       |
+| `disabled` | `boolean`             | `false` |

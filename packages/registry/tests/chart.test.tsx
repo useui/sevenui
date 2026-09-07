@@ -51,11 +51,10 @@ describe("ChartStyle", () => {
     expect(css).toContain("--color-mobile: oklch(0.6 0.118 184.704);");
   });
 
-  it("emits dark values under both dark-mode selectors", () => {
+  it("emits dark values under the .dark selector", () => {
     const { container } = render(<ChartStyle id="chart-test" config={config} />);
     const css = container.querySelector("style")?.innerHTML ?? "";
     expect(css).toContain(".dark [data-chart=chart-test]");
-    expect(css).toContain('[data-theme="dark"] [data-chart=chart-test]');
     expect(css).toContain("--color-mobile: oklch(0.696 0.17 162.48);");
   });
 });
@@ -95,9 +94,6 @@ describe("ChartTooltipContent", () => {
           active
           payload={payload}
           label="desktop"
-          coordinate={{ x: 0, y: 0 }}
-          accessibilityLayer
-          activeIndex={undefined}
         />
       </ChartContainer>,
     );
@@ -111,9 +107,6 @@ describe("ChartTooltipContent", () => {
         <ChartTooltipContent
           active={false}
           payload={payload}
-          coordinate={{ x: 0, y: 0 }}
-          accessibilityLayer
-          activeIndex={undefined}
         />
       </ChartContainer>,
     );

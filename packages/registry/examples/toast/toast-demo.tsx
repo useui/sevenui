@@ -11,7 +11,8 @@ export default function ToastDemo() {
         <Button
           variant="outline"
           onClick={() =>
-            toast("Event created", {
+            toast.add({
+              title: "Event created",
               description: "Sunday, September 7 at 9:00",
             })
           }
@@ -20,27 +21,26 @@ export default function ToastDemo() {
         </Button>
         <Button
           variant="outline"
-          onClick={() => toast.success("Changes saved")}
+          onClick={() => toast.add({ title: "Changes saved", type: "success" })}
         >
           Success
         </Button>
         <Button
           variant="outline"
-          onClick={() => toast.error("Something went wrong")}
+          onClick={() =>
+            toast.add({ title: "Something went wrong", type: "error" })
+          }
         >
           Error
         </Button>
         <Button
           variant="outline"
           onClick={() =>
-            toast.promise(
-              new Promise((resolve) => setTimeout(resolve, 2000)),
-              {
-                loading: "Saving…",
-                success: "Saved",
-                error: "Failed to save",
-              },
-            )
+            toast.promise(new Promise((resolve) => setTimeout(resolve, 2000)), {
+              loading: { title: "Saving…" },
+              success: { title: "Saved" },
+              error: { title: "Failed to save" },
+            })
           }
         >
           Promise

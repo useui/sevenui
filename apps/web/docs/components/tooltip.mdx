@@ -40,18 +40,39 @@ export default function TooltipDemo() {
 
 ## API reference
 
-Built on the [Base UI Tooltip](https://base-ui.com/react/components/tooltip)
-primitive — all its props apply.
+Tooltips are intentionally disabled on touch devices (Base UI behavior —
+there's no hover to trigger them); for info icons that need to work on
+touch, use a [Popover](/docs/components/popover) with `openOnHover`
+instead.
 
-- `delay` / `closeDelay` — live on `TooltipTrigger` (Base UI 1.7 moved these
-  off Root); `delay` defaults to 600ms before the tooltip opens, `closeDelay`
-  defaults to 0ms before it closes after the pointer leaves
-- `TooltipProvider` shares open/close delays across every tooltip it wraps —
-  once one tooltip has opened, moving to another within its `timeout` window
-  (default 400ms) opens the next one instantly, skipping its own `delay`
-- Tooltips are intentionally disabled on touch devices (Base UI behavior,
-  since there's no hover to trigger them); for info icons that need to work
-  on touch, use a [Popover](/docs/components/popover) with `openOnHover`
-  instead
-- `TooltipContent`'s `side` prop defaults to `top` — the only primitive in
-  the registry where the shared positioner default isn't `bottom`
+### TooltipProvider
+
+Shares open/close delays across every tooltip it wraps — once one
+tooltip has opened, moving to another within the `timeout` window opens
+the next one instantly, skipping its own `delay`.
+
+| Prop      | Type     | Default    |
+| --------- | -------- | ---------- |
+| `timeout` | `number` | `400` (ms) |
+
+### TooltipTrigger
+
+Extends the [Base UI Tooltip](https://base-ui.com/react/components/tooltip)
+Trigger — delays live here (Base UI 1.7 moved them off the Root). Use
+the `render` prop for the trigger element:
+`render={<Button variant="outline" />}`.
+
+| Prop         | Type     | Default    |
+| ------------ | -------- | ---------- |
+| `delay`      | `number` | `600` (ms) |
+| `closeDelay` | `number` | `0` (ms)   |
+
+### TooltipContent
+
+| Prop             | Type                 | Default                |
+| ---------------- | -------------------- | ---------------------- |
+| `side` / `align` | positioner placement | `"top"` / `"center"`   |
+| `sideOffset`     | `number`             | `8`                    |
+
+`side` defaulting to `top` makes Tooltip the only overlay in the
+registry whose default isn't `bottom`.

@@ -22,16 +22,38 @@ import { Meter, MeterLabel, MeterValue } from "@/components/ui/meter";
 </Meter>;
 ```
 
+## Examples
+
+### Custom format
+
+`format` takes `Intl.NumberFormatOptions` — here a raw gigabyte value
+with `max={256}` instead of the default percentage.
+
+<Component path="meter/meter-format" />
+
+### System resources
+
+<Component path="meter/meter-resources" />
+
 ## API reference
 
-Built on the [Base UI Meter](https://base-ui.com/react/components/meter)
-primitive — all its props apply. Meter is a Base UI bonus primitive absent
-from shadcn/ui, like Number Field and Toolbar, so there is no migration path
-to preserve.
+Meter is a Base UI bonus primitive absent from shadcn/ui, like Number
+Field and Toolbar.
 
-Renders `role="meter"` semantics for a value within a known range — use
-[Progress](/docs/components/progress) instead for task completion. `value` is
-required and non-nullable; unlike Progress, there is no indeterminate state.
-The default display is a percentage; pass `format` (`Intl.NumberFormatOptions`,
-e.g. `{ style: "unit", unit: "gigabyte" }`) to change it. `MeterLabel` wires
-`aria-labelledby` on the root automatically.
+### Meter
+
+Extends the [Base UI Meter](https://base-ui.com/react/components/meter)
+Root — all its props (`value`, `min`, `max`, `format`, …) apply, and the
+track and indicator are rendered automatically. `role="meter"` semantics
+for a value within a known range — use
+[Progress](/docs/components/progress) for task completion instead.
+`value` is required and non-nullable; there is no indeterminate state.
+The default display is a percentage; pass `format`
+(`Intl.NumberFormatOptions`, e.g. `{ style: "unit", unit: "gigabyte" }`)
+to change it.
+
+### MeterLabel and MeterValue
+
+Extend the Base UI Label and Value parts. The label wires
+`aria-labelledby` on the root automatically; the value renders the
+formatted current value.

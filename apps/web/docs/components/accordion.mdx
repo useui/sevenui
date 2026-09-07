@@ -37,29 +37,72 @@ export default function AccordionDemo() {
 }
 ```
 
+## Examples
+
+### Multiple open panels
+
+<Component path="accordion/accordion-multiple" />
+
+### In a card
+
+<Component path="accordion/accordion-card" />
+
+### Split items
+
+<Component path="accordion/accordion-split" />
+
 ## API reference
 
-Built on the [Base UI Accordion](https://base-ui.com/react/components/accordion)
-primitive — all its props apply.
+### Accordion
 
-- `value`/`defaultValue` on `Accordion` (the Root) are **arrays** of the open
-  item values, e.g. `defaultValue={["item-1"]}`, not a single value.
-- `multiple` (default `false`) allows more than one panel to be open at
-  once. Base UI 1.7 renamed this prop from `openMultiple` to `multiple`.
-- `AccordionTrigger` renders a native `<button>` inside an `<h3>` heading
-  (`Accordion.Header`). Override the heading level by passing `render` on
-  the primitive's `Header` when composing directly.
-- The open trigger is styled via `data-panel-open` (presence) on
-  `AccordionTrigger` — not `data-open`, which lives on `Item`/`Panel`/`Root`
-  instead.
-- Panel height animates through the `--accordion-panel-height` CSS
-  variable — see the `h-[var(--accordion-panel-height)]` /
-  `data-[starting-style]:h-0` / `data-[ending-style]:h-0` classes on
-  `AccordionContent`.
-- `hiddenUntilFound` (default `false`) renders closed panels with
-  `hidden="until-found"`, letting the browser's native find-in-page reveal
-  them.
-- Although `AccordionTrigger` renders a native `<button>`, a disabled
-  trigger stays focusable and receives `aria-disabled="true"` instead of
-  the native `disabled` attribute — style disabled state with
-  `data-[disabled]:`, not the `disabled:` Tailwind variant.
+Extends the
+[Base UI Accordion](https://base-ui.com/react/components/accordion)
+Root — all its props apply. `value`/`defaultValue` are **arrays** of the
+open item values (`defaultValue={["item-1"]}`), not a single value.
+
+| Prop                     | Type                                       | Default |
+| ------------------------ | ------------------------------------------ | ------- |
+| `value` / `defaultValue` | `string[]`                                 | —       |
+| `onValueChange`          | `(value: string[]) => void`                | —       |
+| `multiple`               | `boolean` (renamed from `openMultiple` in 1.7) | `false` |
+| `hiddenUntilFound`       | `boolean` — `hidden="until-found"` panels reveal via find-in-page | `false` |
+| `disabled`               | `boolean`                                  | `false` |
+
+### AccordionItem
+
+Takes the item `value` (and `disabled`).
+
+### AccordionTrigger
+
+A native `<button>` inside an `<h3>` heading (`Accordion.Header`) —
+override the heading level via `render` on the primitive's Header when
+composing directly. The open state styles via `data-panel-open`
+(presence) — not `data-open`, which lives on Item/Panel/Root. A disabled
+trigger stays focusable with `aria-disabled="true"` — style it with
+`data-disabled:`, not `disabled:`.
+
+### AccordionContent
+
+Open/close animates via the `animate-accordion-down` /
+`animate-accordion-up` utilities. Their keyframes ship in this
+component's registry item (the CLI merges them into your CSS); when
+copying the source manually, add them yourself:
+
+```css
+@theme inline {
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}
+
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--accordion-panel-height); }
+}
+
+@keyframes accordion-up {
+  from { height: var(--accordion-panel-height); }
+  to { height: 0; }
+}
+```
+
+`--accordion-panel-height` is set by Base UI on the panel.

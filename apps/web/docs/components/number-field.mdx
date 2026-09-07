@@ -47,10 +47,49 @@ import { Label } from "@/components/ui/label";
 - **Step Values**: Configure `step` for regular increments, `smallStep` for fine adjustments
   (e.g., mouse scroll), and `largeStep` for large jumps (e.g., shift+scroll).
 
+## Examples
+
+### Currency
+
+`format` takes `Intl.NumberFormatOptions`; `largeStep` applies while
+holding <kbd>Shift</kbd>. Drag the label to scrub the value.
+
+<Component path="number-field/number-field-currency" />
+
+### Quantity
+
+A compact stepper clamped with `min` and `max`.
+
+<Component path="number-field/number-field-quantity" />
+
 ## API reference
 
-Built on the [Base UI NumberField](https://base-ui.com/react/components/number-field) primitive —
-all its props apply. The component supports `value`, `defaultValue`, `min`, `max`, and
-`step` props for controlling the number range and increment behavior.
+Number Field is a Base UI exclusive — shadcn/ui has no equivalent
+component. The parts compose explicitly, as in the demo above.
 
-Number Field is a Base UI exclusive — shadcn/ui has no equivalent component, so there is no migration path to preserve.
+### NumberField
+
+Extends the
+[Base UI Number Field](https://base-ui.com/react/components/number-field)
+Root — all its props apply.
+
+| Prop                     | Type                               | Default |
+| ------------------------ | ---------------------------------- | ------- |
+| `value` / `defaultValue` | `number \| null`                   | —       |
+| `onValueChange`          | `(value: number \| null) => void`  | —       |
+| `min` / `max`            | `number`                           | —       |
+| `step`                   | `number`                           | `1`     |
+| `largeStep`              | `number` — step while holding Shift | `10`   |
+| `format`                 | `Intl.NumberFormatOptions`         | —       |
+| `disabled`               | `boolean`                          | `false` |
+
+### NumberFieldGroup, NumberFieldInput, NumberFieldIncrement, NumberFieldDecrement
+
+Styled Base UI parts: the group draws the bordered container, the input
+holds the formatted value, and the stepper buttons come with their
+plus/minus icons built in (hold to repeat).
+
+### NumberFieldScrubArea
+
+Wraps a label to make it scrubbable — dragging it adjusts the value
+with a pointer-lock cursor.

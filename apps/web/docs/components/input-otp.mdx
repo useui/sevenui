@@ -45,19 +45,38 @@ export default function InputOTPDemo() {
 }
 ```
 
+## Examples
+
+### Masked
+
+<Component path="input-otp/input-otp-mask" />
+
 ## API reference
 
-Built on the [Base UI OTP Field](https://base-ui.com/react/components/otp-field)
-primitive — all its props apply. This is a declarative wrapper with no
-third-party input-otp package required.
+### InputOTP
 
-Key props on the Root (`InputOTP`):
+Extends the
+[Base UI OTP Field](https://base-ui.com/react/components/otp-field)
+Root — all its props apply. No third-party input-otp package required.
 
-- `length` — required, the number of OTP slots
-- `value` — the current OTP value (controlled mode)
-- `defaultValue` — the initial OTP value (uncontrolled mode)
-- `onValueChange` — callback fired when the OTP value changes
-- `validationType` — character validation: `'numeric'` (default), `'alpha'`, `'alphanumeric'`, or `'none'`
-- `mask` — whether to mask the input (default: `false`)
-- `onValueComplete` — callback when all slots are filled
-- `autoSubmit` — automatically submit the owning form when complete
+| Prop                     | Type                                                | Default     |
+| ------------------------ | --------------------------------------------------- | ----------- |
+| `length`                 | `number` (required)                                 | —           |
+| `value` / `defaultValue` | `string`                                            | —           |
+| `onValueChange`          | `(value: string) => void`                           | —           |
+| `onValueComplete`        | `(value: string) => void` — all slots filled        | —           |
+| `validationType`         | `"numeric" \| "alpha" \| "alphanumeric" \| "none"`  | `"numeric"` |
+| `mask`                   | `boolean`                                           | `false`     |
+| `autoSubmit`             | `boolean` — submit the owning form when complete    | `false`     |
+
+### InputOTPSlot
+
+Extends the Base UI Input part — each slot is a real single-character
+input; render exactly `length` of them. Focus styling replaces the old
+fake-caret behavior.
+
+### InputOTPGroup and InputOTPSeparator
+
+`InputOTPGroup` (a `div`) draws the joined slot borders and rounded
+ends; `InputOTPSeparator` extends the Base UI Separator and renders a
+minus icon between groups.

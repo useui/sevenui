@@ -12,7 +12,7 @@ export default function InputOTPDemo() {
   const [value, setValue] = useState("");
 
   return (
-    <div className="w-full max-w-sm">
+    <div className="flex w-full max-w-sm justify-center">
       <InputOTP
         length={6}
         value={value}

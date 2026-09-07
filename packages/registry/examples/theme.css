@@ -143,3 +143,146 @@
   width: 100%;
   justify-items: center;
 }
+
+/* Animation utilities — self-contained enter/exit animations for
+   the overlay components (no external animation package). Compose like:
+   data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95
+   Speed and easing come from Tailwind core's duration-* and ease-*
+   utilities via --tw-duration / --tw-ease. */
+@utility animate-in {
+  animation: enter var(--tw-duration, 0.15s) var(--tw-ease, ease) both;
+}
+
+@utility animate-out {
+  animation: exit var(--tw-duration, 0.15s) var(--tw-ease, ease) both;
+}
+
+@utility fade-in-* {
+  --enter-opacity: calc(--value(number) / 100);
+}
+
+@utility fade-out-* {
+  --exit-opacity: calc(--value(number) / 100);
+}
+
+@utility zoom-in-* {
+  --enter-scale: calc(--value(number) / 100);
+}
+
+@utility zoom-out-* {
+  --exit-scale: calc(--value(number) / 100);
+}
+
+@utility slide-in-from-top-* {
+  --enter-translate-y: calc(var(--spacing) * --value(number) * -1);
+}
+
+@utility slide-in-from-bottom-* {
+  --enter-translate-y: calc(var(--spacing) * --value(number));
+}
+
+@utility slide-in-from-left-* {
+  --enter-translate-x: calc(var(--spacing) * --value(number) * -1);
+}
+
+@utility slide-in-from-right-* {
+  --enter-translate-x: calc(var(--spacing) * --value(number));
+}
+
+@utility slide-out-to-top-* {
+  --exit-translate-y: calc(var(--spacing) * --value(number) * -1);
+}
+
+@utility slide-out-to-bottom-* {
+  --exit-translate-y: calc(var(--spacing) * --value(number));
+}
+
+@utility slide-out-to-left-* {
+  --exit-translate-x: calc(var(--spacing) * --value(number) * -1);
+}
+
+@utility slide-out-to-right-* {
+  --exit-translate-x: calc(var(--spacing) * --value(number));
+}
+
+@keyframes enter {
+  from {
+    opacity: var(--enter-opacity, 1);
+    transform: translate3d(
+        var(--enter-translate-x, 0),
+        var(--enter-translate-y, 0),
+        0
+      )
+      scale3d(
+        var(--enter-scale, 1),
+        var(--enter-scale, 1),
+        1
+      );
+  }
+}
+
+@keyframes exit {
+  to {
+    opacity: var(--exit-opacity, 1);
+    transform: translate3d(
+        var(--exit-translate-x, 0),
+        var(--exit-translate-y, 0),
+        0
+      )
+      scale3d(
+        var(--exit-scale, 1),
+        var(--exit-scale, 1),
+        1
+      );
+  }
+}
+
+/* Animation utilities (animate-in/out, fade, zoom, slide) used by the
+   overlay components are defined above. The
+   accordion's open/close keyframes are defined here, driven by the
+   --accordion-panel-height variable Base UI sets on the panel. */
+@theme inline {
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--accordion-panel-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--accordion-panel-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@theme inline {
+  --animate-collapsible-down: collapsible-down 0.2s ease-out;
+  --animate-collapsible-up: collapsible-up 0.2s ease-out;
+}
+
+@keyframes collapsible-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--collapsible-panel-height);
+  }
+}
+
+@keyframes collapsible-up {
+  from {
+    height: var(--collapsible-panel-height);
+  }
+  to {
+    height: 0;
+  }
+}
