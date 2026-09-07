@@ -10,7 +10,8 @@ import {
   InputGroupInput,
 } from "@/registry/base/ui/input-group";
 
-const INSTALL_COMMAND = "npx shadcn@latest add @sevenui/input-group";
+const INSTALL_COMMAND =
+  "npx shadcn@latest add https://sevenui.dev/r/input-group.json";
 
 export default function InputGroupButtonDemo() {
   const [copied, setCopied] = React.useState(false);

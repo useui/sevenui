@@ -1,0 +1,18 @@
+---
+// The shadcn CLI install command for a registry item, rendered as a bash code
+// block identical to a Markdown fence. Registered as an MDX component in
+// components.ts so docs pages write `<InstallCommand item="button" />` instead
+// of hardcoding the command shape.
+import CodeBlock from "blume/components/content/CodeBlock.astro";
+
+import { installCommand } from "../lib/registry.ts";
+
+interface Props {
+  /** Registry item path: `"button"`, `"theme"`, `"blocks/login-01"`. */
+  item: string;
+}
+
+const { item } = Astro.props;
+---
+
+<CodeBlock lang="bash" code={installCommand(item)} />

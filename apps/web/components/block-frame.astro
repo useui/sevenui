@@ -33,6 +33,7 @@
 // mean the block genuinely renders at 1024.
 import CopyIconButton from "./copy-icon-button.tsx";
 import { ArrowUpRight, Monitor, Smartphone, Tablet } from "@lucide/astro";
+import { installCommand as buildInstallCommand } from "../lib/registry.ts";
 
 interface Props {
   name: string;
@@ -42,7 +43,7 @@ interface Props {
   sourcePath: string; // registry item files[0].path, e.g. blocks/auth/login-01/login-01.tsx
 }
 const { name, title, description, height, sourcePath } = Astro.props;
-const installCommand = `npx shadcn@latest add @sevenui/blocks/${name}`;
+const installCommand = buildInstallCommand(`blocks/${name}`);
 const sourceUrl = `https://github.com/useui/sevenui/blob/main/packages/blocks/${sourcePath}`;
 const previewUrl = `/blocks/preview/${name}`;
 // Single source of truth for the resize bounds, now expressed in IFRAME

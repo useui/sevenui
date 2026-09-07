@@ -17,6 +17,7 @@ import CopyCommand from "../components/copy-command.tsx";
 import LandingRuler from "../components/landing-ruler.astro";
 import ComponentWall from "../components/component-wall.astro";
 import { SITE_TABS } from "../components/site-tabs.ts";
+import { installCommand } from "../lib/registry.ts";
 import registry from "../../../packages/registry/registry.json";
 
 const uiCount = registry.items.filter(
@@ -39,7 +40,7 @@ const installSteps = [
   {
     title: "2. Add components",
     body: "Install any part from the registry. Source lands in your components directory, ready to edit.",
-    command: "npx shadcn@latest add @sevenui/button",
+    command: installCommand("button"),
   },
   {
     title: "3. Use them",
@@ -117,7 +118,7 @@ const footerComponents = [
           >
             Get started
           </a>
-          <CopyCommand client:load command="npx shadcn@latest add @sevenui/button" />
+          <CopyCommand client:load command={installCommand("button")} />
         </div>
       </div>
     </section>

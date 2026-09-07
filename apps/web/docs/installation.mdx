@@ -6,9 +6,18 @@ description: Configure the SevenUI registry in your project.
 SevenUI requires a project already set up with the shadcn CLI and
 Tailwind CSS v4. Run `npx shadcn@latest init` first if you have not.
 
-## Configure the registry
+## Add components
 
-Add the registry to your `components.json`:
+Install any component straight from its registry URL — no extra
+configuration needed:
+
+<InstallCommand item="button" />
+
+Components install as source files under your `ui` alias.
+
+## Registry namespace (optional)
+
+For a shorter command, add the registry to your `components.json`:
 
 ```json
 {
@@ -18,17 +27,10 @@ Add the registry to your `components.json`:
 }
 ```
 
-## Add components
+Then the `@sevenui` namespace resolves to the same URLs:
 
 ```bash
 npx shadcn@latest add @sevenui/button
-```
-
-Components install as source files under your `ui` alias. Direct URLs
-work without the namespace config:
-
-```bash
-npx shadcn@latest add https://sevenui.dev/r/button.json
 ```
 
 ## Animations
@@ -53,16 +55,14 @@ composed entirely from SevenUI components. They live under a tiered path:
 components at `/r/<name>.json`, blocks at `/r/blocks/<name>.json`.
 
 Browse them at [sevenui.dev/blocks](https://sevenui.dev/blocks), then install
-with the same `@sevenui` namespace configured above:
+from the block's registry URL:
+
+<InstallCommand item="blocks/login-01" />
+
+With the `@sevenui` namespace configured, the short form works too:
 
 ```bash
 npx shadcn@latest add @sevenui/blocks/login-01
-```
-
-The direct URL also works without any `components.json` config:
-
-```bash
-npx shadcn@latest add https://sevenui.dev/r/blocks/login-01.json
 ```
 
 The block file lands in your `components/` directory and its component
