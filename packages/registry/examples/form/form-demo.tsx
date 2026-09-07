@@ -8,7 +8,7 @@ import { Form } from "@/registry/base/ui/form";
 import { Input } from "@/registry/base/ui/input";
 
 export default function FormDemo() {
-  const [errors, setErrors] = React.useState({});
+  const [errors, setErrors] = React.useState<{ url?: string }>({});
 
   return (
     <div className="w-full max-w-sm">
@@ -19,10 +19,18 @@ export default function FormDemo() {
           setErrors({ url: "This URL is already taken." });
         }}
       >
-        <Field name="url">
-          <FieldLabel>Website</FieldLabel>
-          <Input required type="url" placeholder="https://example.com" />
-          <FieldError />
+        <Field>
+          <FieldLabel htmlFor="form-demo-url">Website</FieldLabel>
+          <Input
+            id="form-demo-url"
+            name="url"
+            required
+            type="url"
+            placeholder="https://example.com"
+          />
+          <FieldError
+            errors={errors.url ? [{ message: errors.url }] : undefined}
+          />
         </Field>
         <Button type="submit">Submit</Button>
       </Form>
