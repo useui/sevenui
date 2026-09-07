@@ -20,12 +20,12 @@ package to depend on.
 
 ## Component coverage
 
-SevenUI ships with 54 components across five waves:
+SevenUI ships with 53 components across five waves:
 
 - **Foundation wave** (15): button, badge, kbd, card, alert, separator,
   skeleton, spinner, aspect-ratio, textarea, table, breadcrumb, pagination,
   avatar, progress.
-- **Form wave** (15): input, label, field, form, form-rhf, checkbox,
+- **Form wave** (14): input, label, field, form, checkbox,
   radio-group, switch, toggle, toggle-group, slider, number-field,
   input-otp, select, combobox.
 - **Overlay wave** (11): dialog, alert-dialog, sheet, drawer, popover,
@@ -44,8 +44,9 @@ react-resizable-panels — for the components that genuinely cannot be
 built on Base UI primitives, the same sanctioned choices shadcn makes.
 These four are the only non-Base-UI dependencies in the registry.
 
-Form components use Base UI-native form handling, with an optional
-`form-rhf` integration for [react-hook-form](https://react-hook-form.com).
+Form components use Base UI-native form handling. Libraries like
+[react-hook-form](https://react-hook-form.com) plug into the `Field`
+component's external-state props — see [Field](/components/field).
 
 Ready to add your first component? Head over to
 [Installation](/installation).

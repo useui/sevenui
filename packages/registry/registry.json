@@ -724,6 +724,7 @@
       "title": "Field",
       "description": "Associates a label, control, description, and validation error for a form field.",
       "dependencies": [
+        "@base-ui/react",
         "class-variance-authority",
         "cn"
       ],
@@ -750,6 +751,59 @@
       "files": [
         {
           "path": "examples/field/field-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "field-orientation",
+      "type": "registry:component",
+      "title": "Field Orientation",
+      "description": "Horizontal and responsive field orientations.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/field.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/switch.json"
+      ],
+      "files": [
+        {
+          "path": "examples/field/field-orientation.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "field-validation",
+      "type": "registry:component",
+      "title": "Field Validation",
+      "description": "Custom validation with an auto-rendered error message.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/field.json",
+        "https://sevenui.dev/r/input.json"
+      ],
+      "files": [
+        {
+          "path": "examples/field/field-validation.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "field-rhf",
+      "type": "registry:component",
+      "title": "Field with React Hook Form",
+      "description": "Controller-driven field state via the invalid, touched, and dirty props.",
+      "dependencies": [
+        "react-hook-form"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/field.json",
+        "https://sevenui.dev/r/input.json"
+      ],
+      "files": [
+        {
+          "path": "examples/field/field-rhf.tsx",
           "type": "registry:component"
         }
       ]
@@ -784,43 +838,6 @@
       "files": [
         {
           "path": "examples/form/form-demo.tsx",
-          "type": "registry:component"
-        }
-      ]
-    },
-    {
-      "name": "form-rhf",
-      "type": "registry:ui",
-      "title": "Form (react-hook-form)",
-      "description": "shadcn's form API, implemented on Base UI Field and react-hook-form.",
-      "dependencies": [
-        "@base-ui/react",
-        "cn",
-        "react-hook-form"
-      ],
-      "files": [
-        {
-          "path": "registry/base/ui/form-rhf.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "form-rhf-demo",
-      "type": "registry:component",
-      "title": "Form (react-hook-form) Demo",
-      "description": "Default react-hook-form example.",
-      "dependencies": [
-        "react-hook-form"
-      ],
-      "registryDependencies": [
-        "https://sevenui.dev/r/button.json",
-        "https://sevenui.dev/r/form-rhf.json",
-        "https://sevenui.dev/r/input.json"
-      ],
-      "files": [
-        {
-          "path": "examples/form-rhf/form-rhf-demo.tsx",
           "type": "registry:component"
         }
       ]

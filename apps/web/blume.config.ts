@@ -105,7 +105,6 @@ export default defineConfig({
             "/components/empty",
             "/components/field",
             "/components/form",
-            "/components/form-rhf",
             "/components/hover-card",
             "/components/input",
             "/components/input-group",

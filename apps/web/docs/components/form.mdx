@@ -32,9 +32,13 @@ import { Input } from "@/components/ui/input";
 
 ## API reference
 
-Built on the [Base UI Form](https://base-ui.com/react/components/form)
+### Form
+
+Extends the [Base UI Form](https://base-ui.com/react/components/form)
 primitive — all its props apply. `Form` renders a native `<form>` element and
-consolidates validation errors for the `Field`s nested inside it.
+consolidates validation errors for the [Field](/components/field)s nested
+inside it: entries in `errors` flow to each field's `<FieldError />` by
+`name`, and clear automatically once that field's value changes.
 
 | Prop           | Type                                                          | Default    | Description                                                                                            |
 | -------------- | -------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------- |

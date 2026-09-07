@@ -12,41 +12,130 @@ description: Associates a label, control, description, and validation error for 
 ## Usage
 
 ```tsx
-import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 <Field name="email">
   <FieldLabel>Email</FieldLabel>
   <Input required type="email" placeholder="name@example.com" />
   <FieldDescription>Used to send you order updates.</FieldDescription>
-  <FieldError match="valueMissing">Please enter your email</FieldError>
-  <FieldError match="typeMismatch">Not a valid email</FieldError>
+  <FieldError />
 </Field>;
 ```
 
+`Field` wires everything together for you: `htmlFor`/`id` between label and
+control, `aria-describedby` for the description and error, and
+`aria-invalid` on the control are all managed by the underlying Base UI
+Field context — no manual ids. Every SevenUI form control (Input, Textarea,
+Checkbox, Radio Group, Select, Switch, Slider, Number Field, …) participates
+automatically.
+
+## Examples
+
+### Orientation
+
+`horizontal` places the label and control on one row — pair it with
+`FieldContent` to stack a label and description beside the control.
+`responsive` stacks in narrow containers and switches to the horizontal
+layout from the `@md` container breakpoint; it requires a `FieldGroup`
+ancestor, which provides the container query scope.
+
+<Component path="field/field-orientation" />
+
+### Validation
+
+A bare `<FieldError />` renders the field's active error on its own —
+native constraint messages (`required`, `type="email"`, …), messages
+returned by `validate`, or server errors passed through
+[Form](/components/form). This example validates on blur with a custom
+`validate` function.
+
+<Component path="field/field-validation" />
+
+To scope a literal message to one native validity state, use `match`:
+
+```tsx
+<FieldError match="valueMissing">Please enter your email.</FieldError>
+<FieldError match="typeMismatch">Not a valid email address.</FieldError>
+```
+
+### React Hook Form
+
+Any form library can drive a field through three generic props — `invalid`,
+`touched`, and `dirty` — plus the `errors` array on `FieldError`. With
+react-hook-form, spread `fieldState` from a `Controller`:
+
+<Component path="field/field-rhf" />
+
+The same pattern works for TanStack Form
+(`field.state.meta.isTouched`, `field.state.meta.errors`) or any validator
+implementing Standard Schema — the component has no form-library imports.
+
 ## API reference
 
-Built on the [Base UI Field](https://base-ui.com/react/components/field) and
-[Base UI Fieldset](https://base-ui.com/react/components/fieldset) primitives —
-all their props apply. `Field` wires its `FieldLabel` and `Input`/`Control`
-together automatically (`for`/`id`), and exposes validation through
-`data-[invalid]` on its parts. SevenUI exports:
+### Field
 
-| Component         | Description                                                          |
-| ------------------ | --------------------------------------------------------------------- |
-| `Field`            | Root that groups a label, control, description, and error.           |
-| `FieldLabel`       | Label associated with the field's control.                            |
-| `FieldDescription` | Supporting help text rendered below the control.                     |
-| `FieldError`       | Validation message, shown only when the matched condition is true.   |
-| `Fieldset`         | Groups related fields with a `<fieldset>` element.                   |
-| `FieldsetLegend`   | Legend/heading for a `Fieldset`.                                     |
+Extends the [Base UI Field](https://base-ui.com/react/components/field)
+Root — all its props apply.
 
-| Prop           | Type                                | Default | Description                                                                                          |
-| -------------- | ------------------------------------ | ------- | ------------------------------------------------------------------------------------------------------ |
-| `validate`     | `(value) => string \| string[] \| null \| Promise<...>` | —       | Custom validation run on `Field`, in addition to native constraints. |
-| `validationMode` | `"onBlur" \| "onChange" \| "onSubmit"` | `"onSubmit"` | When custom `validate` runs.                                                                       |
-| `invalid`      | `boolean`                            | —       | Marks the field invalid regardless of native validity.                                               |
-| `name`         | `string`                             | —       | Name of the field, used to associate its control.                                                    |
-| `match`        | `boolean \| keyof ValidityState`     | —       | On `FieldError`, restricts display to a specific validity state (e.g. `"valueMissing"`, `"typeMismatch"`). Omitting both `match` and children falls back to the control's native validation message. |
+| Prop                            | Type                                                                | Default      |
+| ------------------------------- | ------------------------------------------------------------------- | ------------ |
+| `orientation`                   | `"vertical" \| "horizontal" \| "responsive"`                        | `"vertical"` |
+| `name`                          | `string` — keys the field for form submission and `Form errors`     | —            |
+| `validate`                      | `(value, formValues) => string \| string[] \| null \| Promise<...>` | —            |
+| `validationMode`                | `"onSubmit" \| "onBlur" \| "onChange"`                              | `"onSubmit"` |
+| `invalid` / `touched` / `dirty` | `boolean` — for external form libraries                             | —            |
+| `disabled`                      | `boolean` — supersedes the control's own `disabled`                 | `false`      |
 
-All components accept standard HTML props and an optional `className` override.
+Every part carries the field's state as data attributes for styling:
+`data-invalid`, `data-valid`, `data-dirty`, `data-touched`, `data-filled`,
+`data-focused`, `data-disabled`.
+
+### FieldLabel
+
+Extends the Base UI Field Label — associated with the field's control
+automatically, no `htmlFor` needed. Renders through
+[Label](/docs/components/label), so label styling applies. Wrapping a
+nested `Field` turns it into a selectable card (checkbox/radio card
+patterns).
+
+### FieldDescription
+
+Extends the Base UI Field Description — linked to the control via
+`aria-describedby` automatically.
+
+### FieldError
+
+Extends the Base UI Field Error. Visible only while the field is invalid,
+unless external content forces it.
+
+| Prop     | Type                                       | Default |
+| -------- | ------------------------------------------ | ------- |
+| `errors` | `Array<{ message?: string } \| undefined>` | —       |
+| `match`  | `boolean \| keyof ValidityState`           | —       |
+
+With no props it auto-renders the field's active error from context.
+`errors` accepts issues from any form library or Standard Schema validator
+(Zod, Valibot, ArkType); messages are deduped, and multiple messages render
+as a list. `match="valueMissing"` (and other
+[ValidityState](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState)
+keys) scopes literal children to one native validity condition.
+
+### Layout parts
+
+Plain styled elements with no form wiring — compose freely around any
+number of fields:
+
+| Component        | Description                                                       |
+| ---------------- | ----------------------------------------------------------------- |
+| `FieldSet`       | `<fieldset>` grouping related fields.                             |
+| `FieldLegend`    | `<legend>`; `variant`: `"legend"` (default) or `"label"`.         |
+| `FieldGroup`     | Vertical stack of fields; container-query scope for `responsive`. |
+| `FieldContent`   | Column wrapper pairing a label/description beside a control.      |
+| `FieldTitle`     | Label-styled heading for non-label contexts.                      |
+| `FieldSeparator` | Divider between fields, with optional inline content.             |
