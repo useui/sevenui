@@ -9,15 +9,21 @@ function Slider({
   max = 100,
   ...props
 }: SliderPrimitive.Root.Props) {
+  // Base UI defaults an uncontrolled slider to the scalar `min`, so the
+  // no-value fallback is a single thumb (a [min, max] fallback would render
+  // two thumbs both bound to that scalar).
   const _values = Array.isArray(value)
     ? value
     : Array.isArray(defaultValue)
       ? defaultValue
-      : [min, max];
+      : [min];
 
   return (
     <SliderPrimitive.Root
-      className={cn("data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full", className)}
+      className={cn(
+        "data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full",
+        className,
+      )}
       data-slot="slider"
       defaultValue={defaultValue}
       value={value}

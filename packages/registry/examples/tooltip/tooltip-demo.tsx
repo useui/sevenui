@@ -13,7 +13,11 @@ export default function TooltipDemo() {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger
-          render={<Button variant="outline">Hover me</Button>}
+          render={
+            <Button variant="outline" aria-label="Add to library">
+              Hover me
+            </Button>
+          }
         />
         <TooltipContent>Add to library</TooltipContent>
       </Tooltip>

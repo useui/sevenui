@@ -87,10 +87,27 @@ the viewport, not the page.
 
 ### AlertDialogAction and AlertDialogCancel
 
-Both close the dialog regardless of which one is pressed, so attach the
-destructive handler via `onClick` on `AlertDialogAction`. Both accept
-[Button](/docs/components/button) props — use
-`variant="destructive"` on the action for delete flows.
+Both are Close parts: they close the dialog regardless of which one is
+pressed, so attach the destructive handler via `onClick` on
+`AlertDialogAction`. Both expose [Button](/docs/components/button)'s
+`variant`/`size` — use `variant="destructive"` on the action for delete
+flows.
+
+For async confirms that should keep the dialog open until the work
+finishes, control the dialog and cancel the close:
+
+```tsx
+<AlertDialog
+  open={open}
+  onOpenChange={(nextOpen, eventDetails) => {
+    if (!nextOpen && pending) {
+      eventDetails.cancel(); // keep it open while the request runs
+      return;
+    }
+    setOpen(nextOpen);
+  }}
+>
+```
 
 ### AlertDialogTrigger, AlertDialogHeader, AlertDialogMedia, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogOverlay, AlertDialogPortal
 

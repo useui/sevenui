@@ -27,7 +27,11 @@ export default function TooltipDemo() {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger
-          render={<Button variant="outline">Hover me</Button>}
+          render={
+            <Button variant="outline" aria-label="Add to library">
+              Hover me
+            </Button>
+          }
         />
         <TooltipContent>Add to library</TooltipContent>
       </Tooltip>
@@ -35,6 +39,15 @@ export default function TooltipDemo() {
   );
 }
 ```
+
+## Accessibility
+
+Base UI treats tooltips as supplementary visual labels: the popup carries
+no `role="tooltip"` or `aria-describedby` wiring by design. Screen reader
+users hear the trigger's accessible name instead — so whenever the
+trigger's visible content doesn't match the tooltip (icon buttons,
+"Hover me" style triggers), give the trigger an `aria-label` that mirrors
+the tooltip text.
 
 ## API reference
 

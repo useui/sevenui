@@ -6,7 +6,7 @@ import {
   MoreHorizontalIcon,
 } from "lucide-react";
 
-import { Button } from "@/registry/base/ui/button";
+import { Button, buttonVariants } from "@/registry/base/ui/button";
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
@@ -48,20 +48,18 @@ function PaginationLink({
   size = "icon",
   ...props
 }: PaginationLinkProps) {
+  // A plain anchor styled with buttonVariants: Base UI's Button enforces
+  // role="button" on non-native buttons, which would strip link semantics.
   return (
-    <Button
-      variant={isActive ? "outline" : "ghost"}
-      size={size}
-      className={cn(className)}
-      nativeButton={false}
-      render={
-        <a
-          aria-current={isActive ? "page" : undefined}
-          data-slot="pagination-link"
-          data-active={isActive}
-          {...props}
-        />
-      }
+    <a
+      aria-current={isActive ? "page" : undefined}
+      data-slot="pagination-link"
+      data-active={isActive || undefined}
+      className={cn(
+        buttonVariants({ variant: isActive ? "outline" : "ghost", size }),
+        className,
+      )}
+      {...props}
     />
   );
 }
