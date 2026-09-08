@@ -250,6 +250,54 @@ const clickScript = `(()=>{const dr=()=>{const h=document.querySelector("[data-b
       <span class="hidden dark:inline-flex"><Icon name="moon" size={18} /></span>
     </button>
     {askEnabled && <Ask strings={askStrings} />}
+    <a
+      id="auth-control"
+      class="rounded-full px-3 py-1.5 font-medium text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground"
+      href="/account"
+    >
+      Sign in
+    </a>
   </div>
 </header>
 <script is:inline set:html={clickScript} />
+<script>
+  import { getClerk } from "../../lib/clerk";
+
+  // Clerk sets `__client_uat` (last-active-at, "0" when signed out) on every
+  // request it's seen, readable from plain document.cookie since it's not
+  // httpOnly — that's the fastest signed-in HINT available without paying
+  // for the ~1.5MB Clerk bundle. An anonymous visitor has either no cookie
+  // at all or a "0" value, so this check keeps the entire chunk (and every
+  // network call Clerk's `.load()` makes) OUT of the request path for the
+  // common case: a signed-out visitor browsing docs/blocks pages.
+  function hasSessionHint(): boolean {
+    return document.cookie
+      .split("; ")
+      .some((entry) => {
+        const [name, value] = entry.split("=");
+        return name === "__client_uat" && value && value !== "0";
+      });
+  }
+
+  // Signed-out visitors keep the default "Sign in" label; once Clerk loads
+  // and reports a session, swap it to the user's first name so the header
+  // itself signals sign-in state — the link still just goes to /account,
+  // no dropdown of our own. Wrapped in try/catch: a Clerk boot failure here
+  // (network hiccup, blocked cookie, etc.) must never surface as an
+  // uncaught rejection on every single page — the link just stays "Sign in".
+  async function syncAuthControl() {
+    const link = document.getElementById("auth-control");
+    if (!link) return; // header not rendered on this page
+    if (!hasSessionHint()) return; // no session hint — skip loading Clerk entirely
+    try {
+      const clerk = await getClerk();
+      link.textContent = clerk.user?.firstName || (clerk.user ? "Account" : "Sign in");
+    } catch (e) {
+      console.error("header:", e);
+      // Leave the default "Sign in" label; nothing else to do client-side.
+    }
+  }
+
+  document.addEventListener("astro:page-load", syncAuthControl);
+  syncAuthControl();
+</script>

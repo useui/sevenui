@@ -11,6 +11,7 @@
 // continuous); crop marks are the ::before/::after of .l-marks rows.
 import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
+import Header from "../components/blume/Header.astro";
 import { Logomark } from "../components/logomark.tsx";
 import LandingShowcase from "../components/landing-showcase.tsx";
 import CopyCommand from "../components/copy-command.tsx";
@@ -89,6 +90,7 @@ const footerComponents = [
   siteUrl={config.site}
   ogEnabled={config.og.enabled}
   page={{ title: config.title, description: config.description }}
+  layout={{ Header }}
 >
   <div class="relative">
     <LandingRuler />

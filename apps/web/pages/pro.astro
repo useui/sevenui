@@ -1,0 +1,365 @@
+---
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import data from "blume:data";
+import Header from "../components/blume/Header.astro";
+import LandingRuler from "../components/landing-ruler.astro";
+import SiteFooter from "../components/site-footer.astro";
+import { SITE_TABS } from "../components/site-tabs.ts";
+
+const { config } = data;
+
+const description =
+  "Pre-order SevenUI Pro for $99 lifetime — the price rises to $249 once the Pro blocks catalog launches.";
+
+// Sandbox link until production cutover — the ONLY place the checkout URL lives.
+const CHECKOUT_URL =
+  "https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_MulHSqwF0DaO1vw3QaZ7LOcCarTPBp7fdSwTI2Nagty/redirect";
+
+const features = [
+  "Every Pro block, delivered to your license as the catalog rolls out",
+  "Lifetime access — pay once, keep forever",
+  "Locks in $99 before the price rises to $249 at launch",
+  "License key issued immediately — view it anytime in your account",
+];
+
+// The upcoming catalog, drawn in the same wireframe idiom as the blocks
+// gallery's category illustrations. Names are the promise; the drawings are
+// deliberately unfinished — the catalog is in production.
+const catalog = [
+  { id: "dashboards", label: "Dashboards" },
+  { id: "app-shells", label: "App shells" },
+  { id: "settings", label: "Settings" },
+  { id: "onboarding", label: "Onboarding" },
+  { id: "data-tables", label: "Data tables" },
+  { id: "billing", label: "Billing" },
+];
+
+const navigation = {
+  ...data.navigation,
+  tabs: SITE_TABS,
+};
+---
+
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={navigation}
+  favicon={config.favicon}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  searchEnabled={config.search.enabled}
+  siteUrl={config.site}
+  ogEnabled={config.og.enabled}
+  page={{ title: "Pro — SevenUI", description, route: "/pro" }}
+  layout={{ Header }}
+>
+  <div class="relative">
+    <LandingRuler />
+
+    <section class="border-b border-border">
+      <div
+        class="l-row l-marks flex items-center justify-between gap-4 border-b border-border px-6 py-3 font-mono text-xs text-muted-foreground"
+      >
+        <span>SevenUI Pro</span>
+        <span class="text-end">Pre-order open — $99 until catalog launch</span>
+      </div>
+      <div
+        class="l-row flex flex-col items-center px-6 pt-16 pb-14 text-center sm:pt-24 sm:pb-20"
+      >
+        <h1
+          class="hero-rise text-4xl font-semibold tracking-tight text-balance sm:text-6xl"
+        >
+          The application layer<br />is coming.
+        </h1>
+        <p
+          class="hero-rise hero-rise-2 mt-6 max-w-xl text-lg text-balance text-muted-foreground"
+        >
+          Dashboards, app shells, settings, onboarding — full application
+          blocks on the same Base UI foundation, delivered straight to your
+          license as they ship.
+        </p>
+        <div class="hero-rise hero-rise-3 mt-10 flex flex-col items-center gap-3 sm:flex-row">
+          <a
+            href="#pre-order"
+            class="inline-flex h-10 items-center rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Pre-order — $99
+          </a>
+          <span class="font-mono text-xs text-muted-foreground">
+            <s aria-hidden="true">$249</s> at launch
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-b border-border">
+      <div
+        class="l-row l-marks flex items-center justify-between gap-4 border-b border-border px-6 py-3 font-mono text-xs text-muted-foreground"
+      >
+        <span>In production</span>
+        <span class="text-end">First delivery ships to every pre-order</span>
+      </div>
+      <div class="l-row">
+        <ul class="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
+          {
+            catalog.map((entry, i) => (
+              <li class="catalog-cell bg-background" style={`--draw-delay: ${i * 0.12}s`}>
+                <div class="flex aspect-[11/6] items-center justify-center px-8 py-6">
+                  <div class="h-full w-full max-w-[220px]">
+                    {entry.id === "dashboards" ? (
+                      <svg viewBox="0 0 220 120" class="h-full w-full" aria-hidden="true">
+                        <rect x="14" y="14" width="40" height="92" rx="6" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <rect x="66" y="14" width="42" height="28" rx="5" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <rect x="116" y="14" width="42" height="28" rx="5" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <rect x="166" y="14" width="40" height="28" rx="5" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <rect x="66" y="52" width="140" height="54" rx="6" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <rect x="76" y="64" width="80" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <rect x="76" y="78" width="120" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <rect x="76" y="92" width="100" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                      </svg>
+                    ) : entry.id === "app-shells" ? (
+                      <svg viewBox="0 0 220 120" class="h-full w-full" aria-hidden="true">
+                        <rect x="14" y="14" width="192" height="16" rx="5" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <rect x="14" y="38" width="48" height="68" rx="6" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <rect x="70" y="38" width="136" height="68" rx="6" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <rect x="22" y="48" width="32" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <rect x="22" y="60" width="32" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <rect x="22" y="72" width="32" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <rect x="80" y="50" width="90" height="8" rx="4" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <rect x="80" y="66" width="116" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                      </svg>
+                    ) : entry.id === "settings" ? (
+                      <svg viewBox="0 0 220 120" class="h-full w-full" aria-hidden="true">
+                        <rect x="14" y="20" width="54" height="80" rx="6" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <rect x="80" y="20" width="126" height="80" rx="6" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <rect x="22" y="32" width="38" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/50" />
+                        <rect x="22" y="46" width="38" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <rect x="22" y="60" width="38" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <rect x="92" y="36" width="60" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <circle cx="188" cy="39" r="7" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <rect x="92" y="58" width="60" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <circle cx="188" cy="61" r="7" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <rect x="92" y="80" width="60" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <circle cx="188" cy="83" r="7" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                      </svg>
+                    ) : entry.id === "onboarding" ? (
+                      <svg viewBox="0 0 220 120" class="h-full w-full" aria-hidden="true">
+                        <rect x="60" y="14" width="100" height="80" rx="8" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <rect x="76" y="30" width="68" height="8" rx="4" fill="currentColor" class="ink text-muted-foreground/50" />
+                        <rect x="76" y="46" width="68" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <rect x="76" y="70" width="68" height="12" rx="6" fill="currentColor" class="ink text-muted-foreground/50" />
+                        <circle cx="94" cy="106" r="4" fill="currentColor" class="ink text-muted-foreground/50" />
+                        <circle cx="110" cy="106" r="4" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <circle cx="126" cy="106" r="4" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                      </svg>
+                    ) : entry.id === "data-tables" ? (
+                      <svg viewBox="0 0 220 120" class="h-full w-full" aria-hidden="true">
+                        <rect x="14" y="14" width="192" height="92" rx="6" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <rect x="26" y="26" width="60" height="8" rx="4" fill="currentColor" class="ink text-muted-foreground/50" />
+                        <line x1="14" y1="46" x2="206" y2="46" pathLength="1" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/30" />
+                        <rect x="26" y="56" width="120" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <rect x="26" y="72" width="150" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <rect x="26" y="88" width="100" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 220 120" class="h-full w-full" aria-hidden="true">
+                        <rect x="14" y="14" width="110" height="92" rx="6" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <rect x="26" y="28" width="50" height="8" rx="4" fill="currentColor" class="ink text-muted-foreground/50" />
+                        <rect x="26" y="48" width="86" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <rect x="26" y="62" width="86" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <line x1="26" y1="84" x2="112" y2="84" pathLength="1" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/30" />
+                        <rect x="26" y="92" width="56" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/50" />
+                        <rect x="136" y="34" width="70" height="52" rx="6" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw text-muted-foreground/40" />
+                        <rect x="146" y="46" width="40" height="6" rx="3" fill="currentColor" class="ink text-muted-foreground/30" />
+                        <rect x="146" y="60" width="50" height="10" rx="5" fill="currentColor" class="ink text-muted-foreground/50" />
+                      </svg>
+                    )}
+                  </div>
+                </div>
+                <div class="border-t border-border px-6 py-3">
+                  <span class="text-sm font-medium">{entry.label}</span>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section id="pre-order" class="scroll-mt-16">
+      <div
+        class="l-row l-marks flex items-center justify-between gap-4 border-b border-border px-6 py-3 font-mono text-xs text-muted-foreground"
+      >
+        <span>Lifetime license</span>
+        <span class="text-end">One developer — unlimited projects</span>
+      </div>
+      <div class="l-row grid divide-y divide-border lg:grid-cols-2 lg:divide-x lg:divide-y-0">
+        <div class="px-6 py-10 sm:px-10">
+          <p class="text-5xl font-semibold tracking-tight">
+            $99
+            <span class="ml-2 align-middle font-mono text-sm font-normal text-muted-foreground">
+              <s aria-hidden="true">$249</s> pre-order
+            </span>
+          </p>
+          <p class="mt-6 max-w-md text-sm leading-relaxed text-muted-foreground">
+            Buy now for $99, once, and it's yours forever. The price becomes
+            $249 the moment the Pro blocks catalog launches — pre-ordering
+            locks in today's price. Your license key is issued immediately,
+            and every Pro block ships to it automatically as the catalog
+            rolls out.
+          </p>
+          <p class="mt-6 max-w-md text-xs leading-relaxed text-muted-foreground">
+            One license per developer, unlimited personal and commercial
+            projects. Redistribution or resale of the source is not permitted.
+          </p>
+        </div>
+        <div class="flex flex-col justify-between px-6 py-10 sm:px-10">
+          <ul class="divide-y divide-border text-sm">
+            {
+              features.map((feature) => (
+                <li class="flex items-start gap-3 py-3 first:pt-0">
+                  <svg
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    aria-hidden="true"
+                    class="mt-0.5 size-4 shrink-0 text-muted-foreground"
+                  >
+                    <path d="M3 8.5l3.5 3.5L13 5" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                  <span class="text-muted-foreground">{feature}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <div class="mt-8">
+            <a
+              id="pro-buy"
+              href={CHECKOUT_URL}
+              class="inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >Pre-order — $99</a>
+            <p class="mt-3 text-center text-xs text-muted-foreground">
+              Your key lives in <a href="/account" class="underline underline-offset-4">your account</a> the moment checkout completes.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <footer slot="footer"><SiteFooter /></footer>
+</PageLayout>
+
+<style>
+  .l-row {
+    position: relative;
+    margin-inline: auto;
+    width: 100%;
+    max-width: 72rem; /* matches the max-w-6xl used by the docs pages */
+  }
+
+  @media (min-width: 640px) {
+    .l-row {
+      border-inline: 1px solid var(--border);
+    }
+
+    .l-marks::before,
+    .l-marks::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      z-index: 1;
+      width: 7px;
+      height: 7px;
+      border: 1px solid var(--border);
+      background: var(--background);
+      transform: translate(-50%, -50%);
+    }
+
+    .l-marks::before {
+      left: 0;
+    }
+
+    .l-marks::after {
+      left: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .l-row :global(.hero-rise) {
+      animation: hero-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .l-row :global(.hero-rise-2) {
+      animation-delay: 0.07s;
+    }
+
+    .l-row :global(.hero-rise-3) {
+      animation-delay: 0.14s;
+    }
+
+    /* The page's one authored moment: the catalog draws itself onto the
+       canvas — stroke outlines first, content ink settling in after. */
+    .catalog-cell :global(.draw) {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: catalog-draw 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: var(--draw-delay, 0s);
+    }
+
+    .catalog-cell :global(.ink) {
+      opacity: 0;
+      animation: catalog-ink 0.5s ease-out both;
+      animation-delay: calc(var(--draw-delay, 0s) + 0.55s);
+    }
+  }
+
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes catalog-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes catalog-ink {
+    to {
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  import { getClerk } from "../lib/clerk";
+
+  // Progressive enhancement only: signed-out visitors keep the plain
+  // checkout link untouched. Signed-in visitors get the checkout
+  // pre-filled so the Polar customer is created already matched to this
+  // account, without a manual step on /account.
+  async function enhanceBuyLink() {
+    const buyLink = document.getElementById("pro-buy") as HTMLAnchorElement | null;
+    if (!buyLink) return; // not on this page
+    const clerk = await getClerk();
+    const email = clerk.user?.primaryEmailAddress?.emailAddress;
+    if (!email) return;
+    const url = new URL(buyLink.href);
+    url.searchParams.set("customer_email", email);
+    url.searchParams.set("reference_id", clerk.user!.id);
+    buyLink.href = url.toString();
+  }
+
+  document.addEventListener("astro:page-load", enhanceBuyLink);
+  enhanceBuyLink();
+</script>

@@ -1,0 +1,295 @@
+---
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import data from "blume:data";
+import Header from "../components/blume/Header.astro";
+import LandingRuler from "../components/landing-ruler.astro";
+import SiteFooter from "../components/site-footer.astro";
+import { SITE_TABS } from "../components/site-tabs.ts";
+
+const { config } = data;
+
+const navigation = {
+  ...data.navigation,
+  tabs: SITE_TABS,
+};
+---
+
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={navigation}
+  favicon={config.favicon}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  searchEnabled={config.search.enabled}
+  siteUrl={config.site}
+  ogEnabled={config.og.enabled}
+  page={{ title: "Account — SevenUI", route: "/account" }}
+  layout={{ Header }}
+>
+  <div class="relative">
+    <LandingRuler />
+
+    <section class="border-b border-border">
+      <div
+        class="l-row l-marks flex items-center justify-between gap-4 border-b border-border px-6 py-3 font-mono text-xs text-muted-foreground"
+      >
+        <span>Account</span>
+        <span class="text-end">License &amp; sign-in</span>
+      </div>
+      <div class="l-row" id="account-root">
+        <div class="space-y-3 px-6 py-14 sm:px-10" aria-hidden="true">
+          <div class="h-4 w-2/3 animate-pulse rounded-md bg-muted"></div>
+          <div class="h-4 w-1/2 animate-pulse rounded-md bg-muted"></div>
+          <div class="h-4 w-5/6 animate-pulse rounded-md bg-muted"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <footer slot="footer"><SiteFooter /></footer>
+</PageLayout>
+
+<style>
+  .l-row {
+    position: relative;
+    margin-inline: auto;
+    width: 100%;
+    max-width: 72rem; /* matches the max-w-6xl used by the docs pages */
+  }
+
+  @media (min-width: 640px) {
+    .l-row {
+      border-inline: 1px solid var(--border);
+    }
+
+    .l-marks::before,
+    .l-marks::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      z-index: 1;
+      width: 7px;
+      height: 7px;
+      border: 1px solid var(--border);
+      background: var(--background);
+      transform: translate(-50%, -50%);
+    }
+
+    .l-marks::before {
+      left: 0;
+    }
+
+    .l-marks::after {
+      left: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* The page's one authored moment: the license sketch draws itself in
+       when the signed-out state appears. */
+    #account-root :global(.draw) {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: account-draw 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    #account-root :global(.ink) {
+      opacity: 0;
+      animation: account-ink 0.5s ease-out 0.55s both;
+    }
+  }
+
+  @keyframes account-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes account-ink {
+    to {
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  import { getClerk } from "../lib/clerk";
+
+  const UNAVAILABLE_MESSAGE = "Sign-in is unavailable right now. Please try again shortly.";
+
+  // Shared by every whole-page error path (Clerk boot failure, thrown
+  // exception) so a visitor always gets the same recovery action instead of
+  // dead-end text. Re-running renderAccount() is a full re-fetch, same as a
+  // reload, but without leaving the page.
+  function renderError(root: HTMLElement, message: string) {
+    root.innerHTML = `
+      <div class="px-6 py-14 sm:px-10">
+        <p class="text-sm text-muted-foreground">${message}</p>
+        <button id="account-retry" type="button" class="mt-4 inline-flex h-8 items-center rounded-md border border-border px-3 text-sm hover:bg-muted">Try again</button>
+      </div>`;
+    root.querySelector("#account-retry")?.addEventListener("click", () => renderAccount());
+  }
+
+  async function renderAccount() {
+    const root = document.getElementById("account-root");
+    if (!root) return; // not on this page
+    try {
+      const clerk = await getClerk();
+      if (!clerk.user) {
+        // Inline mounting (clerk.mountSignIn) needs Clerk's UI bundle,
+        // which the self-hosted npm build does NOT ship — it's fetched at
+        // runtime from Clerk's CDN as "remotely hosted code", and this
+        // package never wires that up on its own. redirectToSignIn sends
+        // the visitor to Clerk's hosted sign-in page instead and brings
+        // them back here via signInForceRedirectUrl. A click-to-redirect
+        // button, not an automatic redirect: landing on /account and being
+        // bounced immediately, with no explanation, is hostile.
+        root.innerHTML = `
+          <div class="grid lg:grid-cols-2">
+            <div class="flex flex-col justify-center px-6 py-14 sm:px-10 lg:py-20">
+              <h1 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">Your license key<br />lives here.</h1>
+              <p class="mt-4 max-w-md text-muted-foreground">Sign in with the email you purchased with to view and copy your key — it unlocks every Pro block as the catalog ships.</p>
+              <div class="mt-8 flex flex-wrap items-center gap-4">
+                <button id="account-sign-in" type="button" class="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">Sign in</button>
+                <span class="text-sm text-muted-foreground">No license yet? <a href="/pro" class="text-foreground underline underline-offset-4 hover:no-underline">Pre-order — $99</a></span>
+              </div>
+            </div>
+            <div class="flex items-center justify-center border-t border-border bg-muted/40 px-10 py-14 lg:border-t-0 lg:border-l lg:py-20" aria-hidden="true">
+              <svg viewBox="0 0 300 170" class="h-auto w-full max-w-[340px] text-muted-foreground">
+                <rect x="16" y="16" width="268" height="138" rx="10" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw opacity-40" />
+                <circle cx="52" cy="52" r="14" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw opacity-40" />
+                <rect x="78" y="40" width="104" height="9" rx="4.5" fill="currentColor" class="ink opacity-50" />
+                <rect x="78" y="57" width="76" height="7" rx="3.5" fill="currentColor" class="ink opacity-30" />
+                <line x1="16" y1="86" x2="284" y2="86" pathLength="1" stroke="currentColor" stroke-width="2" class="draw opacity-30" />
+                <rect x="34" y="102" width="168" height="12" rx="6" fill="currentColor" class="ink opacity-30" />
+                <rect x="34" y="126" width="64" height="16" rx="8" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw opacity-40" />
+                <rect x="214" y="102" width="52" height="9" rx="4.5" fill="currentColor" class="ink opacity-50" />
+              </svg>
+            </div>
+          </div>`;
+        root.querySelector("#account-sign-in")?.addEventListener("click", () => {
+          clerk.redirectToSignIn({ signInForceRedirectUrl: `${window.location.origin}/account` });
+        });
+        return;
+      }
+
+      const user = clerk.user;
+      const email = user.primaryEmailAddress?.emailAddress ?? "";
+      const name = user.fullName || email || "Signed in";
+
+      // Identity and sign-out never depend on the license service: render
+      // them first, then resolve the license section on its own. A Polar
+      // hiccup (or local dev, where the /api/me/licenses rewrite does not
+      // exist) must not lock the visitor out of signing out.
+      root.innerHTML = `
+        <div class="flex items-center justify-between gap-4 border-b border-border px-6 py-4 sm:px-10">
+          <div class="flex min-w-0 items-center gap-3">
+            <img src="${user.imageUrl}" alt="${name}" class="size-10 shrink-0 rounded-full" />
+            <div class="min-w-0">
+              <p class="truncate font-medium text-foreground">${name}</p>
+              <p class="truncate text-sm text-muted-foreground">${email}</p>
+            </div>
+          </div>
+          <button id="account-sign-out" type="button" class="h-8 shrink-0 rounded-md border border-border px-3 text-sm hover:bg-muted">Sign out</button>
+        </div>
+        <div id="account-licenses" class="space-y-3 px-6 py-10 sm:px-10" aria-live="polite">
+          <div class="h-4 w-2/3 animate-pulse rounded-md bg-muted"></div>
+          <div class="h-4 w-1/2 animate-pulse rounded-md bg-muted"></div>
+        </div>`;
+
+      root.querySelector("#account-sign-out")?.addEventListener("click", async (event) => {
+        const btn = event.currentTarget as HTMLButtonElement;
+        btn.disabled = true;
+        btn.textContent = "Signing out…";
+        try {
+          await clerk.signOut();
+        } catch (e) {
+          console.error("account:", e);
+        }
+        // A full navigation (not an Astro ClientRouter transition) so the
+        // header's cookie check and every other per-page script re-run
+        // fresh against the now-signed-out state — no stale "signed in"
+        // label left over anywhere on the page.
+        window.location.assign("/account");
+      });
+
+      await renderLicenses(clerk);
+    } catch (e) {
+      console.error("account:", e);
+      renderError(root, UNAVAILABLE_MESSAGE);
+    }
+  }
+
+  // The license section resolves independently of identity/sign-out: its
+  // failures (and its retry) stay inside #account-licenses.
+  async function renderLicenses(clerk: Awaited<ReturnType<typeof getClerk>>) {
+    const box = document.getElementById("account-licenses");
+    if (!box) return;
+    try {
+      const token = await clerk.session?.getToken();
+      const res = await fetch("/api/me/licenses", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error(`licenses request failed: ${res.status}`);
+      const { licenses } = await res.json();
+      if (!Array.isArray(licenses)) throw new Error("unexpected licenses shape");
+
+      box.classList.remove("space-y-3");
+      box.innerHTML = !licenses.length
+        ? `
+        <div class="max-w-md">
+          <h2 class="text-xl font-semibold tracking-tight">No license yet.</h2>
+          <p class="mt-2 text-sm text-muted-foreground">Pre-order now and your key appears here the moment checkout completes.</p>
+          <a class="mt-5 inline-flex h-10 items-center rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90" href="/pro">Pre-order SevenUI Pro — $99</a>
+          <p class="mt-4 text-xs text-muted-foreground">Bought with a different email? Your key is also in the Polar customer portal receipt email.</p>
+        </div>`
+        : licenses
+            .map(
+              (l: { key: string; displayKey: string }) => `
+        <div class="max-w-xl rounded-xl border border-border p-6">
+          <div class="flex items-center justify-between gap-4">
+            <h2 class="text-lg font-semibold">SevenUI Pro</h2>
+            <span class="font-mono text-xs text-muted-foreground">lifetime</span>
+          </div>
+          <p class="mt-4 rounded-md bg-muted/60 px-3 py-2 font-mono text-sm text-foreground" data-key="${l.key}">${l.displayKey}</p>
+          <button class="copy-key mt-3 h-8 rounded-md border border-border px-3 text-sm hover:bg-muted">Copy key</button>
+        </div>`,
+            )
+            .join("");
+
+      box.querySelectorAll(".copy-key").forEach((btn) =>
+        btn.addEventListener("click", () => {
+          const key = (btn.previousElementSibling as HTMLElement).dataset.key!;
+          navigator.clipboard.writeText(key);
+          btn.textContent = "Copied";
+        }),
+      );
+    } catch (e) {
+      console.error("account:", e);
+      // Failure wears the empty state's clothes (the common real-world case
+      // is simply "no license"), with one honest line so a paying customer
+      // isn't told they own nothing: we couldn't check, here's the retry.
+      box.classList.remove("space-y-3");
+      box.innerHTML = `
+        <div class="max-w-md">
+          <h2 class="text-xl font-semibold tracking-tight">No license here yet.</h2>
+          <p class="mt-2 text-sm text-muted-foreground">Pre-order now and your key appears here the moment checkout completes.</p>
+          <a class="mt-5 inline-flex h-10 items-center rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90" href="/pro">Pre-order SevenUI Pro — $99</a>
+          <p class="mt-4 text-xs text-muted-foreground">Bought with a different email? Your key is also in the Polar customer portal receipt email.</p>
+          <p class="mt-2 text-xs text-muted-foreground">Already purchased with this one? We couldn't check your licenses just now — <button id="licenses-retry" type="button" class="underline underline-offset-4 hover:no-underline">try again</button>.</p>
+        </div>`;
+      box.querySelector("#licenses-retry")?.addEventListener("click", () => {
+        box.innerHTML = `
+          <div class="h-4 w-2/3 animate-pulse rounded-md bg-muted"></div>
+          <div class="h-4 w-1/2 animate-pulse rounded-md bg-muted"></div>`;
+        box.classList.add("space-y-3");
+        renderLicenses(clerk);
+      });
+    }
+  }
+
+  document.addEventListener("astro:page-load", renderAccount);
+  renderAccount();
+</script>

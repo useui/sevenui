@@ -12,4 +12,5 @@ export const SITE_TABS = [
     href: "/docs/components/button",
   },
   { label: "Blocks", path: "/blocks", href: "/blocks" },
+  { label: "Pro", path: "/pro", href: "/pro" },
 ];

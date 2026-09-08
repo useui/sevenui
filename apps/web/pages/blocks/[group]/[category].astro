@@ -1,6 +1,7 @@
 ---
 import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
+import Header from "../../../components/blume/Header.astro";
 import BlockFrame from "../../../components/block-frame.astro";
 import BlocksSidebar from "../../../components/blocks-sidebar.astro";
 import SiteFooter from "../../../components/site-footer.astro";
@@ -43,6 +44,7 @@ const navigation = {
     description: category.description,
     route: `/blocks/${group.id}/${category.id}`,
   }}
+  layout={{ Header }}
 >
   <div class="lg:grid lg:grid-cols-[260px_minmax(0,1fr)]">
     <BlocksSidebar activeGroup={group.id} activeCategory={category.id} />

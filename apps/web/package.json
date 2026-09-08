@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@clerk/clerk-js": "^6.31.0",
     "@lucide/astro": "^1.41.0",
     "lucide-react": "^1.41.0",
     "react": "^19.2.8",
