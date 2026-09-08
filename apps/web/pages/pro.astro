@@ -1,0 +1,86 @@
+---
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import data from "blume:data";
+import SiteFooter from "../components/site-footer.astro";
+import { SITE_TABS } from "../components/site-tabs.ts";
+
+const { config } = data;
+
+const description =
+  "Production-ready blocks for application UIs. One purchase, yours forever.";
+
+// Sandbox link until production cutover — the ONLY place the checkout URL lives.
+const CHECKOUT_URL =
+  "https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_MulHSqwF0DaO1vw3QaZ7LOcCarTPBp7fdSwTI2Nagty/redirect";
+
+const features = [
+  "Every current and future Pro block",
+  "Lifetime access — pay once",
+  "Copy-paste source you own outright",
+  "Built on the same free SevenUI components",
+];
+
+const navigation = {
+  ...data.navigation,
+  tabs: SITE_TABS,
+};
+---
+
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={navigation}
+  favicon={config.favicon}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  searchEnabled={config.search.enabled}
+  siteUrl={config.site}
+  ogEnabled={config.og.enabled}
+  page={{ title: "Pro — SevenUI", description, route: "/pro" }}
+>
+  <div class="mx-auto max-w-3xl px-6 py-16">
+    <h1 class="text-3xl font-semibold tracking-tight">SevenUI Pro</h1>
+    <p class="mt-2 text-muted-foreground">
+      Production-ready blocks for application UIs. One purchase, yours forever.
+    </p>
+    <div class="mt-8 rounded-xl border border-border p-6">
+      <div class="flex items-baseline justify-between">
+        <h2 class="text-lg font-semibold">Blocks</h2>
+        <p class="text-3xl font-semibold">
+          $99 <span class="text-sm font-normal text-muted-foreground">one-time</span>
+        </p>
+      </div>
+      <ul class="mt-4 grid gap-2 text-sm text-muted-foreground">
+        {features.map((feature) => <li>{feature}</li>)}
+      </ul>
+      <a
+        id="pro-buy"
+        href={CHECKOUT_URL}
+        class="mt-6 inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+      >Buy SevenUI Pro</a>
+      <p class="mt-3 text-center text-xs text-muted-foreground">
+        Per-developer license, unlimited personal and commercial projects.
+        Your key lives in <a href="/account" class="underline underline-offset-4">your account</a>.
+      </p>
+    </div>
+    <section class="mt-12 grid gap-6 text-sm">
+      <div>
+        <h3 class="font-medium">License</h3>
+        <p class="mt-1 text-muted-foreground">
+          One license per developer, unlimited projects. Redistribution or resale of the source is not permitted.
+        </p>
+      </div>
+      <div>
+        <h3 class="font-medium">How installation works</h3>
+        <p class="mt-1 text-muted-foreground">
+          You get a license key. Add it to your environment, add the registry to components.json, then
+          <code>npx shadcn add @sevenui-pro/&lt;block&gt;</code>. See the
+          <a href="/docs/pro" class="underline underline-offset-4">Pro docs</a>.
+        </p>
+      </div>
+    </section>
+  </div>
+  <footer slot="footer"><SiteFooter /></footer>
+</PageLayout>
