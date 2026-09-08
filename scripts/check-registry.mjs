@@ -24,10 +24,51 @@ function checkLucideDep(item, root, where) {
       readFileSync(filePath, "utf8").includes('from "lucide-react"')
     );
   });
-  if (usesLucide && !(item.dependencies ?? []).includes("lucide-react")) {
+  const hasLucide = (item.dependencies ?? []).some(
+    (dep) => dep === "lucide-react" || dep.startsWith("lucide-react@"),
+  );
+  if (usesLucide && !hasLucide) {
     errors.push(
       `${where}: imports lucide-react but dependencies is missing "lucide-react"`,
     );
+  }
+}
+
+// Every npm dependency must pin the version range the workspace develops
+// against — a bare name makes consumers install latest, so a breaking
+// release of a primitive would reach them silently.
+const registryPkg = JSON.parse(
+  readFileSync(join(REGISTRY_ROOT, "package.json"), "utf8"),
+);
+const blocksPkg = JSON.parse(
+  readFileSync(join(BLOCKS_ROOT, "package.json"), "utf8"),
+);
+const EXPECTED_RANGES = {
+  ...registryPkg.devDependencies,
+  ...registryPkg.dependencies,
+  ...blocksPkg.devDependencies,
+  ...blocksPkg.dependencies,
+};
+
+function checkDepRanges(item, where) {
+  for (const dep of item.dependencies ?? []) {
+    const at = dep.lastIndexOf("@");
+    const name = at > 0 ? dep.slice(0, at) : dep;
+    const range = at > 0 ? dep.slice(at + 1) : null;
+    const expected = EXPECTED_RANGES[name];
+    if (!expected) {
+      errors.push(
+        `${where}: dependency "${name}" is not declared in a workspace package.json`,
+      );
+    } else if (range === null) {
+      errors.push(
+        `${where}: dependency "${dep}" has no version range (expected "${name}@${expected}")`,
+      );
+    } else if (range !== expected) {
+      errors.push(
+        `${where}: dependency "${dep}" differs from workspace range "${name}@${expected}"`,
+      );
+    }
   }
 }
 
@@ -52,6 +93,7 @@ for (const item of registry.items) {
   }
 
   checkLucideDep(item, REGISTRY_ROOT, where);
+  checkDepRanges(item, where);
 
   if (item.type === "registry:ui") {
     if (!itemNames.has(`${item.name}-demo`)) {
@@ -122,6 +164,7 @@ for (const item of blocks.items) {
   }
 
   checkLucideDep(item, BLOCKS_ROOT, where);
+  checkDepRanges(item, where);
 
   // Every house-alias import must be declared as a registryDependency
   const deps = new Set(item.registryDependencies ?? []);

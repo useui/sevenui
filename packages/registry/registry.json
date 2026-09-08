@@ -148,9 +148,9 @@
       "title": "Button",
       "description": "Displays a button built on the Base UI Button primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "class-variance-authority",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -195,9 +195,9 @@
       "title": "Badge",
       "description": "Displays a small status descriptor.",
       "dependencies": [
-        "@base-ui/react",
-        "class-variance-authority",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -227,7 +227,7 @@
       "title": "Kbd",
       "description": "Displays a keyboard key.",
       "dependencies": [
-        "cn"
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -257,7 +257,7 @@
       "title": "Label",
       "description": "Displays a label for form inputs.",
       "dependencies": [
-        "cn"
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -288,7 +288,7 @@
       "title": "Card",
       "description": "Displays a container with optional header, content, and footer sections.",
       "dependencies": [
-        "cn"
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -319,8 +319,8 @@
       "title": "Input",
       "description": "Displays a text input built on the Base UI Input primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -350,9 +350,9 @@
       "title": "Input OTP",
       "description": "Displays an OTP input field built on the Base UI OTPField primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn",
-        "lucide-react"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "files": [
         {
@@ -382,8 +382,8 @@
       "title": "Alert",
       "description": "Displays a message with optional title and description for the user.",
       "dependencies": [
-        "class-variance-authority",
-        "cn"
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -413,8 +413,8 @@
       "title": "Avatar",
       "description": "An image element with a fallback for representing the user.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -444,8 +444,8 @@
       "title": "Separator",
       "description": "Visually or semantically separates content.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -475,7 +475,7 @@
       "title": "Skeleton",
       "description": "Use to show a placeholder while content is loading.",
       "dependencies": [
-        "cn"
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -505,8 +505,8 @@
       "title": "Spinner",
       "description": "Displays a loading indicator.",
       "dependencies": [
-        "cn",
-        "lucide-react"
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "files": [
         {
@@ -537,7 +537,7 @@
       "title": "Aspect Ratio",
       "description": "Displays content with a fixed aspect ratio.",
       "dependencies": [
-        "cn"
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -567,7 +567,7 @@
       "title": "Textarea",
       "description": "Displays a multi-line text input field.",
       "dependencies": [
-        "cn"
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -597,7 +597,7 @@
       "title": "Table",
       "description": "Displays data in rows and columns with semantic HTML and support for headers, bodies, and footers.",
       "dependencies": [
-        "cn"
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -627,9 +627,9 @@
       "title": "Breadcrumb",
       "description": "Displays the current location within a hierarchical navigation structure.",
       "dependencies": [
-        "@base-ui/react",
-        "cn",
-        "lucide-react"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "files": [
         {
@@ -659,8 +659,8 @@
       "title": "Pagination",
       "description": "Displays navigation for multi-page content.",
       "dependencies": [
-        "cn",
-        "lucide-react"
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button.json"
@@ -693,8 +693,8 @@
       "title": "Progress",
       "description": "Displays an indicator showing the completion progress of a task.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -724,9 +724,9 @@
       "title": "Field",
       "description": "Associates a label, control, description, and validation error for a form field.",
       "dependencies": [
-        "@base-ui/react",
-        "class-variance-authority",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/label.json",
@@ -794,7 +794,7 @@
       "title": "Field with React Hook Form",
       "description": "Controller-driven field state via the invalid, touched, and dirty props.",
       "dependencies": [
-        "react-hook-form"
+        "react-hook-form@^7.87.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button.json",
@@ -814,8 +814,8 @@
       "title": "Form",
       "description": "A native form with consolidated, auto-clearing validation error handling.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -848,9 +848,9 @@
       "title": "Checkbox",
       "description": "Displays a checkbox built on the Base UI Checkbox primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn",
-        "lucide-react"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "files": [
         {
@@ -881,8 +881,8 @@
       "title": "Radio Group",
       "description": "Displays a radio group built on the Base UI Radio primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -913,8 +913,8 @@
       "title": "Switch",
       "description": "Displays a switch built on the Base UI Switch primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -945,9 +945,9 @@
       "title": "Toggle",
       "description": "Displays a toggle built on the Base UI Toggle primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "class-variance-authority",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -977,9 +977,9 @@
       "title": "Toggle Group",
       "description": "Displays a toggle group built on the Base UI Toggle Group primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "class-variance-authority",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/toggle.json"
@@ -997,7 +997,7 @@
       "title": "Toggle Group Demo",
       "description": "Default toggle group example.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/toggle-group.json"
@@ -1015,8 +1015,8 @@
       "title": "Slider",
       "description": "Displays a slider built on the Base UI Slider primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -1046,9 +1046,9 @@
       "title": "Number Field",
       "description": "Displays a number field built on the Base UI Number Field primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn",
-        "lucide-react"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "files": [
         {
@@ -1079,9 +1079,9 @@
       "title": "Select",
       "description": "Displays a select menu built on the Base UI Select primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn",
-        "lucide-react"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "files": [
         {
@@ -1114,9 +1114,9 @@
       "title": "Combobox",
       "description": "An input combined with a filterable popup list, built on the Base UI Combobox primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn",
-        "lucide-react"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/animations.json",
@@ -1151,8 +1151,8 @@
       "title": "Tooltip",
       "description": "A popup that displays information related to an element when hovered or focused, built on the Base UI Tooltip primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -1183,8 +1183,8 @@
       "title": "Popover",
       "description": "Displays rich content in a portal, positioned relative to an anchor element, built on the Base UI Popover primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -1220,8 +1220,8 @@
       "title": "Hover Card",
       "description": "Displays a preview card when hovering or focusing a link, built on the Base UI Preview Card primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -1255,9 +1255,9 @@
       "title": "Dialog",
       "description": "A window overlaid on either the primary window or another dialog window, rendering the content underneath inert, built on the Base UI Dialog primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn",
-        "lucide-react"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/animations.json",
@@ -1294,8 +1294,8 @@
       "title": "Alert Dialog",
       "description": "A modal dialog that interrupts the user with important content and expects a response, built on the Base UI Alert Dialog primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/animations.json",
@@ -1330,9 +1330,9 @@
       "title": "Sheet",
       "description": "An edge-positioned panel that slides in from the side of the screen, built on the Base UI Dialog primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn",
-        "lucide-react"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button.json"
@@ -1368,8 +1368,8 @@
       "title": "Drawer",
       "description": "A panel that slides in from an edge of the screen and can be dismissed with a swipe gesture, built on the Base UI Drawer primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -1400,9 +1400,9 @@
       "title": "Dropdown Menu",
       "description": "Displays a menu to the user \u2014 such as a set of actions or functions \u2014 triggered by a button, built on the Base UI Menu primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn",
-        "lucide-react"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "files": [
         {
@@ -1436,9 +1436,9 @@
       "title": "Context Menu",
       "description": "Displays a menu to the user \u2014 such as a set of actions or functions \u2014 triggered by right click or touch long-press, built on the Base UI Menu primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn",
-        "lucide-react"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "files": [
         {
@@ -1471,9 +1471,9 @@
       "title": "Menubar",
       "description": "A horizontal menu bar with multiple menus \u2014 such as File, Edit, and View \u2014 built on the Base UI Menu primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn",
-        "lucide-react"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/animations.json",
@@ -1507,9 +1507,9 @@
       "title": "Toast",
       "description": "A sonner-style, module-level toast API for showing brief, non-blocking notifications, built on the Base UI Toast primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn",
-        "lucide-react"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button.json"
@@ -1543,9 +1543,9 @@
       "title": "Tabs",
       "description": "A set of layered sections of content \u2014 known as tab panels \u2014 that display one panel at a time, built on the Base UI Tabs primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "class-variance-authority",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -1579,7 +1579,7 @@
       "title": "Tabs Indicator",
       "description": "Tabs with an animated active-tab indicator.",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.7.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/tabs.json"
@@ -1597,9 +1597,9 @@
       "title": "Accordion",
       "description": "A vertically stacked set of interactive headings that each reveal an associated panel of content, built on the Base UI Accordion primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn",
-        "lucide-react"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "files": [
         {
@@ -1654,8 +1654,8 @@
       "title": "Collapsible",
       "description": "An interactive component which expands/collapses a panel, built on the Base UI Collapsible primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -1692,7 +1692,7 @@
       "title": "Collapsible Demo",
       "description": "Default collapsible example.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button.json",
@@ -1711,8 +1711,8 @@
       "title": "Scroll Area",
       "description": "Augments native scroll functionality for custom, cross-browser styling, built on the Base UI Scroll Area primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -1743,8 +1743,8 @@
       "title": "Meter",
       "description": "Displays a value within a known range, built on the Base UI Meter primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -1774,8 +1774,8 @@
       "title": "Toolbar",
       "description": "A container for grouping a set of controls, such as buttons, toggle groups, or links, built on the Base UI Toolbar primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -1790,7 +1790,7 @@
       "title": "Toolbar Demo",
       "description": "Default toolbar example.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/toggle-group.json",
@@ -1810,10 +1810,10 @@
       "title": "Navigation Menu",
       "description": "A collection of links for navigating websites, sharing one animated popup between top-level menu triggers, built on the Base UI Navigation Menu primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "class-variance-authority",
-        "cn",
-        "lucide-react"
+        "@base-ui/react@^1.7.0",
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "files": [
         {
@@ -1831,7 +1831,7 @@
       "title": "Navigation Menu Demo",
       "description": "Default navigation menu example.",
       "dependencies": [
-        "cn"
+        "cn@^0.2.5"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/navigation-menu.json"
@@ -1849,9 +1849,9 @@
       "title": "Command",
       "description": "A fast, composable command palette built on the Base UI Autocomplete primitive.",
       "dependencies": [
-        "@base-ui/react",
-        "cn",
-        "lucide-react"
+        "@base-ui/react@^1.7.0",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/dialog.json",
@@ -1870,7 +1870,7 @@
       "title": "Command Demo",
       "description": "Default command palette example.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/command.json"
@@ -1904,10 +1904,10 @@
       "title": "Sidebar",
       "description": "A composable, themeable sidebar with collapsible, mobile, and icon-only modes.",
       "dependencies": [
-        "@base-ui/react",
-        "class-variance-authority",
-        "cn",
-        "lucide-react"
+        "@base-ui/react@^1.7.0",
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button.json",
@@ -1934,7 +1934,7 @@
       "title": "Sidebar Demo",
       "description": "Default sidebar example with a collapsible icon rail and application menu.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/separator.json",
@@ -1953,8 +1953,8 @@
       "title": "Resizable",
       "description": "Accessible resizable panel groups and layouts.",
       "dependencies": [
-        "cn",
-        "react-resizable-panels"
+        "cn@^0.2.5",
+        "react-resizable-panels@^4.12.3"
       ],
       "files": [
         {
@@ -1984,9 +1984,9 @@
       "title": "Carousel",
       "description": "A carousel with motion and swipe built using Embla.",
       "dependencies": [
-        "cn",
-        "embla-carousel-react",
-        "lucide-react"
+        "cn@^0.2.5",
+        "embla-carousel-react@^8.6.0",
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button.json"
@@ -2020,8 +2020,8 @@
       "title": "Calendar",
       "description": "A date field component that lets users select dates or ranges.",
       "dependencies": [
-        "cn",
-        "lucide-react",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0",
         "react-day-picker@^10.0.1"
       ],
       "registryDependencies": [
@@ -2073,7 +2073,7 @@
       "title": "Chart",
       "description": "Composable chart primitives built on Recharts.",
       "dependencies": [
-        "cn",
+        "cn@^0.2.5",
         "recharts@^3.10.1"
       ],
       "files": [
@@ -2125,9 +2125,9 @@
       "title": "Button Group",
       "description": "Groups related buttons with shared borders and separators.",
       "dependencies": [
-        "@base-ui/react",
-        "class-variance-authority",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/separator.json"
@@ -2145,8 +2145,8 @@
       "title": "Input Group",
       "description": "Groups an input with addons, buttons, and inline text.",
       "dependencies": [
-        "class-variance-authority",
-        "cn"
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button.json",
@@ -2166,9 +2166,9 @@
       "title": "Item",
       "description": "A flexible list item with media, content, and actions.",
       "dependencies": [
-        "@base-ui/react",
-        "class-variance-authority",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/separator.json"
@@ -2186,8 +2186,8 @@
       "title": "Empty",
       "description": "Displays an empty state with media, title, description, and actions.",
       "dependencies": [
-        "class-variance-authority",
-        "cn"
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -2202,8 +2202,8 @@
       "title": "Native Select",
       "description": "A styled native HTML select element.",
       "dependencies": [
-        "cn",
-        "lucide-react"
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "files": [
         {
@@ -2218,7 +2218,7 @@
       "title": "Direction",
       "description": "Re-exports the Base UI DirectionProvider for RTL support.",
       "dependencies": [
-        "@base-ui/react"
+        "@base-ui/react@^1.7.0"
       ],
       "files": [
         {
@@ -2233,9 +2233,9 @@
       "title": "Marker",
       "description": "An inline marker with icon and content for annotating UI.",
       "dependencies": [
-        "@base-ui/react",
-        "class-variance-authority",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -2250,7 +2250,7 @@
       "title": "Message",
       "description": "Chat message layout with avatar, content, header, and footer.",
       "dependencies": [
-        "cn"
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -2265,9 +2265,9 @@
       "title": "Message Scroller",
       "description": "Auto-scrolling chat viewport built on the shadcn MessageScroller primitive.",
       "dependencies": [
-        "@shadcn/react",
-        "cn",
-        "lucide-react"
+        "@shadcn/react@^0.3.1",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button.json"
@@ -2285,9 +2285,9 @@
       "title": "Bubble",
       "description": "Chat message bubbles for conversational interfaces.",
       "dependencies": [
-        "@base-ui/react",
-        "class-variance-authority",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5"
       ],
       "files": [
         {
@@ -2302,9 +2302,9 @@
       "title": "Attachment",
       "description": "Displays file attachments with media previews and actions.",
       "dependencies": [
-        "@base-ui/react",
-        "class-variance-authority",
-        "cn"
+        "@base-ui/react@^1.7.0",
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button.json"
@@ -2322,9 +2322,9 @@
       "title": "Questionnaire",
       "description": "Multi-step questionnaire flow built on the shadcn Questionnaire primitive.",
       "dependencies": [
-        "@shadcn/react",
-        "cn",
-        "lucide-react"
+        "@shadcn/react@^0.3.1",
+        "cn@^0.2.5",
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button.json"
@@ -2342,7 +2342,7 @@
       "title": "Input Group Demo",
       "description": "Search and username inputs with icon, kbd, and text addons.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/input-group.json",
@@ -2361,7 +2361,7 @@
       "title": "Input Group Button",
       "description": "Copy and verify buttons inside input groups.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/input-group.json"
@@ -2379,7 +2379,7 @@
       "title": "Input Group Textarea",
       "description": "Prompt textarea with block-end action addon.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/input-group.json"
@@ -2397,7 +2397,7 @@
       "title": "Button Group Demo",
       "description": "Horizontal pager and vertical stepper groups.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button-group.json",
@@ -2416,7 +2416,7 @@
       "title": "Button Group Separator",
       "description": "Split button with separator and dropdown menu.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button-group.json",
@@ -2467,7 +2467,7 @@
       "title": "Empty Demo",
       "description": "Empty state with icon media, description, and actions.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button.json",
@@ -2503,7 +2503,7 @@
       "title": "Item Demo",
       "description": "Outline item with icon media, description, and action.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button.json",
@@ -2522,7 +2522,7 @@
       "title": "Item Variants",
       "description": "Default, outline, and muted item variants.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/item.json"
@@ -2540,7 +2540,7 @@
       "title": "Item Group",
       "description": "Member list with separators and link items.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/avatar.json",
@@ -2559,7 +2559,7 @@
       "title": "Marker Demo",
       "description": "Inline conversation markers with icons and a link.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/marker.json"
@@ -2592,7 +2592,7 @@
       "title": "Direction Demo",
       "description": "Side-by-side LTR and RTL input groups.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/direction.json",
@@ -2674,7 +2674,7 @@
       "title": "Attachment Demo",
       "description": "File and image attachments in a horizontal group.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/attachment.json"
@@ -2692,7 +2692,7 @@
       "title": "Attachment Actions",
       "description": "Actions, full-card trigger, and an uploading state.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/attachment.json",
@@ -2758,7 +2758,7 @@
       "title": "Button Sizes",
       "description": "Text and icon button sizes side by side.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button.json"
@@ -2807,7 +2807,7 @@
       "title": "Alert Action",
       "description": "Alerts with dismiss and undo actions.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/alert.json",
@@ -2826,7 +2826,7 @@
       "title": "Badge Link",
       "description": "Badges rendered as links.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/badge.json"
@@ -2844,7 +2844,7 @@
       "title": "Badge Icon",
       "description": "Badges with leading icons.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/badge.json"
@@ -2862,7 +2862,7 @@
       "title": "Badge Processing",
       "description": "Badges with a spinning loader.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/badge.json"
@@ -2898,7 +2898,7 @@
       "title": "Card Stats",
       "description": "Stat cards with trend badges.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/badge.json",
@@ -2950,7 +2950,7 @@
       "title": "Card Project",
       "description": "Compact project card with avatars and status.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/avatar.json",
@@ -2987,7 +2987,7 @@
       "title": "Kbd Input",
       "description": "Shortcut hint inside a search input group.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/input-group.json",
@@ -3006,7 +3006,7 @@
       "title": "Kbd Tooltip",
       "description": "Shortcut hint inside a tooltip.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/button.json",
@@ -3056,7 +3056,7 @@
       "title": "Breadcrumb Separator",
       "description": "Breadcrumb with dot separators.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/breadcrumb.json"
@@ -3433,7 +3433,7 @@
       "title": "Toggle Variants",
       "description": "Both toggle variants across three sizes.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/toggle.json"
@@ -3451,7 +3451,7 @@
       "title": "Toggle Group Multiple",
       "description": "Outline multi-select formatting group.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/toggle-group.json"
@@ -3501,7 +3501,7 @@
       "title": "Alert Dialog Media",
       "description": "Small alert dialog with icon media.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/alert-dialog.json",
@@ -3596,7 +3596,7 @@
       "title": "Collapsible File Tree",
       "description": "Nested collapsibles as an expandable file tree.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/collapsible.json"
