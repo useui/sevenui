@@ -5,6 +5,7 @@
 // landing) so the block renders edge-to-edge.
 import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
+import Header from "../../../components/blume/Header.astro";
 import blocksRegistry from "../../../../../packages/blocks/registry.json";
 import { PREVIEW_STAGES } from "../_data";
 
@@ -47,6 +48,7 @@ const stageClass = STAGE_CLASSES[PREVIEW_STAGES[slug ?? ""] ?? "filled"];
   fontCssVars={data.fontCssVars}
   themeMode={config.theme.mode}
   page={{ title: `${item?.title ?? slug} — SevenUI Blocks`, route: `/blocks/preview/${slug}` }}
+  layout={{ Header }}
 >
   {
     /* Astro's client-hydration analysis needs a literal component

@@ -1,6 +1,7 @@
 ---
 import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
+import Header from "../../components/blume/Header.astro";
 import BlocksSidebar from "../../components/blocks-sidebar.astro";
 import CategoryIllustration from "../../components/category-illustration.astro";
 import SiteFooter from "../../components/site-footer.astro";
@@ -37,6 +38,7 @@ const navigation = {
   siteUrl={config.site}
   ogEnabled={config.og.enabled}
   page={{ title: "Blocks — SevenUI", description, route: "/blocks" }}
+  layout={{ Header }}
 >
   <div class="lg:grid lg:grid-cols-[260px_minmax(0,1fr)]">
     <BlocksSidebar />
