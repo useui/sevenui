@@ -2,6 +2,7 @@
 import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
 import Header from "../components/blume/Header.astro";
+import LandingRuler from "../components/landing-ruler.astro";
 import SiteFooter from "../components/site-footer.astro";
 import { SITE_TABS } from "../components/site-tabs.ts";
 
@@ -28,32 +29,103 @@ const navigation = {
   page={{ title: "Account — SevenUI", route: "/account" }}
   layout={{ Header }}
 >
-  <div class="mx-auto max-w-2xl px-6 py-16">
-    <h1 class="text-3xl font-semibold tracking-tight">Account</h1>
-    <p class="mt-2 text-muted-foreground">Manage your sign-in and license key.</p>
-    <div id="account-root" class="mt-8">
-      <div class="space-y-3" aria-hidden="true">
-        <div class="h-4 w-2/3 animate-pulse rounded-md bg-muted"></div>
-        <div class="h-4 w-1/2 animate-pulse rounded-md bg-muted"></div>
-        <div class="h-4 w-5/6 animate-pulse rounded-md bg-muted"></div>
+  <div class="relative">
+    <LandingRuler />
+
+    <section class="border-b border-border">
+      <div
+        class="l-row l-marks flex items-center justify-between gap-4 border-b border-border px-6 py-3 font-mono text-xs text-muted-foreground"
+      >
+        <span>Account</span>
+        <span class="text-end">License &amp; sign-in</span>
       </div>
-    </div>
+      <div class="l-row" id="account-root">
+        <div class="space-y-3 px-6 py-14 sm:px-10" aria-hidden="true">
+          <div class="h-4 w-2/3 animate-pulse rounded-md bg-muted"></div>
+          <div class="h-4 w-1/2 animate-pulse rounded-md bg-muted"></div>
+          <div class="h-4 w-5/6 animate-pulse rounded-md bg-muted"></div>
+        </div>
+      </div>
+    </section>
   </div>
   <footer slot="footer"><SiteFooter /></footer>
 </PageLayout>
+
+<style>
+  .l-row {
+    position: relative;
+    margin-inline: auto;
+    width: 100%;
+    max-width: 72rem; /* matches the max-w-6xl used by the docs pages */
+  }
+
+  @media (min-width: 640px) {
+    .l-row {
+      border-inline: 1px solid var(--border);
+    }
+
+    .l-marks::before,
+    .l-marks::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      z-index: 1;
+      width: 7px;
+      height: 7px;
+      border: 1px solid var(--border);
+      background: var(--background);
+      transform: translate(-50%, -50%);
+    }
+
+    .l-marks::before {
+      left: 0;
+    }
+
+    .l-marks::after {
+      left: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* The page's one authored moment: the license sketch draws itself in
+       when the signed-out state appears. */
+    #account-root :global(.draw) {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: account-draw 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    #account-root :global(.ink) {
+      opacity: 0;
+      animation: account-ink 0.5s ease-out 0.55s both;
+    }
+  }
+
+  @keyframes account-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes account-ink {
+    to {
+      opacity: 1;
+    }
+  }
+</style>
 
 <script>
   import { getClerk } from "../lib/clerk";
 
   const UNAVAILABLE_MESSAGE = "Sign-in is unavailable right now. Please try again shortly.";
 
-  // Shared by every error path (fetch failure, bad JSON shape, thrown
+  // Shared by every whole-page error path (Clerk boot failure, thrown
   // exception) so a visitor always gets the same recovery action instead of
   // dead-end text. Re-running renderAccount() is a full re-fetch, same as a
   // reload, but without leaving the page.
   function renderError(root: HTMLElement, message: string) {
     root.innerHTML = `
-      <div class="rounded-xl border border-border p-6">
+      <div class="px-6 py-14 sm:px-10">
         <p class="text-sm text-muted-foreground">${message}</p>
         <button id="account-retry" type="button" class="mt-4 inline-flex h-8 items-center rounded-md border border-border px-3 text-sm hover:bg-muted">Try again</button>
       </div>`;
@@ -68,36 +140,33 @@ const navigation = {
       if (!clerk.user) {
         // Inline mounting (clerk.mountSignIn) needs Clerk's UI bundle,
         // which the self-hosted npm build does NOT ship — it's fetched at
-        // runtime from Clerk's CDN as "remotely hosted code" (@clerk/ui,
-        // resolved from window.__internal_ClerkUICtor), and this package
-        // never wires that up on its own. Attempting to mount without it
-        // throws synchronously ("Clerk was not loaded with Ui components").
-        // redirectToSignIn instead sends the visitor to Clerk's hosted
-        // Account Portal sign-in page — no local UI bundle required — and
-        // brings them back here via signInForceRedirectUrl. A click-to-
-        // redirect button, not an automatic redirect: landing on /account
-        // and being bounced immediately, with no explanation, is hostile.
+        // runtime from Clerk's CDN as "remotely hosted code", and this
+        // package never wires that up on its own. redirectToSignIn sends
+        // the visitor to Clerk's hosted sign-in page instead and brings
+        // them back here via signInForceRedirectUrl. A click-to-redirect
+        // button, not an automatic redirect: landing on /account and being
+        // bounced immediately, with no explanation, is hostile.
         root.innerHTML = `
-          <div class="mx-auto max-w-md overflow-hidden rounded-xl border border-border">
-            <div class="flex items-center justify-between border-b border-border px-5 py-2.5 font-mono text-xs text-muted-foreground">
-              <span>sevenui.dev/account</span>
-              <span>signed out</span>
+          <div class="grid lg:grid-cols-2">
+            <div class="flex flex-col justify-center px-6 py-14 sm:px-10 lg:py-20">
+              <h1 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">Your license key<br />lives here.</h1>
+              <p class="mt-4 max-w-md text-muted-foreground">Sign in with the email you purchased with to view and copy your key — it unlocks every Pro block as the catalog ships.</p>
+              <div class="mt-8 flex flex-wrap items-center gap-4">
+                <button id="account-sign-in" type="button" class="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">Sign in</button>
+                <span class="text-sm text-muted-foreground">No license yet? <a href="/pro" class="text-foreground underline underline-offset-4 hover:no-underline">Pre-order — $99</a></span>
+              </div>
             </div>
-            <div class="flex items-center justify-center bg-muted/40 px-10 py-8" aria-hidden="true">
-              <svg viewBox="0 0 220 120" class="h-auto w-full max-w-[220px] text-muted-foreground">
-                <rect x="14" y="14" width="192" height="92" rx="8" fill="none" stroke="currentColor" stroke-width="2" class="opacity-40" />
-                <circle cx="40" cy="40" r="10" fill="none" stroke="currentColor" stroke-width="2" class="opacity-40" />
-                <rect x="58" y="30" width="70" height="7" rx="3.5" fill="currentColor" class="opacity-50" />
-                <rect x="58" y="43" width="52" height="6" rx="3" fill="currentColor" class="opacity-30" />
-                <rect x="26" y="66" width="112" height="10" rx="5" fill="currentColor" class="opacity-30" />
-                <rect x="26" y="84" width="44" height="12" rx="6" fill="none" stroke="currentColor" stroke-width="2" class="opacity-40" />
+            <div class="flex items-center justify-center border-t border-border bg-muted/40 px-10 py-14 lg:border-t-0 lg:border-l lg:py-20" aria-hidden="true">
+              <svg viewBox="0 0 300 170" class="h-auto w-full max-w-[340px] text-muted-foreground">
+                <rect x="16" y="16" width="268" height="138" rx="10" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw opacity-40" />
+                <circle cx="52" cy="52" r="14" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw opacity-40" />
+                <rect x="78" y="40" width="104" height="9" rx="4.5" fill="currentColor" class="ink opacity-50" />
+                <rect x="78" y="57" width="76" height="7" rx="3.5" fill="currentColor" class="ink opacity-30" />
+                <line x1="16" y1="86" x2="284" y2="86" pathLength="1" stroke="currentColor" stroke-width="2" class="draw opacity-30" />
+                <rect x="34" y="102" width="168" height="12" rx="6" fill="currentColor" class="ink opacity-30" />
+                <rect x="34" y="126" width="64" height="16" rx="8" pathLength="1" fill="none" stroke="currentColor" stroke-width="2" class="draw opacity-40" />
+                <rect x="214" y="102" width="52" height="9" rx="4.5" fill="currentColor" class="ink opacity-50" />
               </svg>
-            </div>
-            <div class="border-t border-border p-6 text-center">
-              <h2 class="text-lg font-semibold">Your license key lives here.</h2>
-              <p class="mt-2 text-sm text-muted-foreground">Sign in with the email you purchased with to view and copy your key.</p>
-              <button id="account-sign-in" type="button" class="mt-5 inline-flex h-10 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">Sign in</button>
-              <p class="mt-4 text-xs text-muted-foreground">No license yet? <a href="/pro" class="text-foreground underline underline-offset-4 hover:no-underline">Pre-order SevenUI Pro — $99</a></p>
             </div>
           </div>`;
         root.querySelector("#account-sign-in")?.addEventListener("click", () => {
@@ -114,8 +183,8 @@ const navigation = {
       // them first, then resolve the license section on its own. A Polar
       // hiccup (or local dev, where the /api/me/licenses rewrite does not
       // exist) must not lock the visitor out of signing out.
-      const identityHtml = `
-        <div class="flex items-center justify-between gap-4 rounded-xl border border-border p-4">
+      root.innerHTML = `
+        <div class="flex items-center justify-between gap-4 border-b border-border px-6 py-4 sm:px-10">
           <div class="flex min-w-0 items-center gap-3">
             <img src="${user.imageUrl}" alt="${name}" class="size-10 shrink-0 rounded-full" />
             <div class="min-w-0">
@@ -124,12 +193,11 @@ const navigation = {
             </div>
           </div>
           <button id="account-sign-out" type="button" class="h-8 shrink-0 rounded-md border border-border px-3 text-sm hover:bg-muted">Sign out</button>
+        </div>
+        <div id="account-licenses" class="space-y-3 px-6 py-10 sm:px-10" aria-live="polite">
+          <div class="h-4 w-2/3 animate-pulse rounded-md bg-muted"></div>
+          <div class="h-4 w-1/2 animate-pulse rounded-md bg-muted"></div>
         </div>`;
-
-      root.innerHTML = identityHtml + `<div id="account-licenses" class="mt-6 space-y-3" aria-live="polite">
-        <div class="h-4 w-2/3 animate-pulse rounded-md bg-muted"></div>
-        <div class="h-4 w-1/2 animate-pulse rounded-md bg-muted"></div>
-      </div>`;
 
       root.querySelector("#account-sign-out")?.addEventListener("click", async (event) => {
         const btn = event.currentTarget as HTMLButtonElement;
@@ -146,6 +214,7 @@ const navigation = {
         // label left over anywhere on the page.
         window.location.assign("/account");
       });
+
       await renderLicenses(clerk);
     } catch (e) {
       console.error("account:", e);
@@ -170,18 +239,22 @@ const navigation = {
       box.classList.remove("space-y-3");
       box.innerHTML = !licenses.length
         ? `
-        <div class="rounded-xl border border-border p-6">
-          <p class="text-foreground">No license yet.</p>
-          <a class="mt-4 inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90" href="/pro">Pre-order SevenUI Pro</a>
-          <p class="mt-3 text-xs text-muted-foreground">Bought with a different email? Your key is also in the Polar customer portal receipt email.</p>
+        <div class="max-w-md">
+          <h2 class="text-xl font-semibold tracking-tight">No license yet.</h2>
+          <p class="mt-2 text-sm text-muted-foreground">Pre-order now and your key appears here the moment checkout completes.</p>
+          <a class="mt-5 inline-flex h-10 items-center rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90" href="/pro">Pre-order SevenUI Pro — $99</a>
+          <p class="mt-4 text-xs text-muted-foreground">Bought with a different email? Your key is also in the Polar customer portal receipt email.</p>
         </div>`
         : licenses
             .map(
               (l: { key: string; displayKey: string }) => `
-        <div class="rounded-xl border border-border p-6">
-          <h2 class="text-lg font-semibold">SevenUI Pro — lifetime</h2>
-          <p class="mt-4 font-mono text-sm text-foreground" data-key="${l.key}">${l.displayKey}</p>
-          <button class="copy-key mt-2 h-8 rounded-md border border-border px-3 text-sm hover:bg-muted">Copy key</button>
+        <div class="max-w-xl rounded-xl border border-border p-6">
+          <div class="flex items-center justify-between gap-4">
+            <h2 class="text-lg font-semibold">SevenUI Pro</h2>
+            <span class="font-mono text-xs text-muted-foreground">lifetime</span>
+          </div>
+          <p class="mt-4 rounded-md bg-muted/60 px-3 py-2 font-mono text-sm text-foreground" data-key="${l.key}">${l.displayKey}</p>
+          <button class="copy-key mt-3 h-8 rounded-md border border-border px-3 text-sm hover:bg-muted">Copy key</button>
         </div>`,
             )
             .join("");
@@ -197,7 +270,7 @@ const navigation = {
       console.error("account:", e);
       box.classList.remove("space-y-3");
       box.innerHTML = `
-        <div class="rounded-xl border border-border p-6">
+        <div class="max-w-md">
           <p class="text-sm text-muted-foreground">Could not load your licenses. Try again shortly.</p>
           <button id="licenses-retry" type="button" class="mt-4 inline-flex h-8 items-center rounded-md border border-border px-3 text-sm hover:bg-muted">Try again</button>
         </div>`;
