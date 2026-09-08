@@ -46,10 +46,23 @@ const navigation = {
     try {
       const clerk = await getClerk();
       if (!clerk.user) {
-        root.innerHTML = "";
-        const mount = document.createElement("div");
-        root.appendChild(mount);
-        clerk.mountSignIn(mount, { forceRedirectUrl: "/account" });
+        // Inline mounting (clerk.mountSignIn) needs Clerk's UI bundle,
+        // which the self-hosted npm build does NOT ship — it's fetched at
+        // runtime from Clerk's CDN as "remotely hosted code" (@clerk/ui,
+        // resolved from window.__internal_ClerkUICtor), and this package
+        // never wires that up on its own. Attempting to mount without it
+        // throws synchronously ("Clerk was not loaded with Ui components").
+        // redirectToSignIn instead sends the visitor to Clerk's hosted
+        // Account Portal sign-in page — no local UI bundle required — and
+        // brings them back here via signInForceRedirectUrl. A click-to-
+        // redirect button, not an automatic redirect: landing on /account
+        // and being bounced immediately, with no explanation, is hostile.
+        root.innerHTML =
+          '<p>Sign in to view your license.</p>' +
+          '<button id="account-sign-in" type="button" class="mt-4 inline-flex h-9 items-center rounded-md bg-primary px-4 text-primary-foreground">Sign in</button>';
+        root.querySelector("#account-sign-in")?.addEventListener("click", () => {
+          clerk.redirectToSignIn({ signInForceRedirectUrl: `${window.location.origin}/account` });
+        });
         return;
       }
       const token = await clerk.session?.getToken();
@@ -93,7 +106,8 @@ const navigation = {
           btn.textContent = "Copied";
         }),
       );
-    } catch {
+    } catch (e) {
+      console.error("account:", e);
       root.textContent = UNAVAILABLE_MESSAGE;
     }
   }

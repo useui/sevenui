@@ -292,7 +292,8 @@ const clickScript = `(()=>{const dr=()=>{const h=document.querySelector("[data-b
     try {
       const clerk = await getClerk();
       link.textContent = clerk.user?.firstName || (clerk.user ? "Account" : "Sign in");
-    } catch {
+    } catch (e) {
+      console.error("header:", e);
       // Leave the default "Sign in" label; nothing else to do client-side.
     }
   }
