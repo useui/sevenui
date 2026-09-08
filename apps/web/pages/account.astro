@@ -268,11 +268,17 @@ const navigation = {
       );
     } catch (e) {
       console.error("account:", e);
+      // Failure wears the empty state's clothes (the common real-world case
+      // is simply "no license"), with one honest line so a paying customer
+      // isn't told they own nothing: we couldn't check, here's the retry.
       box.classList.remove("space-y-3");
       box.innerHTML = `
         <div class="max-w-md">
-          <p class="text-sm text-muted-foreground">Could not load your licenses. Try again shortly.</p>
-          <button id="licenses-retry" type="button" class="mt-4 inline-flex h-8 items-center rounded-md border border-border px-3 text-sm hover:bg-muted">Try again</button>
+          <h2 class="text-xl font-semibold tracking-tight">No license here yet.</h2>
+          <p class="mt-2 text-sm text-muted-foreground">Pre-order now and your key appears here the moment checkout completes.</p>
+          <a class="mt-5 inline-flex h-10 items-center rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90" href="/pro">Pre-order SevenUI Pro — $99</a>
+          <p class="mt-4 text-xs text-muted-foreground">Bought with a different email? Your key is also in the Polar customer portal receipt email.</p>
+          <p class="mt-2 text-xs text-muted-foreground">Already purchased with this one? We couldn't check your licenses just now — <button id="licenses-retry" type="button" class="underline underline-offset-4 hover:no-underline">try again</button>.</p>
         </div>`;
       box.querySelector("#licenses-retry")?.addEventListener("click", () => {
         box.innerHTML = `
