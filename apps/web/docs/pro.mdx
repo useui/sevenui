@@ -1,0 +1,61 @@
+---
+title: Pro
+description: Install premium SevenUI components with your license key.
+---
+
+SevenUI Pro components are premium, ready-made layouts built on SevenUI's
+open-source foundation. Each requires a valid license key to install.
+
+## Get a key
+
+Purchase a Pro license at [sevenui.dev/pro](https://sevenui.dev/pro). Your key
+appears immediately in your [account dashboard](https://sevenui.dev/account).
+
+## Configure
+
+Add the Pro registry to your `components.json` and set your license key in
+your environment:
+
+```jsonc
+// components.json
+"registries": {
+  "@sevenui-pro": {
+    "url": "https://sevenui.dev/r/pro/{name}.json",
+    "headers": { "Authorization": "Bearer ${SEVENUI_PRO_KEY}" }
+  }
+}
+```
+
+```bash
+# .env.local (or your shell profile)
+SEVENUI_PRO_KEY=SEVENUI-XXXX-XXXX
+```
+
+## Install
+
+Install any Pro component using the shadcn CLI:
+
+```bash
+npx shadcn@latest add @sevenui-pro/dashboard-01
+```
+
+Components install as source files under your `ui` alias, fully editable and
+yours to modify.
+
+## Troubleshooting
+
+**401 Unauthorized** — Your `SEVENUI_PRO_KEY` environment variable is missing
+or not set. Check that it's defined in `.env.local` or your shell profile.
+
+**403 Forbidden** — Your key is invalid, expired, or revoked. Visit your
+[account dashboard](https://sevenui.dev/account) to check its status or
+generate a new one.
+
+**503 Service Unavailable** — The licensing service is temporarily unavailable.
+Try again in a few moments.
+
+## Your key
+
+Your license key is **per-developer** — each team member needs their own. Keep
+it out of version control (add `.env.local` to your `.gitignore`). Rotate your
+key anytime from your [Polar portal](https://sevenui.dev/account).

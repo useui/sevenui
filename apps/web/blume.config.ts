@@ -75,6 +75,7 @@ export default defineConfig({
         "/",
         "/installation",
         "/theming",
+        "/pro",
         {
           label: "Components",
           items: [
