@@ -84,9 +84,55 @@ const navigation = {
               </div>
             </section>
           ))}
+
+          <section id="pro-section" hidden>
+            <h2 class="text-lg font-semibold tracking-tight">Pro</h2>
+            <p class="mt-1 text-sm text-muted-foreground">
+              Application blocks for paying customers. <a href="/pro" class="underline underline-offset-4">Get lifetime access</a>.
+            </p>
+            <div id="pro-cards" class="mt-4 grid gap-10"></div>
+          </section>
         </div>
       </div>
     </div>
   </div>
   <footer slot="footer"><SiteFooter /></footer>
 </PageLayout>
+
+<script>
+  async function renderProBlocks() {
+    const section = document.getElementById("pro-section");
+    const cards = document.getElementById("pro-cards");
+    if (!section || !cards || cards.childElementCount > 0) return;
+    try {
+      const res = await fetch("/r/pro-manifest.json");
+      if (!res.ok) return; // pro deployment unavailable: section stays hidden
+      const { items } = await res.json();
+      if (!items?.length) return;
+      cards.innerHTML = items
+        .map(
+          (item: { name: string; title: string; description: string; previewHeight: number }) => `
+          <article class="flex flex-col gap-3">
+            <div class="relative overflow-hidden rounded-xl border border-border bg-background">
+              <iframe src="https://pro.sevenui.dev/previews/${item.name}/" title="${item.title} preview"
+                loading="lazy" style="height:${item.previewHeight}px" class="pointer-events-none w-full"></iframe>
+              <span class="absolute right-3 top-3 rounded-md bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">Pro</span>
+            </div>
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h3 class="text-sm font-medium">${item.title}</h3>
+                <p class="text-sm text-muted-foreground">${item.description}</p>
+              </div>
+              <a href="/pro" class="shrink-0 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-muted">Get Pro</a>
+            </div>
+          </article>`,
+        )
+        .join("");
+      section.hidden = false;
+    } catch {
+      /* leave hidden */
+    }
+  }
+  document.addEventListener("astro:page-load", renderProBlocks);
+  renderProBlocks();
+</script>
