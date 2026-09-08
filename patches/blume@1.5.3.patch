@@ -1,0 +1,13 @@
+diff --git a/src/components/content/Component.astro b/src/components/content/Component.astro
+index 8f407fb33e24524a5bb09503c5b436c406fe6d5c..50041844896506e12ba551d3ac7511aa6fe9f145 100644
+--- a/src/components/content/Component.astro
++++ b/src/components/content/Component.astro
+@@ -106,6 +106,8 @@ const paneClass = "motion-safe:transition-[height] motion-safe:duration-200";
+ }
+ 
+ <script>
++  import { rafThrottle } from "../raf-throttle.ts";
++
+   // Preview frames measure their rendered example and report the height (see
+   // `examplesPageTemplate`). One listener serves every <Component> on the
+   // page; the sender is matched to its iframe through `event.source`. The

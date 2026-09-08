@@ -105,6 +105,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  blume@1.5.3: 377aba481aa884fe18db6cf96b0ab0c1cec3918c3fcb097c1575763fad30c776
+
 importers:
 
   .: {}
@@ -126,7 +129,7 @@ importers:
     devDependencies:
       blume:
         specifier: ^1.5.3
-        version: 1.5.3(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@shikijs/themes@4.4.3)(@types/node@26.4.0)(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(@vercel/functions@3.9.5)(csstype@3.2.3)(esbuild@0.28.2)(prettier@3.9.6)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))(yaml@2.9.0)
+        version: 1.5.3(patch_hash=377aba481aa884fe18db6cf96b0ab0c1cec3918c3fcb097c1575763fad30c776)(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@shikijs/themes@4.4.3)(@types/node@26.4.0)(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(@vercel/functions@3.9.5)(csstype@3.2.3)(esbuild@0.28.2)(prettier@3.9.6)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))(yaml@2.9.0)
       shadcn:
         specifier: ^4.19.1
         version: 4.19.1(typescript@7.0.2)
@@ -8406,7 +8409,7 @@ snapshots:
     dependencies:
       file-uri-to-path: 1.0.0
 
-  blume@1.5.3(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@shikijs/themes@4.4.3)(@types/node@26.4.0)(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(@vercel/functions@3.9.5)(csstype@3.2.3)(esbuild@0.28.2)(prettier@3.9.6)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))(yaml@2.9.0):
+  blume@1.5.3(patch_hash=377aba481aa884fe18db6cf96b0ab0c1cec3918c3fcb097c1575763fad30c776)(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@shikijs/themes@4.4.3)(@types/node@26.4.0)(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(@vercel/functions@3.9.5)(csstype@3.2.3)(esbuild@0.28.2)(prettier@3.9.6)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))(yaml@2.9.0):
     dependencies:
       '@astrojs/check': 0.9.10(prettier@3.9.6)(typescript@6.0.3)
       '@astrojs/markdown-satteri': 0.3.8

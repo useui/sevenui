@@ -19,3 +19,6 @@ publicHoistPattern:
 allowBuilds:
   '@scarf/scarf': false
   esbuild: true
+
+patchedDependencies:
+  blume@1.5.3: patches/blume@1.5.3.patch
