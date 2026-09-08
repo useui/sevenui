@@ -30,7 +30,14 @@ const navigation = {
 >
   <div class="mx-auto max-w-2xl px-6 py-16">
     <h1 class="text-3xl font-semibold tracking-tight">Account</h1>
-    <div id="account-root" class="mt-8 text-sm text-muted-foreground">Loading…</div>
+    <p class="mt-2 text-muted-foreground">Manage your sign-in and license key.</p>
+    <div id="account-root" class="mt-8">
+      <div class="space-y-3" aria-hidden="true">
+        <div class="h-4 w-2/3 animate-pulse rounded-md bg-muted"></div>
+        <div class="h-4 w-1/2 animate-pulse rounded-md bg-muted"></div>
+        <div class="h-4 w-5/6 animate-pulse rounded-md bg-muted"></div>
+      </div>
+    </div>
   </div>
   <footer slot="footer"><SiteFooter /></footer>
 </PageLayout>
@@ -39,6 +46,19 @@ const navigation = {
   import { getClerk } from "../lib/clerk";
 
   const UNAVAILABLE_MESSAGE = "Sign-in is unavailable right now. Please try again shortly.";
+
+  // Shared by every error path (fetch failure, bad JSON shape, thrown
+  // exception) so a visitor always gets the same recovery action instead of
+  // dead-end text. Re-running renderAccount() is a full re-fetch, same as a
+  // reload, but without leaving the page.
+  function renderError(root: HTMLElement, message: string) {
+    root.innerHTML = `
+      <div class="rounded-xl border border-border p-6">
+        <p class="text-sm text-muted-foreground">${message}</p>
+        <button id="account-retry" type="button" class="mt-4 inline-flex h-8 items-center rounded-md border border-border px-3 text-sm hover:bg-muted">Try again</button>
+      </div>`;
+    root.querySelector("#account-retry")?.addEventListener("click", () => renderAccount());
+  }
 
   async function renderAccount() {
     const root = document.getElementById("account-root");
@@ -57,48 +77,96 @@ const navigation = {
         // brings them back here via signInForceRedirectUrl. A click-to-
         // redirect button, not an automatic redirect: landing on /account
         // and being bounced immediately, with no explanation, is hostile.
-        root.innerHTML =
-          '<p>Sign in to view your license.</p>' +
-          '<button id="account-sign-in" type="button" class="mt-4 inline-flex h-9 items-center rounded-md bg-primary px-4 text-primary-foreground">Sign in</button>';
+        root.innerHTML = `
+          <div class="mx-auto max-w-sm rounded-xl border border-border p-8 text-center">
+            <h2 class="text-lg font-semibold">Sign in</h2>
+            <p class="mt-2 text-sm text-muted-foreground">Sign in to view and copy your license key.</p>
+            <button id="account-sign-in" type="button" class="mt-4 inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90">Sign in</button>
+          </div>`;
         root.querySelector("#account-sign-in")?.addEventListener("click", () => {
           clerk.redirectToSignIn({ signInForceRedirectUrl: `${window.location.origin}/account` });
         });
         return;
       }
+
+      const user = clerk.user;
+      const email = user.primaryEmailAddress?.emailAddress ?? "";
+      const name = user.fullName || email || "Signed in";
+
       const token = await clerk.session?.getToken();
       const res = await fetch("/api/me/licenses", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) {
-        root.textContent = "Could not load your licenses. Try again shortly.";
+        renderError(root, "Could not load your licenses. Try again shortly.");
         return;
       }
       const { licenses } = await res.json();
       if (!Array.isArray(licenses)) {
-        root.textContent = UNAVAILABLE_MESSAGE;
+        renderError(root, UNAVAILABLE_MESSAGE);
         return;
       }
-      if (!licenses.length) {
-        root.innerHTML =
-          '<p>No license yet.</p><a class="mt-4 inline-flex h-9 items-center rounded-md bg-primary px-4 text-primary-foreground" href="/pro">Get SevenUI Pro</a>' +
-          '<p class="mt-3 text-xs">Bought with a different email? Your key is also in the Polar customer portal receipt email.</p>';
-        return;
-      }
-      root.innerHTML = licenses
-        .map(
-          (l: { key: string; displayKey: string }) => `
-          <div class="rounded-lg border border-border p-4">
-            <p class="font-mono text-foreground" data-key="${l.key}">${l.displayKey}</p>
-            <button class="copy-key mt-2 h-8 rounded-md border border-border px-3">Copy key</button>
-            <pre class="mt-4 overflow-x-auto rounded-md bg-muted p-3 text-xs">"registries": {
+
+      const identityHtml = `
+        <div class="flex items-center justify-between gap-4 rounded-xl border border-border p-4">
+          <div class="flex min-w-0 items-center gap-3">
+            <img src="${user.imageUrl}" alt="${name}" class="size-10 shrink-0 rounded-full" />
+            <div class="min-w-0">
+              <p class="truncate font-medium text-foreground">${name}</p>
+              <p class="truncate text-sm text-muted-foreground">${email}</p>
+            </div>
+          </div>
+          <button id="account-sign-out" type="button" class="h-8 shrink-0 rounded-md border border-border px-3 text-sm hover:bg-muted">Sign out</button>
+        </div>`;
+
+      const licenseHtml = !licenses.length
+        ? `
+        <div class="mt-6 rounded-xl border border-border p-6">
+          <p class="text-foreground">No license yet.</p>
+          <a class="mt-4 inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90" href="/pro">Get SevenUI Pro</a>
+          <p class="mt-3 text-xs text-muted-foreground">Bought with a different email? Your key is also in the Polar customer portal receipt email.</p>
+        </div>`
+        : licenses
+            .map(
+              (l: { key: string; displayKey: string }) => `
+        <div class="mt-6 rounded-xl border border-border p-6">
+          <h2 class="text-lg font-semibold">SevenUI Blocks — lifetime</h2>
+          <p class="mt-4 font-mono text-sm text-foreground" data-key="${l.key}">${l.displayKey}</p>
+          <button class="copy-key mt-2 h-8 rounded-md border border-border px-3 text-sm hover:bg-muted">Copy key</button>
+          <div class="mt-6">
+            <div class="flex items-center justify-between">
+              <p class="text-xs font-medium text-muted-foreground">components.json</p>
+              <button class="copy-snippet h-7 rounded-md border border-border px-2 text-xs hover:bg-muted">Copy</button>
+            </div>
+            <pre class="mt-2 overflow-x-auto rounded-md bg-muted p-3 text-xs">"registries": {
   "@sevenui-pro": {
     "url": "https://sevenui.dev/r/pro/{name}.json",
     "headers": { "Authorization": "Bearer \${SEVENUI_PRO_KEY}" }
   }
 }</pre>
-          </div>`,
-        )
-        .join("");
+          </div>
+          <p class="mt-3 text-xs text-muted-foreground"><a href="/docs/pro" class="underline underline-offset-4">Full setup guide →</a></p>
+        </div>`,
+            )
+            .join("");
+
+      root.innerHTML = identityHtml + licenseHtml;
+
+      root.querySelector("#account-sign-out")?.addEventListener("click", async (event) => {
+        const btn = event.currentTarget as HTMLButtonElement;
+        btn.disabled = true;
+        btn.textContent = "Signing out…";
+        try {
+          await clerk.signOut();
+        } catch (e) {
+          console.error("account:", e);
+        }
+        // A full navigation (not an Astro ClientRouter transition) so the
+        // header's cookie check and every other per-page script re-run
+        // fresh against the now-signed-out state — no stale "signed in"
+        // label left over anywhere on the page.
+        window.location.assign("/account");
+      });
       root.querySelectorAll(".copy-key").forEach((btn) =>
         btn.addEventListener("click", () => {
           const key = (btn.previousElementSibling as HTMLElement).dataset.key!;
@@ -106,9 +174,17 @@ const navigation = {
           btn.textContent = "Copied";
         }),
       );
+      root.querySelectorAll(".copy-snippet").forEach((btn) =>
+        btn.addEventListener("click", () => {
+          const pre = btn.closest("div")?.nextElementSibling as HTMLElement | null;
+          if (!pre) return;
+          navigator.clipboard.writeText(pre.textContent ?? "");
+          btn.textContent = "Copied";
+        }),
+      );
     } catch (e) {
       console.error("account:", e);
-      root.textContent = UNAVAILABLE_MESSAGE;
+      renderError(root, UNAVAILABLE_MESSAGE);
     }
   }
 
