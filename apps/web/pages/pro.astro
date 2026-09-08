@@ -1,6 +1,7 @@
 ---
 import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
+import Header from "../components/blume/Header.astro";
 import SiteFooter from "../components/site-footer.astro";
 import { SITE_TABS } from "../components/site-tabs.ts";
 
@@ -39,6 +40,7 @@ const navigation = {
   siteUrl={config.site}
   ogEnabled={config.og.enabled}
   page={{ title: "Pro — SevenUI", description, route: "/pro" }}
+  layout={{ Header }}
 >
   <div class="mx-auto max-w-3xl px-6 py-16">
     <h1 class="text-3xl font-semibold tracking-tight">SevenUI Pro</h1>
@@ -84,3 +86,26 @@ const navigation = {
   </div>
   <footer slot="footer"><SiteFooter /></footer>
 </PageLayout>
+
+<script>
+  import { getClerk } from "../lib/clerk";
+
+  // Progressive enhancement only: signed-out visitors keep the plain
+  // checkout link untouched. Signed-in visitors get the checkout
+  // pre-filled so Polar's webhook (Task 4/8) can match the purchase back
+  // to their account without a manual step on /account.
+  async function enhanceBuyLink() {
+    const buyLink = document.getElementById("pro-buy") as HTMLAnchorElement | null;
+    if (!buyLink) return; // not on this page
+    const clerk = await getClerk();
+    const email = clerk.user?.primaryEmailAddress?.emailAddress;
+    if (!email) return;
+    const url = new URL(buyLink.href);
+    url.searchParams.set("customer_email", email);
+    url.searchParams.set("reference_id", clerk.user!.id);
+    buyLink.href = url.toString();
+  }
+
+  document.addEventListener("astro:page-load", enhanceBuyLink);
+  enhanceBuyLink();
+</script>

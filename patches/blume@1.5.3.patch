@@ -11,3 +11,58 @@ index 8f407fb33e24524a5bb09503c5b436c406fe6d5c..50041844896506e12ba551d3ac7511aa
    // Preview frames measure their rendered example and report the height (see
    // `examplesPageTemplate`). One listener serves every <Component> on the
    // page; the sender is matched to its iframe through `event.source`. The
+diff --git a/src/components/layout/PageLayout.astro b/src/components/layout/PageLayout.astro
+index 102029abb76084489bd10fbe105f7c13b97c82d4..8420d195e46786dbdef8da4c7ad28239fb9c16fd 100644
+--- a/src/components/layout/PageLayout.astro
++++ b/src/components/layout/PageLayout.astro
+@@ -22,6 +22,7 @@ import type {
+   BlumeFavicon,
+   BlumeLogo,
+ } from "../../core/data.ts";
++import type { ComponentOverride } from "../../core/define-components.ts";
+ import { EN_UI } from "../../core/i18n-ui.ts";
+ import type { UIStrings } from "../../core/i18n-ui.ts";
+ import type { FontHead } from "../../theme/fonts.ts";
+@@ -47,6 +48,7 @@ import {
+ } from "./head-scripts.ts";
+ import Header from "./Header.astro";
+ import { currentTabForRoute } from "./nav-utils.ts";
++import { resolveSlot } from "./overrides.ts";
+ import WebMcp from "./WebMcp.astro";
+ 
+ interface Props {
+@@ -119,6 +121,13 @@ interface Props {
+    * `clientData={{ config: data.config, navigation: data.navigation, page: { route: "/", title } }}`.
+    */
+   clientData?: BlumeClientData | null;
++  /**
++   * Layout-slot overrides, same shape as RootLayout's — a custom page can
++   * replace the header the same way a docs page does via `defineComponents`.
++   * Only `Header` is honored here; PageLayout has no sidebar/pagination/etc.
++   * to override.
++   */
++  layout?: Record<string, ComponentOverride>;
+ }
+ 
+ const {
+@@ -148,8 +157,11 @@ const {
+   ui,
+   localeSwitch,
+   clientData,
++  layout = {},
+ } = Astro.props;
+ 
++const HeaderSlot = resolveSlot(layout.Header, Header);
++
+ const clientDataJson = clientData
+   ? JSON.stringify(clientData).replaceAll("<", "\\u003c")
+   : null;
+@@ -323,7 +335,7 @@ const bannerKey = banner?.dismissible ? banner.key : null;
+       href="#blume-content">{strings.page.skipToContent}</a
+     >
+     <Banner banner={banner} strings={strings.banner} />
+-    <Header
++    <HeaderSlot
+       askEnabled={askEnabled}
+       askStrings={strings.ask}
+       hasSidebar={false}

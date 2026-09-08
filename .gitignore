@@ -5,3 +5,5 @@ apps/web/public/r/
 *.log
 .DS_Store
 .blume-verify/
+.env
+!.env.example

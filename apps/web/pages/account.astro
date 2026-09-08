@@ -1,0 +1,93 @@
+---
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import data from "blume:data";
+import Header from "../components/blume/Header.astro";
+import SiteFooter from "../components/site-footer.astro";
+import { SITE_TABS } from "../components/site-tabs.ts";
+
+const { config } = data;
+
+const navigation = {
+  ...data.navigation,
+  tabs: SITE_TABS,
+};
+---
+
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={navigation}
+  favicon={config.favicon}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  searchEnabled={config.search.enabled}
+  siteUrl={config.site}
+  ogEnabled={config.og.enabled}
+  page={{ title: "Account — SevenUI", route: "/account" }}
+  layout={{ Header }}
+>
+  <div class="mx-auto max-w-2xl px-6 py-16">
+    <h1 class="text-3xl font-semibold tracking-tight">Account</h1>
+    <div id="account-root" class="mt-8 text-sm text-muted-foreground">Loading…</div>
+  </div>
+  <footer slot="footer"><SiteFooter /></footer>
+</PageLayout>
+
+<script>
+  import { getClerk } from "../lib/clerk";
+
+  async function renderAccount() {
+    const root = document.getElementById("account-root");
+    if (!root) return; // not on this page
+    const clerk = await getClerk();
+    if (!clerk.user) {
+      root.innerHTML = "";
+      const mount = document.createElement("div");
+      root.appendChild(mount);
+      clerk.mountSignIn(mount);
+      return;
+    }
+    const token = await clerk.session?.getToken();
+    const res = await fetch("/api/me/licenses", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) {
+      root.textContent = "Could not load your licenses. Try again shortly.";
+      return;
+    }
+    const { licenses } = await res.json();
+    if (!licenses.length) {
+      root.innerHTML =
+        '<p>No license yet.</p><a class="mt-4 inline-flex h-9 items-center rounded-md bg-primary px-4 text-primary-foreground" href="/pro">Get SevenUI Pro</a>' +
+        '<p class="mt-3 text-xs">Bought with a different email? Your key is also in the Polar customer portal receipt email.</p>';
+      return;
+    }
+    root.innerHTML = licenses
+      .map(
+        (l: { key: string; displayKey: string }) => `
+        <div class="rounded-lg border border-border p-4">
+          <p class="font-mono text-foreground" data-key="${l.key}">${l.displayKey}</p>
+          <button class="copy-key mt-2 h-8 rounded-md border border-border px-3">Copy key</button>
+          <pre class="mt-4 overflow-x-auto rounded-md bg-muted p-3 text-xs">"registries": {
+  "@sevenui-pro": {
+    "url": "https://sevenui.dev/r/pro/{name}.json",
+    "headers": { "Authorization": "Bearer \${SEVENUI_PRO_KEY}" }
+  }
+}</pre>
+        </div>`,
+      )
+      .join("");
+    root.querySelectorAll(".copy-key").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        const key = (btn.previousElementSibling as HTMLElement).dataset.key!;
+        navigator.clipboard.writeText(key);
+        btn.textContent = "Copied";
+      }),
+    );
+  }
+
+  document.addEventListener("astro:page-load", renderAccount);
+  renderAccount();
+</script>

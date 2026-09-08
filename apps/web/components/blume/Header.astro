@@ -250,6 +250,30 @@ const clickScript = `(()=>{const dr=()=>{const h=document.querySelector("[data-b
       <span class="hidden dark:inline-flex"><Icon name="moon" size={18} /></span>
     </button>
     {askEnabled && <Ask strings={askStrings} />}
+    <a
+      id="auth-control"
+      class="rounded-full px-3 py-1.5 font-medium text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground"
+      href="/account"
+    >
+      Sign in
+    </a>
   </div>
 </header>
 <script is:inline set:html={clickScript} />
+<script>
+  import { getClerk } from "../../lib/clerk";
+
+  // Signed-out visitors keep the default "Sign in" label; once Clerk loads
+  // and reports a session, swap it to the user's first name so the header
+  // itself signals sign-in state — the link still just goes to /account,
+  // no dropdown of our own.
+  async function syncAuthControl() {
+    const link = document.getElementById("auth-control");
+    if (!link) return; // header not rendered on this page
+    const clerk = await getClerk();
+    link.textContent = clerk.user?.firstName || (clerk.user ? "Account" : "Sign in");
+  }
+
+  document.addEventListener("astro:page-load", syncAuthControl);
+  syncAuthControl();
+</script>
