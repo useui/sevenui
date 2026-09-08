@@ -77,9 +77,7 @@ const navigation = {
       <div>
         <h3 class="font-medium">How installation works</h3>
         <p class="mt-1 text-muted-foreground">
-          You get a license key. Add it to your environment, add the registry to components.json, then
-          <code>npx shadcn add @sevenui-pro/&lt;block&gt;</code>. See the
-          <a href="/docs/pro" class="underline underline-offset-4">Pro docs</a>.
+          You get a license key. Add it to your environment, add the registry to components.json, then <code>npx shadcn add @sevenui-pro/&lt;block&gt;</code>. See the <a href="/docs/pro" class="underline underline-offset-4">Pro docs</a>.
         </p>
       </div>
     </section>
@@ -92,8 +90,8 @@ const navigation = {
 
   // Progressive enhancement only: signed-out visitors keep the plain
   // checkout link untouched. Signed-in visitors get the checkout
-  // pre-filled so Polar's webhook (Task 4/8) can match the purchase back
-  // to their account without a manual step on /account.
+  // pre-filled so the Polar customer is created already matched to this
+  // account, without a manual step on /account.
   async function enhanceBuyLink() {
     const buyLink = document.getElementById("pro-buy") as HTMLAnchorElement | null;
     if (!buyLink) return; // not on this page
