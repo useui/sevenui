@@ -110,20 +110,10 @@ const navigation = {
       const email = user.primaryEmailAddress?.emailAddress ?? "";
       const name = user.fullName || email || "Signed in";
 
-      const token = await clerk.session?.getToken();
-      const res = await fetch("/api/me/licenses", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) {
-        renderError(root, "Could not load your licenses. Try again shortly.");
-        return;
-      }
-      const { licenses } = await res.json();
-      if (!Array.isArray(licenses)) {
-        renderError(root, UNAVAILABLE_MESSAGE);
-        return;
-      }
-
+      // Identity and sign-out never depend on the license service: render
+      // them first, then resolve the license section on its own. A Polar
+      // hiccup (or local dev, where the /api/me/licenses rewrite does not
+      // exist) must not lock the visitor out of signing out.
       const identityHtml = `
         <div class="flex items-center justify-between gap-4 rounded-xl border border-border p-4">
           <div class="flex min-w-0 items-center gap-3">
@@ -136,25 +126,10 @@ const navigation = {
           <button id="account-sign-out" type="button" class="h-8 shrink-0 rounded-md border border-border px-3 text-sm hover:bg-muted">Sign out</button>
         </div>`;
 
-      const licenseHtml = !licenses.length
-        ? `
-        <div class="mt-6 rounded-xl border border-border p-6">
-          <p class="text-foreground">No license yet.</p>
-          <a class="mt-4 inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90" href="/pro">Pre-order SevenUI Pro</a>
-          <p class="mt-3 text-xs text-muted-foreground">Bought with a different email? Your key is also in the Polar customer portal receipt email.</p>
-        </div>`
-        : licenses
-            .map(
-              (l: { key: string; displayKey: string }) => `
-        <div class="mt-6 rounded-xl border border-border p-6">
-          <h2 class="text-lg font-semibold">SevenUI Pro — lifetime</h2>
-          <p class="mt-4 font-mono text-sm text-foreground" data-key="${l.key}">${l.displayKey}</p>
-          <button class="copy-key mt-2 h-8 rounded-md border border-border px-3 text-sm hover:bg-muted">Copy key</button>
-        </div>`,
-            )
-            .join("");
-
-      root.innerHTML = identityHtml + licenseHtml;
+      root.innerHTML = identityHtml + `<div id="account-licenses" class="mt-6 space-y-3" aria-live="polite">
+        <div class="h-4 w-2/3 animate-pulse rounded-md bg-muted"></div>
+        <div class="h-4 w-1/2 animate-pulse rounded-md bg-muted"></div>
+      </div>`;
 
       root.querySelector("#account-sign-out")?.addEventListener("click", async (event) => {
         const btn = event.currentTarget as HTMLButtonElement;
@@ -171,7 +146,47 @@ const navigation = {
         // label left over anywhere on the page.
         window.location.assign("/account");
       });
-      root.querySelectorAll(".copy-key").forEach((btn) =>
+      await renderLicenses(clerk);
+    } catch (e) {
+      console.error("account:", e);
+      renderError(root, UNAVAILABLE_MESSAGE);
+    }
+  }
+
+  // The license section resolves independently of identity/sign-out: its
+  // failures (and its retry) stay inside #account-licenses.
+  async function renderLicenses(clerk: Awaited<ReturnType<typeof getClerk>>) {
+    const box = document.getElementById("account-licenses");
+    if (!box) return;
+    try {
+      const token = await clerk.session?.getToken();
+      const res = await fetch("/api/me/licenses", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error(`licenses request failed: ${res.status}`);
+      const { licenses } = await res.json();
+      if (!Array.isArray(licenses)) throw new Error("unexpected licenses shape");
+
+      box.classList.remove("space-y-3");
+      box.innerHTML = !licenses.length
+        ? `
+        <div class="rounded-xl border border-border p-6">
+          <p class="text-foreground">No license yet.</p>
+          <a class="mt-4 inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90" href="/pro">Pre-order SevenUI Pro</a>
+          <p class="mt-3 text-xs text-muted-foreground">Bought with a different email? Your key is also in the Polar customer portal receipt email.</p>
+        </div>`
+        : licenses
+            .map(
+              (l: { key: string; displayKey: string }) => `
+        <div class="rounded-xl border border-border p-6">
+          <h2 class="text-lg font-semibold">SevenUI Pro — lifetime</h2>
+          <p class="mt-4 font-mono text-sm text-foreground" data-key="${l.key}">${l.displayKey}</p>
+          <button class="copy-key mt-2 h-8 rounded-md border border-border px-3 text-sm hover:bg-muted">Copy key</button>
+        </div>`,
+            )
+            .join("");
+
+      box.querySelectorAll(".copy-key").forEach((btn) =>
         btn.addEventListener("click", () => {
           const key = (btn.previousElementSibling as HTMLElement).dataset.key!;
           navigator.clipboard.writeText(key);
@@ -180,7 +195,19 @@ const navigation = {
       );
     } catch (e) {
       console.error("account:", e);
-      renderError(root, UNAVAILABLE_MESSAGE);
+      box.classList.remove("space-y-3");
+      box.innerHTML = `
+        <div class="rounded-xl border border-border p-6">
+          <p class="text-sm text-muted-foreground">Could not load your licenses. Try again shortly.</p>
+          <button id="licenses-retry" type="button" class="mt-4 inline-flex h-8 items-center rounded-md border border-border px-3 text-sm hover:bg-muted">Try again</button>
+        </div>`;
+      box.querySelector("#licenses-retry")?.addEventListener("click", () => {
+        box.innerHTML = `
+          <div class="h-4 w-2/3 animate-pulse rounded-md bg-muted"></div>
+          <div class="h-4 w-1/2 animate-pulse rounded-md bg-muted"></div>`;
+        box.classList.add("space-y-3");
+        renderLicenses(clerk);
+      });
     }
   }
 
