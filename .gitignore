@@ -6,4 +6,5 @@ apps/web/public/r/
 .DS_Store
 .blume-verify/
 .env
+.env.*
 !.env.example
