@@ -101,6 +101,31 @@ const navigation = {
     }
   }
 
+  /* The license card carries the site's crop-mark signature: a measured
+     artifact on the design canvas, same device as the l-marks rows. */
+  #account-root :global(.license-card)::before,
+  #account-root :global(.license-card)::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--border);
+    background: var(--background);
+  }
+
+  #account-root :global(.license-card)::before {
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+  }
+
+  #account-root :global(.license-card)::after {
+    bottom: 0;
+    right: 0;
+    transform: translate(50%, 50%);
+  }
+
   @keyframes account-draw {
     to {
       stroke-dashoffset: 0;
@@ -248,13 +273,26 @@ const navigation = {
         : licenses
             .map(
               (l: { key: string; displayKey: string }) => `
-        <div class="max-w-xl rounded-xl border border-border p-6">
-          <div class="flex items-center justify-between gap-4">
-            <h2 class="text-lg font-semibold">SevenUI Pro</h2>
-            <span class="font-mono text-xs text-muted-foreground">lifetime</span>
+        <div class="license-card relative max-w-2xl border border-border bg-background">
+          <div class="flex items-center justify-between gap-4 border-b border-border px-6 py-3">
+            <h2 class="font-semibold tracking-tight">SevenUI Pro</h2>
+            <span class="font-mono text-xs text-muted-foreground">lifetime · per-developer</span>
           </div>
-          <p class="mt-4 rounded-md bg-muted/60 px-3 py-2 font-mono text-sm text-foreground" data-key="${l.key}">${l.displayKey}</p>
-          <button class="copy-key mt-3 h-8 rounded-md border border-border px-3 text-sm hover:bg-muted">Copy key</button>
+          <div class="bg-muted/40 px-6 py-7">
+            <p class="font-mono text-xs text-muted-foreground">License key</p>
+            <div class="mt-3 flex flex-wrap items-center gap-3">
+              <code class="min-w-0 flex-1 truncate font-mono text-base tracking-wide text-foreground sm:text-lg" data-key="${l.key}">${l.displayKey}</code>
+              <button class="copy-key inline-flex h-9 shrink-0 items-center gap-2 rounded-md border border-border bg-background px-3 text-sm transition-colors hover:bg-muted">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-3.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 5.5v-2a1.5 1.5 0 0 0-1.5-1.5H4A1.5 1.5 0 0 0 2.5 3.5v5A1.5 1.5 0 0 0 4 10h1.5" stroke-linecap="round"/></svg>
+                <span>Copy</span>
+              </button>
+            </div>
+            <p class="mt-3 font-mono text-xs text-muted-foreground">Keep it out of committed files — it identifies your purchase.</p>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-3 border-t border-border px-6 py-3 text-xs text-muted-foreground">
+            <span>Licensed to <span class="text-foreground">${clerk.user?.fullName || clerk.user?.primaryEmailAddress?.emailAddress || "this account"}</span> — unlimited personal and commercial projects</span>
+            <span class="font-mono">sevenui.dev/pro</span>
+          </div>
         </div>`,
             )
             .join("");
@@ -263,7 +301,8 @@ const navigation = {
         btn.addEventListener("click", () => {
           const key = (btn.previousElementSibling as HTMLElement).dataset.key!;
           navigator.clipboard.writeText(key);
-          btn.textContent = "Copied";
+          const label = btn.querySelector("span");
+          if (label) label.textContent = "Copied";
         }),
       );
     } catch (e) {
