@@ -1,0 +1,247 @@
+---
+import LegalPage from "../components/legal-page.astro";
+---
+
+<LegalPage
+  title="Privacy Policy"
+  route="/privacy"
+  description="What personal data SevenUI collects, who processes it, and how to exercise your rights."
+  updated="September 9, 2026"
+>
+  <p>
+    This policy explains what personal data <strong>SevenUI</strong> collects
+    when you visit sevenui.dev, sign in, or buy SevenUI Pro — and what we do
+    with it. SevenUI is the data controller for the processing described here.
+    Contact: <a href="mailto:mail@sevenui.dev">mail@sevenui.dev</a>.
+  </p>
+  <p>
+    The short version: <strong>we run no database of our own.</strong> Your
+    identity lives with Clerk, your purchase and licence keys live with Polar,
+    and the rest is website analytics and server logs. Browsing the
+    documentation and installing the free components requires no account and no
+    personal data beyond ordinary server logs.
+  </p>
+
+  <h2>1. What we collect</h2>
+  <p><strong>Account data</strong> — when you sign in, our identity provider
+    Clerk stores your email address, your name and profile image if your
+    provider supplies them, the identifier of the Google or GitHub account you
+    signed in with, and session and device information used to keep you signed
+    in and to detect abuse. We read this data through Clerk to show your account
+    page; we do not copy it into a system of our own.</p>
+  <p><strong>Purchase and licence data</strong> — when you buy SevenUI Pro,
+    Polar (our merchant of record) collects the data needed to take the payment
+    and issue an invoice: your name, email address, billing country, tax
+    identifiers where relevant, and payment details. <strong>We never receive or
+    store your card details.</strong> We can see, through Polar, which orders and
+    licence keys belong to your account.</p>
+  <p><strong>Licence validation data</strong> — when you install a Pro block,
+    the request carries your licence key. Our licence endpoint checks it with
+    Polar and, like any web server, records the request in short-lived technical
+    logs (timestamp, IP address, user agent, requested resource).</p>
+  <p><strong>Server logs</strong> — our host, Vercel, records requests to the
+    site: IP address, user agent, URL, response status, and timing. These logs
+    keep the service running and secure.</p>
+  <p><strong>Usage analytics</strong> — we use Google Analytics 4 (measurement
+    ID <code>G-8702Z28SMN</code>) to understand which pages and components get
+    used. It sets cookies in your browser and reports pageviews, referrer,
+    device and browser type, and a coarse location derived from your IP address.
+    We look at this in aggregate; we do not use it to identify you or to build
+    advertising profiles.</p>
+  <p><strong>Correspondence</strong> — if you email us, we keep the message and
+    your address so we can answer and keep a record of support and refund
+    requests.</p>
+
+  <h2>2. Why we process it, and on what basis</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Purpose</th>
+        <th>Data</th>
+        <th>Legal basis (GDPR)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Sign you in and show your licences</td>
+        <td>Account data</td>
+        <td>Performance of a contract</td>
+      </tr>
+      <tr>
+        <td>Sell SevenUI Pro, issue and validate licence keys, handle refunds</td>
+        <td>Purchase, licence, validation data</td>
+        <td>Performance of a contract</td>
+      </tr>
+      <tr>
+        <td>Keep invoices and tax records</td>
+        <td>Purchase data</td>
+        <td>Legal obligation (handled by Polar as merchant of record)</td>
+      </tr>
+      <tr>
+        <td>Keep the service available and prevent abuse of licence keys</td>
+        <td>Server and validation logs</td>
+        <td>Legitimate interest</td>
+      </tr>
+      <tr>
+        <td>Answer your emails</td>
+        <td>Correspondence</td>
+        <td>Legitimate interest, or contract for existing customers</td>
+      </tr>
+      <tr>
+        <td>Measure how the site is used</td>
+        <td>Analytics data</td>
+        <td>Legitimate interest in aggregate statistics, or your consent where local law requires it</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    Under Turkish data protection law (KVKK), the same processing rests on the
+    grounds in Article 5/2 — in particular processing necessary for a contract,
+    compliance with a legal obligation, and our legitimate interests.
+  </p>
+
+  <h2>3. Who processes data for us</h2>
+  <p>
+    We keep the list of third parties deliberately short. Each acts under its
+    own privacy policy, and we do not sell personal data to anyone.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Provider</th>
+        <th>Role</th>
+        <th>Location</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Clerk</td>
+        <td>Authentication and account records</td>
+        <td>United States</td>
+      </tr>
+      <tr>
+        <td>Polar</td>
+        <td>Merchant of record: payments, invoices, licence keys</td>
+        <td>United States / EU</td>
+      </tr>
+      <tr>
+        <td>Vercel</td>
+        <td>Website and API hosting, server logs</td>
+        <td>United States and global edge network</td>
+      </tr>
+      <tr>
+        <td>Google Analytics</td>
+        <td>Aggregate usage statistics</td>
+        <td>United States</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    We may also disclose data where the law requires it, or to establish or
+    defend a legal claim.
+  </p>
+
+  <h2>4. International transfers</h2>
+  <p>
+    Because these providers are largely based in the United States, your data is
+    transferred outside Türkiye and the European Economic Area. Those transfers
+    rely on the providers' own safeguards — standard contractual clauses and,
+    where applicable, the EU–US Data Privacy Framework — and, for transfers from
+    Türkiye, on the grounds available under KVKK Article 9, including your
+    explicit consent where no other ground applies.
+  </p>
+
+  <h2>5. Cookies</h2>
+  <p>
+    We use no advertising or cross-site tracking cookies. What the site sets:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Cookie</th>
+        <th>Set by</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>__session</code>, <code>__client_uat</code></td>
+        <td>Clerk</td>
+        <td>Keeps you signed in. Strictly necessary; only set once you sign in.</td>
+      </tr>
+      <tr>
+        <td><code>_ga</code>, <code>_ga_*</code></td>
+        <td>Google Analytics</td>
+        <td>Distinguishes visitors for aggregate usage statistics. Expires after up to two years.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    Your theme preference is stored in your browser's local storage and never
+    leaves your device. You can block or delete cookies in your browser
+    settings, or opt out of Google Analytics with Google's
+    <a href="https://tools.google.com/dlpage/gaoptout">browser add-on</a>;
+    blocking the Clerk cookies will sign you out.
+  </p>
+
+  <h2>6. How long we keep it</h2>
+  <ul>
+    <li><strong>Account data</strong> — for as long as your account exists, and deleted with it.</li>
+    <li>
+      <strong>Purchase and licence data</strong> — for the life of the licence,
+      then for as long as tax and accounting law requires Polar to keep the
+      records.
+    </li>
+    <li><strong>Server and validation logs</strong> — short-lived, retained by our host in the ordinary course (typically weeks, not years).</li>
+    <li><strong>Analytics</strong> — as configured in Google Analytics, up to 14 months.</li>
+    <li><strong>Emails</strong> — as long as needed to handle the matter and keep a record of it.</li>
+  </ul>
+
+  <h2>7. Your rights</h2>
+  <p>
+    Under the GDPR and KVKK you can ask us to confirm whether we process your
+    data, get a copy of it, correct it, delete it, restrict or object to the
+    processing, receive it in a portable format, and withdraw consent where
+    processing rests on consent. You may also complain to a supervisory
+    authority — in Türkiye, the Personal Data Protection Authority (KVKK); in
+    the EEA or UK, your national authority.
+  </p>
+  <p>
+    Write to <a href="mailto:mail@sevenui.dev">mail@sevenui.dev</a> from the
+    address on your account and we will respond within 30 days. Deleting your
+    account removes your identity data from Clerk; records Polar must keep for
+    tax purposes remain with Polar, and a deleted account does not by itself
+    cancel a licence you have bought.
+  </p>
+
+  <h2>8. Security</h2>
+  <p>
+    Authentication and payment — the two places sensitive data lives — are
+    delegated to specialist providers rather than kept on our own servers.
+    Traffic to the site and the licence API is encrypted in transit, and licence
+    keys are transmitted as bearer credentials over HTTPS only. No system is
+    perfectly secure; keep your licence key and your sign-in email safe, and
+    tell us if you suspect a problem.
+  </p>
+
+  <h2>9. Children</h2>
+  <p>
+    SevenUI is a developer tool and is not directed at children. Do not use the
+    service or create an account if you are under 16 (or the minimum age for
+    data-processing consent where you live). If we learn we hold a child's data,
+    we will delete it.
+  </p>
+
+  <h2>10. Changes to this policy</h2>
+  <p>
+    We will update this page when our tools or processing change; the date at the
+    top always reflects the current version. Material changes will be announced
+    by email to Pro customers.
+  </p>
+
+  <h2>11. Contact</h2>
+  <p>
+    SevenUI — <a href="mailto:mail@sevenui.dev">mail@sevenui.dev</a>. See also
+    our <a href="/terms">Terms of Service</a>.
+  </p>
+</LegalPage>

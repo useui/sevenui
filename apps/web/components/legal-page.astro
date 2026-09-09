@@ -1,0 +1,198 @@
+---
+// Shared chrome for the legal pages (/terms, /privacy). Wraps the same
+// exposed-canvas treatment the other standalone pages use — ruler, gridded
+// `l-row` column, crop-marked header strip — so the two long prose documents
+// stay in the site's design language without duplicating 80 lines of layout
+// and CSS per page. Pages pass their metadata as props and their body as the
+// default slot; prose typography is set here (see the `.legal` rules below).
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import data from "blume:data";
+import Header from "./blume/Header.astro";
+import LandingRuler from "./landing-ruler.astro";
+import SiteFooter from "./site-footer.astro";
+import { SITE_TABS } from "./site-tabs.ts";
+
+interface Props {
+  /** Document name, shown in the mono header strip and the page title. */
+  title: string;
+  /** Final URL of the page, e.g. `/terms`. */
+  route: string;
+  /** Meta description for the document. */
+  description: string;
+  /** Human-readable last revision date, e.g. `September 9, 2026`. */
+  updated: string;
+}
+
+const { title, route, description, updated } = Astro.props;
+
+const { config } = data;
+
+const navigation = {
+  ...data.navigation,
+  tabs: SITE_TABS,
+};
+---
+
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={navigation}
+  favicon={config.favicon}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  searchEnabled={config.search.enabled}
+  siteUrl={config.site}
+  ogEnabled={config.og.enabled}
+  page={{ title: `${title} — SevenUI`, description, route }}
+  layout={{ Header }}
+>
+  <div class="relative">
+    <LandingRuler />
+
+    <section class="border-b border-border">
+      <div
+        class="l-row l-marks flex items-center justify-between gap-4 border-b border-border px-6 py-3 font-mono text-xs text-muted-foreground"
+      >
+        <span>{title}</span>
+        <span class="text-end">Last updated {updated}</span>
+      </div>
+      <div class="l-row">
+        <article class="legal max-w-[68ch] px-6 py-14 sm:px-10">
+          <h1>{title}</h1>
+          <slot />
+        </article>
+      </div>
+    </section>
+  </div>
+  <footer slot="footer"><SiteFooter /></footer>
+</PageLayout>
+
+<style>
+  .l-row {
+    position: relative;
+    margin-inline: auto;
+    width: 100%;
+    max-width: 72rem; /* matches the max-w-6xl used by the docs pages */
+  }
+
+  @media (min-width: 640px) {
+    .l-row {
+      border-inline: 1px solid var(--border);
+    }
+
+    .l-marks::before,
+    .l-marks::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      z-index: 1;
+      width: 7px;
+      height: 7px;
+      border: 1px solid var(--border);
+      background: var(--background);
+      transform: translate(-50%, -50%);
+    }
+
+    .l-marks::before {
+      left: 0;
+    }
+
+    .l-marks::after {
+      left: 100%;
+    }
+  }
+
+  /* Prose scale for the documents themselves. Element selectors (rather than
+     utility classes on every node) keep the page bodies readable as plain
+     markup; `:global` because the slotted content is scoped to the page. */
+  .legal :global(h1) {
+    font-size: 1.875rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .legal :global(h2) {
+    margin-top: 2.75rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .legal :global(h2 + p),
+  .legal :global(h2 + ul) {
+    margin-top: 0.75rem;
+  }
+
+  .legal :global(p),
+  .legal :global(ul),
+  .legal :global(dl) {
+    margin-top: 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--muted-foreground);
+  }
+
+  .legal :global(ul) {
+    list-style: none;
+    padding-left: 1.125rem;
+  }
+
+  .legal :global(li) {
+    position: relative;
+    margin-top: 0.5rem;
+  }
+
+  .legal :global(li)::before {
+    content: "";
+    position: absolute;
+    top: 0.6875rem;
+    left: -1.125rem;
+    width: 5px;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .legal :global(strong) {
+    font-weight: 500;
+    color: var(--foreground);
+  }
+
+  .legal :global(code) {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.8125rem;
+    color: var(--foreground);
+  }
+
+  .legal :global(a) {
+    color: var(--foreground);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  /* Cookie/processor tables: the same hairline grid as the rest of the canvas. */
+  .legal :global(table) {
+    margin-top: 1.25rem;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    text-align: start;
+  }
+
+  .legal :global(th),
+  .legal :global(td) {
+    border: 1px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    vertical-align: top;
+    color: var(--muted-foreground);
+  }
+
+  .legal :global(th) {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--foreground);
+  }
+</style>

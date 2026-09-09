@@ -304,9 +304,19 @@ const footerComponents = [
       </div>
     </div>
     <div class="border-t border-border">
-      <p class="l-row px-6 py-6 text-xs text-muted-foreground">
-        MIT License © 2026 SevenUI
-      </p>
+      <div
+        class="l-row flex flex-col gap-3 px-6 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
+      >
+        <p>MIT License © 2026 SevenUI</p>
+        <nav aria-label="Legal" class="flex items-center gap-4">
+          <a class="transition-colors hover:text-foreground" href="/terms">
+            Terms
+          </a>
+          <a class="transition-colors hover:text-foreground" href="/privacy">
+            Privacy
+          </a>
+        </nav>
+      </div>
     </div>
   </footer>
 </PageLayout>
