@@ -1,0 +1,127 @@
+---
+// Global theme customizer for the /blocks gallery. Its ONLY side effect is
+// writing localStorage["preset-config"] (Reset removes the key); every open
+// preview iframe — free and pro, all same-origin — re-themes via the native
+// storage event. The gallery page itself never loads the preset applier, so
+// the site chrome stays untouched by design.
+// Spec: docs/superpowers/specs/2026-09-12-theme-customizer-design.md
+import { BASE_COLOR_NAMES, RADIUS_NAMES, THEME_NAMES } from "@sevenui/presets/schema";
+import { BASE_COLORS, THEMES } from "@sevenui/presets/presets";
+
+// Swatch colors are resolved at build time from the preset data; the
+// neutral theme has an empty overlay, so it falls back to the default
+// base color's own primary.
+const themeSwatch = (name: (typeof THEME_NAMES)[number]) =>
+  THEMES[name].light.primary ?? BASE_COLORS.neutral.light.primary;
+const baseSwatch = (name: (typeof BASE_COLOR_NAMES)[number]) =>
+  BASE_COLORS[name].light.foreground;
+const RADIUS_LABELS: Record<(typeof RADIUS_NAMES)[number], string> = {
+  none: "None",
+  small: "SM",
+  default: "MD",
+  large: "LG",
+};
+---
+
+<section data-customizer class="mt-8 border-t border-border pt-6">
+  <h2 class="text-sm font-medium">Customize</h2>
+  <p class="mt-1 text-xs text-muted-foreground">Preview every block in your theme.</p>
+
+  <fieldset class="mt-4">
+    <legend class="text-xs font-medium text-muted-foreground">Theme</legend>
+    <div class="mt-2 flex flex-wrap gap-1.5">
+      {THEME_NAMES.map((name) => (
+        <button
+          type="button"
+          data-field="theme"
+          data-value={name}
+          title={name}
+          aria-pressed="false"
+          class="size-5 rounded-full border border-border aria-pressed:ring-2 aria-pressed:ring-ring aria-pressed:ring-offset-1"
+          style={`background:${themeSwatch(name)}`}
+        >
+          <span class="sr-only">{name}</span>
+        </button>
+      ))}
+    </div>
+  </fieldset>
+
+  <fieldset class="mt-4">
+    <legend class="text-xs font-medium text-muted-foreground">Base color</legend>
+    <div class="mt-2 flex flex-wrap gap-1.5">
+      {BASE_COLOR_NAMES.map((name) => (
+        <button
+          type="button"
+          data-field="baseColor"
+          data-value={name}
+          title={name}
+          aria-pressed="false"
+          class="size-5 rounded-full border border-border aria-pressed:ring-2 aria-pressed:ring-ring aria-pressed:ring-offset-1"
+          style={`background:${baseSwatch(name)}`}
+        >
+          <span class="sr-only">{name}</span>
+        </button>
+      ))}
+    </div>
+  </fieldset>
+
+  <fieldset class="mt-4">
+    <legend class="text-xs font-medium text-muted-foreground">Radius</legend>
+    <div class="mt-2 flex gap-1">
+      {RADIUS_NAMES.map((name) => (
+        <button
+          type="button"
+          data-field="radius"
+          data-value={name}
+          aria-pressed="false"
+          class="rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:text-foreground aria-pressed:bg-muted aria-pressed:text-foreground"
+        >
+          {RADIUS_LABELS[name]}
+        </button>
+      ))}
+    </div>
+  </fieldset>
+
+  <button
+    type="button"
+    data-action="reset"
+    class="mt-4 rounded-md border border-border px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground"
+  >
+    Reset
+  </button>
+</section>
+
+<script>
+  import { PRESET_CONFIG_KEY, readPresetConfig } from "@sevenui/presets/schema";
+
+  // One panel instance per page (the sidebar renders it once). Buttons carry
+  // data-field/data-value; clicks merge into the stored config. The panel's
+  // own page never re-themes (no applier here) — only pressed states update.
+  const panel = document.querySelector<HTMLElement>("[data-customizer]");
+  if (panel) {
+    const buttons = panel.querySelectorAll<HTMLButtonElement>("button[data-field]");
+    const sync = () => {
+      const config = readPresetConfig(localStorage) as unknown as Record<string, string>;
+      for (const button of buttons) {
+        button.setAttribute(
+          "aria-pressed",
+          String(config[button.dataset.field!] === button.dataset.value),
+        );
+      }
+    };
+    panel.addEventListener("click", (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>("button");
+      if (!button) return;
+      if (button.dataset.action === "reset") {
+        localStorage.removeItem(PRESET_CONFIG_KEY);
+      } else if (button.dataset.field && button.dataset.value) {
+        const next = { ...readPresetConfig(localStorage), [button.dataset.field]: button.dataset.value };
+        localStorage.setItem(PRESET_CONFIG_KEY, JSON.stringify(next));
+      } else {
+        return;
+      }
+      sync();
+    });
+    sync();
+  }
+</script>

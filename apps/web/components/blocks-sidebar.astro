@@ -11,6 +11,7 @@
 // whose nav drawer uses the same `lg:sticky lg:top-16
 // lg:h-[calc(100dvh-4rem)]` pairing for its 4rem-tall header.
 import { ChevronRight } from "@lucide/astro";
+import BlocksCustomizer from "./blocks-customizer.astro";
 import BlocksSidebarNav from "./blocks-sidebar-nav.astro";
 
 interface Props {
@@ -40,4 +41,5 @@ const { activeGroup, activeCategory } = Astro.props;
   <nav class="hidden lg:block" aria-label="Block categories">
     <BlocksSidebarNav activeGroup={activeGroup} activeCategory={activeCategory} />
   </nav>
+  <BlocksCustomizer />
 </div>
