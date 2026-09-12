@@ -152,6 +152,56 @@
         "https://sevenui.dev/r/badge.json"
       ],
       "files": [{ "path": "card/card-04.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "dialog-01",
+      "type": "registry:component",
+      "title": "Delete confirmation",
+      "description": "A destructive confirm dialog with cancel and delete actions.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/dialog.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [{ "path": "dialog/dialog-01.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "dialog-02",
+      "type": "registry:component",
+      "title": "Edit profile",
+      "description": "A form dialog with two labeled inputs and a save footer.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/dialog.json",
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [{ "path": "dialog/dialog-02.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "dialog-03",
+      "type": "registry:component",
+      "title": "Share link",
+      "description": "A read-only share link with a copy button and copied state.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/dialog.json",
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/input.json"
+      ],
+      "files": [{ "path": "dialog/dialog-03.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "dialog-04",
+      "type": "registry:component",
+      "title": "Scrollable terms",
+      "description": "A long scrollable terms dialog with a pinned accept footer.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/dialog.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [{ "path": "dialog/dialog-04.tsx", "type": "registry:component" }]
     }
   ]
 }
