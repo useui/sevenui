@@ -392,6 +392,42 @@
         "https://sevenui.dev/r/label.json"
       ],
       "files": [{ "path": "switch/switch-04.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "tabs-01",
+      "type": "registry:component",
+      "title": "Tabs with icons",
+      "description": "Tabs with a leading lucide icon on each trigger.",
+      "dependencies": ["lucide-react@^1.41.0"],
+      "registryDependencies": ["https://sevenui.dev/r/tabs.json"],
+      "files": [{ "path": "tabs/tabs-01.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "tabs-02",
+      "type": "registry:component",
+      "title": "Segmented tabs",
+      "description": "A pill-style segmented tab switcher between three views.",
+      "registryDependencies": ["https://sevenui.dev/r/tabs.json"],
+      "files": [{ "path": "tabs/tabs-02.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "tabs-03",
+      "type": "registry:component",
+      "title": "Tabs with badges",
+      "description": "Tabs whose triggers carry a count badge.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/tabs.json",
+        "https://sevenui.dev/r/badge.json"
+      ],
+      "files": [{ "path": "tabs/tabs-03.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "tabs-04",
+      "type": "registry:component",
+      "title": "Vertical tabs",
+      "description": "Vertical tabs with the list on the left and content to the right.",
+      "registryDependencies": ["https://sevenui.dev/r/tabs.json"],
+      "files": [{ "path": "tabs/tabs-04.tsx", "type": "registry:component" }]
     }
   ]
 }
