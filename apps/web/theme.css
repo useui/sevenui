@@ -4,7 +4,7 @@
  * theme.css"), so three things happen here:
  *
  * 1. The full shadcn token set is defined once (mirroring
- *    examples/theme.css, which serves the isolated preview frames).
+ *    demos/theme.css, which serves the isolated preview frames).
  * 2. Blume's neutral tokens are pointed at ours, so chrome and SevenUI
  *    components share one palette everywhere — portals included. Blume's
  *    accent/action (the brand blue driving links and active nav) is left

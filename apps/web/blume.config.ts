@@ -52,8 +52,8 @@ export default defineConfig({
     pages: "pages",
   },
   examples: {
-    source: "../../packages/registry/examples",
-    css: "../../packages/registry/examples/theme.css",
+    source: "../../packages/registry/demos",
+    css: "../../packages/registry/demos/theme.css",
   },
   github: {
     owner: "useui",

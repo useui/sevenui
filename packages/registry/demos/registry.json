@@ -1,0 +1,2269 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "sevenui-demos",
+  "homepage": "https://sevenui.dev",
+  "items": [
+    {
+      "name": "button-demo",
+      "type": "registry:component",
+      "title": "Button Demo",
+      "description": "Default button example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        {
+          "path": "button/button-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "button-variants",
+      "type": "registry:component",
+      "title": "Button Variants",
+      "description": "All button variants side by side.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        {
+          "path": "button/button-variants.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "badge-demo",
+      "type": "registry:component",
+      "title": "Badge Demo",
+      "description": "Default badge example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/badge.json"
+      ],
+      "files": [
+        {
+          "path": "badge/badge-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "kbd-demo",
+      "type": "registry:component",
+      "title": "Kbd Demo",
+      "description": "Default kbd example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/kbd.json"
+      ],
+      "files": [
+        {
+          "path": "kbd/kbd-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "label-demo",
+      "type": "registry:component",
+      "title": "Label Demo",
+      "description": "Default label example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        {
+          "path": "label/label-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "card-demo",
+      "type": "registry:component",
+      "title": "Card Demo",
+      "description": "Default card example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/card.json"
+      ],
+      "files": [
+        {
+          "path": "card/card-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "input-demo",
+      "type": "registry:component",
+      "title": "Input Demo",
+      "description": "Default input example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/input.json"
+      ],
+      "files": [
+        {
+          "path": "input/input-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "input-otp-demo",
+      "type": "registry:component",
+      "title": "Input OTP Demo",
+      "description": "Default input OTP example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/input-otp.json"
+      ],
+      "files": [
+        {
+          "path": "input-otp/input-otp-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "alert-demo",
+      "type": "registry:component",
+      "title": "Alert Demo",
+      "description": "Default alert example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/alert.json"
+      ],
+      "files": [
+        {
+          "path": "alert/alert-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "avatar-demo",
+      "type": "registry:component",
+      "title": "Avatar Demo",
+      "description": "Default avatar example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/avatar.json"
+      ],
+      "files": [
+        {
+          "path": "avatar/avatar-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "separator-demo",
+      "type": "registry:component",
+      "title": "Separator Demo",
+      "description": "Default separator example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/separator.json"
+      ],
+      "files": [
+        {
+          "path": "separator/separator-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "skeleton-demo",
+      "type": "registry:component",
+      "title": "Skeleton Demo",
+      "description": "Default skeleton example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/skeleton.json"
+      ],
+      "files": [
+        {
+          "path": "skeleton/skeleton-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "spinner-demo",
+      "type": "registry:component",
+      "title": "Spinner Demo",
+      "description": "Default spinner example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/spinner.json"
+      ],
+      "files": [
+        {
+          "path": "spinner/spinner-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "aspect-ratio-demo",
+      "type": "registry:component",
+      "title": "Aspect Ratio Demo",
+      "description": "Default aspect ratio example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/aspect-ratio.json"
+      ],
+      "files": [
+        {
+          "path": "aspect-ratio/aspect-ratio-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "textarea-demo",
+      "type": "registry:component",
+      "title": "Textarea Demo",
+      "description": "Default textarea example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/textarea.json"
+      ],
+      "files": [
+        {
+          "path": "textarea/textarea-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "table-demo",
+      "type": "registry:component",
+      "title": "Table Demo",
+      "description": "Default table example with invoice data.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/table.json"
+      ],
+      "files": [
+        {
+          "path": "table/table-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "breadcrumb-demo",
+      "type": "registry:component",
+      "title": "Breadcrumb Demo",
+      "description": "Default breadcrumb example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/breadcrumb.json"
+      ],
+      "files": [
+        {
+          "path": "breadcrumb/breadcrumb-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "pagination-demo",
+      "type": "registry:component",
+      "title": "Pagination Demo",
+      "description": "Default pagination example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/pagination.json"
+      ],
+      "files": [
+        {
+          "path": "pagination/pagination-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "progress-demo",
+      "type": "registry:component",
+      "title": "Progress Demo",
+      "description": "Default progress example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/progress.json"
+      ],
+      "files": [
+        {
+          "path": "progress/progress-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "field-demo",
+      "type": "registry:component",
+      "title": "Field Demo",
+      "description": "Default field example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/field.json",
+        "https://sevenui.dev/r/input.json"
+      ],
+      "files": [
+        {
+          "path": "field/field-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "field-orientation",
+      "type": "registry:component",
+      "title": "Field Orientation",
+      "description": "Horizontal and responsive field orientations.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/field.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/switch.json"
+      ],
+      "files": [
+        {
+          "path": "field/field-orientation.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "field-validation",
+      "type": "registry:component",
+      "title": "Field Validation",
+      "description": "Custom validation with an auto-rendered error message.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/field.json",
+        "https://sevenui.dev/r/input.json"
+      ],
+      "files": [
+        {
+          "path": "field/field-validation.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "field-rhf",
+      "type": "registry:component",
+      "title": "Field with React Hook Form",
+      "description": "Controller-driven field state via the invalid, touched, and dirty props.",
+      "dependencies": [
+        "react-hook-form@^7.87.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/field.json",
+        "https://sevenui.dev/r/input.json"
+      ],
+      "files": [
+        {
+          "path": "field/field-rhf.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "form-demo",
+      "type": "registry:component",
+      "title": "Form Demo",
+      "description": "Default form example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/field.json",
+        "https://sevenui.dev/r/form.json",
+        "https://sevenui.dev/r/input.json"
+      ],
+      "files": [
+        {
+          "path": "form/form-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "checkbox-demo",
+      "type": "registry:component",
+      "title": "Checkbox Demo",
+      "description": "Default checkbox example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/checkbox.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        {
+          "path": "checkbox/checkbox-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "radio-group-demo",
+      "type": "registry:component",
+      "title": "Radio Group Demo",
+      "description": "Default radio group example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/label.json",
+        "https://sevenui.dev/r/radio-group.json"
+      ],
+      "files": [
+        {
+          "path": "radio-group/radio-group-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "switch-demo",
+      "type": "registry:component",
+      "title": "Switch Demo",
+      "description": "Default switch example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/label.json",
+        "https://sevenui.dev/r/switch.json"
+      ],
+      "files": [
+        {
+          "path": "switch/switch-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "toggle-demo",
+      "type": "registry:component",
+      "title": "Toggle Demo",
+      "description": "Default toggle example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/toggle.json"
+      ],
+      "files": [
+        {
+          "path": "toggle/toggle-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "toggle-group-demo",
+      "type": "registry:component",
+      "title": "Toggle Group Demo",
+      "description": "Default toggle group example.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/toggle-group.json"
+      ],
+      "files": [
+        {
+          "path": "toggle-group/toggle-group-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "slider-demo",
+      "type": "registry:component",
+      "title": "Slider Demo",
+      "description": "Default slider example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/slider.json"
+      ],
+      "files": [
+        {
+          "path": "slider/slider-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "number-field-demo",
+      "type": "registry:component",
+      "title": "Number Field Demo",
+      "description": "Default number field example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/label.json",
+        "https://sevenui.dev/r/number-field.json"
+      ],
+      "files": [
+        {
+          "path": "number-field/number-field-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "select-demo",
+      "type": "registry:component",
+      "title": "Select Demo",
+      "description": "Default select example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/select.json"
+      ],
+      "files": [
+        {
+          "path": "select/select-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "combobox-demo",
+      "type": "registry:component",
+      "title": "Combobox Demo",
+      "description": "Default combobox example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/combobox.json"
+      ],
+      "files": [
+        {
+          "path": "combobox/combobox-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "tooltip-demo",
+      "type": "registry:component",
+      "title": "Tooltip Demo",
+      "description": "Default tooltip example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/tooltip.json"
+      ],
+      "files": [
+        {
+          "path": "tooltip/tooltip-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "popover-demo",
+      "type": "registry:component",
+      "title": "Popover Demo",
+      "description": "Default popover example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json",
+        "https://sevenui.dev/r/popover.json"
+      ],
+      "files": [
+        {
+          "path": "popover/popover-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "hover-card-demo",
+      "type": "registry:component",
+      "title": "Hover Card Demo",
+      "description": "Default hover card example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/avatar.json",
+        "https://sevenui.dev/r/hover-card.json"
+      ],
+      "files": [
+        {
+          "path": "hover-card/hover-card-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "dialog-demo",
+      "type": "registry:component",
+      "title": "Dialog Demo",
+      "description": "Default dialog example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/dialog.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        {
+          "path": "dialog/dialog-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "alert-dialog-demo",
+      "type": "registry:component",
+      "title": "Alert Dialog Demo",
+      "description": "Default alert dialog example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/alert-dialog.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        {
+          "path": "alert-dialog/alert-dialog-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "sheet-demo",
+      "type": "registry:component",
+      "title": "Sheet Demo",
+      "description": "Default sheet example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json",
+        "https://sevenui.dev/r/sheet.json"
+      ],
+      "files": [
+        {
+          "path": "sheet/sheet-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "drawer-demo",
+      "type": "registry:component",
+      "title": "Drawer Demo",
+      "description": "Default drawer example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/drawer.json"
+      ],
+      "files": [
+        {
+          "path": "drawer/drawer-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "dropdown-menu-demo",
+      "type": "registry:component",
+      "title": "Dropdown Menu Demo",
+      "description": "Default dropdown menu example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/dropdown-menu.json"
+      ],
+      "files": [
+        {
+          "path": "dropdown-menu/dropdown-menu-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "context-menu-demo",
+      "type": "registry:component",
+      "title": "Context Menu Demo",
+      "description": "Default context menu example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/context-menu.json"
+      ],
+      "files": [
+        {
+          "path": "context-menu/context-menu-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "menubar-demo",
+      "type": "registry:component",
+      "title": "Menubar Demo",
+      "description": "Default menubar example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/menubar.json"
+      ],
+      "files": [
+        {
+          "path": "menubar/menubar-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "toast-demo",
+      "type": "registry:component",
+      "title": "Toast Demo",
+      "description": "Default toast example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/toast.json"
+      ],
+      "files": [
+        {
+          "path": "toast/toast-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "tabs-demo",
+      "type": "registry:component",
+      "title": "Tabs Demo",
+      "description": "Default tabs example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/card.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json",
+        "https://sevenui.dev/r/tabs.json"
+      ],
+      "files": [
+        {
+          "path": "tabs/tabs-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "tabs-indicator",
+      "type": "registry:component",
+      "title": "Tabs Indicator",
+      "description": "Tabs with an animated active-tab indicator.",
+      "dependencies": [
+        "@base-ui/react@^1.7.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/tabs.json"
+      ],
+      "files": [
+        {
+          "path": "tabs/tabs-indicator.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "accordion-demo",
+      "type": "registry:component",
+      "title": "Accordion Demo",
+      "description": "Default accordion example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/accordion.json"
+      ],
+      "files": [
+        {
+          "path": "accordion/accordion-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "collapsible-demo",
+      "type": "registry:component",
+      "title": "Collapsible Demo",
+      "description": "Default collapsible example.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/collapsible.json"
+      ],
+      "files": [
+        {
+          "path": "collapsible/collapsible-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "scroll-area-demo",
+      "type": "registry:component",
+      "title": "Scroll Area Demo",
+      "description": "Default scroll area example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/scroll-area.json",
+        "https://sevenui.dev/r/separator.json"
+      ],
+      "files": [
+        {
+          "path": "scroll-area/scroll-area-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "meter-demo",
+      "type": "registry:component",
+      "title": "Meter Demo",
+      "description": "Default meter example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/meter.json"
+      ],
+      "files": [
+        {
+          "path": "meter/meter-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "toolbar-demo",
+      "type": "registry:component",
+      "title": "Toolbar Demo",
+      "description": "Default toolbar example.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/toggle-group.json",
+        "https://sevenui.dev/r/toggle.json",
+        "https://sevenui.dev/r/toolbar.json"
+      ],
+      "files": [
+        {
+          "path": "toolbar/toolbar-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "navigation-menu-demo",
+      "type": "registry:component",
+      "title": "Navigation Menu Demo",
+      "description": "Default navigation menu example.",
+      "dependencies": [
+        "cn@^0.2.5"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/navigation-menu.json"
+      ],
+      "files": [
+        {
+          "path": "navigation-menu/navigation-menu-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "command-demo",
+      "type": "registry:component",
+      "title": "Command Demo",
+      "description": "Default command palette example.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/command.json"
+      ],
+      "files": [
+        {
+          "path": "command/command-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "command-dialog",
+      "type": "registry:component",
+      "title": "Command Dialog",
+      "description": "Command palette rendered inside a dialog, toggled with ⌘K.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/command.json"
+      ],
+      "files": [
+        {
+          "path": "command/command-dialog.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-demo",
+      "type": "registry:component",
+      "title": "Sidebar Demo",
+      "description": "Default sidebar example with a collapsible icon rail and application menu.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/separator.json",
+        "https://sevenui.dev/r/sidebar.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar/sidebar-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "resizable-demo",
+      "type": "registry:component",
+      "title": "Resizable Demo",
+      "description": "Default resizable panel group example.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/resizable.json"
+      ],
+      "files": [
+        {
+          "path": "resizable/resizable-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "carousel-demo",
+      "type": "registry:component",
+      "title": "Carousel Demo",
+      "description": "Default carousel example with five slides.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/card.json",
+        "https://sevenui.dev/r/carousel.json"
+      ],
+      "files": [
+        {
+          "path": "carousel/carousel-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "calendar-demo",
+      "type": "registry:component",
+      "title": "Calendar Demo",
+      "description": "Default calendar example with a single selected date.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/calendar.json"
+      ],
+      "files": [
+        {
+          "path": "calendar/calendar-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "calendar-range",
+      "type": "registry:component",
+      "title": "Calendar Range",
+      "description": "Calendar example with a selectable date range across two months.",
+      "dependencies": [
+        "react-day-picker@^10.0.1"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/calendar.json"
+      ],
+      "files": [
+        {
+          "path": "calendar/calendar-range.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "chart-demo",
+      "type": "registry:component",
+      "title": "Chart Demo",
+      "description": "Default bar chart example with a legend and tooltip.",
+      "dependencies": [
+        "recharts@^3.10.1"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/chart.json"
+      ],
+      "files": [
+        {
+          "path": "chart/chart-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "chart-line",
+      "type": "registry:component",
+      "title": "Chart Line",
+      "description": "Line chart example with two series and a label-free tooltip.",
+      "dependencies": [
+        "recharts@^3.10.1"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/chart.json"
+      ],
+      "files": [
+        {
+          "path": "chart/chart-line.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "input-group-demo",
+      "type": "registry:component",
+      "title": "Input Group Demo",
+      "description": "Search and username inputs with icon, kbd, and text addons.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/input-group.json",
+        "https://sevenui.dev/r/kbd.json"
+      ],
+      "files": [
+        {
+          "path": "input-group/input-group-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "input-group-button",
+      "type": "registry:component",
+      "title": "Input Group Button",
+      "description": "Copy and verify buttons inside input groups.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/input-group.json"
+      ],
+      "files": [
+        {
+          "path": "input-group/input-group-button.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "input-group-textarea",
+      "type": "registry:component",
+      "title": "Input Group Textarea",
+      "description": "Prompt textarea with block-end action addon.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/input-group.json"
+      ],
+      "files": [
+        {
+          "path": "input-group/input-group-textarea.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "button-group-demo",
+      "type": "registry:component",
+      "title": "Button Group Demo",
+      "description": "Horizontal pager and vertical stepper groups.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/button-group.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        {
+          "path": "button-group/button-group-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "button-group-separator",
+      "type": "registry:component",
+      "title": "Button Group Separator",
+      "description": "Split button with separator and dropdown menu.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/button-group.json",
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/dropdown-menu.json"
+      ],
+      "files": [
+        {
+          "path": "button-group/button-group-separator.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "native-select-demo",
+      "type": "registry:component",
+      "title": "Native Select Demo",
+      "description": "Labelled timezone select and a small page-size select.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/label.json",
+        "https://sevenui.dev/r/native-select.json"
+      ],
+      "files": [
+        {
+          "path": "native-select/native-select-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "native-select-groups",
+      "type": "registry:component",
+      "title": "Native Select Groups",
+      "description": "Grouped options with a disabled entry.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/native-select.json"
+      ],
+      "files": [
+        {
+          "path": "native-select/native-select-groups.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "empty-demo",
+      "type": "registry:component",
+      "title": "Empty Demo",
+      "description": "Empty state with icon media, description, and actions.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/empty.json"
+      ],
+      "files": [
+        {
+          "path": "empty/empty-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "empty-avatar",
+      "type": "registry:component",
+      "title": "Empty Avatar",
+      "description": "Empty state with avatar media.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/avatar.json",
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/empty.json"
+      ],
+      "files": [
+        {
+          "path": "empty/empty-avatar.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "item-demo",
+      "type": "registry:component",
+      "title": "Item Demo",
+      "description": "Outline item with icon media, description, and action.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/item.json"
+      ],
+      "files": [
+        {
+          "path": "item/item-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "item-variants",
+      "type": "registry:component",
+      "title": "Item Variants",
+      "description": "Default, outline, and muted item variants.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/item.json"
+      ],
+      "files": [
+        {
+          "path": "item/item-variants.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "item-group",
+      "type": "registry:component",
+      "title": "Item Group",
+      "description": "Member list with separators and link items.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/avatar.json",
+        "https://sevenui.dev/r/item.json"
+      ],
+      "files": [
+        {
+          "path": "item/item-group.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "marker-demo",
+      "type": "registry:component",
+      "title": "Marker Demo",
+      "description": "Inline conversation markers with icons and a link.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/marker.json"
+      ],
+      "files": [
+        {
+          "path": "marker/marker-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "marker-variants",
+      "type": "registry:component",
+      "title": "Marker Variants",
+      "description": "Default, separator, and border marker variants.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/marker.json"
+      ],
+      "files": [
+        {
+          "path": "marker/marker-variants.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "direction-demo",
+      "type": "registry:component",
+      "title": "Direction Demo",
+      "description": "Side-by-side LTR and RTL input groups.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/direction.json",
+        "https://sevenui.dev/r/input-group.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        {
+          "path": "direction/direction-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "message-demo",
+      "type": "registry:component",
+      "title": "Message Demo",
+      "description": "Two-party conversation with avatar, header, footer, and bubbles.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/avatar.json",
+        "https://sevenui.dev/r/bubble.json",
+        "https://sevenui.dev/r/message.json"
+      ],
+      "files": [
+        {
+          "path": "message/message-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "bubble-demo",
+      "type": "registry:component",
+      "title": "Bubble Demo",
+      "description": "Grouped incoming bubbles and an end-aligned reply.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/bubble.json"
+      ],
+      "files": [
+        {
+          "path": "bubble/bubble-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "bubble-variants",
+      "type": "registry:component",
+      "title": "Bubble Variants",
+      "description": "All seven bubble variants.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/bubble.json"
+      ],
+      "files": [
+        {
+          "path": "bubble/bubble-variants.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "bubble-reactions",
+      "type": "registry:component",
+      "title": "Bubble Reactions",
+      "description": "Reactions positioned with side and align.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/bubble.json"
+      ],
+      "files": [
+        {
+          "path": "bubble/bubble-reactions.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "attachment-demo",
+      "type": "registry:component",
+      "title": "Attachment Demo",
+      "description": "File and image attachments in a horizontal group.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/attachment.json"
+      ],
+      "files": [
+        {
+          "path": "attachment/attachment-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "attachment-actions",
+      "type": "registry:component",
+      "title": "Attachment Actions",
+      "description": "Actions, full-card trigger, and an uploading state.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/attachment.json",
+        "https://sevenui.dev/r/spinner.json"
+      ],
+      "files": [
+        {
+          "path": "attachment/attachment-actions.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "attachment-image",
+      "type": "registry:component",
+      "title": "Attachment Image",
+      "description": "Vertical image attachment cards in a group.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/attachment.json"
+      ],
+      "files": [
+        {
+          "path": "attachment/attachment-image.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "message-scroller-demo",
+      "type": "registry:component",
+      "title": "Message Scroller Demo",
+      "description": "Auto-scrolling chat with scroll-to-end button and simulated replies.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/bubble.json",
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/message-scroller.json"
+      ],
+      "files": [
+        {
+          "path": "message-scroller/message-scroller-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "questionnaire-demo",
+      "type": "registry:component",
+      "title": "Questionnaire Demo",
+      "description": "Three-step flow with choices, multi-select, input, and validation.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/questionnaire.json"
+      ],
+      "files": [
+        {
+          "path": "questionnaire/questionnaire-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "button-sizes",
+      "type": "registry:component",
+      "title": "Button Sizes",
+      "description": "Text and icon button sizes side by side.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        {
+          "path": "button/button-sizes.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "button-disabled",
+      "type": "registry:component",
+      "title": "Button Disabled",
+      "description": "Disabled state across variants.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        {
+          "path": "button/button-disabled.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "button-loading",
+      "type": "registry:component",
+      "title": "Button Loading",
+      "description": "Loading buttons with spinner.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/spinner.json"
+      ],
+      "files": [
+        {
+          "path": "button/button-loading.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "alert-action",
+      "type": "registry:component",
+      "title": "Alert Action",
+      "description": "Alerts with dismiss and undo actions.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/alert.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        {
+          "path": "alert/alert-action.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "badge-link",
+      "type": "registry:component",
+      "title": "Badge Link",
+      "description": "Badges rendered as links.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/badge.json"
+      ],
+      "files": [
+        {
+          "path": "badge/badge-link.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "badge-icon",
+      "type": "registry:component",
+      "title": "Badge Icon",
+      "description": "Badges with leading icons.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/badge.json"
+      ],
+      "files": [
+        {
+          "path": "badge/badge-icon.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "badge-processing",
+      "type": "registry:component",
+      "title": "Badge Processing",
+      "description": "Badges with a spinning loader.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/badge.json"
+      ],
+      "files": [
+        {
+          "path": "badge/badge-processing.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "card-login",
+      "type": "registry:component",
+      "title": "Card Login",
+      "description": "Login form card with header action and footer buttons.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/card.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        {
+          "path": "card/card-login.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "card-stats",
+      "type": "registry:component",
+      "title": "Card Stats",
+      "description": "Stat cards with trend badges.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/badge.json",
+        "https://sevenui.dev/r/card.json"
+      ],
+      "files": [
+        {
+          "path": "card/card-stats.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "card-image",
+      "type": "registry:component",
+      "title": "Card Image",
+      "description": "Article card with edge-to-edge cover image.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/card.json"
+      ],
+      "files": [
+        {
+          "path": "card/card-image.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "card-notifications",
+      "type": "registry:component",
+      "title": "Card Notifications",
+      "description": "Notification settings card with switches.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/card.json",
+        "https://sevenui.dev/r/label.json",
+        "https://sevenui.dev/r/switch.json"
+      ],
+      "files": [
+        {
+          "path": "card/card-notifications.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "card-project",
+      "type": "registry:component",
+      "title": "Card Project",
+      "description": "Compact project card with avatars and status.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/avatar.json",
+        "https://sevenui.dev/r/badge.json",
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/card.json"
+      ],
+      "files": [
+        {
+          "path": "card/card-project.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "kbd-button",
+      "type": "registry:component",
+      "title": "Kbd Button",
+      "description": "Shortcut hints inside buttons.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/kbd.json"
+      ],
+      "files": [
+        {
+          "path": "kbd/kbd-button.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "kbd-input",
+      "type": "registry:component",
+      "title": "Kbd Input",
+      "description": "Shortcut hint inside a search input group.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/input-group.json",
+        "https://sevenui.dev/r/kbd.json"
+      ],
+      "files": [
+        {
+          "path": "kbd/kbd-input.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "kbd-tooltip",
+      "type": "registry:component",
+      "title": "Kbd Tooltip",
+      "description": "Shortcut hint inside a tooltip.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/kbd.json",
+        "https://sevenui.dev/r/tooltip.json"
+      ],
+      "files": [
+        {
+          "path": "kbd/kbd-tooltip.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "avatar-group",
+      "type": "registry:component",
+      "title": "Avatar Group",
+      "description": "Stacked avatar group with overflow count.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/avatar.json"
+      ],
+      "files": [
+        {
+          "path": "avatar/avatar-group.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "progress-label",
+      "type": "registry:component",
+      "title": "Progress Label",
+      "description": "Progress bar with label and live value.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/progress.json"
+      ],
+      "files": [
+        {
+          "path": "progress/progress-label.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "breadcrumb-separator",
+      "type": "registry:component",
+      "title": "Breadcrumb Separator",
+      "description": "Breadcrumb with dot separators.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/breadcrumb.json"
+      ],
+      "files": [
+        {
+          "path": "breadcrumb/breadcrumb-separator.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "meter-format",
+      "type": "registry:component",
+      "title": "Meter Format",
+      "description": "Disk space meter with unit formatting.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/meter.json"
+      ],
+      "files": [
+        {
+          "path": "meter/meter-format.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "meter-resources",
+      "type": "registry:component",
+      "title": "Meter Resources",
+      "description": "Stacked system resource meters.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/meter.json"
+      ],
+      "files": [
+        {
+          "path": "meter/meter-resources.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "pagination-simple",
+      "type": "registry:component",
+      "title": "Pagination Simple",
+      "description": "Previous/next pager with page indicator.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/pagination.json"
+      ],
+      "files": [
+        {
+          "path": "pagination/pagination-simple.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "scroll-area-horizontal",
+      "type": "registry:component",
+      "title": "Scroll Area Horizontal",
+      "description": "Horizontally scrolling image cards.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/scroll-area.json"
+      ],
+      "files": [
+        {
+          "path": "scroll-area/scroll-area-horizontal.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "slider-vertical",
+      "type": "registry:component",
+      "title": "Slider Vertical",
+      "description": "Vertical single and range sliders.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/slider.json"
+      ],
+      "files": [
+        {
+          "path": "slider/slider-vertical.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "slider-multiple",
+      "type": "registry:component",
+      "title": "Slider Multiple",
+      "description": "Three-thumb slider.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/slider.json"
+      ],
+      "files": [
+        {
+          "path": "slider/slider-multiple.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "slider-disabled",
+      "type": "registry:component",
+      "title": "Slider Disabled",
+      "description": "Disabled single and range sliders.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/slider.json"
+      ],
+      "files": [
+        {
+          "path": "slider/slider-disabled.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "number-field-currency",
+      "type": "registry:component",
+      "title": "Number Field Currency",
+      "description": "Budget field with currency formatting and scrub label.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/label.json",
+        "https://sevenui.dev/r/number-field.json"
+      ],
+      "files": [
+        {
+          "path": "number-field/number-field-currency.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "number-field-quantity",
+      "type": "registry:component",
+      "title": "Number Field Quantity",
+      "description": "Compact quantity stepper with min and max.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/label.json",
+        "https://sevenui.dev/r/number-field.json"
+      ],
+      "files": [
+        {
+          "path": "number-field/number-field-quantity.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "input-file",
+      "type": "registry:component",
+      "title": "Input File",
+      "description": "File input with label.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        {
+          "path": "input/input-file.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "input-required",
+      "type": "registry:component",
+      "title": "Input Required",
+      "description": "Required email input.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        {
+          "path": "input/input-required.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "input-disabled",
+      "type": "registry:component",
+      "title": "Input Disabled",
+      "description": "Disabled input with value.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        {
+          "path": "input/input-disabled.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "input-invalid",
+      "type": "registry:component",
+      "title": "Input Invalid",
+      "description": "Invalid input with error message.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        {
+          "path": "input/input-invalid.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "textarea-required",
+      "type": "registry:component",
+      "title": "Textarea Required",
+      "description": "Required feedback textarea.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/label.json",
+        "https://sevenui.dev/r/textarea.json"
+      ],
+      "files": [
+        {
+          "path": "textarea/textarea-required.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "textarea-disabled",
+      "type": "registry:component",
+      "title": "Textarea Disabled",
+      "description": "Disabled textarea with value.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/label.json",
+        "https://sevenui.dev/r/textarea.json"
+      ],
+      "files": [
+        {
+          "path": "textarea/textarea-disabled.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "textarea-invalid",
+      "type": "registry:component",
+      "title": "Textarea Invalid",
+      "description": "Invalid textarea with error message.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/label.json",
+        "https://sevenui.dev/r/textarea.json"
+      ],
+      "files": [
+        {
+          "path": "textarea/textarea-invalid.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "checkbox-indeterminate",
+      "type": "registry:component",
+      "title": "Checkbox Indeterminate",
+      "description": "Select-all checkbox with indeterminate state.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/checkbox.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        {
+          "path": "checkbox/checkbox-indeterminate.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "checkbox-disabled",
+      "type": "registry:component",
+      "title": "Checkbox Disabled",
+      "description": "Disabled checked and unchecked checkboxes.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/checkbox.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        {
+          "path": "checkbox/checkbox-disabled.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "radio-group-card",
+      "type": "registry:component",
+      "title": "Radio Group Card",
+      "description": "Card-style plan selection.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/label.json",
+        "https://sevenui.dev/r/radio-group.json"
+      ],
+      "files": [
+        {
+          "path": "radio-group/radio-group-card.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "radio-group-disabled",
+      "type": "registry:component",
+      "title": "Radio Group Disabled",
+      "description": "Radio group with a disabled option.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/label.json",
+        "https://sevenui.dev/r/radio-group.json"
+      ],
+      "files": [
+        {
+          "path": "radio-group/radio-group-disabled.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "radio-group-invalid",
+      "type": "registry:component",
+      "title": "Radio Group Invalid",
+      "description": "Invalid radio group with error message.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/label.json",
+        "https://sevenui.dev/r/radio-group.json"
+      ],
+      "files": [
+        {
+          "path": "radio-group/radio-group-invalid.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "combobox-multiple",
+      "type": "registry:component",
+      "title": "Combobox Multiple",
+      "description": "Multi-select combobox with removable chips.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/combobox.json"
+      ],
+      "files": [
+        {
+          "path": "combobox/combobox-multiple.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "select-groups",
+      "type": "registry:component",
+      "title": "Select Groups",
+      "description": "Grouped timezone select with a small trigger.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/select.json"
+      ],
+      "files": [
+        {
+          "path": "select/select-groups.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "toggle-variants",
+      "type": "registry:component",
+      "title": "Toggle Variants",
+      "description": "Both toggle variants across three sizes.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/toggle.json"
+      ],
+      "files": [
+        {
+          "path": "toggle/toggle-variants.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "toggle-group-multiple",
+      "type": "registry:component",
+      "title": "Toggle Group Multiple",
+      "description": "Outline multi-select formatting group.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/toggle-group.json"
+      ],
+      "files": [
+        {
+          "path": "toggle-group/toggle-group-multiple.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "input-otp-mask",
+      "type": "registry:component",
+      "title": "Input OTP Mask",
+      "description": "Masked four-digit PIN field.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/input-otp.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [
+        {
+          "path": "input-otp/input-otp-mask.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "sheet-side",
+      "type": "registry:component",
+      "title": "Sheet Side",
+      "description": "Sheets sliding in from all four edges.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/sheet.json"
+      ],
+      "files": [
+        {
+          "path": "sheet/sheet-side.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "alert-dialog-media",
+      "type": "registry:component",
+      "title": "Alert Dialog Media",
+      "description": "Small alert dialog with icon media.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/alert-dialog.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [
+        {
+          "path": "alert-dialog/alert-dialog-media.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "drawer-snap-points",
+      "type": "registry:component",
+      "title": "Drawer Snap Points",
+      "description": "Drawer with half and full snap points and a swipe handle.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/drawer.json"
+      ],
+      "files": [
+        {
+          "path": "drawer/drawer-snap-points.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "accordion-multiple",
+      "type": "registry:component",
+      "title": "Accordion Multiple",
+      "description": "FAQ accordion with several panels open at once.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/accordion.json"
+      ],
+      "files": [
+        {
+          "path": "accordion/accordion-multiple.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "tabs-line",
+      "type": "registry:component",
+      "title": "Tabs Line",
+      "description": "Underline-style tabs with the line variant.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/tabs.json"
+      ],
+      "files": [
+        {
+          "path": "tabs/tabs-line.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "accordion-card",
+      "type": "registry:component",
+      "title": "Accordion Card",
+      "description": "Contained accordion inside a card surface.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/accordion.json"
+      ],
+      "files": [
+        {
+          "path": "accordion/accordion-card.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "accordion-split",
+      "type": "registry:component",
+      "title": "Accordion Split",
+      "description": "Separated accordion items as individual cards.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/accordion.json"
+      ],
+      "files": [
+        {
+          "path": "accordion/accordion-split.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "collapsible-file-tree",
+      "type": "registry:component",
+      "title": "Collapsible File Tree",
+      "description": "Nested collapsibles as an expandable file tree.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/collapsible.json"
+      ],
+      "files": [
+        {
+          "path": "collapsible/collapsible-file-tree.tsx",
+          "type": "registry:component"
+        }
+      ]
+    }
+  ]
+}
