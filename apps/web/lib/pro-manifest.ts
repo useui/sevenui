@@ -77,12 +77,16 @@ export function parseManifest(raw: unknown): ProManifest {
   if (!Array.isArray(manifest?.groups) || !Array.isArray(manifest?.categories) || !Array.isArray(manifest?.items)) {
     throw new Error("pro manifest: expected { groups, categories, items } arrays — is the deployed manifest enriched yet?");
   }
+  if (manifest.groups.length === 0) {
+    throw new Error("pro manifest: no groups — refusing to publish an empty /blocks (if intentional, coordinate a web-side change).");
+  }
   const groupIds = uniqueIds(manifest.groups, "group id");
   const categoryIds = uniqueIds(manifest.categories, "category id");
   uniqueIds(manifest.items, "item name");
 
   for (const group of manifest.groups) {
-    // "preview" is shadowed by the static /blocks/preview route segment.
+    // "preview" is reserved for a future /blocks/preview route, keeping
+    // that historical URL space clean.
     if (group.id === "preview") {
       throw new Error(`pro manifest: group id "preview" is reserved — rename this group.`);
     }

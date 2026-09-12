@@ -6,7 +6,7 @@ import ComponentGallery from "../../components/component-gallery.astro";
 import ExampleCard from "../../components/example-card.astro";
 import SiteFooter from "../../components/site-footer.astro";
 import { SITE_TABS } from "../../components/site-tabs.ts";
-import { galleryComponents } from "./_data";
+import { galleryComponent } from "./_data";
 
 import Switch01 from "../../../../packages/registry/components/switch/switch-01";
 import switch01Source from "../../../../packages/registry/components/switch/switch-01.tsx?raw";
@@ -18,7 +18,7 @@ import Switch04 from "../../../../packages/registry/components/switch/switch-04"
 import switch04Source from "../../../../packages/registry/components/switch/switch-04.tsx?raw";
 
 const SLUG = "switch";
-const meta = galleryComponents.find((component) => component.slug === SLUG)!;
+const meta = galleryComponent(SLUG);
 const { config } = data;
 const navigation = { ...data.navigation, tabs: SITE_TABS };
 const description = `Free ${meta.label} examples built on the SevenUI ${meta.label} component.`;

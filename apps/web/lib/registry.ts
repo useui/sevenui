@@ -8,7 +8,7 @@ const REGISTRY_BASE = "https://sevenui.dev/r";
 /**
  * Build the shadcn CLI install command for a registry item.
  *
- * @param item Registry item path: `"button"`, `"theme"`, `"blocks/login-01"`.
+ * @param item Registry item path: `"button"`, `"component/accordion-01"`, `"pro/dashboard-01"`, `"demo/accordion-demo"`.
  */
 export const installCommand = (item: string): string =>
   USE_NAMESPACE

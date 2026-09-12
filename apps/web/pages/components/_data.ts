@@ -47,3 +47,14 @@ if (missing.length > 0) {
     `components folder(s) ${missing.join(", ")} have no page in apps/web/pages/components/ — add <slug>.astro.`,
   );
 }
+
+/** Look up a gallery component's data, or fail loudly if the page/folder pairing is broken. */
+export function galleryComponent(slug: string): GalleryComponent {
+  const component = galleryComponents.find((c) => c.slug === slug);
+  if (!component) {
+    throw new Error(
+      `/components/${slug}: no gallery data — the page exists but packages/registry/components/${slug} has no items.`,
+    );
+  }
+  return component;
+}
