@@ -97,8 +97,17 @@ const RADIUS_LABELS: Record<(typeof RADIUS_NAMES)[number], string> = {
   // One panel instance per page (the sidebar renders it once). Buttons carry
   // data-field/data-value; clicks merge into the stored config. The panel's
   // own page never re-themes (no applier here) — only pressed states update.
-  const panel = document.querySelector<HTMLElement>("[data-customizer]");
-  if (panel) {
+  //
+  // Astro's ClientRouter runs this module only the first time it appears;
+  // after a client-side navigation the swapped-in panel is a fresh element
+  // with no listeners (same trap renderProBlocks in pages/blocks/index.astro
+  // works around). Re-bind on every astro:page-load — it fires after each
+  // swap and on the initial load — and guard with data-bound so the
+  // immediate call below and the first event can't double-bind one panel.
+  const setup = () => {
+    const panel = document.querySelector<HTMLElement>("[data-customizer]");
+    if (!panel || panel.dataset.bound === "true") return;
+    panel.dataset.bound = "true";
     const buttons = panel.querySelectorAll<HTMLButtonElement>("button[data-field]");
     const sync = () => {
       const config = readPresetConfig(localStorage) as unknown as Record<string, string>;
@@ -123,5 +132,7 @@ const RADIUS_LABELS: Record<(typeof RADIUS_NAMES)[number], string> = {
       sync();
     });
     sync();
-  }
+  };
+  document.addEventListener("astro:page-load", setup);
+  setup();
 </script>
