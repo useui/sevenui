@@ -8,7 +8,7 @@ export default function Input02() {
     <div className="w-full max-w-sm">
       <Field name="email" invalid>
         <FieldLabel>Email address</FieldLabel>
-        <Input type="email" defaultValue="maya@sevenui" aria-invalid="true" />
+        <Input type="email" defaultValue="maya@sevenui" />
         <FieldError>Enter a valid email address.</FieldError>
       </Field>
     </div>
