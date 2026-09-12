@@ -120,6 +120,9 @@ importers:
       '@lucide/astro':
         specifier: ^1.41.0
         version: 1.41.0(astro@7.2.10(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.4.0)(@vercel/functions@3.9.5(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)))(idb-keyval@6.2.1)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.0))
+      '@sevenui/presets':
+        specifier: workspace:*
+        version: link:../../packages/presets
       lucide-react:
         specifier: ^1.41.0
         version: 1.41.0(react@19.2.8)

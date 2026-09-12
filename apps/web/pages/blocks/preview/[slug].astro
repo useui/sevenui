@@ -123,3 +123,14 @@ const stageClass = STAGE_CLASSES[PREVIEW_STAGES[slug ?? ""] ?? "filled"];
     });
   })();
 </script>
+
+<script>
+  // Preset customizer hookup — preview documents only (site chrome is
+  // deliberately never themed). Applies localStorage["preset-config"] and
+  // follows the customizer panel live via native storage events, exactly
+  // like the blume-theme sync script above. The preset CSS defines values
+  // for both modes; the data-theme attribute picks which set applies, so
+  // the two mechanisms compose.
+  import { watchPresetConfig } from "@sevenui/presets/apply";
+  watchPresetConfig();
+</script>
