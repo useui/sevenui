@@ -1,0 +1,66 @@
+---
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import data from "blume:data";
+import Header from "../../components/blume/Header.astro";
+import ComponentGallery from "../../components/component-gallery.astro";
+import ExampleCard from "../../components/example-card.astro";
+import SiteFooter from "../../components/site-footer.astro";
+import { SITE_TABS } from "../../components/site-tabs.ts";
+import { galleryComponents } from "./_data";
+
+import Badge01 from "../../../../packages/registry/components/badge/badge-01";
+import badge01Source from "../../../../packages/registry/components/badge/badge-01.tsx?raw";
+import Badge02 from "../../../../packages/registry/components/badge/badge-02";
+import badge02Source from "../../../../packages/registry/components/badge/badge-02.tsx?raw";
+import Badge03 from "../../../../packages/registry/components/badge/badge-03";
+import badge03Source from "../../../../packages/registry/components/badge/badge-03.tsx?raw";
+import Badge04 from "../../../../packages/registry/components/badge/badge-04";
+import badge04Source from "../../../../packages/registry/components/badge/badge-04.tsx?raw";
+
+const SLUG = "badge";
+const meta = galleryComponents.find((component) => component.slug === SLUG)!;
+const { config } = data;
+const navigation = { ...data.navigation, tabs: SITE_TABS };
+const description = `Free ${meta.label} examples built on the SevenUI ${meta.label} component.`;
+---
+
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={navigation}
+  favicon={config.favicon}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  searchEnabled={config.search.enabled}
+  siteUrl={config.site}
+  ogEnabled={config.og.enabled}
+  page={{ title: `${meta.label} — SevenUI Components`, description, route: `/components/${SLUG}` }}
+  layout={{ Header }}
+>
+  <ComponentGallery active={SLUG}>
+    <header class="border-b border-border px-6 py-10 lg:px-10">
+      <h1 class="text-3xl font-semibold tracking-tight">{meta.label}</h1>
+      <p class="mt-2 max-w-2xl text-muted-foreground">
+        {description}
+        <a class="underline underline-offset-4" href={`/docs/components/${SLUG}`}>Read the docs</a>.
+      </p>
+    </header>
+    <div class="flex max-w-4xl flex-col gap-12 px-6 py-10 lg:px-10">
+      <ExampleCard id="badge-01" title="Status badges" code={badge01Source}>
+        <Badge01 client:visible />
+      </ExampleCard>
+      <ExampleCard id="badge-02" title="Count badges" code={badge02Source}>
+        <Badge02 client:visible />
+      </ExampleCard>
+      <ExampleCard id="badge-03" title="Badges with icons" code={badge03Source}>
+        <Badge03 client:visible />
+      </ExampleCard>
+      <ExampleCard id="badge-04" title="Tag list" code={badge04Source}>
+        <Badge04 client:visible />
+      </ExampleCard>
+    </div>
+  </ComponentGallery>
+  <footer slot="footer"><SiteFooter /></footer>
+</PageLayout>

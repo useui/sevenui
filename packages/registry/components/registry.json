@@ -73,6 +73,40 @@
       "dependencies": ["lucide-react@^1.41.0"],
       "registryDependencies": ["https://sevenui.dev/r/button.json"],
       "files": [{ "path": "button/button-04.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "badge-01",
+      "type": "registry:component",
+      "title": "Status badges",
+      "description": "A row of badges with a leading colored status dot.",
+      "registryDependencies": ["https://sevenui.dev/r/badge.json"],
+      "files": [{ "path": "badge/badge-01.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "badge-02",
+      "type": "registry:component",
+      "title": "Count badges",
+      "description": "Icon buttons with a small numeric badge overlaid top-right.",
+      "dependencies": ["lucide-react@^1.41.0"],
+      "registryDependencies": ["https://sevenui.dev/r/badge.json"],
+      "files": [{ "path": "badge/badge-02.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "badge-03",
+      "type": "registry:component",
+      "title": "Badges with icons",
+      "description": "Outline badges with a leading status icon.",
+      "dependencies": ["lucide-react@^1.41.0"],
+      "registryDependencies": ["https://sevenui.dev/r/badge.json"],
+      "files": [{ "path": "badge/badge-03.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "badge-04",
+      "type": "registry:component",
+      "title": "Tag list",
+      "description": "A wrapping row of secondary badges used as tags.",
+      "registryDependencies": ["https://sevenui.dev/r/badge.json"],
+      "files": [{ "path": "badge/badge-04.tsx", "type": "registry:component" }]
     }
   ]
 }
