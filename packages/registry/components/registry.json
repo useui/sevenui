@@ -107,6 +107,51 @@
       "description": "A wrapping row of secondary badges used as tags.",
       "registryDependencies": ["https://sevenui.dev/r/badge.json"],
       "files": [{ "path": "badge/badge-04.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "card-01",
+      "type": "registry:component",
+      "title": "Stat card",
+      "description": "A metric card with a trend delta and muted caption.",
+      "dependencies": ["lucide-react@^1.41.0"],
+      "registryDependencies": ["https://sevenui.dev/r/card.json"],
+      "files": [{ "path": "card/card-01.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "card-02",
+      "type": "registry:component",
+      "title": "Notification settings",
+      "description": "A card with three labeled switch rows.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/card.json",
+        "https://sevenui.dev/r/switch.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [{ "path": "card/card-02.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "card-03",
+      "type": "registry:component",
+      "title": "Team members",
+      "description": "A card listing team members with an invite action.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/card.json",
+        "https://sevenui.dev/r/avatar.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [{ "path": "card/card-03.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "card-04",
+      "type": "registry:component",
+      "title": "Project card",
+      "description": "A project card with a progress bar and due date footer.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/card.json",
+        "https://sevenui.dev/r/progress.json",
+        "https://sevenui.dev/r/badge.json"
+      ],
+      "files": [{ "path": "card/card-04.tsx", "type": "registry:component" }]
     }
   ]
 }
