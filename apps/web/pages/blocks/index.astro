@@ -114,7 +114,7 @@ const navigation = {
           (item: { name: string; title: string; description: string; previewHeight: number }) => `
           <article class="flex flex-col gap-3">
             <div class="relative overflow-hidden rounded-xl border border-border bg-background">
-              <iframe src="/previews/${item.name}/" title="${item.title} preview"
+              <iframe src="/previews/${item.name}" title="${item.title} preview"
                 loading="lazy" style="height:${item.previewHeight}px" class="pointer-events-none w-full"></iframe>
               <span class="absolute right-3 top-3 rounded-md bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">Pro</span>
             </div>
