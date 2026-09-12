@@ -1,0 +1,38 @@
+---
+// Two-column shell for /components pages: sticky component list on the
+// left (docs-style structural border), content on the right. The sticky
+// offset mirrors blocks-sidebar.astro / Blume's own docs sidebar.
+import { galleryComponents } from "../pages/components/_data";
+
+interface Props {
+  active?: string;
+}
+const { active } = Astro.props;
+---
+
+<div class="lg:grid lg:grid-cols-[240px_minmax(0,1fr)]">
+  <aside
+    class="border-b border-border px-6 py-6 lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)] lg:overflow-y-auto lg:border-b-0 lg:border-r lg:px-5 lg:py-8"
+  >
+    <nav aria-label="Components">
+      <ul class="flex flex-col gap-0.5">
+        {galleryComponents.map((component) => (
+          <li>
+            <a
+              href={`/components/${component.slug}`}
+              class={`flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+                component.slug === active
+                  ? "bg-muted font-medium text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <span>{component.label}</span>
+              <span class="text-xs text-muted-foreground">{component.count}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </aside>
+  <div class="min-w-0"><slot /></div>
+</div>

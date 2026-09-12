@@ -6,11 +6,7 @@
 // is the link target.
 export const SITE_TABS = [
   { label: "Docs", path: "/docs", href: "/docs" },
-  {
-    label: "Components",
-    path: "/docs/components",
-    href: "/docs/components/button",
-  },
+  { label: "Components", path: "/components", href: "/components" },
   { label: "Blocks", path: "/blocks", href: "/blocks" },
   { label: "Pro", path: "/pro", href: "/pro" },
 ];

@@ -1,0 +1,76 @@
+---
+// One gallery example: anchored heading, Preview/Code toggle, the live
+// example island (slot), highlighted source, and a copyable install
+// command. The toggle uses one delegated document-level listener (bottom),
+// so it needs no per-card or per-navigation rebinding.
+import CodeBlock from "blume/components/content/CodeBlock.astro";
+import CopyCommand from "./copy-command.tsx";
+import { installCommand } from "../lib/registry.ts";
+
+interface Props {
+  /** Registry item name; also the anchor id, e.g. "accordion-01". */
+  id: string;
+  title: string;
+  /** Raw TSX source of the example (import with ?raw). */
+  code: string;
+}
+const { id, title, code } = Astro.props;
+---
+
+<section id={id} class="scroll-mt-24" data-example-card>
+  <div class="flex items-center justify-between gap-4">
+    <h2 class="text-base font-semibold tracking-tight">
+      <a href={`#${id}`} class="hover:underline">{title}</a>
+    </h2>
+    <div class="flex rounded-lg border border-border p-0.5 text-sm" role="tablist">
+      <button
+        type="button"
+        role="tab"
+        aria-selected="true"
+        data-tab="preview"
+        class="rounded-md px-2.5 py-1 text-muted-foreground aria-selected:bg-muted aria-selected:text-foreground"
+      >
+        Preview
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected="false"
+        data-tab="code"
+        class="rounded-md px-2.5 py-1 text-muted-foreground aria-selected:bg-muted aria-selected:text-foreground"
+      >
+        Code
+      </button>
+    </div>
+  </div>
+  <div class="mt-3 overflow-hidden rounded-xl border border-border">
+    <div data-panel="preview" class="flex min-h-72 items-center justify-center bg-background p-6 sm:p-10">
+      <slot />
+    </div>
+    <div data-panel="code" hidden class="max-h-96 overflow-auto">
+      <CodeBlock lang="tsx" code={code} />
+    </div>
+  </div>
+  <div class="mt-3">
+    <CopyCommand client:visible command={installCommand(`component/${id}`)} />
+  </div>
+</section>
+
+<script>
+  // Delegated once per page load; survives ClientRouter navigations because
+  // it listens on document (script-once trap: this module runs only once).
+  document.addEventListener("click", (event) => {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>(
+      "[data-example-card] [data-tab]",
+    );
+    if (!button) return;
+    const card = button.closest("[data-example-card]");
+    if (!card) return;
+    for (const tab of card.querySelectorAll<HTMLButtonElement>("[data-tab]")) {
+      tab.setAttribute("aria-selected", String(tab === button));
+    }
+    for (const panel of card.querySelectorAll<HTMLElement>("[data-panel]")) {
+      panel.hidden = panel.dataset.panel !== button.dataset.tab;
+    }
+  });
+</script>
