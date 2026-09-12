@@ -7,9 +7,7 @@
     "strict": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "verbatimModuleSyntax": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true
+    "verbatimModuleSyntax": true
   },
   "include": ["*.ts", "tests/**/*.ts", "scripts/**/*.mjs"]
 }

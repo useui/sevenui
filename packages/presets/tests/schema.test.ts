@@ -1,4 +1,3 @@
-// @ts-ignore - vitest types available at runtime
 import { describe, expect, it } from "vitest";
 import { DEFAULT_PRESET_CONFIG, readPresetConfig } from "../schema";
 
