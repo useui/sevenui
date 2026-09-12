@@ -1,0 +1,67 @@
+{
+  "groups": [
+    {
+      "id": "application",
+      "label": "Application",
+      "description": "Blocks for product interfaces.",
+      "icon": "layout-dashboard"
+    },
+    {
+      "id": "marketing",
+      "label": "Marketing",
+      "description": "Blocks for landing and marketing pages."
+    }
+  ],
+  "categories": [
+    {
+      "id": "dashboard",
+      "group": "application",
+      "label": "Dashboard",
+      "description": "Operational overviews and stat surfaces.",
+      "cover": {
+        "type": "image",
+        "src": "https://pro.sevenui.dev/assets/blocks/dashboard.png"
+      }
+    },
+    {
+      "id": "settings",
+      "group": "application",
+      "label": "Settings",
+      "description": "Account and workspace settings forms.",
+      "cover": {
+        "type": "svg",
+        "src": "https://pro.sevenui.dev/assets/blocks/settings.svg",
+        "darkSrc": "https://pro.sevenui.dev/assets/blocks/settings-dark.svg"
+      }
+    },
+    {
+      "id": "hero",
+      "group": "marketing",
+      "label": "Hero",
+      "description": "Opening sections that sell the product."
+    }
+  ],
+  "items": [
+    {
+      "name": "dashboard-01",
+      "title": "Dashboard 01",
+      "description": "Overview dashboard with stat cards and a recent-orders table.",
+      "category": "dashboard",
+      "previewHeight": 720
+    },
+    {
+      "name": "settings-01",
+      "title": "Settings 01",
+      "description": "Account settings form with sectioned fields.",
+      "category": "settings",
+      "previewHeight": 640
+    },
+    {
+      "name": "hero-01",
+      "title": "Hero 01",
+      "description": "Opening section with headline, copy, and CTA.",
+      "category": "hero",
+      "previewHeight": 480
+    }
+  ]
+}
