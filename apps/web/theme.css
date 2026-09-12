@@ -38,6 +38,7 @@
    were dropped from the site sheet. The path is relative to the generated
    entry file and reaches back to packages/registry. */
 @source "../../../../../packages/registry/registry";
+@source "../../../../../packages/registry/components";
 
 :root {
   --background: oklch(1 0 0);

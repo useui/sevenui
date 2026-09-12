@@ -171,6 +171,20 @@ for (const [mode, vars] of Object.entries(themeItem.cssVars)) {
   }
 }
 
+// ---- components registry (the /components gallery) ----
+const COMPONENTS_ROOT = "packages/registry/components";
+const components = loadJson(join(COMPONENTS_ROOT, "registry.json"));
+checkRegistry(components, COMPONENTS_ROOT, "components", { fileType: "registry:component" });
+checkAllFilesRegistered(components, COMPONENTS_ROOT, "components", { skip: ["registry.json"] });
+// Gallery folders must be named after a ui component (the page derives its
+// title and docs link from the ui item).
+for (const item of components.items) {
+  const folder = (item.files ?? [])[0]?.path.split("/")[0];
+  if (folder && !uiNames.has(folder)) {
+    errors.push(`components item "${item.name}": folder "${folder}" is not a ui registry item`);
+  }
+}
+
 // ---- blocks registry (free blocks; removed with the teardown) ----
 checkRegistry(blocks, BLOCKS_ROOT, "block", { fileType: "registry:component" });
 for (const item of blocks.items) {
@@ -187,4 +201,4 @@ if (errors.length > 0) {
   console.error(`check-registry: ${errors.length} problem(s)\n` + errors.map((e) => `  - ${e}`).join("\n"));
   process.exit(1);
 }
-console.log(`check-registry: ok (${ui.items.length} ui, ${demos.items.length} demos, ${blocks.items.length} blocks)`);
+console.log(`check-registry: ok (${ui.items.length} ui, ${demos.items.length} demos, ${components.items.length} components, ${blocks.items.length} blocks)`);

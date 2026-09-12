@@ -1,0 +1,40 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "sevenui-components",
+  "homepage": "https://sevenui.dev",
+  "items": [
+    {
+      "name": "accordion-01",
+      "type": "registry:component",
+      "title": "Outline accordion",
+      "description": "Accordion items rendered as separate outlined panels.",
+      "registryDependencies": ["https://sevenui.dev/r/accordion.json"],
+      "files": [{ "path": "accordion/accordion-01.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "accordion-02",
+      "type": "registry:component",
+      "title": "Accordion with icons",
+      "description": "Triggers with leading lucide icons.",
+      "dependencies": ["lucide-react@^1.41.0"],
+      "registryDependencies": ["https://sevenui.dev/r/accordion.json"],
+      "files": [{ "path": "accordion/accordion-02.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "accordion-03",
+      "type": "registry:component",
+      "title": "FAQ section",
+      "description": "FAQ headline, accordion list, and a contact footer.",
+      "registryDependencies": ["https://sevenui.dev/r/accordion.json"],
+      "files": [{ "path": "accordion/accordion-03.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "accordion-04",
+      "type": "registry:component",
+      "title": "Disabled item",
+      "description": "An accordion with one disabled item.",
+      "registryDependencies": ["https://sevenui.dev/r/accordion.json"],
+      "files": [{ "path": "accordion/accordion-04.tsx", "type": "registry:component" }]
+    }
+  ]
+}
