@@ -302,6 +302,50 @@
         "https://sevenui.dev/r/label.json"
       ],
       "files": [{ "path": "input/input-04.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "select-01",
+      "type": "registry:component",
+      "title": "Status select",
+      "description": "A select with colored status dots on each item.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/select.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [{ "path": "select/select-01.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "select-02",
+      "type": "registry:component",
+      "title": "Grouped options",
+      "description": "A select with two labeled timezone groups separated by a divider.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/select.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [{ "path": "select/select-02.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "select-03",
+      "type": "registry:component",
+      "title": "Plan picker",
+      "description": "A select with a muted description line under each plan.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/select.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [{ "path": "select/select-03.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "select-04",
+      "type": "registry:component",
+      "title": "Disabled options",
+      "description": "A select with a placeholder and a couple of disabled items.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/select.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [{ "path": "select/select-04.tsx", "type": "registry:component" }]
     }
   ]
 }
