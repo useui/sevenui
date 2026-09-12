@@ -1,7 +1,7 @@
 // Single source of truth for shadcn CLI install commands. The @sevenui
 // namespace only works once it lands in the shadcn registry directory (or the
 // user configures it in components.json), so default to direct URLs until then.
-const USE_NAMESPACE = false;
+const USE_NAMESPACE = true;
 
 const REGISTRY_BASE = "https://sevenui.dev/r";
 
