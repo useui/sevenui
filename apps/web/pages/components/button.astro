@@ -1,0 +1,66 @@
+---
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import data from "blume:data";
+import Header from "../../components/blume/Header.astro";
+import ComponentGallery from "../../components/component-gallery.astro";
+import ExampleCard from "../../components/example-card.astro";
+import SiteFooter from "../../components/site-footer.astro";
+import { SITE_TABS } from "../../components/site-tabs.ts";
+import { galleryComponents } from "./_data";
+
+import Button01 from "../../../../packages/registry/components/button/button-01";
+import button01Source from "../../../../packages/registry/components/button/button-01.tsx?raw";
+import Button02 from "../../../../packages/registry/components/button/button-02";
+import button02Source from "../../../../packages/registry/components/button/button-02.tsx?raw";
+import Button03 from "../../../../packages/registry/components/button/button-03";
+import button03Source from "../../../../packages/registry/components/button/button-03.tsx?raw";
+import Button04 from "../../../../packages/registry/components/button/button-04";
+import button04Source from "../../../../packages/registry/components/button/button-04.tsx?raw";
+
+const SLUG = "button";
+const meta = galleryComponents.find((component) => component.slug === SLUG)!;
+const { config } = data;
+const navigation = { ...data.navigation, tabs: SITE_TABS };
+const description = `Free ${meta.label} examples built on the SevenUI ${meta.label} component.`;
+---
+
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={navigation}
+  favicon={config.favicon}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  searchEnabled={config.search.enabled}
+  siteUrl={config.site}
+  ogEnabled={config.og.enabled}
+  page={{ title: `${meta.label} — SevenUI Components`, description, route: `/components/${SLUG}` }}
+  layout={{ Header }}
+>
+  <ComponentGallery active={SLUG}>
+    <header class="border-b border-border px-6 py-10 lg:px-10">
+      <h1 class="text-3xl font-semibold tracking-tight">{meta.label}</h1>
+      <p class="mt-2 max-w-2xl text-muted-foreground">
+        {description}
+        <a class="underline underline-offset-4" href={`/docs/components/${SLUG}`}>Read the docs</a>.
+      </p>
+    </header>
+    <div class="flex max-w-4xl flex-col gap-12 px-6 py-10 lg:px-10">
+      <ExampleCard id="button-01" title="Loading button" code={button01Source}>
+        <Button01 client:visible />
+      </ExampleCard>
+      <ExampleCard id="button-02" title="With icons" code={button02Source}>
+        <Button02 client:visible />
+      </ExampleCard>
+      <ExampleCard id="button-03" title="Call to action pair" code={button03Source}>
+        <Button03 client:visible />
+      </ExampleCard>
+      <ExampleCard id="button-04" title="Icon-only actions" code={button04Source}>
+        <Button04 client:visible />
+      </ExampleCard>
+    </div>
+  </ComponentGallery>
+  <footer slot="footer"><SiteFooter /></footer>
+</PageLayout>

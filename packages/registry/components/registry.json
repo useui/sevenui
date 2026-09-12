@@ -35,6 +35,44 @@
       "description": "An accordion with one disabled item.",
       "registryDependencies": ["https://sevenui.dev/r/accordion.json"],
       "files": [{ "path": "accordion/accordion-04.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "button-01",
+      "type": "registry:component",
+      "title": "Loading button",
+      "description": "A primary button in a loading state next to its idle twin.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/spinner.json"
+      ],
+      "files": [{ "path": "button/button-01.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "button-02",
+      "type": "registry:component",
+      "title": "With icons",
+      "description": "Buttons with leading and trailing icons across variants.",
+      "dependencies": ["lucide-react@^1.41.0"],
+      "registryDependencies": ["https://sevenui.dev/r/button.json"],
+      "files": [{ "path": "button/button-02.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "button-03",
+      "type": "registry:component",
+      "title": "Call to action pair",
+      "description": "A hero-style primary and ghost action pair.",
+      "dependencies": ["lucide-react@^1.41.0"],
+      "registryDependencies": ["https://sevenui.dev/r/button.json"],
+      "files": [{ "path": "button/button-03.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "button-04",
+      "type": "registry:component",
+      "title": "Icon-only actions",
+      "description": "A compact toolbar of icon-only outline buttons.",
+      "dependencies": ["lucide-react@^1.41.0"],
+      "registryDependencies": ["https://sevenui.dev/r/button.json"],
+      "files": [{ "path": "button/button-04.tsx", "type": "registry:component" }]
     }
   ]
 }
