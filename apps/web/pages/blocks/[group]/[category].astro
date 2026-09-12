@@ -6,7 +6,7 @@ import BlockFrame from "../../../components/block-frame.astro";
 import BlocksSidebar from "../../../components/blocks-sidebar.astro";
 import SiteFooter from "../../../components/site-footer.astro";
 import { SITE_TABS } from "../../../components/site-tabs.ts";
-import { groups, PREVIEW_HEIGHTS } from "../_data";
+import { groups } from "../_data";
 
 export function getStaticPaths() {
   return groups.flatMap((group) =>
@@ -58,7 +58,15 @@ const navigation = {
             <span class="mx-1.5">/</span>
             <span class="text-foreground">{category.label}</span>
           </nav>
-          <h1 class="mt-4 text-3xl font-semibold tracking-tight">{category.label}</h1>
+          <div class="mt-4 flex flex-wrap items-start justify-between gap-4">
+            <h1 class="text-3xl font-semibold tracking-tight">{category.label}</h1>
+            <a
+              href="/pro"
+              class="shrink-0 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-muted"
+            >
+              Get Pro
+            </a>
+          </div>
           <p class="mt-2 text-muted-foreground">
             {category.description} {category.items.length} {category.items.length === 1 ? "block" : "blocks"} in this category.
           </p>
@@ -71,8 +79,10 @@ const navigation = {
               name={item.name}
               title={item.title}
               description={item.description}
-              height={PREVIEW_HEIGHTS[item.name] ?? 560}
-              sourcePath={item.files[0].path}
+              height={item.previewHeight}
+              installItem={`pro/${item.name}`}
+              previewUrl={`/previews/${item.name}`}
+              badge="Pro"
             />
           ))}
         </div>

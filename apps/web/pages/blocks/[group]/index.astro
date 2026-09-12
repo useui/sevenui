@@ -3,7 +3,7 @@ import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
 import Header from "../../../components/blume/Header.astro";
 import BlocksSidebar from "../../../components/blocks-sidebar.astro";
-import CategoryIllustration from "../../../components/category-illustration.astro";
+import CategoryCard from "../../../components/category-card.astro";
 import SiteFooter from "../../../components/site-footer.astro";
 import { SITE_TABS } from "../../../components/site-tabs.ts";
 import { groups } from "../_data";
@@ -58,25 +58,9 @@ const navigation = {
         </div>
       </header>
       <div class="px-6 py-12 lg:px-10">
-        <div class="grid max-w-5xl gap-6 sm:grid-cols-2">
+        <div class="grid max-w-5xl gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {group.categories.map((category) => (
-            <a
-              href={`/blocks/${group.id}/${category.id}`}
-              class="flex flex-col gap-3 rounded-xl border border-border bg-background p-4 transition-colors hover:border-foreground/20"
-            >
-              <div class="flex aspect-[11/6] items-center justify-center overflow-hidden rounded-lg bg-muted/40">
-                <div class="w-3/4">
-                  <CategoryIllustration category={category.id} />
-                </div>
-              </div>
-              <div>
-                <h2 class="text-sm font-medium">{category.label}</h2>
-                <p class="text-sm text-muted-foreground">{category.description}</p>
-                <p class="mt-1 text-sm text-muted-foreground">
-                  {category.items.length} {category.items.length === 1 ? "block" : "blocks"}
-                </p>
-              </div>
-            </a>
+            <CategoryCard group={group.id} category={category} />
           ))}
         </div>
       </div>

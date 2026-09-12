@@ -3,15 +3,15 @@ import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
 import Header from "../../components/blume/Header.astro";
 import BlocksSidebar from "../../components/blocks-sidebar.astro";
-import CategoryIllustration from "../../components/category-illustration.astro";
+import CategoryCard from "../../components/category-card.astro";
 import SiteFooter from "../../components/site-footer.astro";
 import { SITE_TABS } from "../../components/site-tabs.ts";
+import { lucideIcon } from "../../lib/pro-manifest";
 import { groups } from "./_data";
 
 const { config } = data;
 
-const description =
-  "Ready-made sections composed from SevenUI components. Copy them into your project with one command — the source is yours.";
+const description = "Production-ready pro blocks built on SevenUI components.";
 
 // Computed (not hardcoded) so the directory's count sentence stays correct
 // as groups/categories/items change — mirrors the group/category pages'
@@ -48,91 +48,33 @@ const navigation = {
           <h1 class="text-3xl font-semibold tracking-tight">Blocks</h1>
           <p class="mt-2 text-muted-foreground">
             {description} {totalBlocks} {totalBlocks === 1 ? "block" : "blocks"} in {totalCategories} {totalCategories === 1 ? "category" : "categories"}.
+            {" "}<a href="/pro" class="underline underline-offset-4">Get lifetime access</a>.
           </p>
         </div>
       </header>
       <div class="px-6 py-12 lg:px-10">
         <div class="flex max-w-5xl flex-col gap-12">
-          {groups.map((group) => (
-            <section>
-              <h2 class="text-lg font-semibold tracking-tight">
-                <a href={`/blocks/${group.id}`} class="hover:underline">
-                  {group.label}
-                </a>
-              </h2>
-              <p class="mt-1 text-sm text-muted-foreground">{group.description}</p>
-              <div class="mt-4 grid gap-6 sm:grid-cols-2">
-                {group.categories.map((category) => (
-                  <a
-                    href={`/blocks/${group.id}/${category.id}`}
-                    class="flex flex-col gap-3 rounded-xl border border-border bg-background p-4 transition-colors hover:border-foreground/20"
-                  >
-                    <div class="flex aspect-[11/6] items-center justify-center overflow-hidden rounded-lg bg-muted/40">
-                      <div class="w-3/4">
-                        <CategoryIllustration category={category.id} />
-                      </div>
-                    </div>
-                    <div>
-                      <h3 class="text-sm font-medium">{category.label}</h3>
-                      <p class="text-sm text-muted-foreground">{category.description}</p>
-                      <p class="mt-1 text-sm text-muted-foreground">
-                        {category.items.length} {category.items.length === 1 ? "block" : "blocks"}
-                      </p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </section>
-          ))}
-
-          <section id="pro-section" hidden>
-            <h2 class="text-lg font-semibold tracking-tight">Pro</h2>
-            <p class="mt-1 text-sm text-muted-foreground">
-              Application blocks for paying customers. <a href="/pro" class="underline underline-offset-4">Get lifetime access</a>.
-            </p>
-            <div id="pro-cards" class="mt-4 grid gap-10"></div>
-          </section>
+          {groups.map((group) => {
+            const GroupIcon = group.icon ? lucideIcon(group.icon) : null;
+            return (
+              <section>
+                <h2 class="flex items-center gap-2 text-lg font-semibold tracking-tight">
+                  {GroupIcon && <GroupIcon class="size-4 text-muted-foreground" aria-hidden="true" />}
+                  <a href={`/blocks/${group.id}`} class="hover:underline">{group.label}</a>
+                  <span class="text-sm font-normal text-muted-foreground">{group.items.length}</span>
+                </h2>
+                <p class="mt-1 text-sm text-muted-foreground">{group.description}</p>
+                <div class="mt-4 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                  {group.categories.map((category) => (
+                    <CategoryCard group={group.id} category={category} />
+                  ))}
+                </div>
+              </section>
+            );
+          })}
         </div>
       </div>
     </div>
   </div>
   <footer slot="footer"><SiteFooter /></footer>
 </PageLayout>
-
-<script>
-  async function renderProBlocks() {
-    const section = document.getElementById("pro-section");
-    const cards = document.getElementById("pro-cards");
-    if (!section || !cards || cards.childElementCount > 0) return;
-    try {
-      const res = await fetch("/r/pro-manifest.json");
-      if (!res.ok) return; // pro deployment unavailable: section stays hidden
-      const { items } = await res.json();
-      if (!items?.length) return;
-      cards.innerHTML = items
-        .map(
-          (item: { name: string; title: string; description: string; previewHeight: number }) => `
-          <article class="flex flex-col gap-3">
-            <div class="relative overflow-hidden rounded-xl border border-border bg-background">
-              <iframe src="/previews/${item.name}" title="${item.title} preview"
-                loading="lazy" style="height:${item.previewHeight}px" class="pointer-events-none w-full"></iframe>
-              <span class="absolute right-3 top-3 rounded-md bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">Pro</span>
-            </div>
-            <div class="flex items-start justify-between gap-4">
-              <div>
-                <h3 class="text-sm font-medium">${item.title}</h3>
-                <p class="text-sm text-muted-foreground">${item.description}</p>
-              </div>
-              <a href="/pro" class="shrink-0 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-muted">Get Pro</a>
-            </div>
-          </article>`,
-        )
-        .join("");
-      section.hidden = false;
-    } catch {
-      /* leave hidden */
-    }
-  }
-  document.addEventListener("astro:page-load", renderProBlocks);
-  renderProBlocks();
-</script>

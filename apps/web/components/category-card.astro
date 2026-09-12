@@ -1,0 +1,51 @@
+---
+// One category card: 16:9 cover (image/svg via <img>, /placeholder.svg
+// fallback, optional dark variant), then label + block count. The
+// dark:hidden/dark:block pair below relies on Blume's generated Tailwind
+// entry mapping the `dark` variant to `[data-theme="dark"]` (see
+// apps/web/.blume/src/generated/app.css:
+// `@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));`)
+// rather than the default `.dark` class or a media query — confirmed
+// against Header.astro's own dark:hidden/dark:inline-flex theme toggle,
+// which uses the same convention.
+import type { Category } from "../pages/blocks/_data";
+
+interface Props {
+  group: string;
+  category: Category;
+}
+const { group, category } = Astro.props;
+const cover = category.cover;
+---
+
+<a href={`/blocks/${group}/${category.id}`} class="group block">
+  <div class="aspect-video overflow-hidden rounded-xl border border-border bg-muted/30">
+    {cover ? (
+      <>
+        <img
+          src={cover.src}
+          alt=""
+          loading="lazy"
+          class={`h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.02] ${cover.darkSrc ? "dark:hidden" : ""}`}
+        />
+        {cover.darkSrc && (
+          <img
+            src={cover.darkSrc}
+            alt=""
+            loading="lazy"
+            class="hidden h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.02] dark:block"
+          />
+        )}
+      </>
+    ) : (
+      <img src="/placeholder.svg" alt="" loading="lazy" class="h-full w-full object-cover" />
+    )}
+  </div>
+  <div class="mt-3 flex items-baseline justify-between gap-4">
+    <h3 class="text-sm font-medium">{category.label}</h3>
+    <span class="text-xs text-muted-foreground">
+      {category.items.length} {category.items.length === 1 ? "block" : "blocks"}
+    </span>
+  </div>
+  <p class="mt-1 text-sm text-muted-foreground">{category.description}</p>
+</a>

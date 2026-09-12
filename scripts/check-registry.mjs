@@ -193,9 +193,6 @@ for (const item of blocks.items) {
   }
 }
 checkAllFilesRegistered(blocks, BLOCKS_ROOT, "block", { skip: ["registry.json", "package.json", "tsconfig.json", "node_modules"] });
-if (!existsSync("apps/web/pages/blocks/preview/[slug].astro")) {
-  errors.push("blocks preview route apps/web/pages/blocks/preview/[slug].astro is missing");
-}
 
 if (errors.length > 0) {
   console.error(`check-registry: ${errors.length} problem(s)\n` + errors.map((e) => `  - ${e}`).join("\n"));
