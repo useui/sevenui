@@ -202,6 +202,56 @@
         "https://sevenui.dev/r/button.json"
       ],
       "files": [{ "path": "dialog/dialog-04.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "dropdown-menu-01",
+      "type": "registry:component",
+      "title": "Account menu",
+      "description": "An avatar-triggered account menu with grouped items and shortcut hints.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/dropdown-menu.json",
+        "https://sevenui.dev/r/avatar.json"
+      ],
+      "files": [{ "path": "dropdown-menu/dropdown-menu-01.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "dropdown-menu-02",
+      "type": "registry:component",
+      "title": "View options",
+      "description": "Checkbox items toggling which table columns are visible.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/dropdown-menu.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [{ "path": "dropdown-menu/dropdown-menu-02.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "dropdown-menu-03",
+      "type": "registry:component",
+      "title": "Sort by",
+      "description": "A radio group menu for choosing a sort order.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/dropdown-menu.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [{ "path": "dropdown-menu/dropdown-menu-03.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "dropdown-menu-04",
+      "type": "registry:component",
+      "title": "With submenu",
+      "description": "A menu with a \"Move to…\" submenu of folders and a destructive item.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/dropdown-menu.json",
+        "https://sevenui.dev/r/button.json"
+      ],
+      "files": [{ "path": "dropdown-menu/dropdown-menu-04.tsx", "type": "registry:component" }]
     }
   ]
 }
