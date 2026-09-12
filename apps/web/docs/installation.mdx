@@ -48,23 +48,26 @@ If you copy component source manually instead of using the CLI, copy the
 global stylesheet too — the accordion additionally ships its own
 `accordion-down` / `accordion-up` keyframes in its item the same way.
 
-## Blocks
+## Registry layout
 
-Blocks are ready-made sections — login forms, heroes, pricing tables —
-composed entirely from SevenUI components. They live under a tiered path:
-components at `/r/<name>.json`, blocks at `/r/blocks/<name>.json`.
+The registry is namespaced by kind: components at `/r/<name>.json`, gallery
+examples (the variations shown on [sevenui.dev/components](https://sevenui.dev/components))
+at `/r/component/<name>.json`, docs demos at `/r/demo/<name>.json`, and pro
+blocks at `/r/pro/<name>.json`.
 
-Browse them at [sevenui.dev/blocks](https://sevenui.dev/blocks), then install
-from the block's registry URL:
+A gallery example installs the same way as a component:
 
-<InstallCommand item="blocks/login-01" />
+<InstallCommand item="component/accordion-01" />
 
 With the `@sevenui` namespace configured, the short form works too:
 
 ```bash
-npx shadcn@latest add @sevenui/blocks/login-01
+npx shadcn@latest add @sevenui/component/accordion-01
 ```
 
-The block file lands in your `components/` directory and its component
-dependencies land in `components/ui/` — wire the block into your own page
-or router; blocks never assume a framework-specific file layout.
+The example file lands in your `components/` directory as a single
+self-contained component, and its dependencies (accordion itself, in this
+case) land in `components/ui/`.
+
+Browse components at [sevenui.dev/components](https://sevenui.dev/components)
+and pro blocks at [sevenui.dev/blocks](https://sevenui.dev/blocks).

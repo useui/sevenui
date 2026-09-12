@@ -6,12 +6,10 @@ const loadJson = (path) => JSON.parse(readFileSync(path, "utf8"));
 
 const UI_ROOT = "packages/registry";
 const DEMOS_ROOT = "packages/registry/demos";
-const BLOCKS_ROOT = "packages/blocks";
 const DOCS_DIR = "apps/web/docs/components";
 
 const ui = loadJson(join(UI_ROOT, "registry.json"));
 const demos = loadJson(join(DEMOS_ROOT, "registry.json"));
-const blocks = loadJson(join(BLOCKS_ROOT, "registry.json"));
 
 const uiNames = new Set(ui.items.map((i) => i.name));
 const demoNames = new Set(demos.items.map((i) => i.name));
@@ -22,12 +20,9 @@ const OWN_URL = /^https:\/\/sevenui\.dev\/r\/([a-z0-9-]+)\.json$/;
 // against — a bare name makes consumers install latest, so a breaking
 // release of a primitive would reach them silently.
 const registryPkg = loadJson(join(UI_ROOT, "package.json"));
-const blocksPkg = loadJson(join(BLOCKS_ROOT, "package.json"));
 const EXPECTED_RANGES = {
   ...registryPkg.devDependencies,
   ...registryPkg.dependencies,
-  ...blocksPkg.devDependencies,
-  ...blocksPkg.dependencies,
 };
 
 function checkLucideDep(item, root, where) {
@@ -185,17 +180,8 @@ for (const item of components.items) {
   }
 }
 
-// ---- blocks registry (free blocks; removed with the teardown) ----
-checkRegistry(blocks, BLOCKS_ROOT, "block", { fileType: "registry:component" });
-for (const item of blocks.items) {
-  if (item.type !== "registry:block") {
-    errors.push(`block "${item.name}": type must be "registry:block", got "${item.type}"`);
-  }
-}
-checkAllFilesRegistered(blocks, BLOCKS_ROOT, "block", { skip: ["registry.json", "package.json", "tsconfig.json", "node_modules"] });
-
 if (errors.length > 0) {
   console.error(`check-registry: ${errors.length} problem(s)\n` + errors.map((e) => `  - ${e}`).join("\n"));
   process.exit(1);
 }
-console.log(`check-registry: ok (${ui.items.length} ui, ${demos.items.length} demos, ${components.items.length} components, ${blocks.items.length} blocks)`);
+console.log(`check-registry: ok (${ui.items.length} ui, ${demos.items.length} demos, ${components.items.length} components)`);
