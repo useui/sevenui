@@ -23,7 +23,7 @@ The customization is **preview-only** in effect: it never changes registry outpu
 
 Findings that shaped this design:
 
-- **Token model.** A *base color* is a full hand-authored token set (background, card, border, muted, sidebar-\*, chart-\*, …) in light and dark. A *theme* (the primary color) is a **partial overlay** containing only `primary`, `primary-foreground`, `secondary`, `chart-1..5`, `sidebar-primary` — merged over the base color, theme wins.
+- **Token model.** A *base color* is a full hand-authored token set (background, card, border, muted, sidebar-\*, chart-\*, …) in light and dark. A *theme* (the primary color) is a **partial overlay** containing only `primary`, `primary-foreground`, `secondary`, `secondary-foreground`, `chart-1..5`, `sidebar-primary`, `sidebar-primary-foreground` — merged over the base color, theme wins.
 - **Nothing is computed.** Every value, including dark-mode variants and every `primary-foreground`, is hand-picked per theme per mode. There is no runtime contrast math; correct pairing is guaranteed because `primary` and `primary-foreground` always travel together in the same hand-authored overlay.
 - **Application mechanism.** A runtime `<style>` tag whose text is plain CSS — one `:root { … }` rule for light values, one `.dark { … }` rule for dark — rewritten on every change. No inline styles for colors, no pregenerated per-combination CSS.
 
@@ -94,7 +94,7 @@ Dependency: `zod` (not currently in the workspace; scoped to this package).
 Hand-authored oklch values, shadcn's split:
 
 - `BASE_COLORS: Record<BaseColorName, { light: TokenMap; dark: TokenMap }>` — **full** token sets (all tokens that `theme.css` / `preview.css` define today: background, foreground, card, popover, primary, secondary, muted, accent, destructive, border, input, ring, chart-1..5, sidebar-\*). `neutral` reproduces today's values exactly.
-- `THEMES: Record<ThemeName, { light: Partial<TokenMap>; dark: Partial<TokenMap> }>` — **partial** overlays: `primary`, `primary-foreground`, `ring`, `chart-1..5`, `sidebar-primary`, `sidebar-primary-foreground`. Every `primary` ships with its hand-picked `primary-foreground` in the same object for both modes — that adjacency is the contrast guarantee. `neutral` is an empty overlay (base color's own primary shows through).
+- `THEMES: Record<ThemeName, { light: Partial<TokenMap>; dark: Partial<TokenMap> }>` — **partial** overlays: `primary`, `primary-foreground`, `secondary`, `secondary-foreground`, `chart-1..5`, `sidebar-primary`, `sidebar-primary-foreground` (shadcn's exact overlay key set — `ring` stays with the base color). Every `primary` ships with its hand-picked `primary-foreground` in the same object for both modes — that adjacency is the contrast guarantee. `neutral` is an empty overlay (base color's own primary shows through).
 - `RADIUS: Record<RadiusName, string>`.
 - `resolvePreset(config): { light: TokenMap; dark: TokenMap }` — pure merge: `{ ...base.light, ...theme.light }` (theme wins), plus `--radius` when not default.
 - Values are picked from the same Tailwind-derived ramps shadcn uses; dark primaries are separately picked (usually a lightness-shifted step of the same hue), not derived.
