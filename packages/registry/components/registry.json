@@ -346,6 +346,52 @@
         "https://sevenui.dev/r/label.json"
       ],
       "files": [{ "path": "select/select-04.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "switch-01",
+      "type": "registry:component",
+      "title": "Labeled switch",
+      "description": "A switch with a label and muted description in a row.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/switch.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [{ "path": "switch/switch-01.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "switch-02",
+      "type": "registry:component",
+      "title": "Settings list",
+      "description": "Three bordered rows, each pairing a label and description with a switch.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/switch.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [{ "path": "switch/switch-02.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "switch-03",
+      "type": "registry:component",
+      "title": "Card consent",
+      "description": "Consent switches inside a card with a save footer.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/switch.json",
+        "https://sevenui.dev/r/card.json",
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [{ "path": "switch/switch-03.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "switch-04",
+      "type": "registry:component",
+      "title": "Disabled states",
+      "description": "A disabled-off and disabled-on switch pair with labels.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/switch.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [{ "path": "switch/switch-04.tsx", "type": "registry:component" }]
     }
   ]
 }
