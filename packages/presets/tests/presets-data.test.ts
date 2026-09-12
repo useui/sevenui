@@ -35,6 +35,23 @@ describe("BASE_COLORS", () => {
     expect(BASE_COLORS.neutral.dark.primary).toBe("oklch(0.922 0 0)");
   });
 
+  it("neutral reproduces today's chart palette", () => {
+    // Upstream's neutral base color has drifted to grayscale chart-1..5
+    // values; the spec pins neutral to today's apps/web/theme.css values so
+    // switching only the radius never silently flips preview charts to
+    // grayscale. See scripts/generate-base-colors.mjs PER_NAME_OVERRIDES.
+    expect(BASE_COLORS.neutral.light["chart-1"]).toBe("oklch(0.646 0.222 41.116)");
+    expect(BASE_COLORS.neutral.light["chart-2"]).toBe("oklch(0.6 0.118 184.704)");
+    expect(BASE_COLORS.neutral.light["chart-3"]).toBe("oklch(0.398 0.07 227.392)");
+    expect(BASE_COLORS.neutral.light["chart-4"]).toBe("oklch(0.828 0.189 84.429)");
+    expect(BASE_COLORS.neutral.light["chart-5"]).toBe("oklch(0.769 0.188 70.08)");
+    expect(BASE_COLORS.neutral.dark["chart-1"]).toBe("oklch(0.488 0.243 264.376)");
+    expect(BASE_COLORS.neutral.dark["chart-2"]).toBe("oklch(0.696 0.17 162.48)");
+    expect(BASE_COLORS.neutral.dark["chart-3"]).toBe("oklch(0.769 0.188 70.08)");
+    expect(BASE_COLORS.neutral.dark["chart-4"]).toBe("oklch(0.627 0.265 303.9)");
+    expect(BASE_COLORS.neutral.dark["chart-5"]).toBe("oklch(0.645 0.246 16.439)");
+  });
+
   it("never contains a radius token (radius is its own field)", () => {
     for (const name of BASE_COLOR_NAMES) {
       expect(BASE_COLORS[name].light).not.toHaveProperty("radius");
