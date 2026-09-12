@@ -1,0 +1,66 @@
+---
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import data from "blume:data";
+import Header from "../../components/blume/Header.astro";
+import ComponentGallery from "../../components/component-gallery.astro";
+import ExampleCard from "../../components/example-card.astro";
+import SiteFooter from "../../components/site-footer.astro";
+import { SITE_TABS } from "../../components/site-tabs.ts";
+import { galleryComponents } from "./_data";
+
+import Input01 from "../../../../packages/registry/components/input/input-01";
+import input01Source from "../../../../packages/registry/components/input/input-01.tsx?raw";
+import Input02 from "../../../../packages/registry/components/input/input-02";
+import input02Source from "../../../../packages/registry/components/input/input-02.tsx?raw";
+import Input03 from "../../../../packages/registry/components/input/input-03";
+import input03Source from "../../../../packages/registry/components/input/input-03.tsx?raw";
+import Input04 from "../../../../packages/registry/components/input/input-04";
+import input04Source from "../../../../packages/registry/components/input/input-04.tsx?raw";
+
+const SLUG = "input";
+const meta = galleryComponents.find((component) => component.slug === SLUG)!;
+const { config } = data;
+const navigation = { ...data.navigation, tabs: SITE_TABS };
+const description = `Free ${meta.label} examples built on the SevenUI ${meta.label} component.`;
+---
+
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={navigation}
+  favicon={config.favicon}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  searchEnabled={config.search.enabled}
+  siteUrl={config.site}
+  ogEnabled={config.og.enabled}
+  page={{ title: `${meta.label} — SevenUI Components`, description, route: `/components/${SLUG}` }}
+  layout={{ Header }}
+>
+  <ComponentGallery active={SLUG}>
+    <header class="border-b border-border px-6 py-10 lg:px-10">
+      <h1 class="text-3xl font-semibold tracking-tight">{meta.label}</h1>
+      <p class="mt-2 max-w-2xl text-muted-foreground">
+        {description}
+        <a class="underline underline-offset-4" href={`/docs/components/${SLUG}`}>Read the docs</a>.
+      </p>
+    </header>
+    <div class="flex max-w-4xl flex-col gap-12 px-6 py-10 lg:px-10">
+      <ExampleCard id="input-01" title="Search input" code={input01Source}>
+        <Input01 client:visible />
+      </ExampleCard>
+      <ExampleCard id="input-02" title="With error" code={input02Source}>
+        <Input02 client:visible />
+      </ExampleCard>
+      <ExampleCard id="input-03" title="Password with toggle" code={input03Source}>
+        <Input03 client:visible />
+      </ExampleCard>
+      <ExampleCard id="input-04" title="With add-ons" code={input04Source}>
+        <Input04 client:visible />
+      </ExampleCard>
+    </div>
+  </ComponentGallery>
+  <footer slot="footer"><SiteFooter /></footer>
+</PageLayout>

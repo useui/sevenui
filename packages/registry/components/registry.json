@@ -252,6 +252,56 @@
         "https://sevenui.dev/r/button.json"
       ],
       "files": [{ "path": "dropdown-menu/dropdown-menu-04.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "input-01",
+      "type": "registry:component",
+      "title": "Search input",
+      "description": "A search input with a leading icon inside the field.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/input.json"
+      ],
+      "files": [{ "path": "input/input-01.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "input-02",
+      "type": "registry:component",
+      "title": "With error",
+      "description": "A Field-wrapped input in an invalid state showing its error message.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/field.json",
+        "https://sevenui.dev/r/input.json"
+      ],
+      "files": [{ "path": "input/input-02.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "input-03",
+      "type": "registry:component",
+      "title": "Password with toggle",
+      "description": "A password input with a button to reveal or hide the value.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [{ "path": "input/input-03.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "input-04",
+      "type": "registry:component",
+      "title": "With add-ons",
+      "description": "A URL input with a protocol prefix and a currency input with a trailing unit.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/label.json"
+      ],
+      "files": [{ "path": "input/input-04.tsx", "type": "registry:component" }]
     }
   ]
 }
