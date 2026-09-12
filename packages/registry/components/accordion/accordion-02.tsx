@@ -37,7 +37,10 @@ export default function Accordion02() {
         <AccordionItem key={item.value} value={item.value}>
           <AccordionTrigger>
             <span className="flex items-center gap-2">
-              <item.icon className="size-4 text-muted-foreground" />
+              <item.icon
+                className="size-4 text-muted-foreground"
+                aria-hidden="true"
+              />
               {item.title}
             </span>
           </AccordionTrigger>

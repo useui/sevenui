@@ -12,5 +12,5 @@
     "isolatedModules": true,
     "paths": { "@/*": ["./*"] }
   },
-  "include": ["registry", "examples", "tests", "vitest.config.ts"]
+  "include": ["registry", "demos", "components", "tests", "vitest.config.ts"]
 }
