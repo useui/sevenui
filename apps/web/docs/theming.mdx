@@ -14,3 +14,23 @@ Starting fresh? Install the default neutral tokens:
 
 Dark mode works through your existing `.dark` class strategy — the
 variables carry both palettes.
+
+One thing the token install can't do for you: Tailwind v4's `dark:`
+variant follows the operating system by default, so on a hand-rolled
+setup the components' `dark:` utilities ignore your `.dark` class. `npx
+shadcn init` writes the opt-in for you; if you wired Tailwind up
+yourself, add it to the same stylesheet:
+
+```css
+@custom-variant dark (&:is(.dark *));
+```
+
+## Status colors
+
+Alongside `--destructive`, the theme defines two more semantic pairs for
+status surfaces: `--success` / `--success-foreground` and `--warning` /
+`--warning-foreground`. Use them the way you use destructive
+(`text-success`, `bg-warning/10`) instead of reaching for a raw Tailwind
+green or amber, so status stays on-palette in both modes. They are fixed
+constants — unlike the base and accent colors, they don't shift when you
+change the rest of the theme.

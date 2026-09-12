@@ -36,10 +36,6 @@ describe("BASE_COLORS", () => {
   });
 
   it("neutral reproduces today's chart palette", () => {
-    // Upstream's neutral base color has drifted to grayscale chart-1..5
-    // values; the spec pins neutral to today's apps/web/theme.css values so
-    // switching only the radius never silently flips preview charts to
-    // grayscale. See scripts/generate-base-colors.mjs PER_NAME_OVERRIDES.
     expect(BASE_COLORS.neutral.light["chart-1"]).toBe("oklch(0.646 0.222 41.116)");
     expect(BASE_COLORS.neutral.light["chart-2"]).toBe("oklch(0.6 0.118 184.704)");
     expect(BASE_COLORS.neutral.light["chart-3"]).toBe("oklch(0.398 0.07 227.392)");
@@ -50,6 +46,25 @@ describe("BASE_COLORS", () => {
     expect(BASE_COLORS.neutral.dark["chart-3"]).toBe("oklch(0.769 0.188 70.08)");
     expect(BASE_COLORS.neutral.dark["chart-4"]).toBe("oklch(0.627 0.265 303.9)");
     expect(BASE_COLORS.neutral.dark["chart-5"]).toBe("oklch(0.645 0.246 16.439)");
+  });
+
+  // Upstream has drifted neutral/stone/zinc to grayscale chart-1..5 (the same
+  // five values in both modes), which reads as a broken chart rather than a
+  // neutral one — zinc's light chart-1 is all but invisible on white. The
+  // generator pins those three back to the colorful palette gray and slate
+  // still ship, so a base color only ever changes the neutral scale.
+  // See scripts/generate-base-colors.mjs CHART_PIN.
+  it.each([...BASE_COLOR_NAMES])("%s shares neutral's chart palette", (name) => {
+    for (const mode of ["light", "dark"] as const) {
+      for (const key of ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"]) {
+        expect(BASE_COLORS[name][mode][key]).toBe(BASE_COLORS.neutral[mode][key]);
+      }
+    }
+  });
+
+  it("never reuses one mode's chart palette for the other", () => {
+    // The grayscale drift's tell: identical light and dark values.
+    expect(BASE_COLORS.neutral.light["chart-1"]).not.toBe(BASE_COLORS.neutral.dark["chart-1"]);
   });
 
   it("never contains a radius token (radius is its own field)", () => {

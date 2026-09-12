@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_PRESET_CONFIG, type PresetConfig } from "../schema";
+import { BASE_COLOR_NAMES, DEFAULT_PRESET_CONFIG, type PresetConfig, THEME_NAMES } from "../schema";
 import { BASE_COLORS, buildPresetCss, isDefaultConfig, resolvePreset, THEMES } from "../presets";
 
 const config = (overrides: Partial<PresetConfig>): PresetConfig => ({
@@ -44,5 +44,19 @@ describe("buildPresetCss", () => {
   it("emits --radius only when non-default", () => {
     expect(buildPresetCss(config({ theme: "blue" }))).not.toContain("--radius:");
     expect(buildPresetCss(config({ radius: "none" }))).toContain("--radius: 0;");
+  });
+
+  // The semantic status tokens are theme.css constants on purpose (see
+  // BASE_TOKEN_KEYS). A partial :root rule leaves them alone, so every preset
+  // inherits the same green and amber — but only as long as no preset ever
+  // names them.
+  it("never emits the semantic status tokens", () => {
+    for (const baseColor of BASE_COLOR_NAMES) {
+      for (const theme of THEME_NAMES) {
+        const css = buildPresetCss(config({ baseColor, theme, radius: "large" })) ?? "";
+        expect(css).not.toContain("--success");
+        expect(css).not.toContain("--warning");
+      }
+    }
   });
 });

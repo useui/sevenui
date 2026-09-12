@@ -4,6 +4,13 @@ export type TokenMap = Record<string, string>;
 
 // The 32 tokens every base color defines (shadcn v4's base-color set, minus
 // radius, plus destructive-foreground — see scripts/generate-base-colors.mjs).
+//
+// The semantic status tokens (success/warning and their foregrounds) are
+// deliberately absent: green means green under every base color, so they stay
+// theme-level constants defined once in apps/web/theme.css and
+// packages/registry/demos/theme.css. buildPresetCss emits only the keys listed
+// here, and a partial :root rule overrides nothing else, so those constants
+// survive every preset unchanged.
 export const BASE_TOKEN_KEYS = [
   "background", "foreground", "card", "card-foreground", "popover",
   "popover-foreground", "primary", "primary-foreground", "secondary",
@@ -107,11 +114,11 @@ export const BASE_COLORS: Record<BaseColorName, { light: TokenMap; dark: TokenMa
       "border": "oklch(0.923 0.003 48.717)",
       "input": "oklch(0.923 0.003 48.717)",
       "ring": "oklch(0.709 0.01 56.259)",
-      "chart-1": "oklch(0.869 0.005 56.366)",
-      "chart-2": "oklch(0.553 0.013 58.071)",
-      "chart-3": "oklch(0.444 0.011 73.639)",
-      "chart-4": "oklch(0.374 0.01 67.558)",
-      "chart-5": "oklch(0.268 0.007 34.298)",
+      "chart-1": "oklch(0.646 0.222 41.116)",
+      "chart-2": "oklch(0.6 0.118 184.704)",
+      "chart-3": "oklch(0.398 0.07 227.392)",
+      "chart-4": "oklch(0.828 0.189 84.429)",
+      "chart-5": "oklch(0.769 0.188 70.08)",
       "sidebar": "oklch(0.985 0.001 106.423)",
       "sidebar-foreground": "oklch(0.147 0.004 49.25)",
       "sidebar-primary": "oklch(0.216 0.006 56.043)",
@@ -141,11 +148,11 @@ export const BASE_COLORS: Record<BaseColorName, { light: TokenMap; dark: TokenMa
       "border": "oklch(1 0 0 / 10%)",
       "input": "oklch(1 0 0 / 15%)",
       "ring": "oklch(0.553 0.013 58.071)",
-      "chart-1": "oklch(0.869 0.005 56.366)",
-      "chart-2": "oklch(0.553 0.013 58.071)",
-      "chart-3": "oklch(0.444 0.011 73.639)",
-      "chart-4": "oklch(0.374 0.01 67.558)",
-      "chart-5": "oklch(0.268 0.007 34.298)",
+      "chart-1": "oklch(0.488 0.243 264.376)",
+      "chart-2": "oklch(0.696 0.17 162.48)",
+      "chart-3": "oklch(0.769 0.188 70.08)",
+      "chart-4": "oklch(0.627 0.265 303.9)",
+      "chart-5": "oklch(0.645 0.246 16.439)",
       "sidebar": "oklch(0.216 0.006 56.043)",
       "sidebar-foreground": "oklch(0.985 0.001 106.423)",
       "sidebar-primary": "oklch(0.488 0.243 264.376)",
@@ -177,11 +184,11 @@ export const BASE_COLORS: Record<BaseColorName, { light: TokenMap; dark: TokenMa
       "border": "oklch(0.92 0.004 286.32)",
       "input": "oklch(0.92 0.004 286.32)",
       "ring": "oklch(0.705 0.015 286.067)",
-      "chart-1": "oklch(0.871 0.006 286.286)",
-      "chart-2": "oklch(0.552 0.016 285.938)",
-      "chart-3": "oklch(0.442 0.017 285.786)",
-      "chart-4": "oklch(0.37 0.013 285.805)",
-      "chart-5": "oklch(0.274 0.006 286.033)",
+      "chart-1": "oklch(0.646 0.222 41.116)",
+      "chart-2": "oklch(0.6 0.118 184.704)",
+      "chart-3": "oklch(0.398 0.07 227.392)",
+      "chart-4": "oklch(0.828 0.189 84.429)",
+      "chart-5": "oklch(0.769 0.188 70.08)",
       "sidebar": "oklch(0.985 0 0)",
       "sidebar-foreground": "oklch(0.141 0.005 285.823)",
       "sidebar-primary": "oklch(0.21 0.006 285.885)",
@@ -211,11 +218,11 @@ export const BASE_COLORS: Record<BaseColorName, { light: TokenMap; dark: TokenMa
       "border": "oklch(1 0 0 / 10%)",
       "input": "oklch(1 0 0 / 15%)",
       "ring": "oklch(0.552 0.016 285.938)",
-      "chart-1": "oklch(0.871 0.006 286.286)",
-      "chart-2": "oklch(0.552 0.016 285.938)",
-      "chart-3": "oklch(0.442 0.017 285.786)",
-      "chart-4": "oklch(0.37 0.013 285.805)",
-      "chart-5": "oklch(0.274 0.006 286.033)",
+      "chart-1": "oklch(0.488 0.243 264.376)",
+      "chart-2": "oklch(0.696 0.17 162.48)",
+      "chart-3": "oklch(0.769 0.188 70.08)",
+      "chart-4": "oklch(0.627 0.265 303.9)",
+      "chart-5": "oklch(0.645 0.246 16.439)",
       "sidebar": "oklch(0.21 0.006 285.885)",
       "sidebar-foreground": "oklch(0.985 0 0)",
       "sidebar-primary": "oklch(0.488 0.243 264.376)",
