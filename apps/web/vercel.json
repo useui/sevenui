@@ -3,6 +3,7 @@
   "rewrites": [
     { "source": "/r/pro-manifest.json", "destination": "https://pro.sevenui.dev/r/pro-manifest.json" },
     { "source": "/r/pro/:name", "destination": "https://pro.sevenui.dev/api/registry?name=:name" },
-    { "source": "/api/me/licenses", "destination": "https://pro.sevenui.dev/api/licenses" }
+    { "source": "/api/me/licenses", "destination": "https://pro.sevenui.dev/api/licenses" },
+    { "source": "/previews/:path*", "destination": "https://pro.sevenui.dev/previews/:path*" }
   ]
 }
