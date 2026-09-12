@@ -13,7 +13,7 @@
     "preview": "pnpm --filter @sevenui/web preview",
     "typecheck": "pnpm -r typecheck",
     "check:registry": "node scripts/check-registry.mjs",
-    "test": "pnpm --filter @sevenui/registry test",
+    "test": "pnpm --filter @sevenui/registry test && pnpm --filter @sevenui/presets test",
     "test:smoke": "bash scripts/smoke-test.sh"
   }
 }
