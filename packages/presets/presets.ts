@@ -1,4 +1,4 @@
-import type { BaseColorName, RadiusName, ThemeName } from "./schema";
+import { DEFAULT_PRESET_CONFIG, type PresetConfig, type BaseColorName, type RadiusName, type ThemeName } from "./schema";
 
 export type TokenMap = Record<string, string>;
 
@@ -579,3 +579,36 @@ export const RADIUS: Record<RadiusName, string> = {
   default: "0.625rem",
   large: "0.875rem",
 };
+
+export function resolvePreset(config: PresetConfig): { light: TokenMap; dark: TokenMap } {
+  const base = BASE_COLORS[config.baseColor];
+  const theme = THEMES[config.theme];
+  const light = { ...base.light, ...theme.light } as TokenMap;
+  const dark = { ...base.dark, ...theme.dark } as TokenMap;
+  if (config.radius !== "default") {
+    light.radius = RADIUS[config.radius];
+    dark.radius = RADIUS[config.radius];
+  }
+  return { light, dark };
+}
+
+export function isDefaultConfig(config: PresetConfig): boolean {
+  return (
+    config.baseColor === DEFAULT_PRESET_CONFIG.baseColor &&
+    config.theme === DEFAULT_PRESET_CONFIG.theme &&
+    config.radius === DEFAULT_PRESET_CONFIG.radius
+  );
+}
+
+// The dark rule matches both `.dark` (pro workbench, class toggle) and
+// `[data-theme="dark"]` (Blume's convention) so one applier serves every
+// preview context.
+export function buildPresetCss(config: PresetConfig): string | null {
+  if (isDefaultConfig(config)) return null;
+  const { light, dark } = resolvePreset(config);
+  const rule = (selector: string, tokens: TokenMap) =>
+    `${selector} {\n${Object.entries(tokens)
+      .map(([key, value]) => `  --${key}: ${value};`)
+      .join("\n")}\n}`;
+  return `${rule(":root", light)}\n${rule('.dark, [data-theme="dark"]', dark)}\n`;
+}
