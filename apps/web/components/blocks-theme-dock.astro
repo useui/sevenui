@@ -1,0 +1,339 @@
+---
+// Global theme customizer for the /blocks gallery — "the dock".
+//
+// Its ONLY side effect is writing localStorage["preset-config"] (Reset removes
+// the key); every open preview iframe — free and pro, all same-origin —
+// re-themes via the native storage event. The gallery page itself never loads
+// the preset applier, so the site chrome stays untouched by design.
+// Spec: docs/superpowers/specs/2026-09-12-theme-customizer-design.md
+//
+// Placement: the dock is `sticky bottom-6` inside the gallery's content column
+// rather than `fixed` to the viewport. Three reasons: it aligns with the h1's
+// gutter for free (no hardcoded 300px offset that would have to track the
+// sidebar width), it releases at the end of the column so it can never occlude
+// the footer, and it sidesteps `position: fixed`'s sensitivity to an ancestor
+// gaining `transform`/`filter`/`contain`. The wrapper is `h-0` so it reserves
+// no space; the dock itself is absolutely positioned out of it.
+//
+// Exactly ONE instance per page: rendered by the three /blocks pages
+// (index, [group]/index, [group]/[category]) — never by blocks-sidebar.astro,
+// which is nav only. A second instance would leave the first [data-customizer]
+// bound and the other dead.
+import { ChevronUp, Palette, RotateCcw } from "@lucide/astro";
+import { BASE_COLOR_NAMES, DEFAULT_PRESET_CONFIG, RADIUS_NAMES, THEME_NAMES } from "@sevenui/presets/schema";
+import { BASE_COLORS, THEMES } from "@sevenui/presets/presets";
+
+// Swatch colors are resolved at build time from the preset data; the neutral
+// theme has an empty overlay, so it falls back to the default base color's
+// own primary.
+const themeSwatch = (name: (typeof THEME_NAMES)[number]) =>
+  THEMES[name].light.primary ?? BASE_COLORS.neutral.light.primary;
+
+// A base color is not a single value — neutral/stone/zinc/gray/slate differ by
+// as little as 0.005 chroma, so one dot per base is undiscriminable (the defect
+// this rewrite exists to fix). Each key instead renders that base's real
+// `muted` field under its real `foreground` label, and the five keys abut with
+// no separator so simultaneous contrast at the shared edge exposes the tint
+// that an isolated swatch hides. The name carries the identification; the tint
+// corroborates it.
+const baseField = (name: (typeof BASE_COLOR_NAMES)[number]) => BASE_COLORS[name].light.muted;
+const baseInk = (name: (typeof BASE_COLOR_NAMES)[number]) => BASE_COLORS[name].light.foreground;
+
+const label = (name: string) => name[0].toUpperCase() + name.slice(1);
+
+const RADIUS_LABELS: Record<(typeof RADIUS_NAMES)[number], string> = {
+  none: "None",
+  small: "SM",
+  default: "MD",
+  large: "LG",
+};
+
+// The corner the glyph draws, scaled to its 11px box. Not an icon — a diagram
+// of the value the key sets, so Radius reads without resolving an abstraction.
+const RADIUS_GLYPH: Record<(typeof RADIUS_NAMES)[number], string> = {
+  none: "0px",
+  small: "3.6px",
+  default: "5px",
+  large: "7px",
+};
+
+const defaults = DEFAULT_PRESET_CONFIG;
+
+// One shared key geometry: every control in the panel is a 44px cell in a
+// bordered strip, pressed the same way. `shadow-*` carries the pressed state as
+// a double inset frame (2px card, then 2px foreground) painted INSIDE the cell,
+// so it reads against yellow (0.852) and neutral (0.205) alike and the cell's
+// footprint never moves — a ring-offset would inflate the selected swatch and
+// break the row's rhythm.
+//
+// The strip deliberately does NOT clip. Faking its corners with
+// `overflow-hidden` left every key square, so the pressed frame — which
+// `border-radius` shapes, but the key had none — landed as a hard rectangle
+// inside a soft pill at either end. Instead each key owns the corner it sits in
+// (`first:` the start side, `last:` the end side, middles square), at the
+// strip's radius minus its 1px border, which makes the strip arc, the key, the
+// pressed frame and the focus outline concentric. Keep that radius a live
+// `calc()`: hard-coding today's 9px would silently reopen the mismatch the
+// moment `--radius` changes.
+const KEY =
+  "relative flex h-11 min-w-0 flex-1 cursor-pointer items-center justify-center gap-1.5 text-xs leading-none text-muted-foreground outline-none first:rounded-s-[calc(var(--radius-lg)_-_1px)] last:rounded-e-[calc(var(--radius-lg)_-_1px)] focus-visible:z-[2] focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-foreground aria-pressed:z-[1] aria-pressed:font-medium aria-pressed:text-foreground aria-pressed:shadow-[inset_0_0_0_2px_var(--card),inset_0_0_0_4px_var(--foreground)] aria-pressed:forced-colors:outline-2 aria-pressed:forced-colors:-outline-offset-4 aria-pressed:forced-colors:outline-[Highlight]";
+// `bg-border` on the strip shows through the 1px key gaps as hairlines.
+const STRIP = "flex rounded-lg border border-border bg-border";
+
+// The per-hue hairline is neutral's alone. On every other hue it just doubles
+// the strip's own edge into 3px of grout, which is what made eight hues read as
+// eight separate tiles instead of one band — but neutral's fill (0.205) IS
+// `--card` in dark mode, so without it that key becomes an empty slot rather
+// than a swatch.
+const HUE_HAIRLINE: Partial<Record<(typeof THEME_NAMES)[number], string>> = {
+  neutral: "shadow-[inset_0_0_0_1px_var(--border)]",
+};
+const GLYPH = "inline-block size-[11px] border-[1.5px] border-current border-r-transparent border-b-transparent";
+---
+
+{/* `sticky` (not `fixed`) is load-bearing: it is a containing block for the
+    absolutely positioned dock below, its h-0 reserves no space, and it releases
+    at the end of the content column so the dock can never sit over the footer.
+    The left inset matches the column's own px-6/lg:px-10, so the rail lines up
+    with the h1 without hardcoding the sidebar's width. */}
+<div class="pointer-events-none sticky bottom-6 z-40 h-0">
+  <div
+    data-customizer
+    class="pointer-events-auto absolute bottom-0 left-6 right-6 flex flex-col items-start gap-2 lg:left-10 lg:right-auto"
+  >
+    <div
+      data-panel
+      hidden
+      id="blocks-theme-panel"
+      class="w-full origin-bottom-left rounded-xl border border-border bg-card p-4 text-foreground shadow-[0_24px_56px_-12px_rgb(0_0_0/0.26),0_4px_12px_-4px_rgb(0_0_0/0.12)] max-lg:max-h-[70dvh] max-lg:overflow-y-auto lg:w-90"
+    >
+      <div class="flex items-baseline gap-2 border-b border-border pb-3">
+        <h2 class="text-sm font-semibold tracking-tight">Customize</h2>
+        <p class="ml-auto text-xs text-muted-foreground">Preview every block in your theme.</p>
+      </div>
+
+      <div class="mt-3.5" role="group" aria-labelledby="blocks-theme-legend">
+        <div id="blocks-theme-legend" class="mb-1.5 flex items-baseline gap-2">
+          <span class="text-xs font-medium text-muted-foreground">Theme</span>
+          <span data-readout="theme" class="ml-auto text-xs font-medium text-foreground"></span>
+        </div>
+        <div class={STRIP}>
+          {THEME_NAMES.map((name, index) => (
+            <button
+              type="button"
+              data-field="theme"
+              data-label={label(name)}
+              data-value={name}
+              aria-pressed="false"
+              class={`${KEY} ${HUE_HAIRLINE[name] ?? ""} ${index > 0 ? "ml-px" : ""}`}
+              style={`background:${themeSwatch(name)}`}
+            >
+              <span class="sr-only">{label(name)}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div class="mt-3.5" role="group" aria-labelledby="blocks-base-legend">
+        <div id="blocks-base-legend" class="mb-1.5 flex items-baseline gap-2">
+          <span class="text-xs font-medium text-muted-foreground">Base color</span>
+          <span data-readout="baseColor" class="ml-auto text-xs font-medium text-foreground"></span>
+        </div>
+        <div class={STRIP}>
+          {BASE_COLOR_NAMES.map((name) => (
+            <button
+              type="button"
+              data-field="baseColor"
+              data-label={label(name)}
+              data-value={name}
+              aria-pressed="false"
+              class={`${KEY} text-[11px]`}
+              style={`background:${baseField(name)};color:${baseInk(name)}`}
+            >
+              {label(name)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div class="mt-3.5" role="group" aria-labelledby="blocks-radius-legend">
+        <div id="blocks-radius-legend" class="mb-1.5 flex items-baseline gap-2">
+          <span class="text-xs font-medium text-muted-foreground">Radius</span>
+          <span data-readout="radius" class="ml-auto text-xs font-medium text-foreground"></span>
+        </div>
+        <div class={STRIP}>
+          {RADIUS_NAMES.map((name, index) => (
+            <button
+              type="button"
+              data-field="radius"
+              data-label={RADIUS_LABELS[name]}
+              data-glyph={RADIUS_GLYPH[name]}
+              data-value={name}
+              aria-pressed="false"
+              class={`${KEY} bg-card ${index > 0 ? "ml-px" : ""}`}
+            >
+              <span class={GLYPH} style={`border-top-left-radius:${RADIUS_GLYPH[name]}`} aria-hidden="true"></span>
+              {RADIUS_LABELS[name]}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <button
+        type="button"
+        data-action="reset"
+        disabled
+        class="mt-3.5 flex h-11 w-full cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-3 text-sm text-foreground outline-none hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground disabled:pointer-events-none disabled:opacity-50"
+      >
+        <RotateCcw class="size-[15px] text-muted-foreground" aria-hidden="true" />
+        Reset all three
+        <span class="ml-auto flex items-center gap-1.5 text-xs text-muted-foreground">
+          {label(defaults.theme)}<span aria-hidden="true">·</span>{label(defaults.baseColor)}<span aria-hidden="true">·</span>
+          <span class={GLYPH} style={`border-top-left-radius:${RADIUS_GLYPH[defaults.radius]}`} aria-hidden="true"></span>
+          {RADIUS_LABELS[defaults.radius]}
+        </span>
+      </button>
+    </div>
+
+    <button
+      data-rail
+      type="button"
+      aria-expanded="false"
+      aria-controls="blocks-theme-panel"
+      class="flex h-12 cursor-pointer items-stretch overflow-hidden rounded-full border border-border bg-card outline-none shadow-[0_10px_24px_-6px_rgb(0_0_0/0.18),0_2px_6px_-2px_rgb(0_0_0/0.10)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground lg:h-11"
+    >
+      {/* The cap wears the current primary, so the collapsed dock is the only
+          saturated object on an otherwise monochrome page — the discoverability
+          bet this placement makes. */}
+      <span
+        data-cap
+        class="grid w-12 flex-none place-items-center border-r border-border lg:w-11"
+        style={`background:${themeSwatch(defaults.theme)}`}
+      >
+        <Palette class="size-4 text-background opacity-90" aria-hidden="true" />
+      </span>
+      <span class="flex flex-col justify-center gap-px py-0 pl-3 pr-2.5 text-left">
+        <span class="text-[13px] font-medium leading-[1.15] text-foreground">Customize</span>
+        {/* Collapsed, the rail IS the state readout — presentation of the three
+            existing fields, not a fourth control. */}
+        <span
+          class="flex items-center gap-1.5 whitespace-nowrap text-[11px] leading-[1.25] text-muted-foreground"
+          aria-hidden="true"
+        >
+          <span data-rail-readout="theme"></span><span>·</span>
+          <span data-rail-readout="baseColor"></span><span>·</span>
+          <span data-rail-glyph class={GLYPH}></span>
+          <span data-rail-readout="radius"></span>
+        </span>
+      </span>
+      <ChevronUp
+        data-chevron
+        class="mr-3 ml-0.5 size-3.5 self-center text-muted-foreground transition-transform duration-150 motion-reduce:transition-none"
+        aria-hidden="true"
+      />
+    </button>
+  </div>
+</div>
+{/* Released from sticky, the wrapper's natural position is the column's last
+    pixel — which is the footer's top border, so the rail ended up welded to it.
+    This spacer is what the dock comes to rest above. */}
+<div class="h-8" aria-hidden="true"></div>
+
+<script>
+  import { DEFAULT_PRESET_CONFIG, PRESET_CONFIG_KEY, readPresetConfig } from "@sevenui/presets/schema";
+
+  // One dock instance per page (the three /blocks pages each render it once).
+  // Buttons carry data-field/data-value; clicks merge into the stored config.
+  // The dock's own page never re-themes (no applier here) — only the pressed
+  // states, the readouts and the rail's cap update.
+  //
+  // Astro's ClientRouter runs this module only the first time it appears; after
+  // a client-side navigation the swapped-in dock is a fresh element with no
+  // listeners (the same trap renderProBlocks in pages/blocks/index.astro works
+  // around). Re-bind on every astro:page-load — it fires after each swap and on
+  // the initial load — and guard with data-bound so the immediate call below and
+  // the first event can't double-bind one dock. The dock is deliberately NOT
+  // transition:persist'd: a persisted element would keep its listeners but the
+  // guard would then be the only thing standing between it and a double bind.
+  const setup = () => {
+    const dock = document.querySelector<HTMLElement>("[data-customizer]");
+    if (!dock || dock.dataset.bound === "true") return;
+    dock.dataset.bound = "true";
+
+    const panel = dock.querySelector<HTMLElement>("[data-panel]")!;
+    const rail = dock.querySelector<HTMLButtonElement>("[data-rail]")!;
+    const cap = dock.querySelector<HTMLElement>("[data-cap]")!;
+    const chevron = dock.querySelector<SVGElement>("[data-chevron]")!;
+    const railGlyph = dock.querySelector<HTMLElement>("[data-rail-glyph]")!;
+    const reset = dock.querySelector<HTMLButtonElement>('[data-action="reset"]')!;
+    const buttons = dock.querySelectorAll<HTMLButtonElement>("button[data-field]");
+
+    const setOpen = (open: boolean) => {
+      panel.hidden = !open;
+      rail.setAttribute("aria-expanded", String(open));
+      chevron.style.transform = open ? "rotate(180deg)" : "";
+    };
+
+    const sync = () => {
+      const config = readPresetConfig(localStorage) as unknown as Record<string, string>;
+      let dirty = false;
+
+      for (const button of buttons) {
+        const field = button.dataset.field!;
+        const pressed = config[field] === button.dataset.value;
+        button.setAttribute("aria-pressed", String(pressed));
+        if (!pressed) continue;
+
+        // The readouts mirror the pressed key rather than duplicating a label
+        // map in JS, so adding a preset can never desync the two.
+        dock.querySelector(`[data-readout="${field}"]`)!.textContent = button.dataset.label!;
+        dock.querySelector(`[data-rail-readout="${field}"]`)!.textContent = button.dataset.label!;
+        // Both are authored inline from the same build-time preset value, so
+        // copying the declaration avoids a layout-flushing getComputedStyle.
+        if (field === "theme") cap.style.background = button.style.background;
+        if (field === "radius") railGlyph.style.borderTopLeftRadius = button.dataset.glyph!;
+      }
+
+      for (const [field, value] of Object.entries(DEFAULT_PRESET_CONFIG)) {
+        if (field !== "version" && config[field] !== value) dirty = true;
+      }
+      reset.disabled = !dirty;
+      rail.setAttribute(
+        "aria-label",
+        `Customize theme — ${config.theme} theme, ${config.baseColor} base color, ${config.radius} radius`,
+      );
+    };
+
+    rail.addEventListener("click", () => setOpen(panel.hidden));
+
+    panel.addEventListener("click", (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>("button");
+      if (!button) return;
+      if (button.dataset.action === "reset") {
+        localStorage.removeItem(PRESET_CONFIG_KEY);
+      } else if (button.dataset.field && button.dataset.value) {
+        const next = { ...readPresetConfig(localStorage), [button.dataset.field]: button.dataset.value };
+        localStorage.setItem(PRESET_CONFIG_KEY, JSON.stringify(next));
+      } else {
+        return;
+      }
+      sync();
+    });
+
+    // Non-modal by design: no scrim, no focus trap. The whole point of the
+    // control is that the previews behind it stay visible and keep re-theming,
+    // so the page underneath must stay interactive.
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || panel.hidden) return;
+      setOpen(false);
+      rail.focus();
+    });
+    document.addEventListener("pointerdown", (event) => {
+      if (!panel.hidden && !dock.contains(event.target as Node)) setOpen(false);
+    });
+
+    sync();
+  };
+  document.addEventListener("astro:page-load", setup);
+  setup();
+</script>
