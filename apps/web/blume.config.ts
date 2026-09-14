@@ -42,7 +42,7 @@ export default defineConfig({
   ],
   title: "SevenUI",
   description:
-    "Base UI powered components, distributed through the shadcn registry.",
+    "Base UI powered primitives, distributed through the shadcn registry.",
   logo: "assets/logomark.svg",
   theme: { accent: "blue", radius: "md", mode: "system" },
   deployment: { site: "https://sevenui.dev" },
@@ -76,7 +76,18 @@ export default defineConfig({
         "/installation",
         "/theming",
         {
-          label: "Components",
+          // A collapsible <details> group, not the default flat list: 66 page
+          // links rendered flat made the mobile nav drawer unusable — the site
+          // tabs and everything below the group sat a full screen-height of
+          // scrolling away. NavTree opens the group automatically whenever the
+          // current page is inside it, so a primitive page still lands with
+          // its siblings visible.
+          display: "group",
+          // "Primitives", not "Components": the gallery at /components owns
+          // that word now (see components/site-tabs.ts for the full
+          // vocabulary). The routes below keep their `components` segment —
+          // published URLs, not labels.
+          label: "Primitives",
           items: [
             "/components/accordion",
             "/components/alert",

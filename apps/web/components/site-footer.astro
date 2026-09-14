@@ -10,7 +10,7 @@
 // shared extraction for both is left for a future landing refactor.
 import { Logomark } from "./logomark.tsx";
 
-const footerComponents = [
+const footerPrimitives = [
   "button",
   "input",
   "select",
@@ -29,13 +29,13 @@ const footerComponents = [
         <Logomark className="h-5 w-auto" /> SevenUI
       </span>
       <p class="max-w-xs text-sm text-muted-foreground">
-        Base UI powered components, distributed through the shadcn registry.
+        Base UI powered primitives, distributed through the shadcn registry.
       </p>
     </div>
-    <nav aria-label="Components" class="flex flex-col gap-2 text-sm">
-      <span class="mb-1 font-medium">Components</span>
+    <nav aria-label="Primitives" class="flex flex-col gap-2 text-sm">
+      <span class="mb-1 font-medium">Primitives</span>
       {
-        footerComponents.map((name) => (
+        footerPrimitives.map((name) => (
           <a
             class="text-muted-foreground transition-colors hover:text-foreground"
             href={`/docs/components/${name}`}
@@ -44,8 +44,8 @@ const footerComponents = [
           </a>
         ))
       }
-      <a class="text-muted-foreground transition-colors hover:text-foreground" href="/docs">
-        All components →
+      <a class="text-muted-foreground transition-colors hover:text-foreground" href="/docs/components/accordion">
+        All primitives →
       </a>
     </nav>
     <nav aria-label="Resources" class="flex flex-col gap-2 text-sm">

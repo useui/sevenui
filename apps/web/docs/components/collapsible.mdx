@@ -1,6 +1,6 @@
 ---
 title: Collapsible
-description: An interactive component which expands/collapses a panel, built on the Base UI Collapsible primitive.
+description: An interactive primitive which expands/collapses a panel, built on the Base UI Collapsible.
 ---
 
 <Component path="collapsible/collapsible-demo" />
@@ -65,10 +65,10 @@ stays focusable with `aria-disabled="true"` — style it with
 
 Closed content unmounts by default. `keepMounted` and `hiddenUntilFound`
 are **Panel** props here (unlike Accordion, where they live on the
-Root) — pass them through this component. Open/close animates via the
+Root) — pass them through this primitive. Open/close animates via the
 `animate-collapsible-down` / `animate-collapsible-up` utilities, whose
 keyframes (driven by the Base UI-set `--collapsible-panel-height`
-variable) ship in this component's registry item — the CLI merges them
+variable) ship in this primitive's registry item — the CLI merges them
 into your CSS, same as the accordion's.
 
 | Prop               | Type      | Default |

@@ -1,26 +1,30 @@
 ---
 title: Introduction
-description: Base UI powered components, distributed through the shadcn registry.
+description: Base UI powered primitives, distributed through the shadcn registry.
 ---
 
-SevenUI is a registry of 54 components built on
-[Base UI](https://base-ui.com) primitives. Components are installed as
+SevenUI is a registry of 65 primitives built on
+[Base UI](https://base-ui.com). Primitives are installed as
 source code into your project through the shadcn CLI — no runtime
 package to depend on.
 
+Composed, copy-and-go usage of these primitives lives in
+[Components](https://sevenui.dev/components); full pro sections and pages
+live in [Blocks](https://sevenui.dev/blocks).
+
 ## Why SevenUI
 
-- **Base UI first** — no Radix, anywhere. Every interactive primitive is
-  [Base UI](https://base-ui.com); the only exceptions are four sanctioned,
+- **Base UI first** — no Radix, anywhere. Every interactive part is built
+  on [Base UI](https://base-ui.com); the only exceptions are four sanctioned,
   Radix-free specialized libraries (calendar, carousel, chart, resizable).
 - **Drop-in shadcn compatibility** — works with the `shadcn` CLI and your
   existing `components.json` setup.
-- **Source distribution via the registry** — components install as
+- **Source distribution via the registry** — primitives install as
   source files you own, not a package you depend on.
 
-## Component coverage
+## Coverage
 
-SevenUI ships with 53 components across five waves:
+SevenUI ships 65 primitives. The first 53 arrived across five waves:
 
 - **Foundation wave** (15): button, badge, kbd, card, alert, separator,
   skeleton, spinner, aspect-ratio, textarea, table, breadcrumb, pagination,
@@ -37,16 +41,16 @@ SevenUI ships with 53 components across five waves:
 Navigation and composition are complete — tabs, menus, a shared-popup
 navigation menu, a command palette, and a full sidebar system — with
 zero Radix dependencies. No Radix, no cmdk, no vaul, no sonner: every
-component that can be built on Base UI alone uses Base UI and nothing
+primitive that can be built on Base UI alone uses Base UI and nothing
 else. The third-party wrapper wave adds exactly four specialized,
 Radix-free libraries — react-day-picker, embla-carousel, recharts, and
-react-resizable-panels — for the components that genuinely cannot be
-built on Base UI primitives, the same sanctioned choices shadcn makes.
+react-resizable-panels — for the primitives that genuinely cannot be
+built on Base UI alone, the same sanctioned choices shadcn makes.
 These four are the only non-Base-UI dependencies in the registry.
 
-Form components use Base UI-native form handling. Libraries like
+Form primitives use Base UI-native form handling. Libraries like
 [react-hook-form](https://react-hook-form.com) plug into the `Field`
-component's external-state props — see [Field](/components/field).
+primitive's external-state props — see [Field](/components/field).
 
-Ready to add your first component? Head over to
+Ready to add your first primitive? Head over to
 [Installation](/installation).

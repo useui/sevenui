@@ -1,11 +1,11 @@
 ---
 title: Theming
-description: SevenUI components follow your shadcn theme.
+description: SevenUI primitives follow your shadcn theme.
 ---
 
-SevenUI components style themselves with the standard shadcn CSS
+SevenUI primitives style themselves with the standard shadcn CSS
 variables (`--background`, `--primary`, `--radius`, ...). If your
-project already has a shadcn theme, components adapt to it with no
+project already has a shadcn theme, primitives adapt to it with no
 extra setup.
 
 Starting fresh? Install the default neutral tokens:
@@ -17,7 +17,7 @@ variables carry both palettes.
 
 One thing the token install can't do for you: Tailwind v4's `dark:`
 variant follows the operating system by default, so on a hand-rolled
-setup the components' `dark:` utilities ignore your `.dark` class. `npx
+setup the primitives' `dark:` utilities ignore your `.dark` class. `npx
 shadcn init` writes the opt-in for you; if you wired Tailwind up
 yourself, add it to the same stylesheet:
 
