@@ -4,10 +4,12 @@ import data from "blume:data";
 import Header from "../../../components/blume/Header.astro";
 import BlockFrame from "../../../components/block-frame.astro";
 import BlocksPrefs from "../../../components/blocks-prefs.astro";
+import BlocksSidebarNav from "../../../components/blocks-sidebar-nav.astro";
 import BlocksSidebar from "../../../components/blocks-sidebar.astro";
 import BlocksThemeDock from "../../../components/blocks-theme-dock.astro";
+import ProOffer from "../../../components/pro-offer.astro";
+import SiteDrawer from "../../../components/site-drawer.astro";
 import SiteFooter from "../../../components/site-footer.astro";
-import { SITE_TABS } from "../../../components/site-tabs.ts";
 import { groups } from "../_data";
 
 export function getStaticPaths() {
@@ -23,9 +25,14 @@ const group = groups.find((entry) => entry.id === groupId)!;
 const category = group.categories.find((entry) => entry.id === categoryId)!;
 const { config } = data;
 
+// No tabs in the navigation prop: PageLayout gates its built-in tabs-only
+// drawer on `navigation.tabs.length > 0`, and SiteDrawer replaces it below
+// (blume's `syncDrawerInert` uses `querySelector`, so only one
+// `[data-blume-nav-drawer]` may exist per page). The header is unaffected — it
+// injects the site tabs itself rather than reading this prop.
 const navigation = {
   ...data.navigation,
-  tabs: SITE_TABS,
+  tabs: [],
 };
 ---
 
@@ -61,20 +68,13 @@ const navigation = {
             <span class="mx-1.5">/</span>
             <span class="text-foreground">{category.label}</span>
           </nav>
-          <div class="mt-4 flex flex-wrap items-start justify-between gap-4">
-            <h1 class="text-3xl font-semibold tracking-tight">{category.label}</h1>
-            <a
-              href="/pro"
-              class="shrink-0 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-muted"
-            >
-              Get Pro
-            </a>
-          </div>
+          <h1 class="mt-4 text-3xl font-semibold tracking-tight">{category.label}</h1>
           <p class="mt-2 text-muted-foreground">
             {category.description} {category.items.length} {category.items.length === 1 ? "block" : "blocks"} in this category.
           </p>
         </div>
       </header>
+      <ProOffer />
       <div class="px-6 py-12 lg:px-10">
         <div class="divide-y divide-border">
           {category.items.map((item) => (
@@ -93,5 +93,10 @@ const navigation = {
       <BlocksThemeDock />
     </div>
   </div>
+  <SiteDrawer route={`/blocks/${group.id}/${category.id}`}>
+    <nav aria-label="Block categories">
+      <BlocksSidebarNav activeGroup={group.id} activeCategory={category.id} />
+    </nav>
+  </SiteDrawer>
   <footer slot="footer"><SiteFooter /></footer>
 </PageLayout>

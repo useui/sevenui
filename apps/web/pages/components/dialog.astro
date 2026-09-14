@@ -2,10 +2,11 @@
 import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
 import Header from "../../components/blume/Header.astro";
+import ComponentGalleryNav from "../../components/component-gallery-nav.astro";
 import ComponentGallery from "../../components/component-gallery.astro";
 import ExampleCard from "../../components/example-card.astro";
+import SiteDrawer from "../../components/site-drawer.astro";
 import SiteFooter from "../../components/site-footer.astro";
-import { SITE_TABS } from "../../components/site-tabs.ts";
 import { galleryComponent } from "./_data";
 
 import Dialog01 from "../../../../packages/registry/components/dialog/dialog-01";
@@ -20,8 +21,13 @@ import dialog04Source from "../../../../packages/registry/components/dialog/dial
 const SLUG = "dialog";
 const meta = galleryComponent(SLUG);
 const { config } = data;
-const navigation = { ...data.navigation, tabs: SITE_TABS };
-const description = `Free ${meta.label} examples built on the SevenUI ${meta.label} component.`;
+// No tabs in the navigation prop: PageLayout gates its built-in tabs-only
+// drawer on `navigation.tabs.length > 0`, and SiteDrawer replaces it below
+// (blume's `syncDrawerInert` uses `querySelector`, so only one
+// `[data-blume-nav-drawer]` may exist per page). The header is unaffected — it
+// injects SITE_TABS itself rather than reading this prop.
+const navigation = { ...data.navigation, tabs: [] };
+const description = `Free, copy-and-go ${meta.label} components built on the SevenUI ${meta.label} primitive.`;
 ---
 
 <PageLayout
@@ -44,7 +50,7 @@ const description = `Free ${meta.label} examples built on the SevenUI ${meta.lab
       <h1 class="text-3xl font-semibold tracking-tight">{meta.label}</h1>
       <p class="mt-2 max-w-2xl text-muted-foreground">
         {description}
-        <a class="underline underline-offset-4" href={`/docs/components/${SLUG}`}>Read the docs</a>.
+        <a class="underline underline-offset-4" href={`/docs/components/${SLUG}`}>Read the primitive docs</a>.
       </p>
     </header>
     <div class="flex max-w-4xl flex-col gap-12 px-6 py-10 lg:px-10">
@@ -62,5 +68,8 @@ const description = `Free ${meta.label} examples built on the SevenUI ${meta.lab
       </ExampleCard>
     </div>
   </ComponentGallery>
+  <SiteDrawer route={`/components/${SLUG}`}>
+    <ComponentGalleryNav active={SLUG} />
+  </SiteDrawer>
   <footer slot="footer"><SiteFooter /></footer>
 </PageLayout>

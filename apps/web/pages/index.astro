@@ -1,8 +1,9 @@
 ---
 // Landing page on Blume's PageLayout: the site chrome (header, theme,
 // search) comes from the layout; the shadcn component tokens the showcase
-// needs come from the root theme.css. Header tabs come from the shared
-// SITE_TABS module, same as the docs header override and the blocks pages.
+// needs come from the root theme.css. The header injects the shared site
+// tabs itself; SiteDrawer below is the matching mobile nav drawer, the same
+// one every other page renders.
 //
 // The page is drawn as an exposed design canvas: a max-w-6xl column framed
 // by continuous 1px rails, full-width section separators, crop marks at the
@@ -17,7 +18,7 @@ import LandingShowcase from "../components/landing-showcase.tsx";
 import CopyCommand from "../components/copy-command.tsx";
 import LandingRuler from "../components/landing-ruler.astro";
 import ComponentWall from "../components/component-wall.astro";
-import { SITE_TABS } from "../components/site-tabs.ts";
+import SiteDrawer from "../components/site-drawer.astro";
 import { installCommand } from "../lib/registry.ts";
 import registry from "../../../packages/registry/registry.json";
 
@@ -27,9 +28,14 @@ const uiCount = registry.items.filter(
 
 const { config } = data;
 
+// No tabs in the navigation prop: PageLayout gates its built-in tabs-only
+// drawer on `navigation.tabs.length > 0`, and SiteDrawer replaces it below
+// (blume's `syncDrawerInert` uses `querySelector`, so only one
+// `[data-blume-nav-drawer]` may exist per page). The header is unaffected — it
+// injects the site tabs itself rather than reading this prop.
 const navigation = {
   ...data.navigation,
-  tabs: SITE_TABS,
+  tabs: [],
 };
 
 const installSteps = [
@@ -39,13 +45,13 @@ const installSteps = [
     command: "npx shadcn@latest init",
   },
   {
-    title: "2. Add components",
+    title: "2. Add primitives",
     body: "Install any part from the registry. Source lands in your components directory, ready to edit.",
     command: installCommand("button"),
   },
   {
     title: "3. Use them",
-    body: "Import from your own codebase. The components are yours now — restyle or rewrite anything.",
+    body: "Import from your own codebase. The source is yours now — restyle or rewrite anything.",
     code: 'import { Button } from "@/components/ui/button"',
   },
 ];
@@ -57,7 +63,7 @@ const whyColumns = [
   },
   {
     title: "The shadcn workflow",
-    body: "Components are distributed as source through the shadcn registry and use the same CSS variables, so they drop into an existing shadcn project without touching your theme.",
+    body: "Primitives are distributed as source through the shadcn registry and use the same CSS variables, so they drop into an existing shadcn project without touching your theme.",
   },
   {
     title: "Source, not a dependency",
@@ -65,7 +71,7 @@ const whyColumns = [
   },
 ];
 
-const footerComponents = [
+const footerPrimitives = [
   "button",
   "input",
   "select",
@@ -108,7 +114,7 @@ const footerComponents = [
         <p
           class="hero-rise hero-rise-3 mt-6 max-w-xl text-lg text-balance text-muted-foreground"
         >
-          SevenUI is a registry of accessible React components built
+          SevenUI is a registry of accessible React primitives built
           exclusively on Base UI — installed with the CLI you already use.
         </p>
         <div
@@ -202,14 +208,14 @@ const footerComponents = [
       >
         <div>
           <h2 class="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Every component in the registry
+            Every primitive in the registry
           </h2>
           <p class="mt-3 max-w-xl text-muted-foreground">
             Each cell is one command away from your codebase.
           </p>
         </div>
         <p class="font-mono text-xs text-muted-foreground">
-          {uiCount} components · MIT
+          {uiCount} primitives · MIT
         </p>
       </div>
       <div class="l-row">
@@ -226,14 +232,14 @@ const footerComponents = [
             <Logomark className="h-5 w-auto" /> SevenUI
           </span>
           <p class="max-w-xs text-sm text-muted-foreground">
-            Base UI powered components, distributed through the shadcn
+            Base UI powered primitives, distributed through the shadcn
             registry.
           </p>
         </div>
-        <nav aria-label="Components" class="flex flex-col gap-2 text-sm">
-          <span class="mb-1 font-medium">Components</span>
+        <nav aria-label="Primitives" class="flex flex-col gap-2 text-sm">
+          <span class="mb-1 font-medium">Primitives</span>
           {
-            footerComponents.map((name) => (
+            footerPrimitives.map((name) => (
               <a
                 class="text-muted-foreground transition-colors hover:text-foreground"
                 href={`/docs/components/${name}`}
@@ -244,9 +250,9 @@ const footerComponents = [
           }
           <a
             class="text-muted-foreground transition-colors hover:text-foreground"
-            href="/docs"
+            href="/docs/components/accordion"
           >
-            All components →
+            All primitives →
           </a>
         </nav>
         <nav aria-label="Resources" class="flex flex-col gap-2 text-sm">
@@ -319,6 +325,7 @@ const footerComponents = [
       </div>
     </div>
   </footer>
+  <SiteDrawer route="/" />
 </PageLayout>
 
 <style>

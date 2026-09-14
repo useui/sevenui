@@ -2,11 +2,13 @@
 import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
 import Header from "../../../components/blume/Header.astro";
+import BlocksSidebarNav from "../../../components/blocks-sidebar-nav.astro";
 import BlocksSidebar from "../../../components/blocks-sidebar.astro";
 import BlocksThemeDock from "../../../components/blocks-theme-dock.astro";
+import ProOffer from "../../../components/pro-offer.astro";
 import CategoryCard from "../../../components/category-card.astro";
+import SiteDrawer from "../../../components/site-drawer.astro";
 import SiteFooter from "../../../components/site-footer.astro";
-import { SITE_TABS } from "../../../components/site-tabs.ts";
 import { groups } from "../_data";
 
 export function getStaticPaths() {
@@ -17,9 +19,14 @@ const { group: groupId } = Astro.params;
 const group = groups.find((entry) => entry.id === groupId)!;
 const { config } = data;
 
+// No tabs in the navigation prop: PageLayout gates its built-in tabs-only
+// drawer on `navigation.tabs.length > 0`, and SiteDrawer replaces it below
+// (blume's `syncDrawerInert` uses `querySelector`, so only one
+// `[data-blume-nav-drawer]` may exist per page). The header is unaffected — it
+// injects the site tabs itself rather than reading this prop.
 const navigation = {
   ...data.navigation,
-  tabs: SITE_TABS,
+  tabs: [],
 };
 ---
 
@@ -58,6 +65,7 @@ const navigation = {
           </p>
         </div>
       </header>
+      <ProOffer />
       <div class="px-6 py-12 lg:px-10">
         <div class="grid max-w-5xl gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {group.categories.map((category) => (
@@ -68,5 +76,8 @@ const navigation = {
       <BlocksThemeDock />
     </div>
   </div>
+  <SiteDrawer route={`/blocks/${group.id}`}>
+    <nav aria-label="Block categories"><BlocksSidebarNav activeGroup={group.id} /></nav>
+  </SiteDrawer>
   <footer slot="footer"><SiteFooter /></footer>
 </PageLayout>

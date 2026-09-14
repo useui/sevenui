@@ -4,6 +4,8 @@ import type { UIStrings } from "blume/core/i18n-ui.ts";
 import type { NavNode } from "blume/core/types.ts";
 import Icon from "blume/components/Icon.astro";
 import { withBase } from "blume/components/islands/base-path.ts";
+import data from "blume:data";
+import SiteDrawerTabs from "../site-drawer-tabs.astro";
 import Self from "./NavTree.astro";
 
 interface PagePanel {
@@ -116,6 +118,26 @@ const initialId =
     : "root";
 ---
 
+{
+  /* Site tabs at the top of the docs nav drawer. RootLayout has its own tab
+     list for this slot, but it is driven by `navigation.tabs`, and
+     blume.config declares none — the header injects SITE_TABS itself, which
+     never reaches the layout. So below `lg` the docs drawer used to be the
+     page tree and nothing else: no way to reach Blocks or Pro without
+     scrolling past every component. `lg:hidden` because from `lg` this same
+     element is the static desktop sidebar, where the header shows the tabs
+     inline. Same partial the custom pages' SiteDrawer uses, so the drawer
+     reads identically across the site. */
+  root && (
+    <div class="mb-4 border-border border-b pb-4 lg:hidden">
+      <SiteDrawerTabs
+        label={n.sections}
+        root={data.navigation.root}
+        route={currentRoute}
+      />
+    </div>
+  )
+}
 {
   root && panels.length > 0 ? (
     <blume-nav class="block" data-initial={initialId}>

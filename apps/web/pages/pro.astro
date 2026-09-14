@@ -3,8 +3,8 @@ import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
 import Header from "../components/blume/Header.astro";
 import LandingRuler from "../components/landing-ruler.astro";
+import SiteDrawer from "../components/site-drawer.astro";
 import SiteFooter from "../components/site-footer.astro";
-import { SITE_TABS } from "../components/site-tabs.ts";
 
 const { config } = data;
 
@@ -34,9 +34,14 @@ const catalog = [
   { id: "billing", label: "Billing" },
 ];
 
+// No tabs in the navigation prop: PageLayout gates its built-in tabs-only
+// drawer on `navigation.tabs.length > 0`, and SiteDrawer replaces it below
+// (blume's `syncDrawerInert` uses `querySelector`, so only one
+// `[data-blume-nav-drawer]` may exist per page). The header is unaffected — it
+// injects the site tabs itself rather than reading this prop.
 const navigation = {
   ...data.navigation,
-  tabs: SITE_TABS,
+  tabs: [],
 };
 ---
 
@@ -253,6 +258,7 @@ const navigation = {
     </section>
   </div>
   <footer slot="footer"><SiteFooter /></footer>
+  <SiteDrawer route="/pro" />
 </PageLayout>
 
 <style>

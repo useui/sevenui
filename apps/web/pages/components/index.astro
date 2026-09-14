@@ -2,21 +2,27 @@
 import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
 import Header from "../../components/blume/Header.astro";
+import ComponentGalleryNav from "../../components/component-gallery-nav.astro";
 import ComponentGallery from "../../components/component-gallery.astro";
+import SiteDrawer from "../../components/site-drawer.astro";
 import SiteFooter from "../../components/site-footer.astro";
-import { SITE_TABS } from "../../components/site-tabs.ts";
 import { galleryComponents } from "./_data";
 
 const { config } = data;
 
 const description =
-  "Ready-to-use examples of every SevenUI component. Copy them into your project with one command — the source is yours.";
+  "Composed, ready-to-use pieces built from the SevenUI primitives. Copy one into your project with a single command — the source is yours.";
 
 const totalExamples = galleryComponents.reduce((sum, c) => sum + c.count, 0);
 
+// No tabs in the navigation prop: PageLayout gates its built-in tabs-only
+// drawer on `navigation.tabs.length > 0`, and SiteDrawer replaces it below
+// (blume's `syncDrawerInert` uses `querySelector`, so only one
+// `[data-blume-nav-drawer]` may exist per page). The header is unaffected — it
+// injects the site tabs itself rather than reading this prop.
 const navigation = {
   ...data.navigation,
-  tabs: SITE_TABS,
+  tabs: [],
 };
 ---
 
@@ -40,7 +46,7 @@ const navigation = {
       <div class="max-w-2xl">
         <h1 class="text-3xl font-semibold tracking-tight">Components</h1>
         <p class="mt-2 text-muted-foreground">
-          {description} {totalExamples} {totalExamples === 1 ? "example" : "examples"} across {galleryComponents.length} components.
+          {description} {totalExamples} {totalExamples === 1 ? "component" : "components"} across {galleryComponents.length} {galleryComponents.length === 1 ? "primitive" : "primitives"}.
         </p>
       </div>
     </header>
@@ -52,11 +58,14 @@ const navigation = {
         >
           <h2 class="text-sm font-medium">{component.label}</h2>
           <p class="mt-1 text-sm text-muted-foreground">
-            {component.count} {component.count === 1 ? "example" : "examples"}
+            {component.count} {component.count === 1 ? "component" : "components"}
           </p>
         </a>
       ))}
     </div>
   </ComponentGallery>
+  <SiteDrawer route="/components">
+    <ComponentGalleryNav />
+  </SiteDrawer>
   <footer slot="footer"><SiteFooter /></footer>
 </PageLayout>

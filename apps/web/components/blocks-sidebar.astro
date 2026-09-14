@@ -1,11 +1,13 @@
 ---
 // Category sidebar for the /blocks gallery (directory, group, and category
 // pages). One <details> per group listing its categories with block counts.
-// Below `lg` the whole tree collapses into a single "Categories" disclosure;
-// at `lg` and up it renders as an always-visible left column, flush against
-// the viewport edge, separated from the content column by a border (docs-
-// style structural line, not the landing's decorative rail/crop-mark
-// apparatus), and sticky so it stays visible while the content scrolls.
+// Desktop only: an always-visible left column, flush against the viewport
+// edge, separated from the content column by a border (docs-style structural
+// line, not the landing's decorative rail/crop-mark apparatus), and sticky so
+// it stays visible while the content scrolls. Below `lg` the same tree is
+// reached through the header's nav drawer (site-drawer.astro), which every
+// /blocks page renders — it used to be a "Categories" disclosure buried in the
+// page body here, which the header hamburger knew nothing about.
 // The sticky offset (`top-16` / `100dvh-4rem`) mirrors Blume's own docs
 // sidebar (node_modules/blume/src/components/layout/RootLayout.astro),
 // whose nav drawer uses the same `lg:sticky lg:top-16
@@ -14,7 +16,6 @@
 // Navigation only. The theme customizer used to hang below this tree; it now
 // lives in blocks-theme-dock.astro, rendered by the three /blocks pages. Do not
 // render the dock from here — it must exist exactly once per page.
-import { ChevronRight } from "@lucide/astro";
 import BlocksSidebarNav from "./blocks-sidebar-nav.astro";
 
 interface Props {
@@ -25,23 +26,9 @@ const { activeGroup, activeCategory } = Astro.props;
 ---
 
 <div
-  class="border-b border-border px-6 py-6 lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)] lg:overflow-y-auto lg:border-b-0 lg:border-r lg:px-5 lg:py-8"
+  class="hidden lg:sticky lg:top-16 lg:block lg:h-[calc(100dvh-4rem)] lg:overflow-y-auto lg:border-r lg:border-border lg:px-5 lg:py-8"
 >
-  <details class="group lg:hidden">
-    <summary
-      class="flex cursor-pointer list-none items-center justify-between gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground [&::-webkit-details-marker]:hidden"
-    >
-      <span>Categories</span>
-      <ChevronRight
-        class="size-3.5 shrink-0 text-muted-foreground transition-transform duration-150 group-open:rotate-90"
-        aria-hidden="true"
-      />
-    </summary>
-    <nav class="mt-2" aria-label="Block categories">
-      <BlocksSidebarNav activeGroup={activeGroup} activeCategory={activeCategory} />
-    </nav>
-  </details>
-  <nav class="hidden lg:block" aria-label="Block categories">
+  <nav aria-label="Block categories">
     <BlocksSidebarNav activeGroup={activeGroup} activeCategory={activeCategory} />
   </nav>
 </div>

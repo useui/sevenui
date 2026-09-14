@@ -1,0 +1,39 @@
+---
+import { withBase } from "blume/components/islands/base-path.ts";
+import { currentTabForRoute } from "blume/components/layout/nav-utils.ts";
+import { SITE_TABS } from "./site-tabs.ts";
+
+interface Props {
+  /** Current page route, in final URL space. */
+  route: string;
+  /** Navigation root for the active-tab match (`"/docs"` inside the docs tree). */
+  root?: string;
+  /** Accessible name for the list, localized by the caller. */
+  label: string;
+}
+
+// The site tabs as a vertical list, for the mobile drawer. Two callers render
+// it — SiteDrawer (every custom page) and the Sidebar override (docs pages) —
+// so the markup stays identical across the site instead of being duplicated
+// the way blume duplicates it between RootLayout and PageLayout.
+const { route, root, label } = Astro.props;
+const activeTab = currentTabForRoute(SITE_TABS, route, root);
+---
+
+<nav aria-label={label}>
+  <ul class="m-0 list-none p-0">
+    {
+      SITE_TABS.map((tab) => (
+        <li>
+          <a
+            aria-current={tab === activeTab ? "page" : undefined}
+            class="block rounded-[0.65rem] px-2.5 py-1.5 font-medium text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground"
+            href={withBase(tab.href ?? tab.path)}
+          >
+            {tab.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

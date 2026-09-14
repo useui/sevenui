@@ -9,8 +9,8 @@ import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
 import Header from "./blume/Header.astro";
 import LandingRuler from "./landing-ruler.astro";
+import SiteDrawer from "./site-drawer.astro";
 import SiteFooter from "./site-footer.astro";
-import { SITE_TABS } from "./site-tabs.ts";
 
 interface Props {
   /** Document name, shown in the mono header strip and the page title. */
@@ -27,9 +27,14 @@ const { title, route, description, updated } = Astro.props;
 
 const { config } = data;
 
+// No tabs in the navigation prop: PageLayout gates its built-in tabs-only
+// drawer on `navigation.tabs.length > 0`, and SiteDrawer replaces it below
+// (blume's `syncDrawerInert` uses `querySelector`, so only one
+// `[data-blume-nav-drawer]` may exist per page). The header is unaffected — it
+// injects the site tabs itself rather than reading this prop.
 const navigation = {
   ...data.navigation,
-  tabs: SITE_TABS,
+  tabs: [],
 };
 ---
 
@@ -66,6 +71,7 @@ const navigation = {
       </div>
     </section>
   </div>
+  <SiteDrawer route={route} />
   <footer slot="footer"><SiteFooter /></footer>
 </PageLayout>
 

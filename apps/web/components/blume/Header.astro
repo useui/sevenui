@@ -116,16 +116,20 @@ const SearchSlot = resolveSlot(layout.Search, Search);
 // needed whenever there are tabs to reveal.
 const showNavToggle = hasDrawer && (hasSidebar || navigation.tabs.length > 0);
 const activeTab = currentTabForRoute(navigation.tabs, route, navigation.root);
-// Where the header's inline tab bar appears. With a sidebar it shares the `md`
-// breakpoint with the docs drawer; without one, the tabs-only drawer is the sole
-// mobile nav below `lg`, so the inline tabs wait until `lg` to avoid duplicating
-// the drawer's links between `md` and `lg`.
-const tabsNavClass = hasSidebar
-  ? "hidden gap-1 md:flex"
-  : "hidden gap-1 lg:flex";
+// Where the header's inline tab bar appears. The nav toggle is `lg:hidden`, so
+// the inline tabs wait until `lg` on EVERY page: below that the drawer is the
+// sole mobile nav. Blume varies this by `hasSidebar` (tabs at `md` for docs),
+// which made docs carry the hamburger and the 294px tab bar at the same time —
+// 728px of content in a 768px row, overflowing as soon as a signed-in name, a
+// classic scrollbar, or the pre-swap fallback font widened anything.
+const tabsNavClass = "hidden gap-1 lg:flex";
 
+// `shrink-0` throughout the chrome: every item here is intrinsically sized, so
+// leaving them shrinkable only squashes the icon buttons into ovals and wraps
+// the tab labels inside the 4rem row. The logo is the deliberate exception —
+// it carries `min-w-0`/`truncate`, so it absorbs any deficit by itself.
 const iconButton =
-  "inline-flex size-9 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground";
+  "inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground";
 
 // Delegated handlers for the theme toggle, mobile nav drawer, and banner
 // dismiss. Living with the header means every page that renders it — docs pages
@@ -178,7 +182,7 @@ const clickScript = `(()=>{const dr=()=>{const h=document.querySelector("[data-b
         {navigation.tabs.map((tab) => (
           <a
             aria-current={tab === activeTab ? "page" : undefined}
-            class="rounded-full px-3 py-1.5 font-medium text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:text-foreground"
+            class="shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 font-medium text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:text-foreground"
             href={withBase(tab.href ?? tab.path)}
           >
             {tab.label}
@@ -218,7 +222,7 @@ const clickScript = `(()=>{const dr=()=>{const h=document.querySelector("[data-b
       />
     )
   }
-  <div class="flex items-center gap-2">
+  <div class="flex shrink-0 items-center gap-2">
     {
       navigation.repoUrl && (
         <a
@@ -250,15 +254,42 @@ const clickScript = `(()=>{const dr=()=>{const h=document.querySelector("[data-b
       <span class="hidden dark:inline-flex"><Icon name="moon" size={18} /></span>
     </button>
     {askEnabled && <Ask strings={askStrings} />}
+    {
+      /* Signed out this is a "Sign in" pill. Signed in, the script below stamps
+         `data-signed-in` and fills both spans, and below `sm` the pill becomes a
+         plain icon button showing the initial: a first name is unbounded text in
+         the one header cluster that cannot be hidden, and at 375px its ~128px
+         was the difference between the row fitting and the logo and search
+         trigger being squeezed to make room. */
+    }
     <a
-      id="auth-control"
-      class="rounded-full px-3 py-1.5 font-medium text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground"
+      class="group inline-flex max-w-32 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-3 py-1.5 font-medium text-muted-foreground text-sm uppercase transition-colors hover:bg-muted hover:text-foreground data-[signed-in]:max-sm:size-9 data-[signed-in]:max-sm:bg-muted data-[signed-in]:max-sm:px-0 data-[signed-in]:max-sm:text-foreground"
       href="/account"
+      id="auth-control"
     >
-      Sign in
+      <span
+        class="hidden group-data-[signed-in]:max-sm:inline"
+        data-auth-initial
+      ></span>
+      <span
+        class="min-w-0 truncate normal-case group-data-[signed-in]:max-sm:hidden"
+        data-auth-label>Sign in</span
+      >
     </a>
   </div>
 </header>
+<style is:global>
+  /* The search trigger comes from Blume through the `Search` layout slot, so
+     its classes are not ours to edit. It has no `shrink-0` and, below `lg`,
+     no children but the 16px icon — so once the header ran out of room the
+     button and the icon inside it both compressed, leaving a bordered circle
+     with a dot in it. Everything else in this header is already rigid; this
+     reinstates the same rule for the one element we render through a slot. */
+  [data-blume-search-open],
+  [data-blume-search-open] > * {
+    flex-shrink: 0;
+  }
+</style>
 <script is:inline set:html={clickScript} />
 <script>
   import { getClerk } from "../../lib/clerk";
@@ -285,13 +316,26 @@ const clickScript = `(()=>{const dr=()=>{const h=document.querySelector("[data-b
   // no dropdown of our own. Wrapped in try/catch: a Clerk boot failure here
   // (network hiccup, blocked cookie, etc.) must never surface as an
   // uncaught rejection on every single page — the link just stays "Sign in".
+  //
+  // `data-signed-in` is what switches the link to icon mode below `sm`; the
+  // initial and the full name are written to their own spans so the CSS picks
+  // which one shows rather than the script re-rendering on resize. The name
+  // also becomes the accessible name, since in icon mode the only visible
+  // text is a single letter.
   async function syncAuthControl() {
     const link = document.getElementById("auth-control");
     if (!link) return; // header not rendered on this page
     if (!hasSessionHint()) return; // no session hint — skip loading Clerk entirely
     try {
       const clerk = await getClerk();
-      link.textContent = clerk.user?.firstName || (clerk.user ? "Account" : "Sign in");
+      const name = clerk.user?.firstName || (clerk.user ? "Account" : null);
+      if (!name) return; // signed out after all — leave the "Sign in" pill
+      const label = link.querySelector("[data-auth-label]");
+      const initial = link.querySelector("[data-auth-initial]");
+      if (label) label.textContent = name;
+      if (initial) initial.textContent = name.slice(0, 1);
+      link.setAttribute("aria-label", name);
+      link.setAttribute("data-signed-in", "");
     } catch (e) {
       console.error("header:", e);
       // Leave the default "Sign in" label; nothing else to do client-side.
