@@ -3,6 +3,7 @@ import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
 import Header from "../../../components/blume/Header.astro";
 import BlockFrame from "../../../components/block-frame.astro";
+import BlocksPrefs from "../../../components/blocks-prefs.astro";
 import BlocksSidebar from "../../../components/blocks-sidebar.astro";
 import BlocksThemeDock from "../../../components/blocks-theme-dock.astro";
 import SiteFooter from "../../../components/site-footer.astro";
@@ -50,6 +51,7 @@ const navigation = {
   <div class="lg:grid lg:grid-cols-[260px_minmax(0,1fr)]">
     <BlocksSidebar activeGroup={group.id} activeCategory={category.id} />
     <div class="min-w-0">
+      <BlocksPrefs />
       <header class="border-b border-border px-6 py-12 lg:px-10">
         <div class="max-w-2xl">
           <nav class="text-sm text-muted-foreground" aria-label="Breadcrumb">

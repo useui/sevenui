@@ -1,0 +1,135 @@
+---
+// The install command as ONE fused 32px unit: a package-manager menu button,
+// the command's tail, and a copy button, separated by hairlines rather than
+// gaps so the three read as a single object at the toolbar's own height.
+//
+// Only the PM label varies with the preference; the visible command text does
+// NOT. The runner prefix (`npx` / `pnpm dlx` / `yarn dlx` / `bunx --bun`) plus
+// `shadcn@latest` is exactly the part the label already tells you, so eliding it
+// to a leading "…" keeps the identifying half — the registry item — readable at
+// every width, and keeps the text stable when the preference changes. The four
+// full commands ride along in data attributes; the copy handler in
+// block-frame.astro picks one by the live `[data-pm]` value.
+//
+// All behaviour lives in block-frame.astro's single delegated script — this
+// component ships no script of its own, so a page with six cards binds once.
+import { ChevronDown, Check, Copy } from "@lucide/astro";
+import { PACKAGE_MANAGERS } from "../lib/package-manager.ts";
+import { installCommand } from "../lib/registry.ts";
+
+interface Props {
+  /** Registry item path passed to installCommand(), e.g. "pro/dashboard-01". */
+  item: string;
+  /** Block title, used only to make the copy announcement specific. */
+  title: string;
+}
+
+const { item, title } = Astro.props;
+
+const commands = Object.fromEntries(PACKAGE_MANAGERS.map((pm) => [pm, installCommand(item, pm)]));
+// Derived from a real command rather than re-assembled, so it stays correct if
+// installCommand's shape changes (namespace vs. direct registry URL).
+const tail = `… ${commands.npm.replace(/^.*?shadcn@latest\s+/, "")}`;
+
+const KEY =
+  "relative inline-flex cursor-pointer items-center text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:z-[1] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring";
+---
+
+<div
+  class="relative flex h-8 min-w-0 shrink items-stretch rounded-md border border-border bg-background text-xs"
+  data-install
+  data-title={title}
+  data-cmd-npm={commands.npm}
+  data-cmd-pnpm={commands.pnpm}
+  data-cmd-yarn={commands.yarn}
+  data-cmd-bun={commands.bun}
+>
+  <button
+    type="button"
+    data-pm-trigger
+    aria-haspopup="menu"
+    aria-expanded="false"
+    class={`${KEY} gap-1 rounded-s-md px-2 font-medium text-foreground`}
+  >
+    <span class="sr-only">Package manager:</span>
+    {/* Mark and name are both `.pm-only`, so the same CSS that picks the
+        command picks the brand — the trigger never needs JS to stay truthful.
+        The marks come from the page's one sprite (package-manager-icons.astro);
+        `aria-hidden` because the name beside them already says which is which. */}
+    {PACKAGE_MANAGERS.map((pm) => (
+      <svg class={`pm-only pm-only-${pm} size-3.5 shrink-0`} aria-hidden="true">
+        <use href={`#pm-icon-${pm}`} />
+      </svg>
+    ))}
+    {PACKAGE_MANAGERS.map((pm) => <span class={`pm-only pm-only-${pm}`}>{pm}</span>)}
+    <ChevronDown class="size-3 shrink-0 text-muted-foreground" stroke-width={1.5} aria-hidden="true" />
+  </button>
+
+  <span class="w-px shrink-0 bg-border" aria-hidden="true"></span>
+
+  {/* Not a control — the readable half of what the copy button will put on the
+      clipboard. Two details that look fussy and are not:
+
+      The truncation lives on the inner span, never on this flex container.
+      `text-overflow` acts on a block container's own inline content, and a bare
+      text node inside a flex box is an anonymous flex ITEM — so `truncate` here
+      produced a hard clip with no ellipsis at all.
+
+      That span truncates from the START (`dir="rtl"`, with the command in a
+      <bdi> so the Latin text itself is not reordered). The head is the part we
+      already chose to elide — the runner and `shadcn@latest`, which the package
+      -manager label beside this already names — while the tail is the registry
+      item, the only part that distinguishes dashboard-01 from dashboard-02.
+      Truncating the usual way cut off exactly that. When the CSS ellipsis does
+      appear it simply swallows the authored one, so there is never a double. */}
+  <code class="flex min-w-0 flex-1 items-center px-2 font-mono text-muted-foreground">
+    <span dir="rtl" class="block min-w-0 flex-1 truncate text-left"><bdi>{tail}</bdi></span>
+  </code>
+
+  <span class="w-px shrink-0 bg-border" aria-hidden="true"></span>
+
+  {/* The two icons swap by having the script toggle `hidden` on each, rather
+      than through a group-data variant — the accessible name stays constant
+      ("Copy install command"), because swapping it to "Copied" destroys the
+      button's name for anyone who tabs back to it later, and the result is
+      announced through the page's live region instead. */}
+  <button type="button" data-copy class={`${KEY} w-8 shrink-0 justify-center rounded-e-md`}>
+    <span class="sr-only">Copy install command</span>
+    <Copy class="size-4" stroke-width={1.5} aria-hidden="true" data-copy-idle />
+    <Check class="hidden size-4" stroke-width={1.5} aria-hidden="true" data-copy-done />
+  </button>
+
+  {/* Non-modal, like the theme dock's panel: no scrim, no focus trap. Escape
+      and an outside pointerdown close it. Anchored under the TRIGGER (left), not
+      the control's right edge. */}
+  <div
+    data-pm-menu
+    hidden
+    role="menu"
+    aria-label="Package manager"
+    class="absolute top-full left-0 z-30 mt-1 min-w-[7rem] rounded-md border border-border bg-card p-1 shadow-[0_10px_24px_-6px_rgb(0_0_0/0.18),0_2px_6px_-2px_rgb(0_0_0/0.10)]"
+  >
+    {PACKAGE_MANAGERS.map((pm) => (
+      <button
+        type="button"
+        role="menuitemradio"
+        aria-checked="false"
+        tabindex="-1"
+        data-pm-option={pm}
+        class="group/opt flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-left font-mono text-xs text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:bg-muted focus-visible:text-foreground aria-checked:font-medium aria-checked:text-foreground"
+      >
+        <svg class="size-3.5 shrink-0" aria-hidden="true">
+          <use href={`#pm-icon-${pm}`} />
+        </svg>
+        {pm}
+        {/* The tick trails the name rather than leading it, so the four brand
+            marks form one column the eye can scan. */}
+        <Check
+          class="ml-auto size-3 shrink-0 opacity-0 group-aria-checked/opt:opacity-100"
+          stroke-width={2}
+          aria-hidden="true"
+        />
+      </button>
+    ))}
+  </div>
+</div>
