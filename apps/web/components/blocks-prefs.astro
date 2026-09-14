@@ -1,8 +1,9 @@
 ---
 // Page-level plumbing shared by every install control in the /blocks gallery:
-// the package-manager preference, and the one live region the toolbars
-// announce through. Exactly ONE instance per page, on every page that renders
-// a <BlockFrame /> — today only /blocks/[group]/[category]; the other two
+// the package-manager preference, the one live region the toolbars announce
+// through, and the one tooltip they all share. Exactly ONE instance per page,
+// on every page that renders a <BlockFrame /> — today only
+// /blocks/[group]/[category]; the other two
 // /blocks pages show category cards, which carry no install control. Render it
 // FIRST in the content column: the inline script below has to execute before
 // the cards are parsed, or a non-default preference repaints them.
@@ -30,6 +31,26 @@ import PackageManagerIcons from "./package-manager-icons.astro";
     be cleared between writes or a second identical message is silent — the
     script in block-frame.astro does both. */}
 <div id="sevenui-announcer" role="status" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+
+{/* The single tooltip every toolbar control shares, positioned by the script in
+    block-frame.astro. One node per page rather than one per control, and no
+    hydration: the alternative was a React island per button, which on a
+    six-card category page is 54 of them.
+
+    It is DECORATIVE — `role="presentation"`, no `aria-describedby`. Every
+    control it serves already carries an sr-only name saying the same thing, and
+    a tooltip that repeats the accessible name only makes screen readers say it
+    twice. Base UI's own tooltip omits `role="tooltip"` for the same reason.
+
+    `pointer-events-none` is what makes it WCAG 1.4.13 "hoverable": the pointer
+    cannot land on it, so it can never be dismissed by moving toward it. The
+    `top-0 left-0` + transform pairing keeps positioning off the layout path. */}
+<div
+  id="sevenui-tip"
+  role="presentation"
+  hidden
+  class="pointer-events-none fixed top-0 left-0 z-50 max-w-[min(22rem,90vw)] break-words rounded-md bg-foreground px-2 py-1 font-medium text-background text-xs shadow-md"
+></div>
 
 <style is:global>
   /* One rule per entry in PACKAGE_MANAGERS (lib/package-manager.ts). The

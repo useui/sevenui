@@ -37,7 +37,7 @@
 // pixels wider than what actually renders inside it. Measuring that delta
 // once per box (not hardcoding "2") is what makes "1024px" in the badge
 // mean the block genuinely renders at 1024.
-import { ArrowUpRight, Link2, Maximize2, Monitor, RotateCw, Smartphone, Sparkles, Tablet } from "@lucide/astro";
+import { ArrowUpRight, Check, Link2, Maximize2, Monitor, RotateCw, Smartphone, Sparkles, Tablet } from "@lucide/astro";
 import InstallControl from "./install-control.astro";
 
 interface Props {
@@ -121,42 +121,68 @@ const PRESET = `${ALWAYS} aria-pressed:bg-muted aria-pressed:text-foreground`;
         Controls now drop out at container tiers instead, in reverse order of
         how often they're needed. `display: none` takes them out of the
         accessibility tree and the tab order for free, with none of the
-        focus-loss window an overflow menu opens up. */}
+        focus-loss window an overflow menu opens up.
+
+        The tier thresholds are budgeted against the INSTALL CONTROL, not just
+        against the icons. It is the only shrinkable item in the bar (everything
+        else is `shrink-0`), so it absorbs any deficit alone, and its natural
+        width is ~355px. Tiering on the icons alone put `@lg` at 512 and `@xl`
+        at 576 — container widths where that 355px had not been earned yet — so
+        each tier boundary made the bar TIGHTER as the window got WIDER: the
+        command field dropped 377->266px at `@lg` and 329->258px at `@xl`, its
+        global minimum. `@2xl` (672) and `@3xl` (768) clear 355px on the far
+        side of every boundary, so each tier is now a net gain. A 1024px
+        viewport is the case to keep in mind: the 260px sidebar appears there
+        and the track falls to 684px, which must still land in a tier the
+        install control fits in. */}
     <div class="flex h-11 items-center gap-2 rounded-t-xl border border-border bg-muted/30 px-3">
-      <div class="hidden items-center gap-1 @lg/card:flex" role="group" aria-label="Preview width">
+      <div class="hidden shrink-0 items-center gap-1 @2xl/card:flex" role="group" aria-label="Preview width">
         {/* The labels carry the RANGE each preset is pressed for, not the
             single width it snaps to — the button stays pressed anywhere in its
             bucket, so "768px" was describing a state the control never has on
-            its own. Hints ride on `title`: the UA draws it, so unlike the
-            bespoke tooltip spans this replaces it can never be clipped by the
-            card, it survives on the accessibility side because the same text is
-            in the accessible name, and it is explicitly exempt from WCAG
-            1.4.13, which an author-drawn hover tooltip with no Escape handling
-            can never satisfy. */}
-        <button type="button" data-preset="384" aria-pressed="false" title="Mobile — up to 384px" class={PRESET}>
+            its own. Hints ride on `data-tip`, drawn by the one page-level
+            tooltip node (see the Tooltips section of the script below). They
+            were `title` before, which the UA draws for free but only after its
+            own ~500ms-1s delay that no author can shorten. The two reasons
+            `title` beat the tooltip spans it replaced still hold and are met
+            here: the tip is `position: fixed`, so no ancestor can clip it, and
+            it is purely decorative — the accessible name is the `sr-only` span
+            on each control, unchanged. WCAG 1.4.13 is satisfied rather than
+            side-stepped: Escape dismisses it, and it is `pointer-events: none`
+            so it cannot be hovered away. */}
+        <button type="button" data-preset="384" aria-pressed="false" data-tip="Mobile — up to 384px" class={PRESET}>
           <span class="sr-only">Preview at mobile width, up to 384 pixels</span>
           <Smartphone class="size-4" stroke-width={1.5} aria-hidden="true" />
         </button>
-        <button type="button" data-preset="768" aria-pressed="false" title="Tablet — 385 to 1023px" class={PRESET}>
+        <button type="button" data-preset="768" aria-pressed="false" data-tip="Tablet — 385 to 1023px" class={PRESET}>
           <span class="sr-only">Preview at tablet width, 385 to 1023 pixels</span>
           <Tablet class="size-4" stroke-width={1.5} aria-hidden="true" />
         </button>
-        <button type="button" data-preset="max" aria-pressed="true" title="Desktop — 1024px and up" class={PRESET}>
+        <button type="button" data-preset="max" aria-pressed="true" data-tip="Desktop — 1024px and up" class={PRESET}>
           <span class="sr-only">Preview at desktop width, 1024 pixels and up</span>
           <Monitor class="size-4" stroke-width={1.5} aria-hidden="true" />
         </button>
       </div>
 
       <div class="ml-auto flex min-w-0 items-center gap-1">
-        <button type="button" data-prompt title="Copy prompt for an AI agent" class={`${ICON} hidden @xl/card:inline-flex`}>
+        {/* The `data-copy-idle`/`data-copy-done` pair is the install control's
+            confirmation pattern (install-control.astro), reused verbatim: the
+            script swaps `hidden` between the two icons and the accessible name
+            never changes, so the result is announced through the live region
+            rather than by mutating the button's name under anyone tabbed to it.
+            These two copied silently before — only the install command
+            confirmed, which made the other two feel broken. */}
+        <button type="button" data-prompt data-tip="Copy prompt for an AI agent" class={`${ICON} hidden @3xl/card:inline-flex`}>
           <span class="sr-only">Copy a prompt describing {title} for an AI coding agent</span>
-          <Sparkles class="size-4" stroke-width={1.5} aria-hidden="true" />
+          <Sparkles class="size-4" stroke-width={1.5} aria-hidden="true" data-copy-idle />
+          <Check class="hidden size-4" stroke-width={1.5} aria-hidden="true" data-copy-done />
         </button>
-        <button type="button" data-permalink title="Copy link to this block" class={`${ICON} hidden @xl/card:inline-flex`}>
+        <button type="button" data-permalink data-tip="Copy link to this block" class={`${ICON} hidden @3xl/card:inline-flex`}>
           <span class="sr-only">Copy a link to {title}</span>
-          <Link2 class="size-4" stroke-width={1.5} aria-hidden="true" />
+          <Link2 class="size-4" stroke-width={1.5} aria-hidden="true" data-copy-idle />
+          <Check class="hidden size-4" stroke-width={1.5} aria-hidden="true" data-copy-done />
         </button>
-        <button type="button" data-refresh title="Reload preview" class={`${ICON} hidden @sm/card:inline-flex`}>
+        <button type="button" data-refresh data-tip="Reload preview" class={`${ICON} hidden @sm/card:inline-flex`}>
           <span class="sr-only">Reload the {title} preview</span>
           <RotateCw class="size-4" stroke-width={1.5} aria-hidden="true" />
         </button>
@@ -166,7 +192,7 @@ const PRESET = `${ALWAYS} aria-pressed:bg-muted aria-pressed:text-foreground`;
           type="button"
           data-fullscreen
           aria-pressed="false"
-          title="Full screen"
+          data-tip="Full screen"
           class={`${ICON} hidden @sm/card:inline-flex aria-pressed:bg-muted aria-pressed:text-foreground`}
         >
           <span class="sr-only">Show {title} full screen</span>
@@ -176,12 +202,12 @@ const PRESET = `${ALWAYS} aria-pressed:bg-muted aria-pressed:text-foreground`;
             control one row over, two differently-behaving buttons shared a
             name — and screen-reader users only ever got this one's, since the
             old tooltip was aria-hidden. */}
-        <a href={previewUrl} target="_blank" rel="noopener noreferrer" title="Open in new tab" class={ALWAYS}>
+        <a href={previewUrl} target="_blank" rel="noopener noreferrer" data-tip="Open in new tab" class={ALWAYS}>
           <span class="sr-only">Open the {title} preview in a new tab</span>
           <ArrowUpRight class="size-4" stroke-width={1.5} aria-hidden="true" />
         </a>
         {sourceUrl && (
-          <a href={sourceUrl} target="_blank" rel="noopener noreferrer" title="View source on GitHub" class={ALWAYS}>
+          <a href={sourceUrl} target="_blank" rel="noopener noreferrer" data-tip="View source on GitHub" class={ALWAYS}>
             <span class="sr-only">View the {title} source on GitHub</span>
             <svg class="size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
               <path
@@ -569,6 +595,9 @@ const PRESET = `${ALWAYS} aria-pressed:bg-muted aria-pressed:text-foreground`;
   // ResizeObserver holds STRONG references to its targets, so without this every
   // gallery navigation pins another page's worth of detached iframes in memory.
   document.addEventListener("astro:before-swap", () => {
+    // The tip node is replaced by the swap; leaving the old one visible would
+    // paint a stale hint over the incoming page.
+    hideTip();
     readoutObserver.disconnect();
     loadObserver.disconnect();
     pending.length = 0;
@@ -592,6 +621,155 @@ const PRESET = `${ALWAYS} aria-pressed:bg-muted aria-pressed:text-foreground`;
     });
   }
 
+  // ---------------------------------------------------------------------------
+  // Tooltips
+  // ---------------------------------------------------------------------------
+  // One page-level tooltip node (rendered by blocks-prefs.astro) serving every
+  // `[data-tip]` control, driven by the same delegated document listeners as
+  // the rest of this script. No delay: `title`, which this replaced, is drawn
+  // by the UA after ~500ms in Chrome and ~1s in Safari, and that timing is not
+  // author-controllable.
+  //
+  // Positioned with a transform on a `position: fixed` node, so showing it
+  // never touches layout and no ancestor's overflow can clip it. Preferred side
+  // is ABOVE the control: the toolbar sits on top of the preview iframe, so a
+  // tip drawn below covers the very thing the control acts on. It flips below
+  // only when the viewport top would cut it off, and it is clamped 8px inside
+  // both horizontal edges.
+  const TIP_GAP = 6;
+
+  function tipNode(): HTMLElement | null {
+    return document.getElementById("sevenui-tip");
+  }
+
+  // The control the tip currently belongs to. Kept because both handlers below
+  // fire on movement WITHIN a control — a button and the icon inside it are
+  // separate event targets — and without it entering the icon would hide and
+  // immediately re-show the tip, which reads as a flicker.
+  let tipOwner: HTMLElement | null = null;
+
+  function hideTip() {
+    tipOwner = null;
+    const tip = tipNode();
+    if (!tip || tip.hidden) return;
+    tip.hidden = true;
+    tip.textContent = "";
+  }
+
+  function showTip(trigger: HTMLElement) {
+    const tip = tipNode();
+    // `tipFlash` is the transient "Copied" confirmation; it shadows the static
+    // hint rather than overwriting it, so the flash can never clobber a tip
+    // that syncInstallControls() rewrites on its own schedule.
+    const text = trigger.dataset.tipFlash || trigger.dataset.tip;
+    // The copy button's tip is written by syncInstallControls() once the
+    // package manager is known, so an empty one here just means "not yet".
+    if (!tip || !text) return hideTip();
+    // Re-render when the text changed under us (a "Copied" flash on the button
+    // the pointer is already resting on), skip when it is the same tip again.
+    if (tipOwner === trigger && !tip.hidden && tip.textContent === text) return;
+    tipOwner = trigger;
+    tip.textContent = text;
+    tip.hidden = false;
+    // Measured AFTER unhiding: a `hidden` element has no box, so a rect read
+    // before this point is all zeroes and the tip lands in the corner.
+    const anchor = trigger.getBoundingClientRect();
+    const box = tip.getBoundingClientRect();
+    const left = Math.min(
+      Math.max(8, anchor.left + anchor.width / 2 - box.width / 2),
+      Math.max(8, window.innerWidth - box.width - 8),
+    );
+    const above = anchor.top - box.height - TIP_GAP;
+    const top = above < 8 ? anchor.bottom + TIP_GAP : above;
+    tip.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
+  }
+
+  // Show (or refresh) the tip for a control the user is demonstrably still on.
+  // Used by the copy confirmation, which changes the tip's text out from under
+  // a pointer that never moved.
+  function showTipIfActive(trigger: HTMLElement) {
+    if (trigger.matches(":hover, :focus-visible")) showTip(trigger);
+  }
+
+  function tipTarget(target: EventTarget | null): HTMLElement | null {
+    const el = target as Element | null;
+    return el?.closest ? el.closest<HTMLElement>("[data-tip]") : null;
+  }
+
+  // `pointerover`/`pointerout` rather than mouseenter/leave so one delegated
+  // pair covers every control, present and future. Touch is excluded outright:
+  // a tap fires pointerover with no matching pointerout, which would strand the
+  // tip on screen — the same reason Base UI disables tooltips on touch.
+  document.addEventListener("pointerover", (event) => {
+    if (event.pointerType === "touch") return;
+    const trigger = tipTarget(event.target);
+    if (trigger) showTip(trigger);
+    else hideTip();
+  });
+  document.addEventListener("pointerout", (event) => {
+    const trigger = tipTarget(event.target);
+    if (!trigger) return;
+    // Leaving the button for its own icon is still "inside" as far as the tip
+    // is concerned; only a move that lands outside the control dismisses it.
+    const next = event.relatedTarget as Node | null;
+    if (next && trigger.contains(next)) return;
+    hideTip();
+  });
+  // Keyboard parity: focusin/focusout, not focus/blur, because those do not
+  // bubble and so cannot be delegated.
+  document.addEventListener("focusin", (event) => {
+    const trigger = tipTarget(event.target);
+    if (trigger) showTip(trigger);
+    else hideTip();
+  });
+  document.addEventListener("focusout", (event) => {
+    const trigger = tipTarget(event.target);
+    const next = event.relatedTarget as Node | null;
+    if (trigger && next && trigger.contains(next)) return;
+    hideTip();
+  });
+  // Capture phase: this must run whatever the control's own handler does, and
+  // a click on the fullscreen or open-in-new-tab control moves the page out
+  // from under a tip that would otherwise stay put.
+  document.addEventListener("click", hideTip, true);
+  // Also capture, so scrolling INSIDE any container counts, not just the page.
+  window.addEventListener("scroll", hideTip, true);
+  window.addEventListener("resize", hideTip);
+
+  // Visible confirmation for a copy control: swap its idle icon for the check,
+  // and — if the tip is open on it, which it is whenever the click came from a
+  // pointer — flash "Copied" in place of the hint. Both revert together.
+  // `announce()` covers the non-visual half; this covers the half a sighted
+  // user actually watches for.
+  const COPIED_MS = 1600;
+  const flashTimers = new WeakMap<HTMLElement, number>();
+
+  function flashCopied(button: HTMLElement) {
+    const idle = button.querySelector("[data-copy-idle]");
+    const done = button.querySelector("[data-copy-done]");
+    idle?.classList.add("hidden");
+    done?.classList.remove("hidden");
+    button.dataset.tipFlash = "Copied";
+    // Not `tipOwner === button`: the capture-phase click handler above has
+    // already dismissed the tip by the time this runs. Ask the DOM whether the
+    // control is still the one being pointed at (or keyboard-focused, where no
+    // tip was open to dismiss) and re-open it on the flash text.
+    showTipIfActive(button);
+    // Re-copying before the flash ends restarts it rather than letting the
+    // first timer cut the second confirmation short.
+    clearTimeout(flashTimers.get(button));
+    flashTimers.set(
+      button,
+      window.setTimeout(() => {
+        idle?.classList.remove("hidden");
+        done?.classList.add("hidden");
+        delete button.dataset.tipFlash;
+        showTipIfActive(button);
+        flashTimers.delete(button);
+      }, COPIED_MS),
+    );
+  }
+
   async function copy(text: string, message: string) {
     try {
       await navigator.clipboard.writeText(text);
@@ -609,7 +787,7 @@ const PRESET = `${ALWAYS} aria-pressed:bg-muted aria-pressed:text-foreground`;
   // ---------------------------------------------------------------------------
   // WHICH command each control displays is decided in CSS off `[data-pm]` on
   // <html> (see blocks-prefs.astro), so nothing here touches text. This only
-  // has to keep the parts CSS cannot reach in sync: the copy button's `title`,
+  // has to keep the parts CSS cannot reach in sync: the copy button's tooltip,
   // and the menu's aria-checked.
   function currentPm(): PackageManager {
     const value = document.documentElement.dataset.pm;
@@ -625,7 +803,7 @@ const PRESET = `${ALWAYS} aria-pressed:bg-muted aria-pressed:text-foreground`;
   function syncInstallControls() {
     const pm = currentPm();
     document.querySelectorAll<HTMLElement>("[data-install]").forEach((control) => {
-      control.querySelector("[data-copy]")?.setAttribute("title", commandFor(control, pm));
+      control.querySelector("[data-copy]")?.setAttribute("data-tip", commandFor(control, pm));
       control.querySelectorAll<HTMLElement>("[data-pm-option]").forEach((option) => {
         const checked = option.dataset.pmOption === pm;
         setAttr(option, "aria-checked", String(checked));
@@ -783,15 +961,7 @@ const PRESET = `${ALWAYS} aria-pressed:bg-muted aria-pressed:text-foreground`;
         commandFor(control, pm),
         `Copied the ${pm} install command for ${control.dataset.title ?? "this block"}.`,
       ).then((ok) => {
-        if (!ok) return;
-        const idle = copyButton.querySelector("[data-copy-idle]");
-        const done = copyButton.querySelector("[data-copy-done]");
-        idle?.classList.add("hidden");
-        done?.classList.remove("hidden");
-        setTimeout(() => {
-          idle?.classList.remove("hidden");
-          done?.classList.add("hidden");
-        }, 1600);
+        if (ok) flashCopied(copyButton);
       });
       return;
     }
@@ -800,14 +970,20 @@ const PRESET = `${ALWAYS} aria-pressed:bg-muted aria-pressed:text-foreground`;
     if (permalink) {
       const article = permalink.closest<HTMLElement>("[data-block]")!;
       const url = `${location.origin}${location.pathname}#${article.id}`;
-      void copy(url, `Copied a link to ${article.dataset.title ?? "this block"}.`);
+      void copy(url, `Copied a link to ${article.dataset.title ?? "this block"}.`).then((ok) => {
+        if (ok) flashCopied(permalink);
+      });
       return;
     }
 
     const prompt = target.closest<HTMLElement>("[data-prompt]");
     if (prompt) {
       const article = prompt.closest<HTMLElement>("[data-block]")!;
-      void copy(buildPrompt(article), `Copied an agent prompt for ${article.dataset.title ?? "this block"}.`);
+      void copy(buildPrompt(article), `Copied an agent prompt for ${article.dataset.title ?? "this block"}.`).then(
+        (ok) => {
+          if (ok) flashCopied(prompt);
+        },
+      );
       return;
     }
 
@@ -962,6 +1138,10 @@ const PRESET = `${ALWAYS} aria-pressed:bg-muted aria-pressed:text-foreground`;
   document.addEventListener("pointercancel", endDrag);
 
   document.addEventListener("keydown", (event) => {
+    // Unconditional and first: WCAG 1.4.13 requires the tip be dismissible
+    // without moving the pointer or focus, and the Escape branches below all
+    // return early on their own conditions.
+    if (event.key === "Escape") hideTip();
     const target = event.target as Element | null;
     // keydown can land on `document` when nothing is focused, which has no
     // .closest — so probe for it rather than assuming an Element.

@@ -44,9 +44,13 @@ const KEY =
   data-cmd-yarn={commands.yarn}
   data-cmd-bun={commands.bun}
 >
+  {/* The only toolbar control that carried no hint at all. Same `data-tip`
+      mechanism as block-frame.astro's icons; the accessible name still comes
+      from the sr-only span plus the visible brand name. */}
   <button
     type="button"
     data-pm-trigger
+    data-tip="Change package manager"
     aria-haspopup="menu"
     aria-expanded="false"
     class={`${KEY} gap-1 rounded-s-md px-2 font-medium text-foreground`}
