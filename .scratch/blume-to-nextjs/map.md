@@ -141,6 +141,20 @@ a ticket touches visual parity.
   `cssVars` key into `@theme inline`. Found instead: no registry item declares
   a `theme.json` dependency, so pro blocks using `text-success` can install
   into a project with the var undefined (pro repo's fix).
+- [Sidebar and nav source of truth](issues/03-sidebar-and-nav-source-of-truth.md):
+  hybrid — `lib/docs/nav.ts` declares the skeleton, the Primitives set is derived
+  from the content index and **slug-sorted** (today's config order is exactly
+  that; filename sort is wrong in 5 places, title sort is identical for all 65);
+  the sidebar is a **client component in the layout** because App Router cannot
+  server-compute `aria-current` in a persistent layout, so group open state is
+  controlled with a one-way force; groups carry no `href` so a label cannot
+  become a URL; Blume's `page`-mode panel machinery is **unreachable code** and
+  is not ported. Rename of `/components` -> `/primitives` was raised and
+  **dropped** — corrected the map's reason (install commands do not depend on
+  the docs route) and priced the real cost (`13`'s intended-diff list, not
+  redirects). Found a landmine: **4 base-relative markdown links** in 3 files
+  that Blume rewrites through `basePath` and `02`'s no-basePath decision leaves
+  pointing into the gallery's occupied `/components/*` namespace.
 
 ## Not yet specified
 
@@ -154,6 +168,14 @@ a ticket touches visual parity.
   content elements — they carry Tailwind utilities — so this patch is about a
   type scale and spacing rhythm, not a `.prose` stylesheet.
 - **404 and redirect behaviour** under and around the `/docs` base path.
+  Sharpened by `03-sidebar-and-nav-source-of-truth`: `vercel.json` declares **no
+  redirects at all** today, and `/docs` is a literal route segment rather than a
+  `basePath` (`02`), so nothing currently rewrites a path that misses the docs
+  tree. The `/components/*` namespace is shared — the gallery serves 10 live
+  pages there while the primitives live under `/docs/components/*` — so a
+  mistyped or stale docs link can land on a real but wrong page instead of a
+  404. What the docs 404 renders, and whether any redirect is declared at all,
+  is still open.
 - **Performance budget.** Today's output is static Astro HTML with almost no
   client JS; the React chrome plus RSC payload will not be free. Sharpened by
   `05-code-highlighting-parity`: dual-theme Shiki output is ~2.0 MiB of HTML —
@@ -164,6 +186,10 @@ a ticket touches visual parity.
   `13-parity-proof-method`. `02-docs-content-pipeline-decision` fixed one input:
   highlighting runs once per unique source and is memoized for the whole build,
   and a >3x build-time regression is a signal, not a gate.
+  `03-sidebar-and-nav-source-of-truth` fixed a second: the docs sidebar is a
+  client component in the layout, so ~65 serialized nav nodes (label + href)
+  ride in every docs page's payload alongside the Shiki HTML. The chrome port
+  shape is now partly known, which is what this patch was waiting on.
 
 ## Out of scope
 
@@ -173,8 +199,16 @@ a ticket touches visual parity.
 - The `sevenui-pro` repo and its deployment. Only the rewrite contract in
   `apps/web/vercel.json` is in scope, and only to keep it working.
 - URL changes of any kind, including removing the `/docs` base path. 65
-  primitive pages, published install commands and SEO depend on them; this is a
-  separate effort, after the migration.
+  primitive pages and SEO depend on them; this is a separate effort, after the
+  migration. Reaffirmed by
+  [Sidebar and nav source of truth](issues/03-sidebar-and-nav-source-of-truth.md)
+  after the dev raised renaming `/components` -> `/primitives` and dropped it:
+  the *install commands* clause above is **wrong** (`registry.json` references
+  only `/r/*.json`, never a docs route), and redirects are cheap (three `:slug`
+  wildcards). What makes a rename expensive is `13`'s parity gate — 65 renamed
+  routes turn every canonical URL, `llms.txt` line, `.md` `Source:` line,
+  sitemap entry and OG URL into an intended diff. No follow-up ticket; the
+  segment does live in one named constant so a later effort is a one-line flip.
 - UI redesign. The one exception is search, which is rebuilt on SevenUI's own
   `command` primitive because Blume's dialog cannot be carried over at all.
 - Writing the implementation plan. Separate effort, after this spec is locked.

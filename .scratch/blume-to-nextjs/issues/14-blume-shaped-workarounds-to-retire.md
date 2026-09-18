@@ -65,3 +65,25 @@ Settle, item by item:
 Note on item 6: `07` confirms `packages/registry/demos/theme.css` goes dead for
 the site (its only consumer is `blume.config.ts:56`) but stays on disk, because
 `scripts/check-registry.mjs` reads it to verify the published `cssVars`.
+
+## Added items (from `03-sidebar-and-nav-source-of-truth`)
+
+11. **Blume's `page`-mode nav panel machinery is unreachable code.**
+    `components/blume/NavTree.astro` carries a whole second renderer — the
+    `blume-nav` custom element, drill-in/back buttons, a 260ms slide with RTL
+    handling — and `collectPanels` only emits a panel for a group whose
+    `display` is `"page"`. SevenUI declares exactly one group and it is
+    `display: "group"`, so **no panel is ever created and none of that code
+    runs today**. `03` decided it is not ported: the new sidebar knows a page
+    link and one collapsible group. Blume's `collapsed: false` hatch is
+    likewise unused and does not come along. Nothing to retire beyond deleting
+    the override with Blume — recorded so the slide animation is not mistaken
+    for live behaviour to reproduce.
+
+Note on item 4: the "65-entry sidebar order with its collapsible Primitives
+group" now has its new home — `lib/docs/nav.ts`, with the set derived from the
+content index and the order a slug sort (`03`, decisions 1 and 2), so the list
+itself does not move anywhere. `search.popular` still needs a home; `08` owns
+it. The remaining `blume.config.ts` residents in item 4 (GA4 scripts, the
+external-link `rel` post-build pass, title/description/logo, `deployment.site`)
+are untouched by `03`.
