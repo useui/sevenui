@@ -46,3 +46,22 @@ Settle, item by item:
    and does the alias still resolve for both the app and the inline demos?
 8. **`scripts/smoke-test.sh` and `scripts/check-registry.mjs`** — do either
    assume Blume's output shape (`dist/` layout, HTML structure)? CI runs both.
+
+## Added items (from `07-theme-mechanism-and-token-ownership`)
+
+9. **The `blume-theme` mirror write.** `07` renames the theme storage key to
+   `theme` and, to keep `/blocks` previews in sync across the cutover, has the
+   app also write the resolved value into `blume-theme`. It is temporary and
+   one-way. Retirement condition is explicit: delete once the pro repo reads
+   `theme`. Decide where that condition is recorded so it is not orphaned —
+   this ticket, or a note in the spec.
+10. **`scripts/check-registry.mjs` is no longer only a registry guard.** `07`
+    extends its theme-parity loop to cover `apps/web/app/globals.css` as well as
+    `packages/registry/demos/theme.css`, because once demos render inline the
+    file a visitor actually sees is `globals.css` and nothing guards it. Item 8
+    above should account for this when judging whether the script assumes
+    Blume's output shape.
+
+Note on item 6: `07` confirms `packages/registry/demos/theme.css` goes dead for
+the site (its only consumer is `blume.config.ts:56`) but stays on disk, because
+`scripts/check-registry.mjs` reads it to verify the published `cssVars`.

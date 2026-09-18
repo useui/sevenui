@@ -53,10 +53,13 @@ a ticket touches visual parity.
   its own document, so a Dialog/Sheet/Drawer/Command overlay opened inside a
   demo is clipped to the frame instead of covering the viewport. Dropping the
   iframe fixes a real defect in the current site.
-- `/blocks` previews stay iframes — they are cross-origin, license-gated pages
-  served from `pro.sevenui.dev` via `vercel.json` rewrites. The
-  `block-frame.astro` + `blocks-theme-dock.astro` postMessage theming contract
-  is preserved as-is.
+- `/blocks` previews stay iframes — license-gated pages served from
+  `pro.sevenui.dev` via `vercel.json` rewrites. **Corrected by
+  `07-theme-mechanism-and-token-ownership`:** the rewrite makes them
+  *same-origin*, and there is no postMessage theming contract — `apps/web`
+  contains zero `postMessage` calls. Theming crosses the iframe boundary over
+  shared `localStorage` plus the native `storage` event. That contract is
+  preserved; see `07` for the key rename and its bridge.
 - Search is rebuilt on SevenUI's own `command` primitive. Blume's Orama dialog
   is not reproduced; `theme.css` already fights it with `!important` to reach a
   single-column palette, which is what the replacement should just be.
@@ -119,6 +122,25 @@ a ticket touches visual parity.
   diff on all routes, human review sampled 3-5 per surface, screenshot diffing
   rejected; registry JSON byte-identical, agent endpoints gated by fixtures plus
   a declared intended-diff list (5 known entries).
+- [Theme mechanism and token ownership](issues/07-theme-mechanism-and-token-ownership.md):
+  `data-theme` frozen, but the storage key is renamed `blume-theme` -> `theme`
+  with its vocabulary frozen to `"light"|"dark"|absent` — and **the key is a
+  cross-repo contract**, not a preference: the pro previews are same-origin via
+  the `/previews/*` rewrite and sync over the native `storage` event (the
+  question's "postMessage" premise is wrong — `apps/web` has zero
+  `postMessage`), so a temporary mirror write into `blume-theme` bridges the
+  cutover. `next-themes` configured to that contract; live OS following added,
+  `astro:after-swap` dropped, transition suppression kept. One
+  `app/globals.css`; `@custom-variant dark` and `color-scheme` must move too —
+  they live in Blume's generated entry, not `theme.css`, and omitting the
+  variant kills dark mode **silently**. Inline demos get a selector-scoped
+  preset applier built from the already-exported `resolvePreset()` (docs +
+  `/components`, never chrome); the registry theme guard is extended to
+  `globals.css`. Evaluated `--success`/`--warning` as a suspected bug: **not
+  one** — both are in the published `theme` item and shadcn maps every color
+  `cssVars` key into `@theme inline`. Found instead: no registry item declares
+  a `theme.json` dependency, so pro blocks using `text-success` can install
+  into a project with the var undefined (pro repo's fix).
 
 ## Not yet specified
 
@@ -158,3 +180,15 @@ a ticket touches visual parity.
 - Writing the implementation plan. Separate effort, after this spec is locked.
 - Extending ISR beyond the pro manifest. The other four data sources on the site
   do not go stale.
+- Moving the theme customizer dock onto `/components` and the docs pages. A
+  pre-existing product gap, not migration parity: it changes the layout of 11
+  gallery pages during a cutover whose whole point is that regressions stay
+  attributable, and the dock's behaviour there (rail vs. the gallery sidebar,
+  the mobile drawer) is its own design work. Settled by
+  [Theme mechanism and token ownership](issues/07-theme-mechanism-and-token-ownership.md):
+  the migration ships the scoped applier (forced by the iframe removal), the
+  control stays on `/blocks`.
+- Teaching the pro repo to read the renamed `theme` storage key, and giving pro
+  blocks a `registryDependencies` entry on `/r/theme.json` so `text-success` /
+  `bg-warning` resolve for consumers. Both are pro-repo changes; the web side
+  covers the first with a temporary mirror write.
