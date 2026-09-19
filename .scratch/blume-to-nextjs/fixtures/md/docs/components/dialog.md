@@ -1,0 +1,179 @@
+---
+title: Dialog
+description: A window overlaid on either the primary window or another dialog window, rendering the content underneath inert, built on the Base UI Dialog primitive.
+---
+
+```tsx
+"use client";
+
+import { Button } from "@/registry/base/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/registry/base/ui/dialog";
+import { Input } from "@/registry/base/ui/input";
+import { Label } from "@/registry/base/ui/label";
+
+export default function DialogDemo() {
+  return (
+    <Dialog>
+      <DialogTrigger render={<Button variant="outline">Edit profile</Button>} />
+      <DialogContent className="sm:max-w-106">
+        <DialogHeader>
+          <DialogTitle>Edit profile</DialogTitle>
+          <DialogDescription>
+            Make changes to your profile here. Click save when you&apos;re
+            done.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="name">Name</Label>
+            <Input id="name" defaultValue="Pedro Duarte" />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="username">Username</Label>
+            <Input id="username" defaultValue="@peduarte" />
+          </div>
+        </div>
+        <DialogFooter>
+          <DialogClose render={<Button variant="outline">Cancel</Button>} />
+          <Button type="submit">Save changes</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+## Installation
+
+<InstallCommand item="dialog" />
+
+## Usage
+
+```tsx
+"use client";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+export default function DialogDemo() {
+  return (
+    <Dialog>
+      <DialogTrigger render={<Button variant="outline">Edit profile</Button>} />
+      <DialogContent className="sm:max-w-106">
+        <DialogHeader>
+          <DialogTitle>Edit profile</DialogTitle>
+          <DialogDescription>
+            Make changes to your profile here. Click save when you're done.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="name">Name</Label>
+            <Input id="name" defaultValue="Pedro Duarte" />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="username">Username</Label>
+            <Input id="username" defaultValue="@peduarte" />
+          </div>
+        </div>
+        <DialogFooter>
+          <DialogClose render={<Button variant="outline">Cancel</Button>} />
+          <Button type="submit">Save changes</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+## API reference
+
+### Dialog
+
+Extends the [Base UI Dialog](https://base-ui.com/react/components/dialog)
+Root — all its props apply. Base UI has no `dismissible` prop; use
+`disablePointerDismissal` instead.
+
+| Prop                       | Type                                        | Default |
+| -------------------------- | ------------------------------------------- | ------- |
+| `open` / `defaultOpen`     | `boolean`                                   | `false` |
+| `onOpenChange`             | `(open, eventDetails) => void`              | —       |
+| `onOpenChangeComplete`     | fires after animations finish               | —       |
+| `modal`                    | `true \| false \| "trap-focus"`             | `true`  |
+| `disablePointerDismissal`  | `boolean` — outside press keeps it open     | `false` |
+| `actionsRef`               | ref with imperative `close()`/`unmount()`   | —       |
+| `handle`                   | `Dialog.Handle` — pairs with detached triggers | —    |
+| `triggerId` / `defaultTriggerId` | `string \| null` — which trigger opened it | — |
+
+### Detached triggers (createHandle)
+
+The primitive's
+[`Dialog.createHandle()`](https://base-ui.com/react/components/dialog#detached-triggers)
+connects triggers and a dialog that are **not** co-located in the tree:
+create a handle, pass it to any number of `DialogTrigger`s (optionally
+with a typed `payload` and `id`) and to the `Dialog` root. The root's
+children can be a render function receiving `{ payload }`, so one
+dialog renders trigger-specific content. Our wrappers pass these props
+straight through:
+
+```tsx
+import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
+
+const editDialog = DialogPrimitive.createHandle<{ id: string }>();
+
+<DialogTrigger handle={editDialog} payload={{ id: "42" }} render={<Button>Edit</Button>} />
+// ...anywhere else in the app:
+<Dialog handle={editDialog}>{/* content */}</Dialog>
+```
+
+### DialogContent
+
+Content is centered by a `Dialog.Viewport` — long content scrolls the
+viewport, not the page. A dialog with another dialog open inside it
+exposes `data-nested-dialog-open` on its Popup and the
+`--nested-dialogs` CSS variable, useful for dimming or scaling
+background dialogs.
+
+| Prop                        | Type                     | Default |
+| --------------------------- | ------------------------ | ------- |
+| `showCloseButton`           | `boolean` — built-in ✕   | `true`  |
+| `initialFocus` / `finalFocus` | focus target on open/close | —     |
+
+### DialogFooter
+
+Extends `div` — the muted footer bar.
+
+| Prop              | Type                                     | Default |
+| ----------------- | ---------------------------------------- | ------- |
+| `showCloseButton` | `boolean` — appends an outline Close button | `false` |
+
+### DialogTrigger, DialogClose, DialogHeader, DialogTitle, DialogDescription, DialogOverlay, DialogPortal
+
+Styled Base UI parts. Trigger (a `button`; also takes `handle` /
+`payload` / `id` for detached use) and Close accept the `render` prop
+for custom elements (e.g. `render={<Button />}`). `DialogPortal` takes
+`container` and `keepMounted` (default `false`); `DialogOverlay` is the
+Backdrop — nested dialogs hide the parent's backdrop automatically
+(`forceRender` on the primitive overrides that). Title renders an
+`<h2>`, Description a `<p>` — keep both for accessible labeling, or
+render them `sr-only`.

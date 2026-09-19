@@ -1,0 +1,185 @@
+---
+title: Sheet
+description: An edge-positioned panel that slides in from the side of the screen, built on the Base UI Dialog primitive.
+---
+
+```tsx
+"use client";
+
+import { Button } from "@/registry/base/ui/button";
+import { Input } from "@/registry/base/ui/input";
+import { Label } from "@/registry/base/ui/label";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/registry/base/ui/sheet";
+
+export default function SheetDemo() {
+  return (
+    <Sheet>
+      <SheetTrigger render={<Button variant="outline">Open sheet</Button>} />
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Edit profile</SheetTitle>
+          <SheetDescription>
+            Make changes to your profile here. Click save when you&apos;re
+            done.
+          </SheetDescription>
+        </SheetHeader>
+        <div className="grid flex-1 auto-rows-min gap-6 px-4">
+          <div className="grid gap-2">
+            <Label htmlFor="sheet-name">Name</Label>
+            <Input id="sheet-name" defaultValue="Pedro Duarte" />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="sheet-username">Username</Label>
+            <Input id="sheet-username" defaultValue="@peduarte" />
+          </div>
+        </div>
+        <SheetFooter>
+          <Button type="submit">Save changes</Button>
+          <SheetClose render={<Button variant="outline">Close</Button>} />
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  );
+}
+```
+
+## Installation
+
+<InstallCommand item="sheet" />
+
+## Usage
+
+```tsx
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
+export default function SheetDemo() {
+  return (
+    <Sheet>
+      <SheetTrigger render={<Button variant="outline">Open sheet</Button>} />
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Edit profile</SheetTitle>
+          <SheetDescription>
+            Make changes to your profile here. Click save when you're done.
+          </SheetDescription>
+        </SheetHeader>
+        <div className="grid flex-1 auto-rows-min gap-6 px-4">
+          <div className="grid gap-2">
+            <Label htmlFor="sheet-name">Name</Label>
+            <Input id="sheet-name" defaultValue="Pedro Duarte" />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="sheet-username">Username</Label>
+            <Input id="sheet-username" defaultValue="@peduarte" />
+          </div>
+        </div>
+        <SheetFooter>
+          <Button type="submit">Save changes</Button>
+          <SheetClose render={<Button variant="outline">Close</Button>} />
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  );
+}
+```
+
+## Examples
+
+### Sides
+
+```tsx
+"use client";
+
+import { Button } from "@/registry/base/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/registry/base/ui/sheet";
+
+const sides = ["top", "right", "bottom", "left"] as const;
+
+export default function SheetSide() {
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      {sides.map((side) => (
+        <Sheet key={side}>
+          <SheetTrigger
+            render={
+              <Button variant="outline" className="capitalize">
+                {side}
+              </Button>
+            }
+          />
+          <SheetContent side={side}>
+            <SheetHeader>
+              <SheetTitle className="capitalize">{side} sheet</SheetTitle>
+              <SheetDescription>
+                This panel slides in from the {side} edge of the screen.
+              </SheetDescription>
+            </SheetHeader>
+          </SheetContent>
+        </Sheet>
+      ))}
+    </div>
+  );
+}
+```
+
+## API reference
+
+### Sheet
+
+Extends the [Base UI Dialog](https://base-ui.com/react/components/dialog)
+Root — Sheet is a positioned Dialog rather than a distinct primitive.
+Per Base UI's own guidance, an edge panel without swipe gestures is just
+a Dialog pinned to a screen edge; reach for
+[Drawer](/docs/components/drawer) when you need gesture-driven dragging.
+
+| Prop                      | Type                            | Default |
+| ------------------------- | ------------------------------- | ------- |
+| `open` / `defaultOpen`    | `boolean`                       | `false` |
+| `onOpenChange`            | `(open: boolean) => void`       | —       |
+| `modal`                   | `true \| false \| "trap-focus"` | `true`  |
+| `disablePointerDismissal` | `boolean`                       | `false` |
+
+### SheetContent
+
+No `Viewport` part is used — the Popup is `position: fixed` against a
+screen edge and slides via translate utilities, animated by
+`transition-transform`.
+
+| Prop              | Type                                     | Default   |
+| ----------------- | ---------------------------------------- | --------- |
+| `side`            | `"top" \| "right" \| "bottom" \| "left"` | `"right"` |
+| `showCloseButton` | `boolean` — built-in ✕                   | `true`    |
+
+### SheetTrigger, SheetClose, SheetHeader, SheetFooter, SheetTitle, SheetDescription, SheetOverlay, SheetPortal
+
+Styled parts; trigger and close accept the `render` prop.

@@ -1,0 +1,103 @@
+---
+title: Resizable
+description: Accessible resizable panel groups and layouts.
+---
+
+```tsx
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/registry/base/ui/resizable";
+
+export default function ResizableDemo() {
+  return (
+    <div className="h-[200px] w-full max-w-md">
+      <ResizablePanelGroup className="rounded-lg border">
+        <ResizablePanel defaultSize="50%">
+          <div className="flex h-full items-center justify-center p-6">
+            <span className="font-semibold">One</span>
+          </div>
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel defaultSize="50%">
+          <ResizablePanelGroup orientation="vertical">
+            <ResizablePanel defaultSize="25%">
+              <div className="flex h-full items-center justify-center p-6">
+                <span className="font-semibold">Two</span>
+              </div>
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize="75%">
+              <div className="flex h-full items-center justify-center p-6">
+                <span className="font-semibold">Three</span>
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </ResizablePanel>
+      </ResizablePanelGroup>
+    </div>
+  );
+}
+```
+
+## Installation
+
+<InstallCommand item="resizable" />
+
+## Usage
+
+```tsx
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+
+<div className="h-[200px] w-full">
+  <ResizablePanelGroup className="rounded-lg border">
+    <ResizablePanel defaultSize="50%">One</ResizablePanel>
+    <ResizableHandle withHandle />
+    <ResizablePanel defaultSize="50%">Two</ResizablePanel>
+  </ResizablePanelGroup>
+</div>;
+```
+
+## API reference
+
+A thin wrapper over [`react-resizable-panels`](https://github.com/bvaughn/react-resizable-panels)
+(pinned to `^4.12.3`) — `ResizablePanelGroup`, `ResizablePanel`, and
+`ResizableHandle` map directly to that library's `Group`, `Panel`, and
+`Separator`. All props of the underlying primitives apply.
+
+The v4 API differs from the `direction`/array-`layout` shape covered by most
+`react-resizable-panels` v2 tutorials:
+
+- Use `orientation="horizontal" | "vertical"` (default `horizontal`), not
+  `direction`.
+- `defaultSize`, `minSize`, `maxSize`, and `collapsedSize` take a
+  `number | string`. A bare number is **pixels** — always pass a percent
+  string like `defaultSize="50%"`. `px`/`em`/`rem`/`vh`/`vw` unit strings are also
+  accepted.
+- `onLayoutChange`/`onLayoutChanged` report layout as an **object keyed by
+  panel id**, not an array.
+- Imperative access goes through the `groupRef` (on `ResizablePanelGroup`)
+  and `panelRef` (on `ResizablePanel`) **props**, not a `ref` you attach
+  yourself.
+- `ResizableHandle` takes a `withHandle` prop (default `false`) that
+  renders a visible drag-grip; the bar itself styles off the
+  `aria-orientation` attribute the library sets. Double-clicking a handle
+  resets its adjacent panels to their default size.
+- Keyboard: arrow keys resize the adjacent panels by 5% per press, Home/End
+  jump to the min/max size, and Enter toggles a collapsible panel's
+  collapsed state.
+- To persist layouts across sessions, compose the library's own
+  `useDefaultLayout` hook directly rather than reimplementing storage.
+
+The wrappers are thin passthroughs — orientation styling on both the
+group (`aria-[orientation=vertical]:flex-col`) and the handle reads the
+`aria-orientation` attribute the library sets itself.
+
+Because the `Group`'s inline `height: 100%` / `width: 100%` win over utility
+classes on the group itself, give a fixed-height layout its size on a
+**wrapper** element instead, as in the demo above.

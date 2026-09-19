@@ -1,0 +1,116 @@
+---
+title: Tooltip
+description: A popup that displays information related to an element when hovered or focused, built on the Base UI Tooltip primitive.
+---
+
+```tsx
+"use client";
+
+import { Button } from "@/registry/base/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/registry/base/ui/tooltip";
+
+export default function TooltipDemo() {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <Button variant="outline" aria-label="Add to library">
+              Hover me
+            </Button>
+          }
+        />
+        <TooltipContent>Add to library</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+```
+
+## Installation
+
+<InstallCommand item="tooltip" />
+
+## Usage
+
+```tsx
+"use client";
+
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+export default function TooltipDemo() {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <Button variant="outline" aria-label="Add to library">
+              Hover me
+            </Button>
+          }
+        />
+        <TooltipContent>Add to library</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+```
+
+## Accessibility
+
+Base UI treats tooltips as supplementary visual labels: the popup carries
+no `role="tooltip"` or `aria-describedby` wiring by design. Screen reader
+users hear the trigger's accessible name instead — so whenever the
+trigger's visible content doesn't match the tooltip (icon buttons,
+"Hover me" style triggers), give the trigger an `aria-label` that mirrors
+the tooltip text.
+
+## API reference
+
+Tooltips are intentionally disabled on touch devices (Base UI behavior —
+there's no hover to trigger them); for info icons that need to work on
+touch, use a [Popover](/docs/components/popover) with `openOnHover`
+instead.
+
+### TooltipProvider
+
+Shares open/close delays across every tooltip it wraps — once one
+tooltip has opened, moving to another within the `timeout` window opens
+the next one instantly, skipping its own `delay`.
+
+| Prop      | Type     | Default    |
+| --------- | -------- | ---------- |
+| `timeout` | `number` | `400` (ms) |
+
+### TooltipTrigger
+
+Extends the [Base UI Tooltip](https://base-ui.com/react/components/tooltip)
+Trigger — delays live here (Base UI 1.7 moved them off the Root). Use
+the `render` prop for the trigger element:
+`render={<Button variant="outline" />}`.
+
+| Prop         | Type     | Default    |
+| ------------ | -------- | ---------- |
+| `delay`      | `number` | `600` (ms) |
+| `closeDelay` | `number` | `0` (ms)   |
+
+### TooltipContent
+
+| Prop             | Type                 | Default                |
+| ---------------- | -------------------- | ---------------------- |
+| `side` / `align` | positioner placement | `"top"` / `"center"`   |
+| `sideOffset`     | `number`             | `8`                    |
+
+`side` defaulting to `top` makes Tooltip the only overlay in the
+registry whose default isn't `bottom`.

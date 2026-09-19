@@ -1,0 +1,126 @@
+---
+title: Hover Card
+description: Displays a preview card when hovering or focusing a link, built on the Base UI Preview Card primitive.
+---
+
+```tsx
+"use client";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/registry/base/ui/avatar";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/registry/base/ui/hover-card";
+
+export default function HoverCardDemo() {
+  return (
+    <HoverCard>
+      <HoverCardTrigger
+        href="https://x.com/sevenuidev"
+        target="_blank"
+        rel="noreferrer"
+        className="text-sm font-medium underline underline-offset-4"
+      >
+        @sevenuidev
+      </HoverCardTrigger>
+      <HoverCardContent className="flex w-72 gap-3">
+        <Avatar>
+          <AvatarImage src="/logomark.svg" alt="SevenUI" />
+          <AvatarFallback>7U</AvatarFallback>
+        </Avatar>
+        <div className="space-y-1">
+          <h4 className="text-sm font-medium">
+            SevenUI{" "}
+            <span className="font-normal text-muted-foreground">
+              @sevenuidev
+            </span>
+          </h4>
+          <p className="text-sm text-muted-foreground">
+            A shadcn-compatible component registry built entirely on Base UI —
+            no Radix, anywhere.
+          </p>
+          <p className="text-xs text-muted-foreground">sevenui.dev · Joined 2026</p>
+        </div>
+      </HoverCardContent>
+    </HoverCard>
+  );
+}
+```
+
+## Installation
+
+<InstallCommand item="hover-card" />
+
+## Usage
+
+```tsx
+"use client";
+
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+
+export default function HoverCardDemo() {
+  return (
+    <HoverCard>
+      <HoverCardTrigger
+        href="https://base-ui.com"
+        target="_blank"
+        rel="noreferrer"
+        className="text-sm font-medium underline underline-offset-4"
+      >
+        @base_ui
+      </HoverCardTrigger>
+      <HoverCardContent className="flex gap-3">
+        <Avatar>
+          <AvatarFallback>BU</AvatarFallback>
+        </Avatar>
+        <div className="space-y-1">
+          <h4 className="font-medium text-sm">Base UI</h4>
+          <p className="text-muted-foreground text-sm">
+            Unstyled UI components for React, by the MUI team.
+          </p>
+          <p className="text-muted-foreground text-xs">Joined 2024</p>
+        </div>
+      </HoverCardContent>
+    </HoverCard>
+  );
+}
+```
+
+## API reference
+
+### HoverCard
+
+Extends the
+[Base UI Preview Card](https://base-ui.com/react/components/preview-card)
+Root — no `modal` prop; hover-open is built in. Not accessible to touch
+or screen-reader users **by design** — preview cards are a progressive
+enhancement over the underlying link, which remains fully operable on
+its own.
+
+| Prop                   | Type                      | Default |
+| ---------------------- | ------------------------- | ------- |
+| `open` / `defaultOpen` | `boolean`                 | `false` |
+| `onOpenChange`         | `(open: boolean) => void` | —       |
+
+### HoverCardTrigger
+
+Renders a real link (`<a>`) and needs an `href` — preview cards exist to
+preview link destinations.
+
+| Prop         | Type     | Default    |
+| ------------ | -------- | ---------- |
+| `href`       | `string` | — required |
+| `delay`      | `number` | `600` (ms) |
+| `closeDelay` | `number` | `300` (ms) |
+
+### HoverCardContent
+
+| Prop             | Type                 | Default                 |
+| ---------------- | -------------------- | ----------------------- |
+| `side` / `align` | positioner placement | `"bottom"` / `"center"` |

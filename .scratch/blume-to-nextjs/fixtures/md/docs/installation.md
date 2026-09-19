@@ -1,0 +1,74 @@
+---
+title: Installation
+description: Configure the SevenUI registry in your project.
+---
+
+SevenUI requires a project already set up with the shadcn CLI and
+Tailwind CSS v4. Run `npx shadcn@latest init` first if you have not.
+
+## Add primitives
+
+Install any primitive straight from its registry URL — no extra
+configuration needed:
+
+<InstallCommand item="button" />
+
+Primitives install as source files under your `ui` alias.
+
+## Registry namespace (optional)
+
+For a shorter command, add the registry to your `components.json`:
+
+```json
+{
+  "registries": {
+    "@sevenui": "https://sevenui.dev/r/{name}.json"
+  }
+}
+```
+
+Then the `@sevenui` namespace resolves to the same URLs:
+
+```bash
+npx shadcn@latest add @sevenui/button
+```
+
+## Animations
+
+Overlay primitives (dialog, menus, popover, select, …) animate through
+SevenUI's own enter/exit utilities (`animate-in`, `fade-in-0`,
+`zoom-in-95`, `slide-in-from-*`, …) — no animation package is involved.
+The `@utility` and `@keyframes` definitions live in a single
+`animations` registry item that every animated primitive depends on, so
+the shadcn CLI merges them into your stylesheet automatically. Speed and
+easing compose with Tailwind core's `duration-*` / `ease-*` utilities.
+
+If you copy primitive source manually instead of using the CLI, copy the
+`css` block from `https://sevenui.dev/r/animations.json` into your
+global stylesheet too — the accordion additionally ships its own
+`accordion-down` / `accordion-up` keyframes in its item the same way.
+
+## Registry layout
+
+The registry is namespaced by kind, one namespace per tier: primitives at
+`/r/<name>.json`, components — the composed examples on
+[sevenui.dev/components](https://sevenui.dev/components) — at
+`/r/component/<name>.json`, docs demos at `/r/demo/<name>.json`, and pro
+blocks at `/r/pro/<name>.json`.
+
+A component installs the same way as a primitive:
+
+<InstallCommand item="component/accordion-01" />
+
+With the `@sevenui` namespace configured, the short form works too:
+
+```bash
+npx shadcn@latest add @sevenui/component/accordion-01
+```
+
+The file lands in your `components/` directory as a single self-contained
+component, and the primitives it depends on (accordion itself, in this case)
+land in `components/ui/`.
+
+Browse components at [sevenui.dev/components](https://sevenui.dev/components)
+and pro blocks at [sevenui.dev/blocks](https://sevenui.dev/blocks).

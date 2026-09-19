@@ -1,0 +1,150 @@
+---
+title: Toast
+description: Stacked, swipe-dismissable notifications driven by the Base UI toast manager.
+---
+
+```tsx
+"use client";
+
+import { Button } from "@/registry/base/ui/button";
+import { Toaster, toast } from "@/registry/base/ui/toast";
+
+export default function ToastDemo() {
+  return (
+    <div>
+      <Toaster />
+      <div className="flex flex-wrap gap-2">
+        <Button
+          variant="outline"
+          onClick={() =>
+            toast.add({
+              title: "Event created",
+              description: "Sunday, September 7 at 9:00",
+            })
+          }
+        >
+          Show toast
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => toast.add({ title: "Changes saved", type: "success" })}
+        >
+          Success
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() =>
+            toast.add({ title: "Something went wrong", type: "error" })
+          }
+        >
+          Error
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() =>
+            toast.promise(new Promise((resolve) => setTimeout(resolve, 2000)), {
+              loading: { title: "Saving…" },
+              success: { title: "Saved" },
+              error: { title: "Failed to save" },
+            })
+          }
+        >
+          Promise
+        </Button>
+      </div>
+    </div>
+  );
+}
+```
+
+## Installation
+
+<InstallCommand item="toast" />
+
+## Usage
+
+```tsx
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Toaster, toast } from "@/components/ui/toast";
+
+export function App() {
+  return (
+    <div>
+      <Toaster />
+      <Button
+        onClick={() =>
+          toast.add({ title: "Changes saved", type: "success" })
+        }
+      >
+        Save
+      </Button>
+    </div>
+  );
+}
+```
+
+Render `<Toaster />` once, near your app root. It owns a module-level
+`createToastManager()` instance, so `toast.add(...)` works from anywhere
+— event handlers, effects, or plain functions outside the React tree.
+No third-party dependency (no sonner).
+
+## API reference
+
+### toast (manager)
+
+The module-level manager created with `createToastManager()`; both are
+exported, along with the `useToastManager` hook for reading toasts in
+React.
+
+| Method                       | Signature                                                   |
+| ---------------------------- | ----------------------------------------------------------- |
+| `toast.add(options)`         | returns the toast `id`; re-using an `id` updates in place   |
+| `toast.close(id?)`           | dismisses one toast                                         |
+| `toast.update(id, options)`  | merges new options into an existing toast                   |
+| `toast.promise(p, options)`  | loading → success/error lifecycle around a Promise          |
+
+`add`/`update` options: `title`, `description`, `type` (styles the
+built-in icon: `"success" | "info" | "warning" | "error" | "loading"`),
+`timeout` (Base UI default 5000ms), `priority`, `actionProps` (renders
+the action button), `onClose`, `id`.
+
+`toast.promise` takes `{ loading, success, error }` — each a string
+(shorthand for `{ description }`), an options object, or a function of
+the result. The toast's `type` is set to `loading` and then
+`success`/`error` automatically, so the spinner and icons switch on
+their own.
+
+### Toaster
+
+The one-stop component: renders `ToastProvider` → `ToastPortal` →
+`ToastViewport` and the stacked toast list.
+
+| Prop           | Type                                | Default              |
+| -------------- | ----------------------------------- | -------------------- |
+| `toastManager` | a `createToastManager()` instance   | the module-level `toast` |
+| `timeout`      | `number` — auto-dismiss             | `5000` (ms)          |
+| `limit`        | `number` — visible stack size       | `3`                  |
+
+### Behavior
+
+- The viewport stacks toasts; collapsed ones peek and scale behind the
+  frontmost, and the stack expands on hover or focus (`data-expanded`).
+  <kbd>F6</kbd> jumps focus into the toast viewport landmark.
+- Swipe on a toast to dismiss — movement is driven live through the
+  `--toast-swipe-movement-x/y` variables and the
+  `data-[swipe-direction]` attributes.
+- A toast beyond `limit` stays mounted with `data-limited` (and HTML
+  `inert`) instead of unmounting.
+- Only the `title` and `description` **strings** are announced by screen
+  readers — pass text content there, not interactive JSX.
+
+### Toast parts
+
+`Toast`, `ToastContent`, `ToastTitle`, `ToastDescription`,
+`ToastAction` (renders through [Button](/docs/components/button),
+`outline`/`sm` by default), `ToastClose` (ghost icon button with a
+built-in ✕), `ToastProvider`, `ToastPortal`, and `ToastViewport` are all
+exported for fully custom toast layouts — the default `Toaster` already
+composes them.
