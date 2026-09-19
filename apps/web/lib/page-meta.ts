@@ -43,3 +43,12 @@ const CUSTOM: Record<string, PageMeta> = {
 export function getPageMeta(route: string): PageMeta | undefined {
   return CUSTOM[route];
 }
+
+// The route keys of `CUSTOM`, exported as a plain synchronous value so a
+// caller that only needs "is this a known custom route" (lib/docs/links.ts's
+// link validator) doesn't have to go through `getPageMeta`. That matters
+// because Task 2.5 makes `getPageMeta` async (it will answer for `/docs/*`
+// routes from the content index, which is async) — a sync validator calling
+// it would break at that point. `CUSTOM_ROUTES` is derived from the same
+// `CUSTOM` object, so there is still exactly one place this list is written.
+export const CUSTOM_ROUTES: ReadonlySet<string> = new Set(Object.keys(CUSTOM));

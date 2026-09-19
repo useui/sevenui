@@ -6,6 +6,7 @@ import { VFile } from "vfile";
 import { matter } from "vfile-matter";
 import { frontmatterSchema } from "./schema";
 import { scanHeadings, type Heading } from "./headings";
+import { validateLinks } from "./links";
 
 export type { Heading };
 
@@ -125,8 +126,9 @@ async function readAll(): Promise<DocPage[]> {
   // build on violation:
   //   - Task 2.2: assertNavCoversIndex(pages) — every page has a nav entry
   //   - Task 2.4: forbidden-construct scan over each page's `raw`
-  //   - Task 2.9: link validator over each page's `raw`
+  //   - Task 2.9: link validator over each page's `raw` (done — see below)
   // ---------------------------------------------------------------------
+  validateLinks(pages);
 
   return pages;
 }
