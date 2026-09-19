@@ -1,0 +1,370 @@
+@import "tailwindcss";
+
+/* Tailwind v4's automatic scan does not reach outside the app, and the
+   registry sources the site imports live in packages/registry. These paths
+   are relative to this file (apps/web/app/globals.css) — they were fragile
+   only while they resolved against Blume's generated entry (§8.2). */
+@source "../../../packages/registry/registry";
+@source "../../../packages/registry/components";
+
+/* Dark mode is driven by data-theme on the <html> element, not by OS
+   preference. Without this, Tailwind v4's built-in `dark:` variant falls
+   back to an OS-level color-scheme media query, which both desyncs from
+   the theme toggle and reintroduces the media-query rule §4.4 requires
+   this sheet stay free of. Ported from Blume's generated entry (was never
+   in theme.css, so a theme.css-only sweep never sees it). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* enableColorScheme is off in the next-themes config (§8.1) so these rules
+   stay the single owner of color-scheme — the only thing keeping
+   UA-rendered surfaces (scrollbars, native selects, form-control fallbacks,
+   autofill) dark in dark mode. Ported verbatim from Blume's generated
+   entry for the same reason as the custom variant above. */
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --success: oklch(0.627 0.194 149.214);
+  --success-foreground: oklch(0.985 0 0);
+  --warning: oklch(0.769 0.188 70.08);
+  --warning-foreground: oklch(0.279 0.077 45.635);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.625rem;
+}
+
+[data-theme="dark"] {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0 0);
+  --success: oklch(0.723 0.219 149.579);
+  --success-foreground: oklch(0.985 0 0);
+  --warning: oklch(0.828 0.189 84.429);
+  --warning-foreground: oklch(0.279 0.077 45.635);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@theme inline {
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Blume-only until now, ported from its generated Tailwind entry (§8.3):
+     all five are used by demos. */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  /* font-mono has 15 authored call sites plus 3 in the registry; font-sans is
+     the body font; font-display has no utility but §6's heading override reads
+     it, and display is Inter too. */
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-ibm-plex-mono);
+  --font-display: var(--font-sans);
+
+  /* The 42rem docs measure. Killed on a "zero consumers" premise that §11's
+     furniture falsifies — five max-w-content call sites on one live page. */
+  --container-content: 42rem;
+}
+
+/* Tailwind v4 preflight leaves border-color at currentColor; no framework
+   ships a default border color, which is MORE necessary under Next.js, not
+   less. Bare `border` utilities in SevenUI components need one. */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  /* The global flex/grid overflow defuse. Silent and site-wide. */
+  * {
+    min-width: 0;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  /* scroll-padding-top is load-bearing for §9's anchored search results,
+     which would otherwise land under the sticky header. */
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 4.5rem;
+    text-rendering: optimizeLegibility;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  /* §17.6 #14 — declared as var(--foreground), not Blume's own accent
+     token, which resolved to oklch(0.145 0 0) light / oklch(0.96 0 0) dark —
+     that is --foreground to within 0.025 L; blocks-theme-dock already
+     hardcodes outline-foreground, so this makes the site consistent. */
+  :focus-visible {
+    outline: 2px solid var(--foreground);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation: none;
+}
+
+/* Text selection follows the palette instead of the browser default; the
+   inverted pair stays legible in both themes. */
+::selection {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+/* Reserve the scrollbar gutter so demos that grow/shrink the page
+   (accordion, collapsible) don't shift the layout horizontally. */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* Animation utilities — self-contained enter/exit animations for
+   the overlay components (no external animation package). Compose like:
+   data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95
+   Speed and easing come from Tailwind core's duration-* and ease-*
+   utilities via --tw-duration / --tw-ease. */
+@utility animate-in {
+  animation: enter var(--tw-duration, 0.15s) var(--tw-ease, ease) both;
+}
+
+@utility animate-out {
+  animation: exit var(--tw-duration, 0.15s) var(--tw-ease, ease) both;
+}
+
+@utility fade-in-* {
+  --enter-opacity: calc(--value(number) / 100);
+}
+
+@utility fade-out-* {
+  --exit-opacity: calc(--value(number) / 100);
+}
+
+@utility zoom-in-* {
+  --enter-scale: calc(--value(number) / 100);
+}
+
+@utility zoom-out-* {
+  --exit-scale: calc(--value(number) / 100);
+}
+
+@utility slide-in-from-top-* {
+  --enter-translate-y: calc(var(--spacing) * --value(number) * -1);
+}
+
+@utility slide-in-from-bottom-* {
+  --enter-translate-y: calc(var(--spacing) * --value(number));
+}
+
+@utility slide-in-from-left-* {
+  --enter-translate-x: calc(var(--spacing) * --value(number) * -1);
+}
+
+@utility slide-in-from-right-* {
+  --enter-translate-x: calc(var(--spacing) * --value(number));
+}
+
+@utility slide-out-to-top-* {
+  --exit-translate-y: calc(var(--spacing) * --value(number) * -1);
+}
+
+@utility slide-out-to-bottom-* {
+  --exit-translate-y: calc(var(--spacing) * --value(number));
+}
+
+@utility slide-out-to-left-* {
+  --exit-translate-x: calc(var(--spacing) * --value(number) * -1);
+}
+
+@utility slide-out-to-right-* {
+  --exit-translate-x: calc(var(--spacing) * --value(number));
+}
+
+@keyframes enter {
+  from {
+    opacity: var(--enter-opacity, 1);
+    transform: translate3d(
+        var(--enter-translate-x, 0),
+        var(--enter-translate-y, 0),
+        0
+      )
+      scale3d(
+        var(--enter-scale, 1),
+        var(--enter-scale, 1),
+        1
+      );
+  }
+}
+
+@keyframes exit {
+  to {
+    opacity: var(--exit-opacity, 1);
+    transform: translate3d(
+        var(--exit-translate-x, 0),
+        var(--exit-translate-y, 0),
+        0
+      )
+      scale3d(
+        var(--exit-scale, 1),
+        var(--exit-scale, 1),
+        1
+      );
+  }
+}
+
+/* Animation utilities (animate-in/out, fade, zoom, slide) used by the
+   overlay components are defined above. The
+   accordion's open/close keyframes are defined here, driven by the
+   --accordion-panel-height variable Base UI sets on the panel. */
+@theme inline {
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--accordion-panel-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--accordion-panel-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@theme inline {
+  --animate-collapsible-down: collapsible-down 0.2s ease-out;
+  --animate-collapsible-up: collapsible-up 0.2s ease-out;
+}
+
+@keyframes collapsible-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--collapsible-panel-height);
+  }
+}
+
+@keyframes collapsible-up {
+  from {
+    height: var(--collapsible-panel-height);
+  }
+  to {
+    height: 0;
+  }
+}
