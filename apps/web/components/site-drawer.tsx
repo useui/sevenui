@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { currentTabForRoute, SITE_TABS } from "../lib/site-tabs";
+import { currentTabForRoute, getSiteTabs } from "../lib/site-tabs";
 import { useDrawer } from "./drawer-context";
 
 /**
@@ -28,11 +28,16 @@ import { useDrawer } from "./drawer-context";
  * the header's height is the constant `h-16` (4rem) and the whole
  * measurement, plus its two re-measure triggers, is deleted rather than
  * ported.
+ *
+ * `primitivesHref` is threaded down from `app/layout.tsx` for the same
+ * reason `SiteHeader` takes it: the nav tree lives behind `lib/docs`
+ * (`server-only`), and this is a `"use client"` component.
  */
-export function SiteDrawer() {
+export function SiteDrawer({ primitivesHref }: { primitivesHref: string }) {
   const { open, setOpen } = useDrawer();
   const pathname = usePathname();
-  const activeTabHref = currentTabForRoute(pathname);
+  const tabs = getSiteTabs(primitivesHref);
+  const activeTabHref = currentTabForRoute(pathname, tabs);
 
   // Close-on-resize past `lg` (64rem), ported from Header.astro:150's
   // `resize` listener as a `matchMedia` listener instead — the intent
@@ -77,7 +82,7 @@ export function SiteDrawer() {
       >
         <nav aria-label="Sections">
           <ul className="m-0 list-none p-0">
-            {SITE_TABS.map((tab) => (
+            {tabs.map((tab) => (
               <li key={tab.href}>
                 <Link
                   aria-current={tab.href === activeTabHref ? "page" : undefined}

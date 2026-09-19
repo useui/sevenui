@@ -8,6 +8,7 @@ import { SiteDrawer } from "../components/site-drawer";
 import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
 import { ThemeProvider } from "../components/theme-provider";
+import { getNavTree, resolvePrimitivesHref } from "../lib/docs/nav";
 import { site } from "../lib/site";
 
 // §11.2: nobody owned this resolved config today — it's Blume's *defaults*,
@@ -58,6 +59,14 @@ export const metadata: Metadata = {
  * `SiteHeader`'s hamburger and `SiteDrawer` itself both call `useDrawer()`,
  * which throws outside a provider by design.
  *
+ * `primitivesHref` is resolved here, not in `SiteHeader`/`SiteDrawer`
+ * themselves: both are `"use client"` components (§5, `lib/site-tabs.ts`),
+ * and the nav tree comes from `lib/docs`, which is `server-only` — a client
+ * component importing it fails the build. This server component is the one
+ * place in the tree that can read the nav tree and hand its resolved value
+ * down as a plain string prop, so it does, via `getSiteTabs(primitivesHref)`
+ * in each consumer.
+ *
  * `<SiteDrawer />` sits as a top-level sibling after `<main>` and before
  * `<SiteFooter>` — outside `<main>` entirely. That is a deliberate departure
  * from the legacy DOM, not a reproduction of it: `slot="footer"` is a named
@@ -75,7 +84,17 @@ export const metadata: Metadata = {
  * now the first element after it, so the linear text/link sequence is
  * unchanged.
  */
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // `resolvePrimitivesHref` (in `lib/docs/nav.ts`) owns finding "the"
+  // Primitives group and its link target — it built the tree, so it knows
+  // which group that is without this file guessing by position ("the
+  // first node with children", true only while this stage's tree has
+  // exactly one group) or by re-deriving a label match of its own.
+  const primitivesHref = resolvePrimitivesHref(await getNavTree());
+  if (!primitivesHref) {
+    throw new Error("app/layout.tsx: nav tree has no Primitives group with a resolvable href");
+  }
+
   return (
     <html className={`${inter.variable} ${ibmPlexMono.variable}`} lang="en" suppressHydrationWarning>
       <head>
@@ -104,9 +123,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             Skip to content
           </a>
           <DrawerProvider>
-            <SiteHeader />
+            <SiteHeader primitivesHref={primitivesHref} />
             <main id="content">{children}</main>
-            <SiteDrawer />
+            <SiteDrawer primitivesHref={primitivesHref} />
             <SiteFooter />
           </DrawerProvider>
         </ThemeProvider>

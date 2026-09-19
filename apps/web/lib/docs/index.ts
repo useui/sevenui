@@ -7,6 +7,7 @@ import { matter } from "vfile-matter";
 import { frontmatterSchema } from "./schema";
 import { scanHeadings, type Heading } from "./headings";
 import { validateLinks } from "./links";
+import { assertNavCoversIndex, buildNavTree } from "./nav";
 
 export type { Heading };
 
@@ -124,11 +125,13 @@ async function readAll(): Promise<DocPage[]> {
   // Later tasks in this stage validate the fully assembled index here,
   // before it is handed to any consumer. Each should throw to fail the
   // build on violation:
-  //   - Task 2.2: assertNavCoversIndex(pages) — every page has a nav entry
+  //   - Task 2.2: assertNavCoversIndex(pages, buildNavTree(pages)) — every
+  //     page has a nav entry, exactly once (done — see below)
   //   - Task 2.4: forbidden-construct scan over each page's `raw`
   //   - Task 2.9: link validator over each page's `raw` (done — see below)
   // ---------------------------------------------------------------------
   validateLinks(pages);
+  assertNavCoversIndex(pages, buildNavTree(pages));
 
   return pages;
 }

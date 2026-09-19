@@ -1,6 +1,6 @@
 import type { DocPage } from "./index";
 import { stripFences } from "./headings";
-import { currentTabForRoute } from "../site-tabs";
+import { currentTabForRoute, SITE_TABS } from "../site-tabs";
 import { CUSTOM_ROUTES } from "../page-meta";
 
 export type InternalLink = { href: string; line: number };
@@ -104,7 +104,7 @@ export function validateLinks(index: DocPage[]): void {
       // `/componentz`: letting any non-docs link pass unchecked would
       // silently accept a wrong page. Tightening the `/components`/`/blocks`
       // half to their real per-item routes is Stage 4/5's job.
-      if (currentTabForRoute(path) === undefined && !CUSTOM_ROUTES.has(path)) {
+      if (currentTabForRoute(path, SITE_TABS) === undefined && !CUSTOM_ROUTES.has(path)) {
         throw new Error(
           `${page.sourcePath}:${line}: link ${href} matches no site-tabs.ts section and no page-meta.ts custom route`,
         );

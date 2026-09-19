@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useDrawer } from "./drawer-context";
 import { Logomark } from "./logomark";
-import { currentTabForRoute, SITE_TABS } from "../lib/site-tabs";
+import { currentTabForRoute, getSiteTabs } from "../lib/site-tabs";
 import { site } from "../lib/site";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -39,10 +39,17 @@ const iconButton =
  * §11.1), and this header persists across route changes, so a plain `<a>`
  * here would trade the live site's soft navigation for a full reload on
  * every internal click. Only the external GitHub link stays a plain `<a>`.
+ *
+ * `primitivesHref` comes from `app/layout.tsx`: the Primitives tab's link
+ * target is the nav's first primitive child, and the nav tree is read
+ * through `lib/docs`, which is `server-only` — this client component can't
+ * import it itself, so the root layout resolves it once and passes it down
+ * (`lib/site-tabs.ts`'s `getSiteTabs` doc comment has the full reasoning).
  */
-export function SiteHeader() {
+export function SiteHeader({ primitivesHref }: { primitivesHref: string }) {
   const pathname = usePathname();
-  const activeTabHref = currentTabForRoute(pathname);
+  const tabs = getSiteTabs(primitivesHref);
+  const activeTabHref = currentTabForRoute(pathname, tabs);
   const { setOpen } = useDrawer();
   const repoUrl = `https://github.com/${site.github.owner}/${site.github.repo}`;
 
@@ -76,7 +83,7 @@ export function SiteHeader() {
         768px row overflowed as soon as anything else in it widened.
       */}
       <nav aria-label="Sections" className="hidden gap-1 lg:flex">
-        {SITE_TABS.map((tab) => (
+        {tabs.map((tab) => (
           <Link
             aria-current={tab.href === activeTabHref ? "page" : undefined}
             className="shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 font-medium text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:text-foreground"
