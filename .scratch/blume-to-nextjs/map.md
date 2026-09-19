@@ -172,6 +172,26 @@ a ticket touches visual parity.
   here (59 of 65 registry components have no named props type). Element map is
   closed and asserted on `02`'s existing text scan.
 
+- [Inline demo rendering contract](issues/06-inline-demo-rendering-contract.md):
+  the inline preview **already ships** — `/components` renders registry
+  components in-document with a `min-h-72` pane (288px, Blume's own
+  `MIN_PANE_PX`), and the docs demos adopt that component; an RSC resolves the
+  frozen `path` by dynamic template import (no codegen, generated map as the
+  named fallback) and reads the Code tab's source with `fs`; **no forced client
+  boundary** — 56 demos ship zero JS, `client:visible` is not reproduced.
+  Isolation is four rules, and "never inside `.prose`" is not among them since
+  `04` deleted `.prose`: no inheritable typography on any ancestor, the
+  `[data-blume-example]` grid rule carried over, a container-level root reset
+  (the frame's `body` rule under a new selector), and **no bare `h1`-`h6` in
+  `globals.css`** — Blume styles headings globally and 4 demos render raw ones.
+  The shared pane height, the postMessage protocol and the `rafThrottle`
+  listener are all **retired**. Found two deliberate fixes, not one: the 42rem
+  column means the iframe **lies about breakpoints** (`md:`/`lg:` false in
+  every frame), so 26 of 137 demos change at `md` and above. Nothing needs a
+  frame — every overlay portals to `document.body`, so `contain: layout paint`
+  is safe, and `sidebar-demo` (the registry's only viewport-reading, `fixed`
+  primitive) takes it as an opt-in flag.
+
 ## Not yet specified
 
 - **No test harness in `apps/web`.** Zero test files and no `vitest` in its
@@ -203,8 +223,12 @@ a ticket touches visual parity.
   and a >3x build-time regression is a signal, not a gate.
   `03-sidebar-and-nav-source-of-truth` fixed a second: the docs sidebar is a
   client component in the layout, so ~65 serialized nav nodes (label + href)
-  ride in every docs page's payload alongside the Shiki HTML. The chrome port
-  shape is now partly known, which is what this patch was waiting on.
+  ride in every docs page's payload alongside the Shiki HTML.
+  `06-inline-demo-rendering-contract` fixed a third and it cuts both ways: 56 of
+  137 demos become zero-JS RSCs, but the 81 that stay client components hydrate
+  **on load rather than on scroll** — Astro's `client:visible` is deliberately
+  not reproduced. The chrome port shape is now partly known, which is what this
+  patch was waiting on.
 
 ## Out of scope
 
