@@ -342,6 +342,56 @@ a ticket touches visual parity.
   text diff** (diff the card's input, since its output is unreadable), and a fixed 6-card
   human review.
 
+- [404 and redirect behaviour](issues/19-404-and-redirect-behaviour.md): three premises
+  corrected against the live site — the 4 base-relative MDX links **404**, they do not
+  land on a wrong page (the gallery holds 10 slugs and neither `field` nor `form` is
+  one); the two collisions that *do* return 200 on the wrong page belong to
+  `search.popular`, which **`08` already closed**; and status codes were never broken —
+  every miss probed returns 404 on one 21 KB page. What *is* broken is chrome: the live
+  404 renders Blume's **default** header (logo + GitHub, zero `<nav>`, no account) because
+  the generated `404.astro` never gets the `layout={{ Header }}` override, so the page is
+  a dead end — and the port fixes it **for free**, since `app/not-found.tsx` sits under
+  the root layout. Content reproduced verbatim, `noindex` emitted **explicitly** (Next
+  does not add it), title gains `15`'s suffix because a rule with an exceptions list is
+  not a rule. **Two** boundaries — root and docs, the sidebar being the only thing that
+  lists all 65 primitives; gallery and blocks declined as surfaces `13` would have to
+  verify. The 4 links are fixed **at source and pre-shipped to `main`**: the corpus
+  already writes **41** links `/docs/`-prefixed against these 4, and Blume's rewrite is
+  **idempotent** (verified live), so the fix is byte-identical HTML today while repairing
+  `.md` and `llms-full.txt` — which a redirect could not. **No redirects at all**;
+  `vercel.json` stays rewrite-only. Found the gap `13` could not see: its inventory lists
+  only live routes, while `02`'s catch-all and `09`'s `dynamicParams` make **200-with-a-
+  fallback** the easy failure — so a fixed 6-path negative list is asserted 404 alongside
+  it.
+
+- [Docs page furniture](issues/17-docs-page-furniture.md): the breadcrumb **was not one**
+  — `Breadcrumbs.astro` draws only `crumbs[length-2]`, so 65 pages emit the identical
+  non-linked `<span>Primitives</span>` and 3 emit nothing, all under a navigation
+  landmark. Decision: draw the real trail, adopting the idiom the site **already ships**
+  on `/blocks`, with a synthetic `Docs` root (the nav trail alone leaves
+  `/docs/installation` a one-item trail — the same defect relocated) and correct
+  `nav > ol > li` + `aria-current="page"` markup that **`/blocks` is brought along to**,
+  pixel-identical under `list-none`. `BreadcrumbList` JSON-LD added as a third `@graph`
+  node on both sections. That forced the effort's one deliberate scope bend: **a new page,
+  `/docs/components`**, because redirecting it to the first primitive makes the URL honest
+  while Google canonicalizes the crumb to Button's **sibling** — the same lie through a
+  hop. It is authored as `docs/components/index.mdx` (+1 to `04`'s closed set) so nav,
+  search, `.md`, `llms.txt`, sitemap and the OG card all take it with **zero special
+  cases**; the Primitives group gains an optional `href`, narrowing `03`'s type boundary
+  rather than breaking it (the value still comes only from the content index's `route`).
+  Feedback reproduced on its exact GA4 contract, except `title`, which `15` was already
+  moving — so it changes **once**, to the registry's bare title — and the four dead sinks
+  (posthog, plausible, internal reporter, listener-less `blume:track`) are dropped.
+  Scroll-spy ported exactly (72px offset, last heading past it, last link at document
+  bottom) but as **one** hook feeding two renderers instead of today's two independent
+  observers; the `IntersectionObserver` survives because `06` hydrates 81 demos on load,
+  moving headings with no scroll event. Pagination verbatim minus `rtl:-scale-x-100`
+  (a variant with no `dir` switch to match). Found a live conflict: `12` killed
+  `--container-content` and `--radius-blume` on a "zero consumers" premise that the
+  furniture's own markup falsifies — so the **42rem measure comes back owned** (nothing on
+  the map owned it after `04` deleted `.prose`) while 12px `rounded-blume` still dies,
+  snapping to `rounded-lg` beside primitives that use 10px.
+
 ## Not yet specified
 
 - **No test harness in `apps/web`.** Zero test files and no `vitest` in its
@@ -382,8 +432,14 @@ a ticket touches visual parity.
   routes turn every canonical URL, `llms.txt` line, `.md` `Source:` line,
   sitemap entry and OG URL into an intended diff. No follow-up ticket; the
   segment does live in one named constant so a later effort is a one-line flip.
-- UI redesign. The one exception is search, which is rebuilt on SevenUI's own
-  `command` primitive because Blume's dialog cannot be carried over at all.
+- UI redesign. Two exceptions, both forced rather than chosen: search, which is
+  rebuilt on SevenUI's own `command` primitive because Blume's dialog cannot be
+  carried over at all; and the **one new page** the effort adds,
+  `/docs/components`, decided by
+  [Docs page furniture](issues/17-docs-page-furniture.md) — a real breadcrumb needs
+  a real ancestor, and the alternative (redirecting it to the first primitive)
+  resolves the crumb to a sibling. Recorded here so it reads as a deliberate bend
+  of "no new surfaces", not a stray.
 - Writing the implementation plan. Separate effort, after this spec is locked.
 - Extending ISR beyond the pro manifest. The other four data sources on the site
   do not go stale.
@@ -417,3 +473,11 @@ a ticket touches visual parity.
   gallery page is a live component grid and a block preview is a license-gated
   cross-origin iframe, so both would be newly invented content to maintain.
   Each is a post-cutover choice, not parity.
+- Post-cutover 404 niceties, each consciously declined by
+  [404 and redirect behaviour](issues/19-404-and-redirect-behaviour.md): `not-found`
+  boundaries for the `/components` gallery and `/blocks` (10 static pages and a
+  manifest-driven category set, where a sidebar's recovery value is low against one
+  more surface for `13`), and redirects for the base-less legacy shapes `/installation`
+  and `/theming` (404 since the `/docs` base path landed in Wave 2, so a redirect is a
+  new feature rather than parity — and `/components/*` cannot take a blanket rule
+  because the gallery occupies it).

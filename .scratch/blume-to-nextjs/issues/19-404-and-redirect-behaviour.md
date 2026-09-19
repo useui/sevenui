@@ -1,7 +1,7 @@
 # 404 and redirect behaviour
 
 Type: grilling
-Status: open
+Status: resolved
 
 ## Question
 
@@ -71,3 +71,102 @@ base-relative MDX links, and whether a miss reports a real 404 status. One data
 point for question 5 — the OG route is the one place on the site where "returns
 200 with a plausible-looking fallback instead of 404" was a live option, and it
 was declined.
+
+## Answer
+
+Resolved 2026-09-19. Blume's `notFoundPageTemplate` was read from source
+(`…/blume/src/astro/templates.ts:2313`) and every claim below was verified
+against the live site rather than inferred.
+
+### Premise corrections
+
+1. **The four MDX links do not land on a wrong page — they 404.** The gallery
+   namespace holds exactly 10 pages (`accordion`, `badge`, `button`, `card`,
+   `dialog`, `dropdown-menu`, `input`, `select`, `switch`, `tabs`); neither
+   `field` nor `form` is among them. Verified live: `/components/field` 404,
+   `/components/form` 404, `/installation` 404. The ticket's "real but wrong
+   page" framing does not apply to any of the four.
+
+2. **The genuinely dangerous collisions belong to `08`, and `08` already closed
+   them.** `/components/button` and `/components/dialog` both return 200 on the
+   wrong page, but they are `search.popular` entries, and `08` decision 6 moves
+   all six to `lib/docs/search.ts` with literal `/docs/` prefixes, handed to
+   `14`. This ticket does not own them.
+
+3. **The live 404 is chrome-orphaned.** It renders Blume's *default* header —
+   logo plus GitHub only — because the generated `404.astro` never receives the
+   `layout={{ Header }}` override the six custom pages pass (`12`'s second patch
+   hunk). Measured against the landing page: 7,565 B / 2 links versus 9,882 B /
+   8 links, and zero `<nav>` elements. The site's five tabs and the account link
+   are absent, so the page is a dead end with one button out.
+
+4. **Status codes are already correct and need no work.** Every miss probed
+   returns 404 with the same 21,026 B page: root, `/docs/*`, `/docs/components/*`,
+   `/components/*`, `/blocks/*`, `/blocks/<group>/*`, `/og/*`. Astro emits
+   `404.html` at the output root and Vercel serves it with a 404 status.
+
+### Decisions
+
+1. **Root 404: content reproduced verbatim, chrome upgraded for free.** The 6xl
+   muted "404", the `Page not found` h1, "We couldn't find the page you're
+   looking for.", and an accent button to `/` are kept exactly. `app/not-found.tsx`
+   sits under the root layout, so the real header arrives without being asked
+   for — correcting premise 3 as a side effect of the port's structure rather
+   than as work. `noindex` must be emitted **explicitly**: Blume sets it, and
+   Next does not add it to `not-found.tsx` automatically.
+
+   The `<title>` gains the suffix: **"Page not found — SevenUI"**. `15` set that
+   rule over the 85 live routes and the 404 sat outside that audit, but a rule
+   with an exceptions list stops being a rule. One intended-diff line for `13`.
+
+2. **Two `not-found` boundaries: root and docs.** `app/docs/not-found.tsx`
+   renders inside the docs layout, so a miss arrives with the sidebar — the only
+   thing on the site that lists all 65 primitives, and the actual recovery
+   affordance for what a docs miss overwhelmingly is (a mistyped or stale
+   primitive slug). Today's bare page offers nothing. The sidebar renders with
+   no active item, which under `03`'s one-way group force simply means no group
+   is opened.
+
+   Boundaries for the gallery and `/blocks` are **declined**: 10 static pages and
+   a manifest-driven category set respectively, where a sidebar's recovery value
+   is low, while each extra `not-found.tsx` is one more surface `13` must verify.
+
+3. **The four MDX links are fixed at source, shipped to `main` before the
+   cutover.** The corpus already writes **41** internal links with a literal
+   `/docs/` prefix against these **4** without one, so the four are an
+   inconsistency, not a convention. Blume's rewrite is **idempotent** — verified
+   on the live `field` page, where `](/docs/components/label)` renders as
+   `/docs/components/label` (not double-prefixed) while `](/components/form)`
+   renders as `/docs/components/form` — so rewriting the four at source produces
+   **byte-identical HTML today**.
+
+   That is what makes it the better tool than a redirect: it repairs all three
+   surfaces at once (HTML, `/<route>.md`, `llms-full.txt`, which currently
+   carries 3 occurrences of `](/components/`), where a redirect would repair only
+   the first. Same pre-ship pattern as `15`'s gallery titles and `16`'s
+   `seo.og.titles`. The four are `docs/index.mdx:53,56` and
+   `docs/components/form.mdx:39`, `docs/components/field.mdx:55`.
+
+4. **No redirects are declared; `vercel.json` stays rewrite-only.**
+   `/installation` and `/theming` have 404'd ever since the `/docs` base path
+   landed in Wave 2, so a redirect now is a new feature rather than parity — added
+   during a cutover whose entire point is that regressions stay attributable. A
+   blanket rule for `/components/*` is impossible anyway, because the gallery
+   occupies that namespace; what remains is per-path mappings, which is a
+   maintenance trap. Nothing external can be linking to a working
+   `/components/field` or `/components/form`, because neither was ever a valid URL
+   on this site. `10`'s "`vercel.json` is the rewrites' single owner" is untouched.
+
+5. **A fixed negative-path list joins `13`'s sweep.** `13`'s inventory is an
+   inventory of *live* routes and cannot see a miss. The risk here is the inverse
+   of the usual one: `02`'s `[[...slug]]` catch-all and `09`'s `dynamicParams`
+   both make it easy to accidentally return **200 with a plausible fallback**,
+   which is exactly what makes a stale link look healthy to a crawler. Six paths,
+   each asserted 404: a docs miss, a gallery miss, a blocks category miss (`09`'s
+   `notFound()`), an OG miss (`16`'s registry lookup), a root miss, and
+   `/components/field` — the last proving decision 3's old target still 404s
+   rather than quietly becoming something.
+
+6. **The shared `/components` namespace is left exactly as it is.** The map ruled
+   the `/primitives` rename out of scope twice and `03` already put the segment in
+   one named constant; none of the decisions above touch the namespace.
