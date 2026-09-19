@@ -8,6 +8,7 @@ import { frontmatterSchema } from "./schema";
 import { scanHeadings, type Heading } from "./headings";
 import { validateLinks } from "./links";
 import { assertNavCoversIndex, buildNavTree } from "./nav";
+import { assertElementsAllowed } from "./elements";
 
 export type { Heading };
 
@@ -127,11 +128,14 @@ async function readAll(): Promise<DocPage[]> {
   // build on violation:
   //   - Task 2.2: assertNavCoversIndex(pages, buildNavTree(pages)) — every
   //     page has a nav entry, exactly once (done — see below)
-  //   - Task 2.4: forbidden-construct scan over each page's `raw`
+  //   - Task 2.4: forbidden-construct + JSX-tag scan over each page's
+  //     `raw`, asserting the nine-element map is actually closed
+  //     (done — see below)
   //   - Task 2.9: link validator over each page's `raw` (done — see below)
   // ---------------------------------------------------------------------
   validateLinks(pages);
   assertNavCoversIndex(pages, buildNavTree(pages));
+  assertElementsAllowed(pages);
 
   return pages;
 }

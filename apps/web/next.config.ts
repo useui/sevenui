@@ -63,11 +63,23 @@ const withMDX = createMDX({
     rehypePlugins: [
       "rehype-slug",
       ["rehype-autolink-headings", { behavior: "wrap" }],
+      // `addLanguageClass: true` is a Task 2.4 amendment to this otherwise-
+      // locked Task 2.3 chain: a plain boolean, so it does not reopen the
+      // Turbopack plain-data constraint (§ Task 2.3's Critical). It is the
+      // only JSON-serializable route to the fence's language surviving
+      // Shiki's node replacement — every other route (a `transformers`
+      // entry, `parseMetaString`) is function-valued and forbidden here.
+      // It emits `class="language-<lang>"` on the rendered `<code>`
+      // element, NOT `data-language` on the `<pre>` — there is no
+      // plain-data option that writes the latter directly, so
+      // `components/mdx/code-block.tsx` reads the language back off that
+      // class instead of off a `data-language` prop.
       [
         "@shikijs/rehype",
         {
           themes: { light: "github-light", dark: "github-dark" },
           defaultColor: false,
+          addLanguageClass: true,
         },
       ],
       ["rehype-external-links", { target: "_blank", rel: ["noopener", "noreferrer"] }],
