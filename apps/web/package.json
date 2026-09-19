@@ -12,11 +12,15 @@
   "dependencies": {
     "@clerk/clerk-js": "^6.31.0",
     "@sevenui/presets": "workspace:*",
+    "github-slugger": "^2.0.0",
     "lucide-react": "^1.41.0",
     "next": "16.3.5",
     "next-themes": "^0.4.6",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "server-only": "^0.0.1",
+    "vfile": "^6.0.3",
+    "vfile-matter": "^5.0.1",
     "zod": "^4.1.13"
   },
   "devDependencies": {
