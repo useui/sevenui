@@ -392,22 +392,31 @@ a ticket touches visual parity.
   the map owned it after `04` deleted `.prose`) while 12px `rounded-blume` still dies,
   snapping to `rounded-lg` beside primitives that use 10px.
 
+- [Performance budget](issues/18-performance-budget.md): the five inputs were already
+  measured; what was missing was **the other half** — so Next 16.3.5 was installed and a
+  hello-world App Router app built (root layout, static server page, nested layout with
+  one `'use client'` component). Floor: **566 KB raw / 173 KB gzip across 7 chunks, all
+  executed**, preload-only zero. Against today's measured **6.8–28.5 KB gzip** of JS per
+  route, every route regresses **6–25x by construction**, before a line of our code —
+  and that figure, not the five inputs, decides the ticket. So: a budget **exists** but
+  as a recorded measurement, never CI (no stable environment, no number to fail on, and
+  `13` put performance outside the gate — a CI gate would block a release nobody agreed
+  it blocks). Three numbers per route and **INP, not LCP**, because the change is
+  hydration-shaped and the page arrives as static HTML either way. Reference set gains
+  **`/docs/components/chart`** — the only docs page pulling recharts client-side and
+  already today's heaviest docs HTML. Both baselines recorded in **different roles**: the
+  Astro table as context answering "what was traded for what" (a relative budget is red
+  on day one against a 173 KB floor), the budget itself absolute off the port's first
+  measurement. Measured **once at the end of the branch**, because the cutover is a
+  single deploy and "regression" mid-migration only means stage N vs N-1. `06` not
+  reopened — and the ticket **understated** reopening: `client:visible` defers hydration
+  only, while Next's `next/dynamic` splits the chunk, so scroll-gating moves payload and
+  main-thread time both.
+
 ## Not yet specified
 
-- **No test harness in `apps/web`.** Zero test files and no `vitest` in its
-  `package.json`; all 66 test files live in `packages/registry`.
-  `13-parity-proof-method` settled how the cutover is verified (route diffing)
-  and never touched unit testing, so nothing on the map owns this. Surfaced by
-  `04-mdx-content-component-parity-set`, where it was one reason not to build a
-  component with zero uses: the parity gate cannot see a component that renders
-  on no route, and there is nothing else to exercise it. Whether the migrated
-  app gets a harness at all, and what it would cover, is unspecified.
-  Sharpened by `14-blume-shaped-workarounds-to-retire`: `apps/web` has no
-  *typecheck* over its own sources either — `tsconfig.json` includes exactly one
-  file (`blume.config.ts`), so the 4 `.tsx`, the 4 `lib/*.ts` and every `.astro`
-  frontmatter are unchecked by `pnpm typecheck` today. `14` closes that half by
-  taking Next's default `include` and clearing whatever it surfaces, which leaves
-  this patch owning only the runtime-test question.
+<!-- empty: the last patch graduated into
+     [Runtime test harness for apps/web](issues/20-runtime-test-harness.md) -->
 
 ## Out of scope
 

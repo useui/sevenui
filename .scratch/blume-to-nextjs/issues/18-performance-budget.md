@@ -1,7 +1,7 @@
 # Performance budget
 
 Type: grilling
-Status: open
+Status: resolved
 
 ## Question
 
@@ -56,3 +56,81 @@ Settle:
    hydration rather than HTML, a scroll-gated boundary becomes an option again —
    but it is `06`'s decision being reopened, so the bar is a measurement, not a
    preference.
+
+## Answer
+
+Resolved 2026-09-19. The five inputs the ticket lists were already measured by
+other tickets; what was missing was the **other half of the comparison** — what
+the port costs before any of our code runs. That was measured directly: Next
+16.3.5 and React installed fresh, a hello-world App Router app built (one root
+layout, one static server page, one nested layout carrying a single `'use client'`
+component with 65 serialized nav nodes), and the emitted chunks weighed.
+
+### The two baselines
+
+Today's site, measured live from the CDN with `Accept-Encoding: gzip`:
+
+| route | HTML gzip | JS gzip |
+|---|---|---|
+| `/` | 19.9 KB | 6.8 KB |
+| `/docs` | 19.0 KB | 12.5 KB |
+| `/docs/installation` | 21.6 KB | 12.5 KB |
+| `/docs/components/button` | 23.7 KB | 15.0 KB |
+| `/docs/components/chart` | 24.8 KB | 15.0 KB |
+| `/blocks/marketing/hero` | 21.6 KB | 28.5 KB |
+
+The port's floor: **566 KB raw / 173 KB gzip**, across 7 chunks, **all executed**
+(`src=`; preload-only totals zero). Production build, no dev markers. Measured
+with gzip -9 against CDN-gzip for the Astro side, so the comparison is like for
+like; Vercel serves brotli, which would take roughly 15% off both.
+
+So **every route's JS regresses 6–25x by construction**, before a line of our own
+code. That figure, not any of the five inputs, is what decides this ticket.
+
+### Decisions
+
+**1. There is a budget, and it is a recorded measurement — not CI.** A CI check
+needs a stable measurement environment and a number to fail on, and neither
+exists until the port does. More decisively, `13` put performance **outside** the
+cutover gate, so a CI gate would block a release on something nobody agreed
+blocks it. Recording nothing is the worse option: the 6–25x arrives by
+construction, and a spec that does not say it out loud turns a known cost into a
+post-cutover discovery.
+
+**2. Three numbers per route, and INP rather than LCP.** Compressed transfer
+(HTML plus the RSC flight payload), compressed JS executed on first load, and one
+field metric. INP is the right one because the change is hydration-shaped, not
+render-shaped: the page arrives as static HTML either way so LCP barely moves,
+while 81 demos hydrating on load is precisely an INP/TBT story.
+
+Reference routes are the ticket's four — `/docs/components/button` (the Shiki
+worst case), a `/blocks/<group>/<category>` (the client-heaviest), `/`
+(hand-tuned), one guide page — **plus `/docs/components/chart`**, the only docs
+page that pulls recharts to the client and therefore the worst case for the
+demo-hydration question decision 5 defers. It is already today's heaviest docs
+HTML at 24.8 KB gzip.
+
+**3. Both baselines are recorded, in different roles.** The Astro numbers above go
+into the spec as **context, not as a target**: against a 173 KB floor a relative
+budget is red on day one and teaches nothing. The budget itself is **absolute**,
+derived from the port's own first measurement. The Astro table's job is to answer
+"what was traded for what", which is a question the spec should be able to answer
+and currently cannot.
+
+**4. A signal, not a gate — measured once, at the end of the branch.** This
+follows `02`'s build-time precedent, with one correction to the ticket's framing:
+the cutover is a single deploy from a long-lived branch, so "regression" during
+the migration means "stage N is worse than stage N-1", which no fixed number can
+express usefully. The measurement is taken **once**, at the end of the branch,
+recorded in the spec, and that recorded number becomes the baseline for
+subsequent work. Nothing gates the cutover itself — `13` already decided that,
+and this ticket is not the place to quietly reverse it.
+
+**5. `06` is not reopened preemptively, and the ticket understates what reopening
+would cost.** In Astro, `client:visible` defers *hydration* only; the bytes ship
+either way. In Next the equivalent is `next/dynamic`, which splits the chunk out
+— so scroll-gating would change **both** payload and main-thread time, making it
+a larger change than the ticket implies rather than a smaller one. `06` set the
+bar as "a measurement, not a preference"; the correct behaviour is to measure
+`/docs/components/chart` and `/docs/components/button` and reopen only if the
+measured INP on the fixed device profile is bad.
