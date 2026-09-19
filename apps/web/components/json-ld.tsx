@@ -16,14 +16,14 @@ import { site } from "../lib/site";
  * `BreadcrumbList` is a third graph node added later, by Stages 3 and 5 — not
  * implemented here.
  */
-export function JsonLd({ route }: { route: string }) {
+export async function JsonLd({ route }: { route: string }) {
   const websiteId = `${site.url}#website`;
   const graph: Record<string, unknown>[] = [
     { "@id": websiteId, "@type": "WebSite", name: site.name, url: site.url },
   ];
 
   if (route !== "/") {
-    const meta = getPageMeta(route);
+    const meta = await getPageMeta(route);
     if (!meta) {
       throw new Error(`JsonLd: no page-meta registered for route "${route}"`);
     }
@@ -40,10 +40,18 @@ export function JsonLd({ route }: { route: string }) {
     });
   }
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@graph": graph }) }}
-    />
-  );
+  // `dangerouslySetInnerHTML` puts this string directly into the document
+  // with no HTML-escaping of its own — unlike an attribute value (e.g.
+  // `generateMetadata`'s `description`, which Next escapes for us), a raw
+  // "<" here can close the `<script>` tag early if any title/description
+  // ever contains one. No current description does (byte-neutral today),
+  // but `getPageMeta` above now answers from author-written docs
+  // frontmatter (Stage 2), which taints this payload from this task
+  // onward regardless of whether `<JsonLd>` is mounted yet. Escaping to
+  // the JS string escape `<` is Next's own prescribed fix for this
+  // exact sink and is unconditionally safe (valid inside a JSON string,
+  // parses back to the same "<").
+  const json = JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replace(/</g, "\\u003c");
+
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: json }} />;
 }
