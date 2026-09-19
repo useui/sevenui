@@ -10,10 +10,15 @@
     "dev": "pnpm --filter @sevenui/web dev",
     "build": "pnpm --filter @sevenui/web build",
     "build:registry": "pnpm --filter @sevenui/web build:registry",
-    "preview": "pnpm --filter @sevenui/web preview",
+    "preview": "pnpm --filter @sevenui/web start",
     "typecheck": "pnpm -r typecheck",
     "check:registry": "node scripts/check-registry.mjs",
     "test": "pnpm --filter @sevenui/registry test && pnpm --filter @sevenui/presets test",
-    "test:smoke": "bash scripts/smoke-test.sh"
+    "test:smoke": "bash scripts/smoke-test.sh",
+    "inventory": "node scripts/route-inventory.mjs",
+    "extract": "node scripts/extract-page-features.mjs"
+  },
+  "devDependencies": {
+    "linkedom": "^0.18.13"
   }
 }
