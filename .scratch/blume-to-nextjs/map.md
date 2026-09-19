@@ -231,6 +231,25 @@ a ticket touches visual parity.
   silence. Live manifest is 3 groups / 14 categories / 65 items = **18 routes**,
   two more than `13` recorded.
 
+- [Clerk integration approach](issues/10-clerk-integration-approach.md):
+  `@clerk/clerk-js` stays **client-only** — no `@clerk/nextjs`, no
+  `middleware.ts`, because `/account` is 1 authenticated page out of 101 and
+  `clerkMiddleware()` would sit in front of ISR, `/r/*.json` and the agent
+  endpoints to serve it. What that declines is named: the CDN build the Next
+  package loads *does* ship UI components, so `<SignIn/>` could mount inline —
+  but the hosted redirect is a deliberate pro-session decision and `/account`'s
+  signed-out state is designed around it. The laziness is **two** mechanisms,
+  both preserved: the dynamic import *and* a `__client_uat` cookie gate that
+  keeps the measured **1.46 MiB** off every anonymous request. Rewrites stay in
+  `vercel.json` as their single owner — the trailing-slash pair is a debugged
+  platform fact (`:path*` does not match a trailing slash) and all five targets
+  are external, so `next.config` gains nothing and splitting them is the trap.
+  `/account` stays a static shell filled client-side: a server fetch of
+  `/api/me/licenses` would need `auth()`, which is the package we just declined.
+  Found: **`/pro` loads the full 1.46 MiB for every anonymous visitor** — it has
+  the dynamic import but not the cookie gate. Only env var on the site,
+  `PUBLIC_CLERK_PUBLISHABLE_KEY` -> `NEXT_PUBLIC_*`.
+
 ## Not yet specified
 
 - **No test harness in `apps/web`.** Zero test files and no `vitest` in its
