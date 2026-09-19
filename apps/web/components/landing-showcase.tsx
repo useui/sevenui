@@ -298,7 +298,8 @@ export default function LandingShowcase() {
             <Button
               variant="outline"
               onClick={() =>
-                toast("Component added", {
+                toast.add({
+                  title: "Component added",
                   description: "button.tsx landed in your repo.",
                 })
               }
@@ -307,7 +308,9 @@ export default function LandingShowcase() {
             </Button>
             <Button
               variant="outline"
-              onClick={() => toast.success("Changes saved")}
+              onClick={() =>
+                toast.add({ title: "Changes saved", type: "success" })
+              }
             >
               Success
             </Button>

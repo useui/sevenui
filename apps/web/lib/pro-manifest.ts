@@ -3,7 +3,7 @@
 // during the static build and fails the build loudly on any shape
 // violation — a silent fallback would publish an empty or wrong /blocks.
 import { readFileSync } from "node:fs";
-import { icons } from "@lucide/astro";
+import { icons } from "lucide-react";
 
 export interface ManifestAsset {
   type: "image" | "svg";
@@ -41,7 +41,7 @@ export interface ProManifest {
 const kebabToPascal = (key: string) =>
   key.split("-").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join("");
 
-/** Resolve a manifest icon key to its @lucide/astro component. */
+/** Resolve a manifest icon key to its lucide-react component. */
 export function lucideIcon(key: string) {
   const icon = (icons as Record<string, unknown>)[kebabToPascal(key)];
   if (!icon) {

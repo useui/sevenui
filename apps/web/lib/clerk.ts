@@ -9,7 +9,7 @@ export function getClerk(): Promise<Clerk> {
     // (the Header, /account, /pro) — callers decide WHEN to call this,
     // this module just keeps the network fetch out of the initial chunk.
     const { Clerk } = await import("@clerk/clerk-js");
-    const clerk = new Clerk(import.meta.env.PUBLIC_CLERK_PUBLISHABLE_KEY);
+    const clerk = new Clerk(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!);
     await clerk.load();
     return clerk;
   })();

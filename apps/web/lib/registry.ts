@@ -1,7 +1,7 @@
 // Single source of truth for shadcn CLI install commands. The @sevenui
 // namespace only works once it lands in the shadcn registry directory (or the
 // user configures it in components.json), so default to direct URLs until then.
-import { PACKAGE_MANAGER_RUNNERS, type PackageManager } from "./package-manager.ts";
+import { PACKAGE_MANAGER_RUNNERS, type PackageManager } from "./package-manager";
 
 const USE_NAMESPACE = true;
 

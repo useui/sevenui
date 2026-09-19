@@ -8,3 +8,5 @@ apps/web/public/r/
 .env
 .env.*
 !.env.example
+.next/
+*.tsbuildinfo
