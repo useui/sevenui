@@ -318,6 +318,30 @@ a ticket touches visual parity.
   way — `headline` goes **bare everywhere**, matching every `<h1>`. WebMCP not
   ported (2,709 B of dead JS per docs page for an API no browser ships).
 
+- [OG card: reproduce or redraw](issues/16-og-card-reproduce-or-redraw.md): read from
+  Blume's **unminified source**, three premises fell — the drawn headline is **two
+  rules** (content routes already draw the real frontmatter title; only the 17 custom
+  pages humanize a URL segment), so the "bare title" defect is **12 of 85 cards**, not
+  85; the site-wide description is a Blume **limit** (`og.description` is one string),
+  not a bug; and the palette is **2 of 5** colors off, since `--foreground`/
+  `--muted-foreground`/`--border` convert to the card's exact literals. So
+  reproduce-vs-redraw dissolved: composition, type scale and the five literals
+  (`#fafafa` included) are kept verbatim, no dark variant, Geist stays — now **146 KB
+  of TTF** from Google Fonts inside `ImageResponse`'s 500 KB budget, `cmap`-verified
+  at 729 glyphs. Content is fixed instead: **bare title everywhere** and the page's
+  **own description** (cap 160, the corpus maxes at 156), fed by one
+  `lib/page-meta.ts` registry that `generateMetadata` reads too — without it "drawn
+  equals declared" desyncs on the first edit. The 17 missing block cards are generated,
+  which **forces** `dynamicParams: true` (`09`: `generateStaticParams` doesn't re-run on
+  revalidation), which in turn **forces** a registry lookup + `notFound()` — otherwise
+  `/og/<anything>.png` becomes an attacker-texted image generator on our domain.
+  `immutable` dropped as a lie under ISR. Found two things nobody owned: the 12 headline
+  fixes can ship to `main` **before** the cutover via `seo.og.titles` (`15`'s precedent),
+  leaving `13` a **3-row** intended diff; and `13` had left the ~102-card OG surface with
+  **no verification method at all** — now a status sweep, a **registry-vs-`generateMetadata`
+  text diff** (diff the card's input, since its output is unreadable), and a fixed 6-card
+  human review.
+
 ## Not yet specified
 
 - **No test harness in `apps/web`.** Zero test files and no `vitest` in its

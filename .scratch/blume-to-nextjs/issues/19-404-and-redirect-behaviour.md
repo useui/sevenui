@@ -55,3 +55,19 @@ same broken shape — Blume rewrites relative *images* only, so nothing touches
 them on the way into `/<route>.md` and `llms-full.txt`. That widens this
 ticket's question 4: fixing them at the MDX source repairs all three surfaces at
 once, while a redirect repairs only the HTML one.
+
+## Update from `16-og-card-reproduce-or-redraw`
+
+`16` decided the `/og/[...slug]` route's own miss behaviour and this ticket does
+**not** need to re-open it: an unrecognised slug is looked up in
+`lib/page-meta.ts` and `notFound()`s. That is parity (a missing file 404s in
+today's static build) and it is load-bearing rather than cosmetic — `16` runs the
+route with `dynamicParams: true` so new block categories get cards, which without
+the lookup would make `/og/<anything>.png` render caller-chosen text on a card
+that looks like ours.
+
+What this ticket still owns is unchanged: the root and docs `not-found`, the four
+base-relative MDX links, and whether a miss reports a real 404 status. One data
+point for question 5 — the OG route is the one place on the site where "returns
+200 with a plausible-looking fallback instead of 404" was a live option, and it
+was declined.
