@@ -212,6 +212,25 @@ a ticket touches visual parity.
   wrong gallery page; and ~60 lines of `innerHTML` sanitizing have **no
   successor** in React.
 
+- [ISR shape and manifest failure semantics](issues/09-isr-shape-and-manifest-failure-semantics.md):
+  `fetch` with `next: { revalidate: 300, tags: ['pro-manifest'] }` plus a
+  segment `revalidate` — the Data Cache is URL-keyed, so one entry serves all
+  three routes *and* `generateStaticParams`, preserving today's single-fetch
+  module singleton; `"use cache"` rejected because Next 16 gates it behind
+  `cacheComponents`, which changes rendering app-wide. **Stale-serve needs no
+  code**: the existing throw-everything loader already means "build fails cold,
+  last good page survives revalidation". A shape violation is treated exactly
+  like a non-200 — it *cannot* be made louder at the route level, so louder
+  means an alert, not different page behaviour. The "no manual rebuild" promise
+  runs through a non-obvious chain: `generateStaticParams` **does not re-run on
+  revalidation**, so a new category appears only because the revalidated
+  listings link to it and `dynamicParams` renders it on demand — which forces
+  today's `groups.find(...)!` to become `notFound()`, or an arbitrary path 500s
+  instead of 404ing. CI goes hermetic on the fixture and the signal it gives up
+  moves to a **scheduled manifest canary**, which also closes stale-serve's
+  silence. Live manifest is 3 groups / 14 categories / 65 items = **18 routes**,
+  two more than `13` recorded.
+
 ## Not yet specified
 
 - **No test harness in `apps/web`.** Zero test files and no `vitest` in its
