@@ -46,6 +46,24 @@ export default defineConfig({
   logo: "assets/logomark.svg",
   theme: { accent: "blue", radius: "md", mode: "system" },
   deployment: { site: "https://sevenui.dev" },
+  seo: {
+    og: {
+      titles: {
+        "/terms": "Terms of Service",
+        "/privacy": "Privacy Policy",
+        "/components/accordion": "Accordion",
+        "/components/badge": "Badge",
+        "/components/button": "Button",
+        "/components/card": "Card",
+        "/components/dialog": "Dialog",
+        "/components/dropdown-menu": "Dropdown Menu",
+        "/components/input": "Input",
+        "/components/select": "Select",
+        "/components/switch": "Switch",
+        "/components/tabs": "Tabs",
+      },
+    },
+  },
   basePath: "/docs",
   content: {
     root: "docs",
