@@ -226,6 +226,28 @@ html {
   scrollbar-gutter: stable;
 }
 
+/* All four commands ship in the HTML and CSS picks one, off `[data-pm]` on
+   <html> (set by <PackageManagerScript />, before first paint). The
+   React-shaped alternative — read localStorage in an effect and re-render —
+   reintroduces exactly the post-hydration repaint the inline script was
+   written to avoid, and would do it once per card (§13.2). Ported verbatim
+   from legacy-components/blocks-prefs.astro, which /blocks still owns until
+   Stage 5: one shared `.pm-only` class carries `display: none`, and each
+   element also carries a `.pm-only-{pm}` class that the matching `[data-pm]`
+   selector reveals. `:root:not([data-pm]) .pm-only-pnpm` is the pre-script
+   default — it must name DEFAULT_PACKAGE_MANAGER (pnpm), since the inline
+   script only ever narrows from it. */
+.pm-only {
+  display: none;
+}
+:root:not([data-pm]) .pm-only-pnpm,
+[data-pm="pnpm"] .pm-only-pnpm,
+[data-pm="npm"] .pm-only-npm,
+[data-pm="yarn"] .pm-only-yarn,
+[data-pm="bun"] .pm-only-bun {
+  display: inline;
+}
+
 /* Animation utilities — self-contained enter/exit animations for
    the overlay components (no external animation package). Compose like:
    data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95
