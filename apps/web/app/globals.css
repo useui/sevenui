@@ -207,6 +207,52 @@
   }
 }
 
+/* Shiki (Task 2.3, §4.3/§4.4): `@shikijs/rehype` runs with
+   `defaultColor: false`, which makes it emit `--shiki-light`/`--shiki-dark`
+   (and, on `span`s, the matching `-font-style`/`-font-weight`/
+   `-text-decoration`) custom properties instead of baking one theme's
+   colors into `style` attributes. These rules pick a side with
+   `:root[data-theme="dark"]` — never an OS-level color-scheme media
+   query, which this sheet stays free of (the custom-variant above already
+   keys `dark:` off the same attribute) — and the fallback keeps a block readable
+   pre-hydration or if Shiki fails to highlight it.
+   Deliberately unlayered, like `.pm-only` below: the `!important` pairs
+   here need to win outright, not just on specificity within a layer, and
+   an unlayered rule already beats anything Tailwind puts in `@layer
+   utilities` regardless of order.
+   Measured verbatim off production's served stylesheet
+   (.superpowers/sdd/2026-09-19-blume-to-nextjs/measured-shiki-rules.css)
+   and re-based here: `pre.astro-code` -> `.shiki` (class name
+   `@shikijs/rehype` actually emits), the `.prose` scope dropped (this port
+   has no `.prose` class — Task 2.4, Task 2.6), and the color fallback's
+   `--blume-foreground` -> `--foreground` (Blume's tokens were retired in
+   Task 1.3). The live rules paint no background at all (`background: 0 0
+   !important` / no dark background rule), which this reproduces rather
+   than the flat panel a naive port would add. */
+.shiki {
+  color: var(--shiki-light, var(--foreground)) !important;
+  background: 0 0 !important;
+}
+
+:root[data-theme="dark"] .shiki {
+  color: var(--shiki-dark, var(--foreground)) !important;
+}
+
+.shiki span {
+  color: var(--shiki-light, inherit);
+  font-style: var(--shiki-light-font-style, inherit);
+  font-weight: var(--shiki-light-font-weight, inherit);
+  text-decoration: var(--shiki-light-text-decoration, inherit);
+  background: 0 0 !important;
+}
+
+:root[data-theme="dark"] .shiki span {
+  color: var(--shiki-dark, inherit);
+  font-style: var(--shiki-dark-font-style, inherit);
+  font-weight: var(--shiki-dark-font-weight, inherit);
+  text-decoration: var(--shiki-dark-text-decoration, inherit);
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   mix-blend-mode: normal;
