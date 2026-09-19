@@ -47,3 +47,18 @@ Settle:
 - Does the 16-block-page 404 `og:image` bug get a card, or get its tag removed?
   Any Next.js implementation fixes it incidentally by generating one — confirm
   that is wanted rather than accidental.
+
+## Update from `15-agent-facing-and-seo-surface`
+
+The declared titles this card sits next to have changed under it. `15` audited
+all 85 live routes (68 ASCII hyphen, 16 em dash, 1 bare) and set one rule —
+`<page> — SevenUI`, landing page exempt. Consequences for this ticket:
+
+- The 10 gallery pages are renamed `X — SevenUI Components` → `X Components —
+  SevenUI`, **before the cutover**, on today's Blume site. So their `og:title`
+  and `og:image:alt` have already moved by the time the port ships.
+- The 68 docs `og:title`s change separator **in** the cutover.
+- Fact 5's bare-vs-declared question is unchanged in kind, but there is a new
+  data point: `15` took JSON-LD's `headline` **bare** on every page, aligning it
+  with every `<h1>`. That is a `headline` decision, not a binding constraint on
+  what the card draws.

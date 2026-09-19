@@ -45,3 +45,11 @@ title })`, and the site has GA4 configured (`G-8702Z28SMN`) in
 Each of these is chrome around the content, so the client/server boundary
 question belongs with `12-chrome-port-client-and-server-boundaries` — this
 ticket decides _what exists_, not _where the boundary goes_.
+
+## Update from `15-agent-facing-and-seo-surface`
+
+A fifth piece of furniture ships live that this ticket never listed: the
+**page-actions rail** in the TOC aside (Edit on GitHub, Scroll to top, Copy as
+Markdown, Open in chat × 6 providers). `15` found it, owns it, and resolved it —
+ported whole, docs-only. Do not re-decide it here. This ticket still owns the
+four items above.

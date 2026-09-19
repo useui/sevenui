@@ -1,7 +1,8 @@
 # Agent-facing and SEO surface
 
 Type: grilling
-Status: open
+Status: resolved
+Assignee: Oğuzhan (this session)
 Blocked by: 02, 04
 
 ## Question
@@ -60,3 +61,331 @@ Settle:
    page action (default true), and `webmcp` (default true — a client-side
    WebMCP island). Measure whether each is actually rendered in production
    before deciding it does not come along.
+
+## Answer
+
+Three of this ticket's premises were wrong, and one whole surface was missing
+from it. All four are corrected before the decisions:
+
+- **The `.md` 404 asymmetry is not a quirk.** The generated endpoint
+  (`.blume/src/pages/[...slug].md.ts`) maps a route to a slug with one
+  expression: `route === "/" ? "index" : route.slice(1)`. `/docs` is a route in
+  `raw-markdown.json`, `/docs/index` is not — so `/docs.md` returns 200 (2634 B,
+  verified) and `/docs/index.md` 404s because nothing claims to serve it. There
+  is nothing to normalize.
+- **`/index.md` is not the landing page's Markdown.** It is `llms.txt` itself,
+  byte for byte (both 9299 B, verified). `buildRawMarkdown` has no MDX source
+  for a landing-page home, so it substitutes `buildLlmsIndex(project)` as "the
+  machine-readable representation of the site the landing page fronts". The two
+  endpoints share one generator, and always will.
+- **`<InstallCommand>` being emitted raw is not a Blume defect.** Blume's
+  serializer registry is `Callout, Steps, Tabs, TypeTable, YouTube` plus
+  `Component` (built from the example lookup), and it ships a documented
+  extension point — `ai.markdownComponents` — that layers user serializers over
+  the built-ins. `blume.config.ts` never used it. The gap is ours, not the
+  framework's, which also means the port has no migration problem here: it
+  writes both serializers itself.
+- **Three live surfaces were not in the ticket.** 69 `/<route>.mdx` endpoints
+  (200, `text/mdx`, the verbatim authored source), `/agent-readability.json`
+  (200, 565 B), and the docs **page-actions rail**. They are decided below.
+
+Two things the ticket assumed might be live are **not**: the
+`x-markdown-tokens` response header the `.md` endpoint sets (a static build
+writes the body to disk and the header is lost — verified absent in production),
+and `Accept: text/markdown` content negotiation (Blume ships dev middleware and
+a Vercel routing path for it; the static deployment has neither — `Accept:
+text/markdown` on `/docs/components/button` returns 157 KB of HTML).
+
+### 1. Every endpoint is reproduced except the 69 `.mdx` mirrors
+
+| Endpoint | Count | Decision |
+| --- | --- | --- |
+| `/<route>.md` | 69 | Reproduced |
+| `/<route>.mdx` | 69 | **Dropped** |
+| `/llms.txt` | 1 | Reproduced, scope widened (§4) |
+| `/llms-full.txt` | 1 | Reproduced unchanged (§5) |
+| `/sitemap.xml` | 1 | Reproduced, 17 routes added (§7) |
+| `/robots.txt` | 1 | Reproduced verbatim (§6) |
+| `/agent-readability.json` | 1 | Reproduced, two fields corrected (§9) |
+| `/rss.xml`, MCP routes | 0 | Already 404; nothing to do |
+
+The `.mdx` mirrors are dropped because nothing reaches them. No page links one,
+no `<link>` declares one, `agent-readability.json` advertises only the `.md`
+pattern, and the `.md` variant is a superset — same body, with `<Component>`
+downleveled to source. They exist because Blume emits them by default, not
+because the site chose them. 69 URLs leave the frozen contract; that is one
+line on `13`'s intended-diff list, not 69.
+
+The reproduced set is therefore **74 text/JSON endpoints**, which is exactly the
+number `13-parity-proof-method` recorded — by coincidence, since the live total
+is 143. `13`'s inventory generator must be re-run after the drop, not trusted to
+have already counted this.
+
+### 2. `<InstallCommand>` serializes to all four package-manager commands
+
+The tag currently reaches agents verbatim on 68 pages (67 files;
+`installation.mdx` uses it twice), so the Installation section of every
+primitive page is empty of instruction for a Markdown reader. The port's
+serializer emits one fenced `bash` block holding all four commands:
+
+````
+## Installation
+
+```bash
+npx shadcn@latest add @sevenui/button
+pnpm dlx shadcn@latest add @sevenui/button
+yarn dlx shadcn@latest add @sevenui/button
+bunx shadcn@latest add @sevenui/button
+```
+````
+
+This is the Markdown counterpart of the package-manager bar `04` adds to the
+web surface, and it is a **deliberate, spec-recorded improvement over parity** —
+one uniform intended diff across 68 pages, in both `/<route>.md` and
+`llms-full.txt`.
+
+`<Component>` keeps today's behaviour exactly: the example's source as a fenced
+block in the example's language. Verified non-defect along the way — the fenced
+source uses `@/registry/base/ui/*`, which is what the page's own Code tab shows,
+so the two agree; only the hand-authored Usage block says `@/components/ui/*`,
+as it should.
+
+Per `04`, the authored surface is exactly these two components, so the port's
+serializer registry is closed at two. Blume's other five (`Callout`, `Steps`,
+`Tabs`, `TypeTable`, `YouTube`) have zero uses and are not ported.
+
+### 3. `/<route>.md` keeps its front matter; `llms-full.txt` keeps stripping it
+
+Today the two artefacts wrap the same body differently: `.md` emits the verbatim
+YAML block (`---` / `title` / `description` / `---`), while `llms-full.txt`
+strips it and writes `# <title>` + `Source: <url>`. The split is kept.
+
+YAML front matter is the standard metadata carrier for a standalone Markdown
+document and flattening it to a heading loses the `description` as structured
+data. Inside `llms-full.txt` the same block would be noise — 68 documents are
+concatenated there, and the `# <title>` / `Source:` pair is what separates them.
+
+### 4. `/llms.txt` gains `/components` and all 18 `/blocks` routes
+
+Today it mirrors the docs nav tree only (`## Docs`, `## Primitives`), because
+`buildLlmsIndex` walks `project.graph.navigation` and the 11 gallery pages and
+the blocks surface are not Blume page records. The index gains both, in full:
+`/components` + its 10 component pages, and all 18 blocks routes (`/blocks`, 3
+groups, 14 categories).
+
+The blocks half is only affordable because of §7: `sitemap.xml` is already being
+fed from `09`'s manifest `fetch`, whose Data Cache entry is URL-keyed, so
+`llms.txt` reads the same entry for no additional fetch and no additional ISR
+surface — one more `revalidate: 300`. Listing 18 routes in the sitemap and not
+in `llms.txt`, from the same data, would have been arbitrary.
+
+29 new lines. `/index.md` grows with it, since §0 established they are one
+generator.
+
+### 5. `/llms-full.txt` is reproduced unchanged
+
+296,471 bytes, 68 sections, **59% fenced code** (175,231 bytes, 214 fences) —
+measured, confirming the ticket's suspicion that demo sources dominate. It stays
+whole. The file's purpose is the entire corpus in one fetch; dropping the demo
+sources (~120 KB remaining) would reduce it to a longer `llms.txt`, and a
+consumer who asks for this file is asking for everything.
+
+### 6. `robots.txt` is reproduced verbatim, permanently
+
+```
+User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+
+Sitemap: https://sevenui.dev/sitemap.xml
+```
+
+Four lines, byte-identical. The `Content-Signal` stance is a policy statement,
+not a technical detail, and revisiting it during a framework cutover would add a
+diff that `13`'s gate has to be told to expect for no migration reason. **No
+post-cutover follow-up is opened either** — the stance is settled, not deferred.
+
+### 7. `sitemap.xml` gains the 17 missing `/blocks` routes and is ISR'd
+
+Live today: 85 `<loc>` entries, bare — no `<lastmod>`, `<changefreq>` or
+`<priority>`. It carries `/blocks` but none of the 3 group or 14 category
+routes, so 17 live pages are in no sitemap at all. Next's `sitemap.ts` reads
+`09`'s manifest through the shared Data Cache entry and declares
+`revalidate: 300`, taking the count to **102**.
+
+A site-wide rule is attached: **no `revalidate` anywhere exceeds 300 seconds.**
+That matches `09`'s figure rather than introducing a second number, and it binds
+any future ISR surface.
+
+Entry **order is not a contract**. Blume's current collation is visibly odd
+(`alert-dialog` before `alert`, `/components/tabs` before `/components`); the
+port sorts with a plain `localeCompare`. `13`'s criterion for this file is **URL
+set equality**, not line order — which is the right criterion regardless, since
+the 17 additions change that set on purpose.
+
+### 8. The title convention changes site-wide, and JSON-LD goes bare
+
+JSON-LD itself is reproduced — `@graph` with a `WebSite` node plus a
+`TechArticle` node on every page except the landing page, which carries `WebSite`
+alone. `TechArticle` on a listing page like `/blocks` is imprecise schema, but it
+is not a migration question and is left alone.
+
+The two inconsistencies this ticket raised are resolved in opposite directions.
+
+**Titles.** Audited all 85 live routes: 68 use an ASCII hyphen (`Button -
+SevenUI`, Blume's default), 16 an em dash (`Blocks — SevenUI`, hand-written
+Astro), 1 has no separator (`SevenUI`, the landing page). The rule is now:
+
+> Every `<title>` ends with `SevenUI`, separated by an em dash. The landing page
+> is the sole exception and stays bare `SevenUI`.
+
+Exactly **10 routes violate it** — the gallery component pages, which read
+`Button — SevenUI Components`. They become `Button Components — SevenUI`.
+`og:title` and `og:image:alt` follow `<title>` on every page (verified), so they
+move with it; `<h1>` is bare everywhere (`Button`) and does not move.
+
+**JSON-LD `headline`/`name` go bare on every page.** Today docs pages emit
+`"Button"` and gallery pages `"Button — SevenUI Components"`. The suffix belongs
+to the browser tab, not to the article: schema.org `headline` naming every
+article `… — SevenUI` is wrong. So the 16 `TechArticle`-bearing non-docs pages
+drop the suffix; the 68 docs pages already comply. The result aligns with the
+`<h1>` on every page.
+
+### 9. The rename lands before the cutover; the separator lands in it
+
+The 10 gallery titles are hand-written `.astro` — a one-line change each on
+today's Blume site. They ship as **a separate commit to `main` before the
+migration branch merges**, so the cutover diff never contains them and they
+never enter `13`'s intended-diff list. This holds the map's attributability rule
+at its weakest point: a title change is exactly the kind of thing that, bundled
+into a framework deploy, gives every downstream difference two suspects.
+
+The 68 hyphen-to-em-dash titles cannot go first — Blume generates them — so they
+are a cutover intended diff, as is the JSON-LD `headline` normalization on 16
+pages.
+
+Three intended-diff entries for `13`, then: 69 dropped `.mdx` URLs; 68 docs
+titles re-separated (with their `og:title` and `og:image:alt`); JSON-LD
+`headline` bare on 16 pages.
+
+### 10. Page titles stay bare in every agent artefact
+
+The suffix rule governs `<title>`, `og:title` and `og:image:alt` only. The three
+places a page title appears in agent output keep the bare form: `llms.txt` link
+text (`- [Button](…)`), `llms-full.txt` section headings (`# Button`), and the
+`.md` front-matter `title:`. `llms.txt` already names the site once in its own
+`# SevenUI` header; repeating it on 85 lines is pure token cost.
+
+### 11. `/agent-readability.json` is reproduced with two fields corrected
+
+Live, 565 B, and pointed at from every docs page by
+`<link rel="describedby" type="application/json">`. It is reproduced, with:
+
+- `"generator": "blume@1.5.3"` → `"sevenui-web"`. Post-cutover the current value
+  is simply false.
+- `"artifacts.markdown.pattern": "https://sevenui.dev/{route}.md"` →
+  `"https://sevenui.dev/docs/{route}.md"`. The universal pattern is **already a
+  lie** — verified: `/components/button.md`, `/components.md`, `/blocks.md`,
+  `/pro.md` and `/terms.md` all 404, because `.md` mirrors exist only for the 68
+  docs routes plus `/`. Nothing noticed because `llms.txt` never listed those
+  routes; §4 makes it list 29 of them, so the field has to become true.
+
+Everything else in the file — `contentUsage` (which mirrors §6's
+`Content-Signal`), `site`, `repository`, `name`, `description` — is reproduced
+as-is, from `14`'s `lib/site.ts`.
+
+The three per-docs-page `<link>` tags are reproduced unchanged:
+
+```html
+<link href="/agent-readability.json" rel="describedby" type="application/json">
+<link href="/llms.txt" rel="describedby" type="text/plain">
+<link href="/docs/components/button.md" rel="alternate" type="text/markdown">
+```
+
+They are docs-only today (verified absent on `/`, `/components/button` and
+`/blocks`) and stay docs-only, which §12 keeps consistent.
+
+### 12. The 29 newly-listed routes do **not** gain `.md` mirrors
+
+`llms.txt` lists them as URLs; an agent that wants their content reads the HTML.
+Synthesizing Markdown for a gallery page is its own design problem — the page is
+a live component grid, not prose, so the output would be either empty or newly
+invented content to maintain. For `/blocks` it is worse: the previews are
+license-gated iframes served from another origin. §11's narrowed `pattern` makes
+the declaration match the reality.
+
+### 13. The `x-markdown-tokens` header is not restored
+
+Blume's endpoint sets it (`Math.ceil(length / 4)`, Cloudflare's Markdown-for-
+Agents convention) and the static deployment drops it. Next's route handler
+*could* send it, but adding a header that is not live today is a new feature
+wearing parity's clothes, and a 4-chars-per-token estimate is wrong silently.
+Declined; a post-cutover one-liner if ever wanted.
+
+### 14. WebMCP is not ported
+
+Every docs page ships `<blume-webmcp data-llms="true" data-search="true" hidden>`
+plus a 2,709-byte ES module that registers `search_docs` and `get_page` tools on
+`navigator.modelContext ?? document.modelContext`. That API is an early W3C
+proposal that **no shipping browser implements**, so the module downloads,
+executes, finds nothing, and exits — on every docs page view. It has no visible
+behaviour and is not a URL, so dropping it costs nothing outside `13`'s DOM diff
+(one `<blume-webmcp>` element, one `<script>`).
+
+Incidental measurement for `18-performance-budget`: the file named
+`WebMcp.DkviXZb4.css` is **not** a WebMCP cost — it is the site's single
+stylesheet (399,991 bytes, the only `rel="stylesheet"` on the page), named after
+whichever component the bundler saw first.
+
+### 15. The docs page-actions rail is ported whole
+
+Found in the TOC aside and owned by no ticket — `17-docs-page-furniture` lists
+the breadcrumb, feedback widget, TOC scroll-spy and pagination, not this. It is
+agent-facing, so it is decided here. All four items are ported, with all six
+chat providers:
+
+1. **Edit on GitHub** → `https://github.com/useui/sevenui/edit/main/docs/<slug>.mdx`,
+   built from `14`'s `lib/site.ts` `github` entry.
+2. **Scroll to top.**
+3. **Copy as Markdown** — fetches the page's `.md` URL and writes it to the
+   clipboard. This is the only visible consumer of the `.md` endpoints, which is
+   the main reason §1 reproduces them.
+4. **Open in chat** — a dropdown over v0, ChatGPT, Claude, T3 Chat, Scira and
+   Cursor. Hrefs are built client-side, so the static HTML ships anchors without
+   one; the prompt is
+   `Read <absolute .md URL> so I can ask you questions about this page.` and the
+   templates are `https://v0.app?q=`, `https://chatgpt.com/?hints=search&prompt=`,
+   `https://claude.ai/new?q=`, `https://t3.chat/new?q=`, `https://scira.ai/?q=`,
+   `https://cursor.com/link/prompt?text=`.
+
+The rail stays **docs-only**, as today. The client/server boundary is `12`'s
+call, not this ticket's.
+
+### Notes for other tickets
+
+- **`13-parity-proof-method`**: the live text-endpoint count is 143, not 74 —
+  the inventory missed 69 `.mdx` routes and `/agent-readability.json`. After §1
+  the reproduced set is 74 again, but re-run the generator rather than relying on
+  the coincidence. Three intended-diff entries are named in §9, plus §2's
+  `<InstallCommand>` diff across 68 pages, the `<blume-webmcp>` DOM diff, and
+  `sitemap.xml`'s criterion change from byte-identity to URL-set equality.
+- **`16-og-card-reproduce-or-redraw`**: §8 changed the declared titles under it.
+  10 gallery pages are renamed before the cutover, 68 docs `og:title`s change
+  separator in it, and `og:image:alt` tracks both. The bare-vs-suffixed question
+  `16` inherited from `11` is unchanged in kind — JSON-LD went bare (§8), which
+  is a data point, not a constraint on the card.
+- **`17-docs-page-furniture`**: the page-actions rail is resolved here (§15), not
+  there. `17` still owns the breadcrumb, the feedback widget, TOC scroll-spy and
+  pagination markup.
+- **`19-404-and-redirect-behaviour`**: `03`'s four base-relative Markdown links
+  are not rewritten in the agent artefacts either — Blume rewrites relative
+  *images* only — so they reach `/<route>.md` and `llms-full.txt` in the same
+  broken shape. Fixing them at the MDX source (`19`'s option 4) fixes all three
+  surfaces at once; a redirect fixes only the HTML one.
+- **`09-isr-shape-and-manifest-failure-semantics`**: `sitemap.xml` and `llms.txt`
+  become two more readers of its Data Cache entry, and §7's 300-second ceiling is
+  now a site-wide rule.
+- **`14-blume-shaped-workarounds-to-retire`**: `lib/site.ts` gains the title
+  builder (`<page> — SevenUI`, landing exempt) and feeds
+  `/agent-readability.json`, the rail's GitHub edit URL, `robots.txt` and
+  `sitemap.xml`.

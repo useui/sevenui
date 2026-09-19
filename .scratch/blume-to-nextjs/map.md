@@ -250,6 +250,74 @@ a ticket touches visual parity.
   the dynamic import but not the cookie gate. Only env var on the site,
   `PUBLIC_CLERK_PUBLISHABLE_KEY` -> `NEXT_PUBLIC_*`.
 
+- [Chrome port: client and server boundaries](issues/12-chrome-port-client-and-server-boundaries.md):
+  one root shell + three nested layouts, and **all three sidebars follow `03`** —
+  client components in persistent layouts, because `aria-current` cannot be
+  server-computed there. The header is **one** client component (five tabs; the
+  search dialog a dynamic import) and the drawer's measured `--blume-drawer-top`
+  dies with the banner, which is **dead code today**. `block-frame.astro` becomes
+  a server card plus one client `BlockPreview` per card, keeping the
+  concurrency-3 loader as a context (the cap is the feature) and replacing the
+  bespoke tooltip singleton with the registry's own `Tooltip`. The
+  package-manager preference becomes a site-wide `data-pm` contract applied in
+  the root layout — CSS-selected, not effect-driven — so all **three** install
+  surfaces agree. Fonts are today's Inter + IBM Plex Mono on `next/font`;
+  **Geist was deferred, not rejected** (attributability, plus re-tuned heading
+  tracking and 2.0 MiB of mono-metric Shiki output). Swept the global base layer
+  once instead of one rule per ticket: **13** unowned `@theme inline` entries
+  (not five — `--font-sans`/`--font-mono` among them; five others have zero
+  consumers and die) and seven `@layer base` rules. Found: the global focus ring
+  is near-black, **not** the brand blue `theme.css` claims; `/account` loads
+  1.46 MiB for anonymous visitors and shows them only a skeleton, fixed by
+  server-rendering the signed-out state behind the `__client_uat` gate.
+
+- [Blume-shaped workarounds to retire](issues/14-blume-shaped-workarounds-to-retire.md):
+  `publicHoistPattern` goes, and the repo already contains the control case —
+  `cn` is imported directly by 65 registry files, is **not** hoisted, is
+  unreachable from `apps/web` by any node_modules walk, and builds today, so only
+  Node's runtime resolution from `dist/` ever needed the hoist; proof is a clean
+  install plus a build naming five specific pages, not "the build passed". The
+  Blume patch turns out to carry **two** hunks — the `rafThrottle` fix *and* a
+  `PageLayout` header-override feature six pages depend on — and both still die
+  because the port's layouts are its own. Every `blume.config.ts` resident now has
+  a named home (a 13-row table), with `title`/`description`/`site`/`github`
+  landing in one `lib/site.ts` that `11` and `15` read too. `@lucide/astro` →
+  `lucide-react` **verified**, not assumed (same 1.41.0 icon set, the 3 live
+  manifest keys resolve), with one rule attached: the `icons` record stays
+  server-only. Both CI scripts survive untouched — neither reads `dist/` or HTML —
+  so the only edit is `07`'s `globals.css` extension. Found: `pnpm typecheck`
+  checks **one file** in `apps/web` today, and the new tsconfig deliberately
+  widens it rather than preserving the blind spot; `combination-mark.tsx` +
+  `assets/` are dead code (so three `.tsx` port, not four); a production demo
+  depends on a devDependency (`react-hook-form`), fixed by an approved one-line
+  exception to the registry scope rule; `/blume-assets/*` 404s live and is not
+  reproduced.
+
+- [Agent-facing and SEO surface](issues/15-agent-facing-and-seo-surface.md): three
+  premises corrected — the `.md` 404 "asymmetry" is one expression
+  (`route === "/" ? "index" : route.slice(1)`, so `/docs.md` 200s and there is
+  nothing to normalize), `/index.md` **is `llms.txt` byte for byte**, and
+  `<InstallCommand>` reaching agents raw is **our** gap, not Blume's — its
+  `ai.markdownComponents` extension point was never used. Found three live
+  surfaces the ticket didn't know about: 69 `.mdx` endpoints (**dropped** —
+  nothing links them and `.md` is a superset), `/agent-readability.json`
+  (reproduced, but its `generator` and its **already-false** universal
+  `{route}.md` pattern are corrected), and the docs **page-actions rail**
+  (ported whole — 4 items, 6 chat providers; `17` doesn't own it). Everything
+  else reproduced: `robots.txt` verbatim and **permanently** (no follow-up),
+  `llms-full.txt` whole at 296 KB / 59% fenced demo source, `.md` keeps front
+  matter while `llms-full.txt` keeps stripping it. `llms.txt` and `sitemap.xml`
+  both learn the blocks surface off `09`'s Data Cache entry (+29 lines, +17
+  routes, `revalidate: 300` — now a **site-wide ceiling**), and sitemap parity
+  becomes URL-set equality, not byte identity. Two audits: `<InstallCommand>`
+  serializes to all four package-manager commands on 68 pages, and **all 85
+  titles** — 68 ASCII hyphen, 16 em dash, 1 bare — collapse to one rule
+  (`<page> — SevenUI`, landing exempt), which lands in two places on purpose: the
+  10 offending gallery titles ship to `main` **before** the cutover so they never
+  enter `13`'s diff, the 68 re-separated ones can't. JSON-LD resolved the other
+  way — `headline` goes **bare everywhere**, matching every `<h1>`. WebMCP not
+  ported (2,709 B of dead JS per docs page for an API no browser ships).
+
 ## Not yet specified
 
 - **No test harness in `apps/web`.** Zero test files and no `vitest` in its
@@ -260,42 +328,23 @@ a ticket touches visual parity.
   component with zero uses: the parity gate cannot see a component that renders
   on no route, and there is nothing else to exercise it. Whether the migrated
   app gets a harness at all, and what it would cover, is unspecified.
-- **404 and redirect behaviour** under and around the `/docs` base path.
-  Sharpened by `03-sidebar-and-nav-source-of-truth`: `vercel.json` declares **no
-  redirects at all** today, and `/docs` is a literal route segment rather than a
-  `basePath` (`02`), so nothing currently rewrites a path that misses the docs
-  tree. The `/components/*` namespace is shared — the gallery serves 10 live
-  pages there while the primitives live under `/docs/components/*` — so a
-  mistyped or stale docs link can land on a real but wrong page instead of a
-  404. What the docs 404 renders, and whether any redirect is declared at all,
-  is still open.
-- **Performance budget.** Today's output is static Astro HTML with almost no
-  client JS; the React chrome plus RSC payload will not be free. Sharpened by
-  `05-code-highlighting-parity`: dual-theme Shiki output is ~2.0 MiB of HTML —
-  33% of the live button page — and the App Router duplicates it into the RSC
-  flight payload, so this is a real number, not a worry. Whether a budget is a
-  gate, and what it measures, is still worth stating only once the chrome port
-  shape is known. Explicitly outside the cutover gate per
-  `13-parity-proof-method`. `02-docs-content-pipeline-decision` fixed one input:
-  highlighting runs once per unique source and is memoized for the whole build,
-  and a >3x build-time regression is a signal, not a gate.
-  `03-sidebar-and-nav-source-of-truth` fixed a second: the docs sidebar is a
-  client component in the layout, so ~65 serialized nav nodes (label + href)
-  ride in every docs page's payload alongside the Shiki HTML.
-  `06-inline-demo-rendering-contract` fixed a third and it cuts both ways: 56 of
-  137 demos become zero-JS RSCs, but the 81 that stay client components hydrate
-  **on load rather than on scroll** — Astro's `client:visible` is deliberately
-  not reproduced. The chrome port shape is now partly known, which is what this
-  patch was waiting on.
-  `08-search-palette-and-its-index` fixed a fourth: a 30 KiB gzipped search
-  index, fetched on first open rather than bundled, with a measured 5 KiB
-  alternative if body text is ever dropped.
+  Sharpened by `14-blume-shaped-workarounds-to-retire`: `apps/web` has no
+  *typecheck* over its own sources either — `tsconfig.json` includes exactly one
+  file (`blume.config.ts`), so the 4 `.tsx`, the 4 `lib/*.ts` and every `.astro`
+  frontmatter are unchecked by `pnpm typecheck` today. `14` closes that half by
+  taking Next's default `include` and clearing whatever it surfaces, which leaves
+  this patch owning only the runtime-test question.
 
 ## Out of scope
 
 - Changes to `packages/registry` or `packages/presets` — React sources packaged
   by `shadcn build`, blind to the site framework. Touching them only widens the
-  migration.
+  migration. **One approved exception**, scoped to a single line: `react-hook-form`
+  moves from `devDependencies` to `dependencies` in `packages/registry/package.json`,
+  because `field-rhf` is a live demo that `06` renders inline on a production docs
+  page. See
+  [Blume-shaped workarounds to retire](issues/14-blume-shaped-workarounds-to-retire.md)
+  decision 15; no other registry file is touched.
 - The `sevenui-pro` repo and its deployment. Only the rewrite contract in
   `apps/web/vercel.json` is in scope, and only to keep it working.
 - URL changes of any kind, including removing the `/docs` base path. 65
@@ -326,3 +375,21 @@ a ticket touches visual parity.
   blocks a `registryDependencies` entry on `/r/theme.json` so `text-success` /
   `bg-warning` resolve for consumers. Both are pro-repo changes; the web side
   covers the first with a temporary mirror write.
+- Switching the site to Geist / Geist Mono. Raised while porting the chrome and
+  deliberately deferred by
+  [Chrome port: client and server boundaries](issues/12-chrome-port-client-and-server-boundaries.md):
+  the change is ~3 lines against the single `--font-sans`/`--font-mono` seam that
+  ticket creates, so cost is not the reason. Moving typography and framework in
+  one deploy gives every drift on the hand-tuned `/` and `/blocks` two suspects,
+  which is the one thing the sampled human review cannot adjudicate. A follow-up
+  effort after the cutover; `16` is told not to "fix" the card/site font mismatch
+  by pulling the OG card onto Inter.
+- Agent-surface additions that are not live today. Declined by
+  [Agent-facing and SEO surface](issues/15-agent-facing-and-seo-surface.md):
+  the `x-markdown-tokens` response header (Blume's endpoint sets it; a static
+  build drops it, so production has never sent it), `Accept: text/markdown`
+  content negotiation (Blume ships the middleware, the static deployment does
+  not run it), and `.md` mirrors for the 29 routes `llms.txt` newly lists — a
+  gallery page is a live component grid and a block preview is a license-gated
+  cross-origin iframe, so both would be newly invented content to maintain.
+  Each is a post-cutover choice, not parity.
