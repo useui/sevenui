@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { CopyButton } from "./copy-button";
+import { currentPackageManager, type PackageManager } from "../../lib/package-manager";
 
 function cx(...values: Array<string | false | null | undefined>): string {
   return values.filter(Boolean).join(" ");
@@ -44,7 +45,59 @@ function LanguageIcon({ language }: { language: string }) {
   );
 }
 
-export type CodeBlockProps = React.ComponentPropsWithoutRef<"pre">;
+export type CodeBlockProps = React.ComponentPropsWithoutRef<"pre"> & {
+  /**
+   * Task 2.7 extension. Overrides the language normally read off the single
+   * fenced `<code>` child's own `language-<lang>` class. <InstallCommand>'s
+   * `children` is an ARRAY of four `.pm-only-<pm>` variants (see
+   * `installCommands` below), not one element with a class to read, so it
+   * has to say its own language plainly. Plain data (a string), not a
+   * function — doesn't reopen any server/client boundary.
+   */
+  language?: string;
+  /**
+   * Task 2.7 extension. Rendered at the trailing edge of the existing
+   * header band (inside the same `pr-13` gutter reserved for the copy
+   * button), pushed there with `ml-auto`. ADDITIVE, not a replacement for
+   * `label` — the brief's `header` prop implied swapping the language label
+   * out entirely, but nothing in this stage measures what that should look
+   * like, and the language label (`Bash`, its icon) is still true and
+   * useful information for an install command. Only <InstallCommand>'s
+   * `<PackageManagerMenu>` passes this today.
+   */
+  headerRight?: React.ReactNode;
+  /**
+   * Task 2.7 extension. Plain-data command strings keyed by package
+   * manager. When present, `children` is treated as the array of
+   * `.pm-only-<pm>` variant elements <InstallCommand> renders (four
+   * highlighted commands, CSS reveals one via `[data-pm]` — see
+   * globals.css) rather than a single fenced `<code>` to clone/ref.
+   *
+   * The built-in copy button switches from reading `codeRef.current
+   * .textContent` (which would concatenate all four variants — `.pm-only`'s
+   * `display: none` does not stop `textContent` from including a hidden
+   * element's text) to reading this object keyed by the LIVE
+   * `document.documentElement.dataset.pm` at click time
+   * (`currentPackageManager()`, lib/package-manager.ts) — the same
+   * attribute CSS already keys off, so the two can never disagree. No
+   * function prop crosses the server/client boundary to get here: this
+   * object is plain data handed from the async server component
+   * <InstallCommand>, and the DOM read happens entirely inside this
+   * already-`"use client"` component's own click handler.
+   *
+   * SCOPE (fix round 1, task-2.7 review MINOR 2): this prop has exactly ONE
+   * consumer today, <InstallCommand>. It is not a generic "command with
+   * variants" mechanism other surfaces are expected to adopt — §6.1's table
+   * gives the other two install surfaces their OWN shapes (`/blocks`' fused
+   * 32px control; Stage 4's `copy-command.tsx`, which §13.2 says "keeps its
+   * shape" and takes `command: string`, not a `Record<PackageManager,
+   * string>`). What IS shared across those surfaces is
+   * `<PackageManagerMenu>` and `currentPackageManager()`
+   * (lib/package-manager.ts) — reuse those, not this prop, if a future
+   * stage needs the same four-command switch elsewhere.
+   */
+  installCommands?: Record<PackageManager, string>;
+};
 
 type ClonableCodeProps = { className?: string; tabIndex?: number } & React.RefAttributes<HTMLElement>;
 
@@ -72,27 +125,70 @@ type ClonableCodeProps = { className?: string; tabIndex?: number } & React.RefAt
 // calls lib/shiki.ts's `highlight()` itself and injects the resulting HTML.
 // That swap lands entirely in mdx-components.tsx's `code` override (the one
 // place that decides what `children` is before it reaches this component) —
-// CodeBlock never inspects or produces raw HTML itself; it only clones
-// whatever single child element it is given and reads that child's
-// `.textContent` through a ref. Swapping the override to render
+// for the FENCE path, CodeBlock never inspects or produces raw HTML itself;
+// it only clones whatever single child element it is given and reads that
+// child's `.textContent` through a ref. Swapping the override to render
 // `dangerouslySetInnerHTML` output instead of JSX from the rehype chain
 // touches that one function, not this component.
-export function CodeBlock({ children, className, tabIndex: _tabIndex, ...rest }: CodeBlockProps) {
+//
+// Task 2.7 gives this component a SECOND producer/shape, `installCommands`
+// (see CodeBlockProps below): `children` becomes an array of four
+// `.pm-only-<pm>` elements instead of one fenced `<code>`, and the copy
+// button reads a plain-data object keyed by the live `[data-pm]` attribute
+// instead of a ref's `.textContent`. Both paths still share every other
+// piece of chrome (header band, language icon, scroll box, `<CopyButton>`)
+// — nothing about the fence path above changed.
+export function CodeBlock({
+  children,
+  className,
+  language: languageProp,
+  headerRight,
+  installCommands,
+  tabIndex: _tabIndex,
+  ...rest
+}: CodeBlockProps) {
   const codeRef = React.useRef<HTMLElement>(null);
 
-  const codeElement = React.isValidElement<ClonableCodeProps>(children) ? children : undefined;
+  // installCommands mode (Task 2.7): children is the four-element
+  // `.pm-only-<pm>` array, not a single fenced <code> — never read a
+  // language-<lang> class off it, and never take the single-child clone
+  // path below.
+  const codeElement =
+    !installCommands && React.isValidElement<ClonableCodeProps>(children) ? children : undefined;
   const languageMatch = /(?:^|\s)language-(\w+)/.exec(codeElement?.props.className ?? "");
-  const language = languageMatch?.[1];
+  const language = languageProp ?? languageMatch?.[1];
   const label = language ? (LANGUAGE_LABELS[language] ?? language.toUpperCase()) : undefined;
   const hasIcon = language !== undefined && language in LANGUAGE_ICON_PATHS;
 
-  const codeChild = codeElement
-    ? React.cloneElement(codeElement, {
-        ref: codeRef,
-        tabIndex: 0,
-        className: cx("block max-h-96 overflow-auto px-5 pb-1.5", codeElement.props.className),
-      })
-    : children;
+  // Every one of the four variants gets the same scroll/padding treatment a
+  // single fenced <code> would — only one is ever visible at once (CSS), so
+  // applying it uniformly costs nothing and keeps whichever one is revealed
+  // properly scrollable. tabIndex=0 on a `display: none` element is inert
+  // (out of the tab order regardless), so setting it on all four is safe.
+  const codeChild = installCommands
+    ? React.Children.map(children, (child) =>
+        React.isValidElement<ClonableCodeProps>(child)
+          ? React.cloneElement(child, {
+              tabIndex: 0,
+              className: cx("block max-h-96 overflow-auto px-5 pb-1.5", child.props.className),
+            })
+          : child,
+      )
+    : codeElement
+      ? React.cloneElement(codeElement, {
+          ref: codeRef,
+          tabIndex: 0,
+          className: cx("block max-h-96 overflow-auto px-5 pb-1.5", codeElement.props.className),
+        })
+      : children;
+
+  // installCommands mode reads the currently-revealed command straight from
+  // plain data + the live `[data-pm]` attribute, rather than the ref's
+  // `.textContent` — `.textContent` ignores `display: none` and would
+  // concatenate all four hidden variants into one clipboard write.
+  const getCopyText = installCommands
+    ? () => installCommands[currentPackageManager()] ?? ""
+    : () => codeRef.current?.textContent ?? "";
 
   return (
     <pre
@@ -100,19 +196,25 @@ export function CodeBlock({ children, className, tabIndex: _tabIndex, ...rest }:
       data-language={language}
       className={cx(
         "group relative my-6 overflow-auto rounded-md border border-border bg-transparent pb-4 text-[0.8125rem] leading-[1.55]",
-        label ? "pt-15" : "pt-4",
+        label || headerRight ? "pt-15" : "pt-4",
         className,
       )}
     >
-      {label ? (
+      {label || headerRight ? (
         <div
-          aria-hidden="true"
+          // Only decorative (a duplicate of data-language) when it's just
+          // the plain label, same as before. Once `headerRight` carries a
+          // real control (<PackageManagerMenu>), the band holds focusable
+          // content and must stay out of the accessibility tree's hidden
+          // subtree, so aria-hidden is dropped in that case.
+          aria-hidden={headerRight ? undefined : true}
           className={cx(
             "absolute inset-x-0 top-0 flex h-11 items-center border-b border-border pr-13 font-sans text-xs font-medium text-muted-foreground",
             hasIcon ? "pl-10" : "pl-4",
           )}
         >
           {label}
+          {headerRight ? <div className="ml-auto flex items-center">{headerRight}</div> : null}
         </div>
       ) : null}
       {hasIcon && language ? (
@@ -121,7 +223,7 @@ export function CodeBlock({ children, className, tabIndex: _tabIndex, ...rest }:
         </span>
       ) : null}
       {codeChild}
-      <CopyButton getText={() => codeRef.current?.textContent ?? ""} />
+      <CopyButton getText={getCopyText} />
     </pre>
   );
 }

@@ -294,6 +294,42 @@ html {
   display: inline;
 }
 
+/* Task 2.7's <InstallCommand>: the revealed `.pm-only-<pm>` element above is
+   forced `display: inline` (unlayered — beats any Tailwind utility in
+   `@layer utilities` regardless of specificity, same fact the Shiki rules
+   above already rely on). <InstallCommand>'s four variants are also `.shiki`
+   (each is CodeBlock's cloned, individually-scrollable code box:
+   `max-h-96 overflow-auto`), and `overflow`/`max-height` do nothing on a
+   plain inline box — a non-replaced inline element ignores `overflow`
+   other than `visible` and has no box to clip.
+   This repeats the base rule's own selectors verbatim with `.shiki`
+   appended to each compound selector — same unlayered tier, but strictly
+   HIGHER specificity for every one of the five pairs, so it wins
+   regardless of source order rather than relying on a same-specificity,
+   declared-later tie-break. Fix round 1 (task-2.7 review MINOR 4): the
+   five pairs are not all the same arithmetic — `:root` and the attribute
+   selector inside `:not()` both count, so
+   `:root:not([data-pm]) .pm-only-pnpm.shiki` is (0,4,0) against the base
+   rule's own `:root:not([data-pm]) .pm-only-pnpm` at (0,3,0); the other
+   four pairs (`[data-pm="…"] .pm-only-<pm>.shiki` vs.
+   `[data-pm="…"] .pm-only-<pm>`) are (0,3,0) against (0,2,0). Each pair is
+   still compared only against its own counterpart, so the conclusion
+   (every new selector strictly outranks its base-rule counterpart) holds
+   either way — this note exists so the arithmetic is right as written, not
+   because the outcome changes. The revealed install-command variant ends up
+   `display: block` instead of `inline`, and CodeBlock's own `max-h-96
+   overflow-auto` utilities can actually take effect. Every other `.pm-only`
+   consumer (a bare word/icon, e.g. /blocks' trigger label — legacy-
+   components/install-control.astro) is untouched: it has no `.shiki` class,
+   so only the base `display: inline` rule above ever matches it. */
+:root:not([data-pm]) .pm-only-pnpm.shiki,
+[data-pm="pnpm"] .pm-only-pnpm.shiki,
+[data-pm="npm"] .pm-only-npm.shiki,
+[data-pm="yarn"] .pm-only-yarn.shiki,
+[data-pm="bun"] .pm-only-bun.shiki {
+  display: block;
+}
+
 /* Animation utilities — self-contained enter/exit animations for
    the overlay components (no external animation package). Compose like:
    data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95

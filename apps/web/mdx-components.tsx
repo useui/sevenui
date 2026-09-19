@@ -1,6 +1,7 @@
 import * as React from "react";
 import type { MDXComponents } from "mdx/types";
 import { CodeBlock } from "./components/mdx/code-block";
+import { InstallCommand } from "./components/mdx/install-command";
 
 function cx(...values: Array<string | false | null | undefined>): string {
   return values.filter(Boolean).join(" ");
@@ -202,19 +203,19 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     td: Td,
     ul: Ul,
     li: Li,
+    InstallCommand,
 
     // --- Seam for later tasks — DO NOT import these before they exist ---
     // An import of a nonexistent module fails the whole build, so each is
     // named here only in comment form until its own task lands:
     //   - Task 2.6 adds `Component` (renders a registry demo + its source,
     //     via the same <CodeBlock> this file wires up above).
-    //   - Task 2.7 adds `InstallCommand` (the package-manager install
-    //     snippet, also built on <CodeBlock>).
     //   - Stage 3 adds `PrimitiveIndex` (the base-primitive cross-reference
     //     table).
     // lib/docs/elements.ts's JSX-tag assertion already allow-lists all
     // three names, so wiring each in here is this map's only remaining
-    // step once its task lands.
+    // step once its task lands. `InstallCommand` (Task 2.7,
+    // components/mdx/install-command.tsx) is wired above, not here.
     // ----------------------------------------------------------------------
   };
 }
