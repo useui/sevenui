@@ -1,5 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "outputDirectory": null,
   "rewrites": [
     { "source": "/r/pro-manifest.json", "destination": "https://pro.sevenui.dev/r/pro-manifest.json" },
     { "source": "/r/pro/:name", "destination": "https://pro.sevenui.dev/api/registry?name=:name" },
