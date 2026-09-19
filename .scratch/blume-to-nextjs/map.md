@@ -155,18 +155,33 @@ a ticket touches visual parity.
   redirects). Found a landmine: **4 base-relative markdown links** in 3 files
   that Blume rewrites through `basePath` and `02`'s no-basePath decision leaves
   pointing into the gallery's occupied `/components/*` namespace.
+- [MDX content component parity set](issues/04-mdx-content-component-parity-set.md):
+  the authored surface is **exactly 2 components** (re-verified — the 15 extra
+  tags a fence-only scan reports all sit inside inline code spans), plus
+  `CodeBlock` as the primitive both render through; the prose layer is
+  **hand-written element overrides, no `@tailwindcss/typography`**, because the
+  corpus needs exactly **9 elements** and never uses 13 others (no `h1`, `h4`-`h6`,
+  ordered lists, blockquote, `hr`, images, `em`); values match Blume's rendered
+  output, which is a **merge of plugin defaults and Blume's overrides** — read
+  from computed styles, not from its CSS file. `<InstallCommand>` **gains a
+  package-manager bar** (deliberate: the `pnpm` preference is honoured on 1 of 3
+  install surfaces today), embedded as 4 highlighted commands selected by
+  `<html data-pm>` — one uniform intended diff across 67 pages, not 67 different
+  ones. **Nothing is added**: `TypeTable`, `AutoTypeTable`, `GithubInfo` and
+  `Diff` were each raised and dropped — `AutoTypeTable` provably **cannot work**
+  here (59 of 65 registry components have no named props type). Element map is
+  closed and asserted on `02`'s existing text scan.
 
 ## Not yet specified
 
-- **Docs prose typography.** Blume owns the `.prose` styles that render the 68
-  MDX pages today. Once its stylesheet is gone, docs typography is defined from
-  scratch. How closely it must match, and whether it derives from the site
-  tokens or its own scale, sharpens once the content component set
-  (`04-mdx-content-component-parity-set`) and the demo rendering contract
-  (`06-inline-demo-rendering-contract`) are settled. Sharpened by
-  `02-docs-content-pipeline-decision`: no bespoke class names are coined for
-  content elements — they carry Tailwind utilities — so this patch is about a
-  type scale and spacing rhythm, not a `.prose` stylesheet.
+- **No test harness in `apps/web`.** Zero test files and no `vitest` in its
+  `package.json`; all 66 test files live in `packages/registry`.
+  `13-parity-proof-method` settled how the cutover is verified (route diffing)
+  and never touched unit testing, so nothing on the map owns this. Surfaced by
+  `04-mdx-content-component-parity-set`, where it was one reason not to build a
+  component with zero uses: the parity gate cannot see a component that renders
+  on no route, and there is nothing else to exercise it. Whether the migrated
+  app gets a harness at all, and what it would cover, is unspecified.
 - **404 and redirect behaviour** under and around the `/docs` base path.
   Sharpened by `03-sidebar-and-nav-source-of-truth`: `vercel.json` declares **no
   redirects at all** today, and `/docs` is a literal route segment rather than a
