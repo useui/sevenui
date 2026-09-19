@@ -192,6 +192,26 @@ a ticket touches visual parity.
   is safe, and `sidebar-demo` (the registry's only viewport-reading, `fixed`
   primitive) takes it as an opt-in flag.
 
+- [Search palette and its index](issues/08-search-palette-and-its-index.md):
+  full-text matching **measurably does not work** on this corpus — 65 of 68
+  pages are one skeleton, so `installation` matches 67/68 and `props` 47/68.
+  So the index gains **heading-level entries**: 382 entries = 68 pages + 314
+  headings, after excluding the three boilerplate headings that account for 195
+  of 509 occurrences; a heading result deep-links to `route#slug`, which cannot
+  drift because the slug comes from `02`'s `github-slugger` pass. Static JSON
+  fetched on first open, 113 KiB raw / **30 KiB gzipped** (5 KiB if body text
+  were dropped — measured, not taken). The matcher is **ours**: `command`'s
+  `Autocomplete.Root` accepts `filteredItems`, so a hand-written weighted
+  ladder ranks and Base UI keeps combobox roles, highlight and keyboard. Base
+  UI's own filter could not do it — collator substring, boolean, no score.
+  Scope stays docs-only (the gallery and `/blocks` are not searchable today,
+  and `/blocks` is ISR so a build-time index of it is stale by construction).
+  `⌘K` toggle and `/` preserved; **`⌘J` dropped** — it toggles a preview pane
+  this site already hides with `!important`. Found: the six `search.popular`
+  routes are base-less and `/components/button` unprefixed lands on a real but
+  wrong gallery page; and ~60 lines of `innerHTML` sanitizing have **no
+  successor** in React.
+
 ## Not yet specified
 
 - **No test harness in `apps/web`.** Zero test files and no `vitest` in its
@@ -229,6 +249,9 @@ a ticket touches visual parity.
   **on load rather than on scroll** — Astro's `client:visible` is deliberately
   not reproduced. The chrome port shape is now partly known, which is what this
   patch was waiting on.
+  `08-search-palette-and-its-index` fixed a fourth: a 30 KiB gzipped search
+  index, fetched on first open rather than bundled, with a measured 5 KiB
+  alternative if body text is ever dropped.
 
 ## Out of scope
 
