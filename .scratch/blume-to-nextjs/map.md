@@ -415,8 +415,10 @@ a ticket touches visual parity.
 
 ## Not yet specified
 
-<!-- empty: the last patch graduated into
-     [Runtime test harness for apps/web](issues/20-runtime-test-harness.md) -->
+<!-- empty. The last patch graduated into
+     [Runtime test harness for apps/web](issues/20-runtime-test-harness.md),
+     which was then ruled out of scope. The frontier is empty: every ticket is
+     resolved or scoped out, and the spec can be written. -->
 
 ## Out of scope
 
@@ -449,6 +451,16 @@ a ticket touches visual parity.
   a real ancestor, and the alternative (redirecting it to the first primitive)
   resolves the crumb to a sibling. Recorded here so it reads as a deliberate bend
   of "no new surfaces", not a stray.
+- A runtime test harness for `apps/web`. Ruled out of scope by the dev on
+  2026-09-19 after the investigation had run: the destination is a locked
+  migration spec, and whether the site keeps a standing test harness is a
+  practice decision that outlives the cutover — "we look at it when all the work
+  is done". `13`'s parity gate is the verification this cutover gets. The
+  facts, the three named blind spots that gate structurally cannot see, and the
+  provisional answers approved before the ruling are preserved in
+  [Runtime test harness for apps/web](issues/20-runtime-test-harness.md) so the
+  later effort starts from them. Its one live consequence is recorded in the
+  spec as a stated limit, not left as a hole.
 - Writing the implementation plan. Separate effort, after this spec is locked.
 - Extending ISR beyond the pro manifest. The other four data sources on the site
   do not go stale.
