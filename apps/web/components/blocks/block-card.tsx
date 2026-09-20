@@ -73,7 +73,16 @@ export function BlockCard({
       id={name}
     >
       <div>
-        <h2 className="flex items-center gap-2 text-sm font-medium">
+        {/*
+          The legacy Astro site set tight letter-spacing on every bare
+          `h1`-`h6` globally; this port declares no such bare-selector rule,
+          on the assumption that the chrome's headings all carry their own
+          spacing class. This title is one of the two chrome headings that
+          assumption missed, so the class below restores production's
+          measured spacing by hand. The "Pro" badge span inherits it and
+          needs no class of its own.
+        */}
+        <h2 className="flex items-center gap-2 text-sm font-medium tracking-tighter">
           {title}
           {badge && (
             <span className="rounded-md bg-primary px-1.5 py-0.5 text-xs font-medium text-primary-foreground">

@@ -62,7 +62,15 @@ export function CategoryCard({ group, category }: { group: string; category: Cat
         )}
       </div>
       <div className="mt-3 flex items-baseline justify-between gap-4">
-        <h3 className="text-sm font-medium">{category.label}</h3>
+        {/*
+          The legacy Astro site set tight letter-spacing on every bare
+          `h1`-`h6` globally; this port declares no such bare-selector rule,
+          on the assumption that the chrome's headings all carry their own
+          spacing class. This label is one of the two chrome headings that
+          assumption missed, so the class below restores production's
+          measured spacing by hand.
+        */}
+        <h3 className="text-sm font-medium tracking-tighter">{category.label}</h3>
         {/*
           One template literal rather than the Astro source's two adjacent
           expressions with a space between them. The rendered characters are
