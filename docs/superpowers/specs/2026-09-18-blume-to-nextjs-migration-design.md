@@ -958,7 +958,7 @@ Every diff must be empty or appear here. This list is what separates "we fixed a
 | 29 | Three demos (`field-validation.tsx`, `chart-demo.tsx`, `chart-line.tsx`) gain a `"use client"` directive; their `/r/demo/*.json` content changes by one line each | §7 |
 | 30 | The site footer renders on docs pages; production has none there | §11.1 |
 | 31 | Inline demos contribute 16 headings to the outline on 5 routes, one of them with a generated id | §7 |
-| 32 | The code block's language label is text where production drew an icon | §11.5 |
+| 32 | The code block's language label is a real text node on **both** surfaces that carry one — the docs pages, where production drew an icon, and the 10 `/components` pages, where production drew it with a CSS `::before`. §17.2's extractor reads `body.textContent`, which sees neither an icon nor a pseudo-element, so this **adds extractable text**: production's extraction of `/docs/components/button` and `/components/button` contains zero occurrences of `TSX`, ours contains 6 and 4 | §11.5 |
 | 33 | The Preview/Code labels ship in the static HTML instead of being written by script | §7.3, §11.5 |
 | 34 | **"Edit on GitHub" is repaired** — production's 68 links all point at a path that has not existed since the monorepo move; the port emits the working one | §11.3 |
 | 35 | prev/next gains one hop, through `/docs/components` | consequence of #26 |
