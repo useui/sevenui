@@ -1,3 +1,4 @@
+import { docsTrail, getNavTree } from "../lib/docs/nav";
 import { getPageMeta } from "../lib/page-meta";
 import { site } from "../lib/site";
 
@@ -13,11 +14,19 @@ import { site } from "../lib/site";
  * the article. Today's 16 non-docs `TechArticle` pages emit a suffixed
  * headline; that is intended diff §17.6 #18.
  *
- * `BreadcrumbList` is a third graph node added later, by Stages 3 and 5 — not
- * implemented here.
+ * `BreadcrumbList` is the third graph node, added for docs routes by Task 3.3
+ * (§17.6 #23) — production emits only the two above, so this node is
+ * genuinely new. Stage 5 brings `/blocks` onto the same node.
+ *
+ * ROUTE FORMAT, and it is not cosmetic: `route` must have a leading slash and
+ * NO trailing slash (`lib/page-meta.ts`'s own contract names this component
+ * as the caller that throws otherwise — a trailing slash makes `getPageMeta`
+ * return `undefined` and the `!meta` branch below fails the build). Every
+ * mount point must normalise before passing.
  */
 export async function JsonLd({ route }: { route: string }) {
   const websiteId = `${site.url}#website`;
+  const pageUrl = `${site.url}${route}`;
   const graph: Record<string, unknown>[] = [
     { "@id": websiteId, "@type": "WebSite", name: site.name, url: site.url },
   ];
@@ -27,7 +36,6 @@ export async function JsonLd({ route }: { route: string }) {
     if (!meta) {
       throw new Error(`JsonLd: no page-meta registered for route "${route}"`);
     }
-    const pageUrl = `${site.url}${route}`;
     graph.push({
       "@id": `${pageUrl}#page`,
       "@type": "TechArticle",
@@ -37,6 +45,41 @@ export async function JsonLd({ route }: { route: string }) {
       url: pageUrl,
       description: meta.description,
       isPartOf: { "@id": websiteId },
+    });
+  }
+
+  // The `BreadcrumbList` node (§17.6 #23) — the SAME trail the rendered
+  // breadcrumb draws, from the same function, so the markup and the
+  // structured data cannot describe two different hierarchies. That is the
+  // whole reason it is not assembled locally here.
+  //
+  // Emitted only for a trail of two or more, which mirrors
+  // `components/docs/breadcrumb.tsx`'s own guard: `/docs` is its own trail's
+  // only item, and a one-item breadcrumb list is as empty of information in
+  // the graph as it is on the page. Non-docs routes get an empty trail and so
+  // get no node either, which is what leaves `/blocks` to Stage 5.
+  //
+  // `getNavTree()` is called unconditionally rather than behind a
+  // "is this a docs route" test: `docsTrail` already answers `[]` for
+  // anything the nav does not contain, so a second route-shape predicate
+  // here would be a duplicate of `getPageMeta`'s free to drift from it. The
+  // tree is memoized through `getDocIndex()`, which every docs render has
+  // already resolved by this point, so this costs no extra filesystem pass.
+  //
+  // `position` is 1-based and contiguous by construction (the array index),
+  // and every `item` is absolute — Google resolves neither a relative `item`
+  // nor a gap in the sequence.
+  const trail = docsTrail(await getNavTree(), route);
+  if (trail.length > 1) {
+    graph.push({
+      "@id": `${pageUrl}#breadcrumb`,
+      "@type": "BreadcrumbList",
+      itemListElement: trail.map((crumb, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: crumb.label,
+        ...(crumb.href ? { item: `${site.url}${crumb.href}` } : {}),
+      })),
     });
   }
 

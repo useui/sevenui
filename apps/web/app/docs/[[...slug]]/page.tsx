@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { JsonLd } from "../../../components/json-ld";
 import { getDoc, getDocIndex } from "../../../lib/docs";
 import { getPageMeta } from "../../../lib/page-meta";
 import { pageTitle } from "../../../lib/site";
@@ -16,9 +17,10 @@ function routeFrom({ slug = [] }: Params): string {
   return slug.length ? `/docs/${slug.join("/")}` : "/docs";
 }
 
-// 68 entries: one per file in apps/web/docs/**/*.mdx (65 under components/,
-// plus index.mdx, installation.mdx, theming.mdx). `/docs` itself (index.mdx)
-// maps to `slug: []`, matching this route's optional catch-all segment.
+// 69 entries: one per file in apps/web/docs/**/*.mdx (65 under components/,
+// plus index.mdx, installation.mdx, theming.mdx and — from Task 3.3 —
+// components.mdx, the Primitives index). `/docs` itself (index.mdx) maps to
+// `slug: []`, matching this route's optional catch-all segment.
 export async function generateStaticParams() {
   const index = await getDocIndex();
   return index.map((p) => ({
@@ -65,7 +67,15 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 
 export default async function DocPage({ params }: { params: Promise<Params> }) {
   const { slug = [] } = await params; // params is a Promise in Next 16
-  const doc = await getDoc(routeFrom({ slug }));
+  // Hoisted out of the `getDoc` call below because `<JsonLd>` needs the same
+  // string, and `routeFrom` is the one place a slug array becomes it (see its
+  // own comment). It produces exactly the leading-slash / no-trailing-slash
+  // form `lib/page-meta.ts`'s contract requires: `slug.join("/")` cannot
+  // yield a trailing slash (Next never puts an empty segment in the array),
+  // and the empty-slug case is the literal `"/docs"`, not `"/docs/"` and not
+  // `""`.
+  const route = routeFrom({ slug });
+  const doc = await getDoc(route);
   if (!doc) notFound();
 
   // Relative, literally-prefixed specifier: Turbopack builds the context
@@ -106,11 +116,30 @@ export default async function DocPage({ params }: { params: Promise<Params> }) {
   // inside a 42rem box and then leave each of those four to be centred
   // again, or force them inside a wrapper they do not belong in. After
   // this task the count is 1; Tasks 3.2-3.4 take it to 5.
+  // `<JsonLd>` mounts HERE, and until Task 3.3 it was mounted nowhere at all:
+  // the component shipped in Task 1.7 and the only other occurrences of its
+  // name in the repo were comments, so every docs page was emitting zero
+  // `application/ld+json` against production's one — an unlisted regression,
+  // and no place for §17.6 #23's new `BreadcrumbList` node to land.
+  //
+  // The page rather than a layout, because a layout is not given the
+  // pathname in App Router and this file already owns the one conversion from
+  // slug array to route string. OUTSIDE the `<article>`, not inside it: the
+  // payload is a `<script>`, and §17.2's text extractor reads the article's
+  // text — a JSON blob inside it would be page content as far as any text
+  // comparison is concerned. `<JsonLd>` also THROWS on a route
+  // `getPageMeta` cannot answer (Task 1.7's deliberate fail-loud choice,
+  // which no build had ever executed before this mount); Task 2.5 widened
+  // that resolver to answer every `/docs` route from the content index, so
+  // all 69 resolve, `/docs/components` included, with no `CUSTOM` entry.
   return (
-    <article className="mx-auto max-w-content">
-      <h1>{doc.title}</h1>
-      <p className="my-4 text-lg text-muted-foreground">{doc.description}</p>
-      <MDXContent />
-    </article>
+    <>
+      <article className="mx-auto max-w-content">
+        <h1>{doc.title}</h1>
+        <p className="my-4 text-lg text-muted-foreground">{doc.description}</p>
+        <MDXContent />
+      </article>
+      <JsonLd route={route} />
+    </>
   );
 }

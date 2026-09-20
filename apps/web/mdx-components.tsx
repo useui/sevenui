@@ -3,6 +3,7 @@ import type { MDXComponents } from "mdx/types";
 import { CodeBlock } from "./components/mdx/code-block";
 import { Component } from "./components/mdx/component";
 import { InstallCommand } from "./components/mdx/install-command";
+import { PrimitiveIndex } from "./components/mdx/primitive-index";
 
 function cx(...values: Array<string | false | null | undefined>): string {
   return values.filter(Boolean).join(" ");
@@ -207,13 +208,10 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     InstallCommand,
     Component,
 
-    // --- Seam for a later stage — DO NOT import before it exists ---
-    // An import of a nonexistent module fails the whole build. Stage 3
-    // adds `PrimitiveIndex` (the base-primitive cross-reference table);
-    // lib/docs/elements.ts's JSX-tag assertion already allow-lists the
-    // name, so wiring it in here is this map's only remaining step once
-    // that stage lands. `InstallCommand` (Task 2.7) and `Component`
-    // (Task 2.6) are both wired above, not here.
-    // ----------------------------------------------------------------------
+    // Task 3.3 closes the seam this map left open: `PrimitiveIndex` is the
+    // 65-card index on `/docs/components`, and it is the third and last of
+    // the JSX components `lib/docs/elements.ts`'s assertion allow-lists. All
+    // three are now wired, so nothing here is a forward reference any more.
+    PrimitiveIndex,
   };
 }

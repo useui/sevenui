@@ -404,17 +404,53 @@ function NavGroupRow({
         onToggle={(event) => setOpen(event.currentTarget.open)}
         open={open}
       >
-        <summary className="flex cursor-pointer list-none items-center gap-1.5 rounded-[0.65rem] px-2.5 py-1.5 text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground [&::-webkit-details-marker]:hidden">
+        <summary
+          className="flex cursor-pointer list-none items-center gap-1.5 rounded-[0.65rem] px-2.5 py-1.5 text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground [&::-webkit-details-marker]:hidden"
+          onClick={(event) => {
+            // Task 3.3 §E. The group's own link now lives INSIDE this
+            // summary, and a disclosure's toggle is the click's own
+            // activation behaviour — so a click on the link would navigate
+            // AND collapse the section under the reader. Cancelling the
+            // click's default is what suppresses the toggle; the navigation
+            // does not depend on that default, because `next/link` performs
+            // it from its own handler on the anchor, which React has
+            // already run by the time the event bubbles up to here.
+            //
+            // Everything else still toggles: the chevron, this summary's own
+            // padding, and — since a keyboard activation targets the SUMMARY
+            // rather than the link — Enter and Space with the summary
+            // focused. Enter with the LINK focused fires a click targeted at
+            // the link, so it navigates without toggling, which is the
+            // anchor's own semantics and the right answer. A modifier or
+            // middle click is deliberately left alone so the browser can
+            // still open the page in a new tab; the disclosure toggling in
+            // that one case is the accepted cost of not breaking it.
+            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            if ((event.target as HTMLElement).closest("a")) event.preventDefault();
+          }}
+        >
           {/*
-            A `<span>`, because SevenUI's group has no `href` yet.
-            NavTree.astro:279-298 has an `<a>` branch for a group that
-            carries a `route` — Task 3.3 is the one that populates
-            `NavGroup.href` (from the content index's `route`, never from
-            the label) and turns that branch on here, making the summary a
-            link with the toggle bound to the chevron. The shape is left
-            addressable for it rather than collapsed away.
+            NavTree.astro:279-298's two branches, both live now: an `<a>` for
+            a group that carries its own page, a `<span>` for one that does
+            not. Task 3.3 populates `NavGroup.href` (from the content index's
+            `route`, never from the label), so today's single group takes the
+            link branch — the `<span>` stays for a future group without one.
+            The link's utilities are NavTree's own, reproduced rather than
+            re-invented; `-my-1`/`py-1` restore the row's hit area after the
+            anchor's own box is introduced.
           */}
-          <span className="flex-1 truncate">{group.label}</span>
+          {group.href ? (
+            <Link
+              aria-current={group.href === pathname ? "page" : undefined}
+              className="-my-1 flex flex-1 items-center gap-1.5 rounded py-1 transition-colors aria-[current=page]:font-semibold aria-[current=page]:text-foreground"
+              href={group.href}
+              onClick={onNavigate}
+            >
+              <span className="flex-1 truncate">{group.label}</span>
+            </Link>
+          ) : (
+            <span className="flex-1 truncate">{group.label}</span>
+          )}
           {/*
             Scoped to this group's own `details` rather than Tailwind's
             `group-open` variant, which matches any open ancestor `.group`

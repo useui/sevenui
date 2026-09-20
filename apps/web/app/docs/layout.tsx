@@ -1,12 +1,13 @@
+import { DocsBreadcrumb } from "../../components/docs/breadcrumb";
 import { DocsSidebar } from "../../components/docs/sidebar";
 import { DocsTocDesktop, DocsTocMobile, DocsTocProvider } from "../../components/docs/toc";
 import { getDocIndex } from "../../lib/docs";
 import type { Heading } from "../../lib/docs/headings";
-import { getNavTree, resolvePrimitivesHref } from "../../lib/docs/nav";
+import { type Crumb, docsTrail, getNavTree, resolvePrimitivesHref } from "../../lib/docs/nav";
 
 /**
- * The persistent docs layout (§5, §11.1). Wraps all 68 docs routes — 69
- * once Task 3.3 adds `/docs/components` — so the sidebar is mounted once
+ * The persistent docs layout (§5, §11.1). Wraps all 69 docs routes (68 plus
+ * `/docs/components`, which Task 3.3 added) so the sidebar is mounted once
  * and survives every navigation between them.
  *
  * A SERVER component, deliberately: it is the only place in this subtree
@@ -55,9 +56,19 @@ export default async function DocsLayout({ children }: { children: React.ReactNo
   // memoized index the nav tree above came from, so no second filesystem pass.
   // The headings themselves are the content index's h2+h3 text scan (§4.5),
   // ids included; nothing here re-reads the MDX.
+  //
+  // The breadcrumb trails ride along in the same loop, for the same reason
+  // and at the same cost (Task 3.3, §11.3). `DocsBreadcrumb` has to be a
+  // client component — it sits HERE, above the mobile TOC, where no route is
+  // available, so it reads `usePathname()` — but `docsTrail` lives in
+  // `lib/docs/nav.ts`, which is `server-only`. Precomputing every route's
+  // trail on the server and handing down a plain map keeps the nav tree and
+  // the content index off the client, exactly as `headingsByRoute` does.
   const headingsByRoute: Record<string, Heading[]> = {};
+  const crumbsByRoute: Record<string, Crumb[]> = {};
   for (const page of await getDocIndex()) {
     headingsByRoute[page.route] = page.headings;
+    crumbsByRoute[page.route] = docsTrail(tree, page.route);
   }
 
   return (
@@ -82,10 +93,20 @@ export default async function DocsLayout({ children }: { children: React.ReactNo
         <div className="px-6 pt-6 pb-10 lg:px-8 xl:px-10">
           {/*
             `RootLayout.astro:684-688`'s order: breadcrumb, mobile TOC, then the
-            page header. Task 3.3's breadcrumb goes ABOVE this line; the `<h1>`
-            that follows lives inside `{children}`
+            page header. Task 3.3's breadcrumb is the first line below; the
+            `<h1>` that follows lives inside `{children}`
             (`app/docs/[[...slug]]/page.tsx`'s `<article>`), so the mobile TOC
             is the last thing this layout puts before it.
+
+            DEPARTURE FROM TASK 3.3's FILE LIST, reported with the task. That
+            brief lists `app/docs/[[...slug]]/page.tsx` as the breadcrumb's
+            render site and does not list this file. It cannot be the page:
+            the page IS `{children}`, so a breadcrumb rendered there lands
+            BELOW the mobile TOC and inverts the order this comment (and
+            `RootLayout.astro`) fixes. The dispatch that opened the task
+            resolves it the other way and points at this very line, so the
+            breadcrumb is mounted here and the file list is the thing that
+            gave way.
 
             Note for whoever diffs build HTML next: React's `useId` numbering is
             derived from each children array's slot index AND its length, and
@@ -95,6 +116,7 @@ export default async function DocsLayout({ children }: { children: React.ReactNo
             and 3.4; it is internal id text, not markup structure, and §17.2's
             extractor (route, text, headings, links) cannot see it.
           */}
+          <DocsBreadcrumb crumbsByRoute={crumbsByRoute} />
           <DocsTocMobile />
           {children}
         </div>

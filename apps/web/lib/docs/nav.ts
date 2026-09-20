@@ -28,6 +28,14 @@ const SKELETON = ["/docs", "/docs/installation", "/docs/theming"] as const;
 const PRIMITIVES_GROUP = "Primitives";
 const PRIMITIVES_PREFIX = "/docs/components/";
 
+// The Primitives group's OWN page (Task 3.3, §11.3), i.e. the content index
+// route the group's `href` is set to below. Note the one-character
+// difference from `PRIMITIVES_PREFIX` above: this constant has no trailing
+// slash and the prefix does, which is exactly what keeps this route out of
+// the `primitives` children list — a group's own landing page must never
+// also appear as one of its own children.
+const PRIMITIVES_INDEX = "/docs/components";
+
 // Builds the nav tree from an already-assembled content index. Pure and
 // synchronous on purpose: Task 2.1's per-build assertion seam
 // (`lib/docs/index.ts`'s `readAll()`) needs to build a tree and check it
@@ -80,12 +88,43 @@ export function buildNavTree(index: DocPage[]): NavNode[] {
     .map((page) => ({ label: page.title, href: page.route }))
     .sort((a, b) => (a.href < b.href ? -1 : a.href > b.href ? 1 : 0));
 
-  return [...rootLinks, { label: PRIMITIVES_GROUP, children: primitives }];
+  // Step 4's narrowing, and the only thing in this file that has ever
+  // constructed a group `href`. Its value comes from the content index's own
+  // `route` — the same field every leaf `href` above comes from — never from
+  // the group's `label`, so §5's boundary holds unchanged.
+  //
+  // Fail loud rather than degrade. With no page at that route the group
+  // would quietly render an unlinked label again (the exact defect §11.3
+  // removes) and every primitive's breadcrumb would lose its middle link,
+  // with no error raised anywhere — the same quiet-wrong-answer this
+  // module's other checks refuse to allow. The lookup, not a literal, is
+  // also what makes the `href` provably a real route.
+  const indexPage = byRoute.get(PRIMITIVES_INDEX);
+  if (!indexPage) {
+    throw new Error(
+      `lib/docs/nav.ts: the "${PRIMITIVES_GROUP}" group's own page "${PRIMITIVES_INDEX}" has no matching page in the content index`,
+    );
+  }
+
+  return [...rootLinks, { label: PRIMITIVES_GROUP, children: primitives, href: indexPage.route }];
 }
 
 // The Primitives tab's link target (§5, `lib/site-tabs.ts`'s `getSiteTabs`):
-// the group's own `href` once Stage 3 (§11.3) populates one, or its first
-// (slug-sorted) child's `href` until then.
+// the group's FIRST (slug-sorted) child's `href`, unconditionally.
+//
+// RULED, Task 3.3 §D.2 — DO NOT "fix" this back to preferring the group's
+// own `href`. It used to read `group?.href ?? group?.children[0]?.href`, and
+// the comment above it (and `site-tabs.ts`'s) anticipated the group gaining
+// an `href` and this tab following it. Now that `buildNavTree` populates
+// one, that preference would retarget the header's Primitives tab from
+// `/docs/components/accordion` to `/docs/components` on EVERY page of the
+// site — three links on ~101 routes — and §17.6 is declared complete with
+// no row covering a site-wide link rewrite. Keeping the tab put is the
+// reversible choice; moving it would mix an unlisted 101-route diff into
+// the one gate that would otherwise catch a real regression. The group's
+// `href` still lives in the tree for the breadcrumb and the sidebar
+// summary, both of which read the tree directly; this function has exactly
+// one call site (`app/layout.tsx`), whose only consumer is the tab.
 //
 // The group is identified by the same structural fact `buildNavTree` used
 // to BUILD it — its children's routes start with `PRIMITIVES_PREFIX`
@@ -106,7 +145,7 @@ export function resolvePrimitivesHref(tree: NavNode[]): string | undefined {
       node.children.length > 0 &&
       node.children.every((child) => child.href.startsWith(PRIMITIVES_PREFIX)),
   );
-  return group?.href ?? group?.children[0]?.href;
+  return group?.children[0]?.href;
 }
 
 // Visits every `href` reachable in the tree, INCLUDING a group's own
@@ -174,6 +213,75 @@ function flattenLinks(tree: NavNode[]): NavLink[] {
 export async function getNavTree(): Promise<NavNode[]> {
   const index = await getDocIndex();
   return buildNavTree(index);
+}
+
+// One breadcrumb. `href` is optional for the same reason the sidebar's group
+// summary has a `<span>` branch: a group that carries no `href` is still a
+// real ancestor and must still be NAMED in the trail, just not linked.
+export type Crumb = { label: string; href?: string };
+
+// The synthetic root of every docs trail.
+//
+// Synthetic because the nav tree has no root node, and taking the tree's own
+// trail as-is was rejected: it leaves `/docs/installation` with a one-item
+// trail — the same no-information breadcrumb §11.3 exists to remove, merely
+// relocated.
+//
+// `Docs` is the site's own word for this section, not a coinage: it is the
+// label of `lib/site-tabs.ts`'s first tab, whose `href` is this same
+// `/docs`. It deliberately does NOT reuse the index page's own frontmatter
+// title ("Introduction", `docs/index.mdx`) — a trail's root names the
+// section a reader is in, and "Introduction / Primitives / Button" names a
+// document instead.
+const DOCS_ROOT: Crumb = { label: "Docs", href: "/docs" };
+
+// `href` is read off the UNION, not off either branch: `NavLink.href` is
+// required and `NavGroup.href` optional, so the union's property type is
+// already `string | undefined` and no narrowing is needed. The key is omitted
+// rather than set to `undefined` so the crumb serializes clean across the RSC
+// boundary.
+function crumbFor(node: NavNode): Crumb {
+  return node.href === undefined ? { label: node.label } : { label: node.label, href: node.href };
+}
+
+// Depth-first search for `route`, returning the chain of nodes from the top
+// level down to the match, or `undefined` when the tree does not contain it.
+// A group matches on its OWN `href` as well as through its children, which
+// is what gives `/docs/components` the trail `Docs / Primitives` with the
+// group as the current page rather than as an ancestor of itself.
+function findTrail(nodes: NavNode[], route: string): Crumb[] | undefined {
+  for (const node of nodes) {
+    if (isNavGroup(node)) {
+      if (node.href === route) return [crumbFor(node)];
+      const inner = findTrail(node.children, route);
+      if (inner) return [crumbFor(node), ...inner];
+    } else if (node.href === route) {
+      return [crumbFor(node)];
+    }
+  }
+  return undefined;
+}
+
+/**
+ * The breadcrumb trail for one docs route (§11.3): the synthetic `Docs`
+ * root, then every nav ancestor, then the page itself —
+ * `Docs / Primitives / Button`.
+ *
+ * `/docs` returns a ONE-item trail on purpose, and callers render nothing
+ * for a trail of one: a breadcrumb whose only item is the current page
+ * carries no information. It is special-cased rather than found through the
+ * tree so the root crumb reads `Docs` there too, instead of the index page's
+ * own title.
+ *
+ * An empty array for a route the nav does not contain. Unreachable for a
+ * docs page (`assertNavCoversIndex` fails the build before any of this
+ * runs), and the correct answer for the non-docs routes `components/
+ * json-ld.tsx` also serves — they get no `BreadcrumbList`.
+ */
+export function docsTrail(tree: NavNode[], route: string): Crumb[] {
+  if (route === DOCS_ROOT.href) return [DOCS_ROOT];
+  const trail = findTrail(tree, route);
+  return trail ? [DOCS_ROOT, ...trail] : [];
 }
 
 export type PrevNext = { prev: NavLink | undefined; next: NavLink | undefined };
