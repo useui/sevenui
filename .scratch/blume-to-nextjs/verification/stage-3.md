@@ -84,3 +84,38 @@ human can supply the bypass secret. `npm i` in that directory first.
 
 **Verdict: Stage 3's structural half PASSES in full.** Its runtime half is deferred to a Playwright
 run, with the blocking input named.
+
+---
+
+## Runtime half — CLOSED 2026-09-20 (Session 6)
+
+The human supplied the Vercel Protection Bypass, so the deferred half ran where it always could:
+a real headless Chromium against the branch preview. Harness
+`.superpowers/sdd/2026-09-19-blume-to-nextjs/pw/stage3-frames.mjs`, full detail in
+`stage3-frames-report.md`, machine-readable results in `pw/stage3-frames.json`. Origin guard on,
+so nothing was reported until the landed origin proved it was our own deployment. Re-run clean,
+exit 0, deterministic.
+
+| # | Behaviour | Verdict | Measurement |
+|---|---|---|---|
+| 1 | Scroll-spy tracking | PASS | `/docs/components/chart`, 5-heading walk; active id installation→usage→api-reference, matching `activeIdFor()` at every step |
+| 2 | Last TOC link forced at the document bottom | PASS (with caveat) | forced value `api-reference` correct; **no sampled route has enough content after its last heading to distinguish "forced" from "crossed naturally"** — recorded, not hidden |
+| 3 | TOC after demo hydration | PASS | re-probed 2 s past networkidle against fresh DOM; all 5 steps still match. Page height happened not to change on that route |
+| 4 | Mobile drawer motion | PASS | `aside[aria-label="Primary"]` x: **−269px → 0px** on hamburger click |
+| 5 | Backdrop | PASS | covers the full 375×812 viewport while open; click-to-close verified; positive control shown for the selector |
+| 6 | Scroll lock + `inert`, both states | PASS | `overflow: visible → hidden`; `inert: true → false` |
+| 7 | Close-on-resize above `lg` | PASS | see the breakpoint below |
+| 8 | Hand-collapsed group survives navigation + chevron rotation | PASS | "Primitives" stayed collapsed across a confirmed client-side nav (a `window` marker survived); chevron `rotate` flips 90deg ↔ none |
+| 9 | GA4 feedback event | PASS | GA **is** live on preview; captured payload `{"helpful":"yes","path":"/docs/components/button","title":"Button"}` |
+
+**THE DRAWER'S REAL BREAKPOINT IS 1024px.** Bracketed at 1020 / 1023 / 1024 / 1025 / 1028: both the
+resize-close and the hamburger's own disappearance switch at exactly 1024px — `lg`, i.e. the 64rem
+`matchMedia` query `site-drawer.tsx` already names. **The plan's "768 is a guess" (§17.3, Stage 4's
+preview matrix) is answered: it is 1024, not 768.**
+
+**New standing trap:** Tailwind v4 here emits rotation and translation as the standalone CSS
+`rotate` / `translate` properties, not the `transform` shorthand. Any future probe reading
+`getComputedStyle(el).transform` on these elements sees `"none"` in **every** state and would
+report a false negative. Read `rotate` / `translate`.
+
+**Verdict: Stage 3 now passes in full — structural and runtime.** No FAILs.
