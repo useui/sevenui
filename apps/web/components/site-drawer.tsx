@@ -14,6 +14,10 @@ import { useDrawer } from "./drawer-context";
  * that made room for one in the Astro source has nothing to render and is
  * dropped).
  *
+ * Returns `null` under `/docs` — see the guard in the body; that docstring
+ * line above ("this app has no docs sidebar yet") stopped being true in
+ * Task 3.1, which brought the tree branch back as its own component.
+ *
  * Deliberately hand-rolled rather than the registry's `Sheet`: Sheet is
  * modal with a focus trap, and this drawer is non-modal by design — a choice
  * recorded twice in the Astro source (site-drawer.astro:11-30's comment and
@@ -39,27 +43,53 @@ export function SiteDrawer({ primitivesHref }: { primitivesHref: string }) {
   const tabs = getSiteTabs(primitivesHref);
   const activeTabHref = currentTabForRoute(pathname, tabs);
 
+  // Task 3.1 (§5): a docs page must carry exactly ONE drawer, and under
+  // `/docs` that drawer is `components/docs/sidebar.tsx` — the same element
+  // that is the desktop sidebar column, which additionally lists the 65
+  // primitives this tabs-only drawer never could. It owns the backdrop, the
+  // scroll lock, the `inert` handling and the tab block there, so this
+  // component stands down entirely rather than stacking a second off-canvas
+  // panel behind it.
+  //
+  // The rejected alternative was feeding the tree upward into this drawer:
+  // a child layout cannot hand data to a parent layout during SSR, so
+  // `app/layout.tsx` would have to serialize all 65 links into the client
+  // payload on EVERY route (`/`, `/blocks`, `/pro`, the gallery) when Blume
+  // pays for them on docs pages only.
+  //
+  // `usePathname()` resolves during prerender, so the suppression is
+  // server-side too — the static HTML for a docs route simply has no second
+  // drawer in it, not a hydration-time flip. The check has to sit below
+  // every hook, and the two effects below opt out of it by the same flag,
+  // so nothing here contends with the docs sidebar for `documentElement`'s
+  // `overflow` or for the drawer's open state.
+  const isDocs = pathname === "/docs" || pathname.startsWith("/docs/");
+
   // Close-on-resize past `lg` (64rem), ported from Header.astro:150's
   // `resize` listener as a `matchMedia` listener instead — the intent
   // (leaving `lg`+ never leaves the scroll lock or the drawer open behind
   // it) is unchanged, only the event source is.
   useEffect(() => {
+    if (isDocs) return;
     const query = window.matchMedia("(min-width: 64rem)");
     const onChange = (event: MediaQueryListEvent) => {
       if (event.matches) setOpen(false);
     };
     query.addEventListener("change", onChange);
     return () => query.removeEventListener("change", onChange);
-  }, [setOpen]);
+  }, [isDocs, setOpen]);
 
   // Scroll lock while open, ported verbatim from Header.astro:150's
   // `d.style.overflow=open?"hidden":""`.
   useEffect(() => {
+    if (isDocs) return;
     document.documentElement.style.overflow = open ? "hidden" : "";
     return () => {
       document.documentElement.style.overflow = "";
     };
-  }, [open]);
+  }, [isDocs, open]);
+
+  if (isDocs) return null;
 
   return (
     <>

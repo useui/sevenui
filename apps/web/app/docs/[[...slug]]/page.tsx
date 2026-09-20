@@ -89,8 +89,25 @@ export default async function DocPage({ params }: { params: Promise<Params> }) {
   // because the aliased form is broken under Turbopack, because it isn't.
   const { default: MDXContent } = await import(`../../../docs/${slug.length ? slug.join("/") : "index"}.mdx`);
 
+  // `mx-auto max-w-content` — the 42rem docs measure (§A5, Task 3.1).
+  // `--container-content: 42rem` has been declared in `app/globals.css`
+  // since Task 1.x with zero call sites; production carries it on
+  // `<article class="prose mx-auto max-w-content">`
+  // (RootLayout.astro:305). `prose` does NOT come along: §8.3 replaced
+  // `.prose` with element overrides in `globals.css`, so the class has no
+  // definition here.
+  //
+  // On the `<article>` itself, as production has it, not on a wrapper in
+  // `app/docs/layout.tsx`: the four remaining call sites the `globals.css`
+  // comment predicts ("five `max-w-content` call sites on one live page")
+  // are the breadcrumb, the mobile TOC, the pagination and the
+  // last-updated line — all of them SIBLINGS of the article on the same
+  // measure, not ancestors of it. A wrapper would centre the article
+  // inside a 42rem box and then leave each of those four to be centred
+  // again, or force them inside a wrapper they do not belong in. After
+  // this task the count is 1; Tasks 3.2-3.4 take it to 5.
   return (
-    <article>
+    <article className="mx-auto max-w-content">
       <h1>{doc.title}</h1>
       <p className="my-4 text-lg text-muted-foreground">{doc.description}</p>
       <MDXContent />
