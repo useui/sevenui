@@ -918,3 +918,42 @@ html {
     opacity: 1;
   }
 }
+
+/* --- /pro --- */
+/* Task 6.3: ported from `legacy-pages/pro.astro`'s own `<style>` block.
+   Astro's `:global()` there is scoping syntax with no runtime meaning —
+   `.catalog-cell :global(.draw)` compiled to the plain descendant selector
+   written below. Scoped under `.catalog-cell` (the class on each catalog
+   grid cell in `app/pro/page.tsx`), the way the source scoped it, so these
+   rules reach only this page's drawings — a bare `.draw`/`.ink` rule here
+   would also catch `/account`'s license sketch, added just above under its
+   own `#account-root` scope. */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* The page's one authored moment: the catalog draws itself onto the
+     canvas — stroke outlines first, content ink settling in after. */
+  .catalog-cell .draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: catalog-draw 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--draw-delay, 0s);
+  }
+
+  .catalog-cell .ink {
+    opacity: 0;
+    animation: catalog-ink 0.5s ease-out both;
+    animation-delay: calc(var(--draw-delay, 0s) + 0.55s);
+  }
+}
+
+@keyframes catalog-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes catalog-ink {
+  to {
+    opacity: 1;
+  }
+}
