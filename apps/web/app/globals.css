@@ -450,6 +450,85 @@ html {
   display: block;
 }
 
+/* The exposed-grid canvas. Ported from legacy-pages/index.astro's `<style>`
+   block, but it lives here rather than beside the landing page because it is
+   not the landing page's alone: legacy-components/legal-page.astro draws the
+   same rails and crop marks, so Task 4.3's `/terms` and `/privacy` are the
+   second consumer. Astro's `:global()` is scoping syntax with no runtime
+   meaning — `.l-row :global(.hero-rise)` below is written as the plain
+   descendant selector it always compiled to.
+
+   One row of the exposed grid: the shared content column plus the two
+   vertical rails. Rows stack, so per-row borders read as continuous lines.
+   Rails and marks disappear below sm where they would hug the viewport
+   edge. */
+.l-row {
+  position: relative;
+  margin-inline: auto;
+  width: 100%;
+  max-width: 72rem; /* the same 72rem measure the docs pages' column uses */
+}
+
+@media (min-width: 640px) {
+  .l-row {
+    border-inline: 1px solid var(--border);
+  }
+
+  .l-marks::before,
+  .l-marks::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--border);
+    background: var(--background);
+    transform: translate(-50%, -50%);
+  }
+
+  .l-marks::before {
+    left: 0;
+  }
+
+  .l-marks::after {
+    left: 100%;
+  }
+}
+
+/* The page's one authored motion moment: the hero settles into place on
+   load. Content is visible by default; the animation only runs when motion
+   is welcome. */
+@media (prefers-reduced-motion: no-preference) {
+  .l-row .hero-rise {
+    animation: hero-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .l-row .hero-rise-2 {
+    animation-delay: 0.07s;
+  }
+
+  .l-row .hero-rise-3 {
+    animation-delay: 0.14s;
+  }
+
+  .l-row .hero-rise-4 {
+    animation-delay: 0.21s;
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Animation utilities — self-contained enter/exit animations for
    the overlay components (no external animation package). Compose like:
    data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95

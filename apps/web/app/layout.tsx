@@ -59,13 +59,15 @@ export const metadata: Metadata = {
  * `SiteHeader`'s hamburger and `SiteDrawer` itself both call `useDrawer()`,
  * which throws outside a provider by design.
  *
- * `primitivesHref` is resolved here, not in `SiteHeader`/`SiteDrawer`
- * themselves: both are `"use client"` components (§5, `lib/site-tabs.ts`),
- * and the nav tree comes from `lib/docs`, which is `server-only` — a client
- * component importing it fails the build. This server component is the one
- * place in the tree that can read the nav tree and hand its resolved value
- * down as a plain string prop, so it does, via `getSiteTabs(primitivesHref)`
- * in each consumer.
+ * `primitivesHref` is resolved here, not in `SiteHeader`/`SiteDrawer`/
+ * `SiteFooter` themselves: all three are `"use client"` components (§5,
+ * `lib/site-tabs.ts`), and the nav tree comes from `lib/docs`, which is
+ * `server-only` — a client component importing it fails the build. This
+ * server component is the one place in the tree that can read the nav tree
+ * and hand its resolved value down as a plain string prop, so it does, via
+ * `getSiteTabs(primitivesHref)` in the header and drawer and directly on the
+ * footer's "All primitives" link (Task 4.1, which retired that link's
+ * hard-coded `/docs/components/accordion`).
  *
  * `<SiteDrawer />` sits as a top-level sibling after `<main>` and before
  * `<SiteFooter>` — outside `<main>` entirely. That is a deliberate departure
@@ -126,7 +128,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <SiteHeader primitivesHref={primitivesHref} />
             <main id="content">{children}</main>
             <SiteDrawer primitivesHref={primitivesHref} />
-            <SiteFooter />
+            <SiteFooter primitivesHref={primitivesHref} />
           </DrawerProvider>
         </ThemeProvider>
         <Analytics />

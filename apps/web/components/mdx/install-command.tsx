@@ -45,7 +45,10 @@ import { CodeBlock } from "./code-block";
 // `installCommands` prop is built for exactly this one call site, not as a
 // mechanism other install surfaces are expected to adopt — §6.1's table
 // gives `/blocks` and Stage 4's `copy-command.tsx` their own shapes
-// (`copy-command.tsx` keeps `command: string`, per §13.2). The pieces that
+// (`copy-command.tsx` keeps its own `$ command` row and its own
+// `Record<PackageManager, string>` prop; Task 4.1 corrected this line, which
+// used to claim it "keeps `command: string`, per §13.2" — §13.2 in fact says
+// it takes its command from the same four-command set). The pieces that
 // ARE shared across those surfaces are `<PackageManagerMenu>` and
 // `currentPackageManager()` (lib/package-manager.ts), both reused here
 // rather than reinvented.

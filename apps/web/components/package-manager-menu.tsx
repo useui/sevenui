@@ -63,8 +63,13 @@ function cx(...values: Array<string | false | null | undefined>): string {
 // (lib/package-manager.ts) are what §6.1's table means by the three install
 // surfaces "agreeing" — each surface keeps its OWN shape (this fused menu
 // for docs; `/blocks`' cramped 32px control; Stage 4's `copy-command.tsx`,
-// which "keeps its shape" per §13.2 and takes `command: string`, not an
-// `installCommands` record). `CodeBlock`'s `installCommands` prop is NOT
+// which "keeps its shape" per §13.2 — its `$ command` row — while taking a
+// `Record<PackageManager, string>` of its own, NOT `CodeBlock`'s
+// `installCommands` record. (Task 4.1 correction: this comment used to read
+// "and takes `command: string`". §13.2's actual sentence is "keeps its shape
+// but takes its command from the same four-command set", so the string form
+// was a misreading; what stays unshared is the PROP below, not the four-
+// command data.) `CodeBlock`'s `installCommands` prop is NOT
 // part of that shared surface — it has exactly one consumer,
 // `components/mdx/install-command.tsx`, today. Do not wire a future gallery
 // or `/blocks` port through `CodeBlock`; reuse this component and

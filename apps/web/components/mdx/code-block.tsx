@@ -90,8 +90,10 @@ export type CodeBlockProps = React.ComponentPropsWithoutRef<"pre"> & {
    * variants" mechanism other surfaces are expected to adopt — §6.1's table
    * gives the other two install surfaces their OWN shapes (`/blocks`' fused
    * 32px control; Stage 4's `copy-command.tsx`, which §13.2 says "keeps its
-   * shape" and takes `command: string`, not a `Record<PackageManager,
-   * string>`). What IS shared across those surfaces is
+   * shape" — the `$ command` row — while taking its own
+   * `Record<PackageManager, string>` prop rather than this one; Task 4.1
+   * corrected this line, which used to claim it takes `command: string`).
+   * What IS shared across those surfaces is
    * `<PackageManagerMenu>` and `currentPackageManager()`
    * (lib/package-manager.ts) — reuse those, not this prop, if a future
    * stage needs the same four-command switch elsewhere.
