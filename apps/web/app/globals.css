@@ -207,6 +207,70 @@
   }
 }
 
+/* Task 2.6, §7.2/§7.3: the 137 docs demos render inline now (no iframe), so
+   an overlay opened inside one (Dialog/Sheet/Drawer/Command) covers the
+   viewport instead of being clipped to a frame. `[data-sevenui-example]`
+   is the renamed `[data-blume-example]` hook (`packages/registry/demos/
+   theme.css:153`, untouched by this task — scope wall); the wrapper that
+   carries it is `components/demo/preview-pane.tsx`.
+
+   Rule 1 (display/sizing) is `demos/theme.css`'s own
+   `[data-blume-example]` rule, carried over verbatim under the renamed
+   hook: the hard-won fix without which the 64 `w-full` demos collapse to
+   content width. Load-bearing regardless of anything below. */
+[data-sevenui-example] {
+  display: grid;
+  width: 100%;
+  justify-items: center;
+}
+
+/* Rule 2 (typographic root) is `demos/theme.css`'s `body { background-
+   color; color }` rule, ported to this selector with the other properties
+   an iframe's `<body>` used to establish for free — `font-family`,
+   `font-size`, `line-height`, `letter-spacing` — now that removing the
+   frame leaves nothing to supply them. This is parity work, not a guard:
+   it closes the gap left if a future layout class violates the "nothing
+   inheritable on a demo ancestor" rule (Task 2.4's body typography lives
+   on the `p`/`li`/`td` element overrides only — verified by grepping
+   app/docs/[[...slug]]/page.tsx and app/layout.tsx for `text-sm`,
+   `leading-`, `text-muted-foreground`: neither the bare `<article>` nor
+   any of its ancestors carries one). */
+[data-sevenui-example] {
+  font-size: 1rem;
+  line-height: normal;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-sans);
+  letter-spacing: normal;
+}
+
+/* Deferred from Task 2.4: the Typography plugin's `.prose > :last-child {
+   margin-bottom: 0 }` has no owner in this port (there is no `.prose`
+   class anywhere — Task 2.4/2.6). The docs route's only `<article>`
+   (`app/docs/[[...slug]]/page.tsx`) is the sole consumer in this app, so
+   this reproduces the same trim at the container Task 2.6 owns, rather
+   than leaving every docs page with one extra trailing margin (a `<p>`'s
+   `my-4`, a fenced block's `my-6`, or a `<Component>`'s `my-6`) that live
+   trims and this port otherwise would not. A `<Component>`'s own `my-6`
+   wrapper is a legitimate target when it's the last element on a page —
+   the trim is meant to apply to whatever the last element is, the same
+   way `.prose > :last-child` never cared about the child's type.
+   Stated, per fix round 1's review, rather than left implicit: this is a
+   BARE element selector (`article`, no scoping class), reaching every
+   `<article>` in the whole document, not only the docs route's — the same
+   category of risk rule (d) above calls out for `h1`-`h6`. Verified
+   harmless today the same way: grepped every demo and every registry
+   component for `<article` — zero hits, so no demo's own internal markup
+   can be reached by this rule. `page.tsx`'s `<article>` cannot be given a
+   scoping class from this task (out of its authorised file list), so the
+   selector stays bare; if a future demo or component ever renders its own
+   `<article>`, this comment is the flag that the rule needs to move to a
+   scoped selector at that point, exactly as rule (d)'s own comment would
+   for a future bare heading. */
+article > :last-child {
+  margin-bottom: 0;
+}
+
 /* Shiki (Task 2.3, §4.3/§4.4): `@shikijs/rehype` runs with
    `defaultColor: false`, which makes it emit `--shiki-light`/`--shiki-dark`
    (and, on `span`s, the matching `-font-style`/`-font-weight`/

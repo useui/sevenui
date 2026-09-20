@@ -71,10 +71,22 @@ export default async function DocPage({ params }: { params: Promise<Params> }) {
   // Relative, literally-prefixed specifier: Turbopack builds the context
   // module from the static prefix `../../../docs/` (this file lives at
   // apps/web/app/docs/[[...slug]]/page.tsx — three directories up from
-  // apps/web/, then into docs/). The `@docs/*` tsconfig alias exists for
-  // static imports and type resolution only; it is deliberately not usable
-  // here because Turbopack needs a literal relative prefix, not an alias,
-  // to build the dynamic-import context (§4.1).
+  // apps/web/, then into docs/).
+  //
+  // Correction (Task 2.6 fix round 1, MINOR 2): this comment used to claim
+  // the `@docs/*` alias was "deliberately not usable here because
+  // Turbopack needs a literal relative prefix, not an alias, to build the
+  // dynamic-import context." That platform limitation does not exist —
+  // Task 2.6 reproduced both halves against `components/mdx/component.tsx`'s
+  // own dynamic import: the brief's aliased specifier there failed only
+  // because its alias (`@/*` -> `packages/registry/*`) doubled a path
+  // segment, and Turbopack's own error message named the doubled path,
+  // which is itself proof it built the aliased dynamic-import context
+  // fine; a path-corrected alias (`@/demos/${path}.tsx`) compiled and ran
+  // all the way to static generation. The relative form above is kept as
+  // the choice here (consistency with the one other dynamic-import call
+  // site, `component.tsx`, which reaches the same conclusion) — not
+  // because the aliased form is broken under Turbopack, because it isn't.
   const { default: MDXContent } = await import(`../../../docs/${slug.length ? slug.join("/") : "index"}.mdx`);
 
   return (
