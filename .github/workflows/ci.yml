@@ -24,4 +24,6 @@ jobs:
       - run: pnpm check:registry
       - run: pnpm test
       - run: pnpm build
+        env:
+          PRO_MANIFEST_URL: lib/pro-manifest.fixture.json
       - run: pnpm test:smoke
