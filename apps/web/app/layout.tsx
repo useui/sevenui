@@ -9,6 +9,7 @@ import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
 import { ThemeProvider } from "../components/theme-provider";
 import { getNavTree, resolvePrimitivesHref } from "../lib/docs/nav";
+import { galleryComponents } from "../lib/gallery";
 import { site } from "../lib/site";
 
 // §11.2: nobody owned this resolved config today — it's Blume's *defaults*,
@@ -127,7 +128,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <DrawerProvider>
             <SiteHeader primitivesHref={primitivesHref} />
             <main id="content">{children}</main>
-            <SiteDrawer primitivesHref={primitivesHref} />
+            {/*
+              The gallery list is resolved here, in a server component, and
+              handed to the drawer as plain data — the same reason
+              `primitivesHref` is (Task 4.2, §5). Production's 11
+              `/components` routes each passed their own copy of this tree
+              into the drawer's slot; App Router has no upward slot, and
+              `SiteDrawer` renders it only when `usePathname()` is in the
+              gallery, so no other route's HTML carries those links.
+            */}
+            <SiteDrawer galleryComponents={galleryComponents} primitivesHref={primitivesHref} />
             <SiteFooter primitivesHref={primitivesHref} />
           </DrawerProvider>
         </ThemeProvider>

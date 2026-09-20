@@ -2,21 +2,25 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
+import type { GalleryComponent } from "../lib/gallery";
 import { currentTabForRoute, getSiteTabs } from "../lib/site-tabs";
 import { useDrawer } from "./drawer-context";
+import { GalleryNav } from "./gallery/nav";
 
 /**
  * The mobile nav drawer: one per site, listing `SITE_TABS`, opened by the
  * header's hamburger button. Ported from `legacy-components/site-drawer.astro`
- * and `legacy-components/site-drawer-tabs.astro` (the drawer's only tree —
- * this app has no docs sidebar yet, so the `hasTree`/`<slot />` branching
- * that made room for one in the Astro source has nothing to render and is
- * dropped).
+ * and `legacy-components/site-drawer-tabs.astro`.
  *
- * Returns `null` under `/docs` — see the guard in the body; that docstring
- * line above ("this app has no docs sidebar yet") stopped being true in
- * Task 3.1, which brought the tree branch back as its own component.
+ * The Astro source's `hasTree`/`<slot />` branching — a page handing its own
+ * tree in to sit under the tab block — is back, in two different shapes,
+ * because App Router has no slot a child layout can fill upward. Under
+ * `/docs` this component returns `null` entirely and
+ * `components/docs/sidebar.tsx` is the drawer (Task 3.1). Under
+ * `/components` the tree is threaded down as a prop from `app/layout.tsx`
+ * and rendered here (Task 4.2). Both branches are guarded on
+ * `usePathname()` and both are explained where they appear below.
  *
  * Deliberately hand-rolled rather than the registry's `Sheet`: Sheet is
  * modal with a focus trap, and this drawer is non-modal by design — a choice
@@ -36,8 +40,18 @@ import { useDrawer } from "./drawer-context";
  * `primitivesHref` is threaded down from `app/layout.tsx` for the same
  * reason `SiteHeader` takes it: the nav tree lives behind `lib/docs`
  * (`server-only`), and this is a `"use client"` component.
+ *
+ * `galleryComponents` is threaded down the same way, and for the same
+ * reason, from Task 4.2 — see the `isGallery` branch below for why the
+ * gallery tree comes INTO this drawer rather than getting one of its own.
  */
-export function SiteDrawer({ primitivesHref }: { primitivesHref: string }) {
+export function SiteDrawer({
+  primitivesHref,
+  galleryComponents,
+}: {
+  primitivesHref: string;
+  galleryComponents: GalleryComponent[];
+}) {
   const { open, setOpen } = useDrawer();
   const pathname = usePathname();
   const tabs = getSiteTabs(primitivesHref);
@@ -64,6 +78,34 @@ export function SiteDrawer({ primitivesHref }: { primitivesHref: string }) {
   // so nothing here contends with the docs sidebar for `documentElement`'s
   // `overflow` or for the drawer's open state.
   const isDocs = pathname === "/docs" || pathname.startsWith("/docs/");
+
+  // Task 4.2 (§5). Every one of the 11 `/components` routes passed
+  // `<ComponentGalleryNav>` into `site-drawer.astro`'s slot, so below `lg`
+  // the drawer carried the section tabs AND the 10 gallery links, with the
+  // tab block separated by a bottom rule (`site-drawer.astro`'s `hasTree`
+  // branch). Without this, all 11 routes would lose their entire mobile
+  // navigation.
+  //
+  // A child layout cannot hand content to a root-layout component in the
+  // App Router, so `app/layout.tsx` resolves the list on the server and
+  // passes it as a plain prop — exactly as it already threads
+  // `primitivesHref` — and this flag decides whether to render it.
+  // `usePathname()` resolves during prerender, so no other route's HTML
+  // contains those links either; they are not hidden, they are absent.
+  //
+  // A second, gallery-guarded drawer (the `isDocs` shape above) was
+  // rejected: it would make the backdrop, the scroll lock, the `inert`
+  // handling and the resize-close a THIRD copy. The docs tree is a
+  // different case and stays where it is — 65 links threaded through every
+  // route's flight payload is what this component's own comment above
+  // refuses, and ten links is a few hundred bytes.
+  const isGallery = pathname === "/components" || pathname.startsWith("/components/");
+
+  // A link tap has to close the drawer; this layout persists across
+  // client-side navigations, unlike Astro's full page loads. Same reason as
+  // the tab links' own handler below, hoisted to a stable callback because
+  // `GalleryNav` takes it as a prop.
+  const closeDrawer = useCallback(() => setOpen(false), [setOpen]);
 
   // Close-on-resize past `lg` (64rem), ported from Header.astro:150's
   // `resize` listener as a `matchMedia` listener instead — the intent
@@ -110,7 +152,16 @@ export function SiteDrawer({ primitivesHref }: { primitivesHref: string }) {
         }`}
         inert={!open}
       >
-        <nav aria-label="Sections">
+        {/*
+          The rule between the tab block and the gallery tree, ported from
+          `site-drawer.astro`'s `hasTree` class list. It sits on the `<nav>`
+          itself rather than on a wrapper `<div>` as the Astro source had
+          it: that `<div>` carried nothing else, and a block-level `<nav>`
+          draws the same box. Undefined (no `class` attribute at all) on
+          every other route, which is what keeps this change invisible
+          outside the gallery.
+        */}
+        <nav aria-label="Sections" className={isGallery ? "mb-4 border-border border-b pb-4" : undefined}>
           <ul className="m-0 list-none p-0">
             {tabs.map((tab) => (
               <li key={tab.href}>
@@ -125,7 +176,7 @@ export function SiteDrawer({ primitivesHref }: { primitivesHref: string }) {
                   // navigations (that's the whole reason `aria-current` needs
                   // `usePathname()` above), so without this the drawer would
                   // stay open over the page it just navigated to.
-                  onClick={() => setOpen(false)}
+                  onClick={closeDrawer}
                 >
                   {tab.label}
                 </Link>
@@ -133,6 +184,7 @@ export function SiteDrawer({ primitivesHref }: { primitivesHref: string }) {
             ))}
           </ul>
         </nav>
+        {isGallery ? <GalleryNav components={galleryComponents} onNavigate={closeDrawer} /> : null}
       </aside>
       {open && (
         <button

@@ -1,3 +1,4 @@
+import { galleryComponents } from "./gallery";
 import { site } from "./site";
 
 // NOTE: as of Task 2.5, this module is transitively `server-only`. It was
@@ -48,6 +49,32 @@ const CUSTOM: Record<string, PageMeta> = {
     title: "Privacy Policy",
     description: "What personal data SevenUI collects, who processes it, and how to exercise your rights.",
   },
+  /**
+   * The 10 gallery children (Task 4.2), derived rather than transcribed.
+   * Every live page's own `<meta name="description">` is this one sentence
+   * with the primitive's label substituted twice — verified against the
+   * shipped HTML for all ten — and the label already has a single source
+   * (the matching `registry:ui` item's `title`). Writing the ten out by
+   * hand would copy that label into a second place and copy the sentence
+   * into ten more, all of which a `registry:ui` rename would then leave
+   * stale without any error.
+   *
+   * The page BODY renders `getPageMeta(route).description` too (see
+   * `app/components/[name]/page.tsx`), so the sentence lives here once and
+   * the `<meta>` and the `<p>` under the `<h1>` cannot disagree.
+   *
+   * `/components` itself is NOT here — it has been in this object since
+   * Task 1.7, probed from the live site, and is deliberately left alone.
+   */
+  ...Object.fromEntries(
+    galleryComponents.map((component) => [
+      `/components/${component.slug}`,
+      {
+        title: component.label,
+        description: `Free, copy-and-go ${component.label} components built on the SevenUI ${component.label} primitive.`,
+      },
+    ]),
+  ),
 };
 
 /**
@@ -99,6 +126,36 @@ export async function getPageMeta(route: string): Promise<PageMeta | undefined> 
   }
 
   return undefined;
+}
+
+/**
+ * `getPageMeta`, but for the callers that cannot continue without an
+ * answer — every page whose `<title>`, `<meta name="description">`, `<h1>`
+ * or body copy IS the registered meta. Four such call sites across the two
+ * gallery route files each wrote the same lookup-then-throw pair; this is
+ * that pair, once (task-4.2 review, M3).
+ *
+ * `file` is the caller's own path and is NOT decorative: the message it
+ * produces ("app/components/[name]/page.tsx: no page-meta registered for
+ * route \"/components/button\"") names both halves of the break — which
+ * route went unregistered and which file expected it — and a stack trace
+ * through an awaited server component is a poor substitute for either.
+ * Passing it keeps the failure exactly as loud and exactly as specific as
+ * the throws it replaces.
+ *
+ * Deliberately NOT adopted by the two other callers that could take it.
+ * `app/page.tsx` has the identical shape and is outside this task's file
+ * list. `app/docs/[[...slug]]/page.tsx` has a different shape on purpose: a
+ * miss there is a real 404 that must render `app/docs/not-found.tsx` with
+ * its own title, not a build failure, and its body reads
+ * `meta?.title ?? doc.title`. See task-4.2-report.md.
+ */
+export async function requirePageMeta(route: string, file: string): Promise<PageMeta> {
+  const meta = await getPageMeta(route);
+  if (!meta) {
+    throw new Error(`${file}: no page-meta registered for route "${route}"`);
+  }
+  return meta;
 }
 
 // The route keys of `CUSTOM`, exported as a plain synchronous value so a
