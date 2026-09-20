@@ -175,6 +175,9 @@ importers:
       remark-gfm:
         specifier: ^4.0.1
         version: 4.0.1(supports-color@8.1.1)
+      remark-smartypants:
+        specifier: ^3.0.3
+        version: 3.0.3
       server-only:
         specifier: ^0.0.1
         version: 0.0.1

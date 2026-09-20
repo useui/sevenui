@@ -29,6 +29,7 @@
     "rehype-slug": "^6.0.0",
     "remark-frontmatter": "^5.0.0",
     "remark-gfm": "^4.0.1",
+    "remark-smartypants": "^3.0.3",
     "server-only": "^0.0.1",
     "shiki": "4.4.3",
     "vfile": "^6.0.3",

@@ -22,9 +22,21 @@ const nextConfig: NextConfig = {
 };
 
 // The remark/rehype chain (§4.3), locked in this order:
-//   remark:  remark-frontmatter(['yaml'])  ->  remark-gfm
+//   remark:  remark-frontmatter(['yaml'])  ->  remark-gfm  ->  remark-smartypants
 //   rehype:  rehype-slug  ->  rehype-autolink-headings(wrap)  ->
 //            @shikijs/rehype  ->  rehype-external-links
+//
+// `remark-smartypants` (Fix F2) sits LAST in the remark half, after
+// `remark-gfm` — the order Astro's markdown pipeline applied it in, which
+// this chain must reproduce. Task 2.3 locked this chain without it, on the
+// assumption remark-gfm's output already matched production; it didn't —
+// production ran SmartyPants and this port initially did not, so 36 of 68
+// docs routes lost smart punctuation (curly quotes/dashes/ellipses came out
+// as straight ASCII). Its only options are plain booleans (`dashes: true`
+// by default converts `--`/`---` to en/em dashes, which is desired and
+// verified to match production's em/en dash counts exactly), so it needs no
+// function-valued config and does not reopen the Turbopack plain-data
+// constraint described below.
 //
 // `rehype-slug` must precede `rehype-autolink-headings` — it writes the
 // `id` the anchor links to. Shiki emits no `<a>`, so its position in the
@@ -59,7 +71,7 @@ const nextConfig: NextConfig = {
 // index; this chain's only frontmatter job is stripping it from output).
 const withMDX = createMDX({
   options: {
-    remarkPlugins: [["remark-frontmatter", ["yaml"]], "remark-gfm"],
+    remarkPlugins: [["remark-frontmatter", ["yaml"]], "remark-gfm", "remark-smartypants"],
     rehypePlugins: [
       "rehype-slug",
       ["rehype-autolink-headings", { behavior: "wrap" }],
