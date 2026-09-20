@@ -502,6 +502,17 @@ async function replaceTagsAsync(
  * Those leading blank lines are never part of any fixture's body, so they
  * are trimmed here rather than left for both callers to trim independently.
  *
+ * @param doc Only `raw` and `sourcePath` are read, so the parameter is typed
+ *   `Pick<DocPage, "raw" | "sourcePath">` rather than the full `DocPage`
+ *   (Task 8.2 controller decision). Task 8.2's script cannot call
+ *   `getDocIndex()` (this module's own header explains why) and so builds
+ *   its own page objects by hand; a full `DocPage` would force it to
+ *   fabricate a `headings` array it has no honest value for
+ *   (`scanHeadings` exists to serve Task 2.4/2.9's location reporting, not
+ *   this task), and `headings: []` would be a typed lie a later reader
+ *   could believe. Task 8.3's caller still has a real `DocPage` in hand
+ *   (from `getDocIndex()`) and passes it here unchanged — a wider object
+ *   structurally satisfies a `Pick` of itself.
  * @param pages Every page's route/title/description, for `<PrimitiveIndex>`
  *   (Ruling 61) — both callers already enumerate the full corpus to build
  *   their own indexes (the `.md` mirror script writes one file per page; the
@@ -518,7 +529,10 @@ async function replaceTagsAsync(
  * an async context, so nothing here forces a caller across a boundary it
  * wasn't already on.
  */
-export async function toMarkdown(doc: DocPage, pages: readonly DocPageSummary[]): Promise<string> {
+export async function toMarkdown(
+  doc: Pick<DocPage, "raw" | "sourcePath">,
+  pages: readonly DocPageSummary[],
+): Promise<string> {
   const body = doc.raw.replace(/^\n+/, "");
   return replaceTagsAsync(body, doc.sourcePath, pages);
 }
