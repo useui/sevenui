@@ -965,8 +965,10 @@ Every diff must be empty or appear here. This list is what separates "we fixed a
 | 36 | The docs `<aside>` is nested inside `<main>`, so **"Skip to content" no longer skips the docs navigation** — a declared accessibility regression, remedy deferred past cutover | §11.1 |
 | 37 | Each docs page carries ~5.3 KB gzip of serialized heading data | §11.1 |
 | 38 | §11.3's `docs/components/index.mdx` is the wrong path — `routeFor` maps it to `/docs/components/index`; the file is `docs/components.mdx` | spec text defect |
+| 39 | The `/components` nav marks its active link with `aria-current="page"` — **accessibility tree only, pixel-identical**: the two class strings are reproduced verbatim from `component-gallery-nav.astro` rather than re-expressed as `aria-[current=page]:` utilities. Measured on `/components/button`: 2 occurrences today (the site tabs, in the header and the drawer) against 4 (the same two, plus the desktop column and the drawer's tree) | §5, same reasoning as #24 |
+| 40 | The gallery's code pane grows by the shared code block's header band. Production caps the whole panel (`max-h-96 overflow-auto` on `[data-panel="code"]`, 384px); the port caps the `<code>` and sits it under the same chrome the docs pages use, so the pane is ~460px on the 10 gallery pages. Extractor-invisible; the alternative was a second code-block shape | §7.3, §11.5 |
 
-Rows #30–#38 were added after Stage 3, each a consequence of a decision taken earlier in this document rather than a new choice. #34 is the only row that *repairs* something, and #36 the only one that costs the reader anything.
+Rows #30–#40 were added after Stage 3, each a consequence of a decision taken earlier in this document rather than a new choice. #34 is the only row that *repairs* something, and #36 the only one that costs the reader anything.
 
 **Two inventory observations that are expected and are not diffs:** `/blume-assets/*` is absent (it 404s today), and the 9 chrome anchors gain `target`/`rel` — which the post-build pass already added, so the built HTML is unchanged.
 
