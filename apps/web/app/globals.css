@@ -856,3 +856,65 @@ html {
     height: 0;
   }
 }
+
+/* --- /account --- */
+/* Task 6.2: ported from `legacy-pages/account.astro`'s own `<style>` block.
+   Astro's `:global()` there is scoping syntax with no runtime meaning —
+   `#account-root :global(.draw)` compiled to the plain descendant selector
+   written below. Scoped under `#account-root` (the id `components/account/
+   account-panel.tsx` puts on its own root element) so these rules reach
+   only that page: a bare `.draw`/`.ink` rule here would also catch `/pro`'s
+   catalog sketches, a different animation with a different delay
+   variable. */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* The page's one authored motion moment: the license sketch draws itself
+     in when the signed-out state appears. */
+  #account-root .draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: account-draw 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  #account-root .ink {
+    opacity: 0;
+    animation: account-ink 0.5s ease-out 0.55s both;
+  }
+}
+
+/* The license card carries the site's crop-mark signature: a measured
+   artifact on the design canvas, same device as the `.l-marks` rows. */
+#account-root .license-card::before,
+#account-root .license-card::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--border);
+  background: var(--background);
+}
+
+#account-root .license-card::before {
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+
+#account-root .license-card::after {
+  bottom: 0;
+  right: 0;
+  transform: translate(50%, 50%);
+}
+
+@keyframes account-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes account-ink {
+  to {
+    opacity: 1;
+  }
+}

@@ -86,11 +86,43 @@ export function AccountPanel() {
   const [view, setView] = useState<View>({ kind: "signed-out" });
   const [licenses, setLicenses] = useState<LicensesState>({ status: "loading" });
   const [signingOut, setSigningOut] = useState(false);
+  const [retrying, setRetrying] = useState(false);
   // The resolved Clerk instance, once known. A ref, not state: nothing here
   // is rendered from it directly (every view renders from `view`/`licenses`
   // instead), it just needs to survive between the effect that resolves it
   // and the click handlers (sign out, license retry) that need it later.
   const clerkRef = useRef<Clerk | null>(null);
+
+  // One mount flag for every async callback in this component, not a
+  // separate `cancelled` local per effect (Controller Ruling 36): the mount
+  // effect below is not the only place that calls `setState` after an
+  // `await` — `applyClerk`'s `loadLicenses` call, `handleSignIn`'s catch and
+  // `handleRetry` all do too, and none of those run inside the mount
+  // effect's own closure, so a local `cancelled` variable there could not
+  // guard them. A single ref every one of them checks is simpler than
+  // threading a cancellation token through four separate call sites, and
+  // reads the same way at each: "if we unmounted while this was in flight,
+  // do nothing."
+  //
+  // The setup body re-arms the ref to `true` (Controller Ruling — round
+  // 2/5): App Router runs under `<StrictMode>` in development, which
+  // mounts every effect, runs its cleanup, then mounts it again to surface
+  // effects that are not idempotent. A ref survives that simulated
+  // unmount, so a setup that only ever read `useRef(true)`'s initial value
+  // and left the CLEANUP as the only writer would flip `mountedRef.current`
+  // to `false` on the first (thrown-away) mount and never set it back —
+  // every guard in this file would then read as "unmounted" for the rest
+  // of the component's real lifetime, even though it is fully mounted.
+  // Setting it back to `true` here makes the effect idempotent the way
+  // StrictMode expects: mount -> true, cleanup -> false, remount -> true
+  // again, matching whichever pass is actually live.
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   // Turns a resolved Clerk instance into render state, shared by the two
   // places that ever obtain one: the mount effect below (gated) and
@@ -130,9 +162,11 @@ export function AccountPanel() {
       if (!res.ok) throw new Error(`licenses request failed: ${res.status}`);
       const body = await res.json();
       if (!Array.isArray(body.licenses)) throw new Error("unexpected licenses shape");
+      if (!mountedRef.current) return;
       setLicenses({ status: "loaded", licenses: body.licenses });
     } catch (e) {
       console.error("account:", e);
+      if (!mountedRef.current) return;
       setLicenses({ status: "error" });
     }
   }
@@ -141,40 +175,41 @@ export function AccountPanel() {
   // dependency array is correct — this is a one-time mount check, not
   // something any navigation here re-triggers (this page never
   // soft-navigates into itself).
+  //
+  // `getClerkIfLikelySignedIn` is NOT `async` (Controller Ruling 34,
+  // `lib/clerk.ts`'s own doc comment has the full reasoning): it returns
+  // `undefined` synchronously, before awaiting anything, when the hint is
+  // absent. That is what makes the branch below exact rather than
+  // timing-dependent — `pending` is checked and, when falsy, this effect
+  // returns without a single call to `setView`. The `view` this component
+  // mounted with — the hero — is never touched, so it never unmounts and
+  // remounts, and `.draw`'s animation never restarts. This is a stronger
+  // guarantee than "resolves before the browser can act on it": no state
+  // update reaches the hero at all on this path.
   useEffect(() => {
-    let cancelled = false;
-    // Entering "loading" unconditionally, before the gate even answers, is
-    // still zero-request for an anonymous visitor: `getClerkIfLikelySignedIn`
-    // returns `undefined` before awaiting anything when the hint is absent
-    // (see its doc comment), so the code below settles back to
-    // "signed-out" on the very next microtask, well before any dynamic
-    // `import()` — the one thing actually measured by "zero Clerk
-    // requests" — could ever fire. On the hint-present path this is the
-    // real "identity + licenses loading" skeleton (task addendum C, view
-    // 2), and it stays up for the whole of Clerk's real boot time.
-    setView({ kind: "loading" });
+    const pending = getClerkIfLikelySignedIn();
+    if (!pending) return; // no hint: the hero is never touched at all
+    setView({ kind: "loading" }); // reached only when a boot is genuinely in flight
     (async () => {
       try {
-        const clerk = await getClerkIfLikelySignedIn();
-        if (cancelled) return;
-        if (!clerk) {
-          setView({ kind: "signed-out" });
-          return;
-        }
+        const clerk = await pending;
+        if (!mountedRef.current) return;
         applyClerk(clerk);
       } catch (e) {
-        if (cancelled) return;
         console.error("account:", e);
+        if (!mountedRef.current) return;
         setView({ kind: "error" });
       }
     })();
-    return () => {
-      cancelled = true;
-    };
   }, []);
 
   // The hero's "Sign in" button — a deliberate click, so it goes through
-  // `getClerkAlways()` per Ruling 32 above, not the gated export.
+  // `getClerkAlways()` per Ruling 32 above, not the gated export. Failure
+  // here already swaps the whole view (hero -> whole-page error), unlike
+  // `handleRetry` below, so it needs no separate busy state: success
+  // navigates the browser away via `redirectToSignIn`, and failure lands on
+  // a plainly different screen — there is no outcome that reads as nothing
+  // happened.
   async function handleSignIn() {
     try {
       const clerk = await getClerkAlways();
@@ -188,6 +223,7 @@ export function AccountPanel() {
       await clerk.redirectToSignIn({ signInForceRedirectUrl: `${window.location.origin}/account` });
     } catch (e) {
       console.error("account:", e);
+      if (!mountedRef.current) return;
       setView({ kind: "error" });
     }
   }
@@ -196,13 +232,26 @@ export function AccountPanel() {
   // click, so it also goes through `getClerkAlways()` (Ruling 32) — a full
   // re-attempt, the same shape as the mount effect's success path, not a
   // page reload.
+  //
+  // Unlike "Sign in", a failed retry lands back on the SAME view it started
+  // on — nothing about the page changes, so with no feedback of its own the
+  // click would look like it did nothing (Controller Ruling 35: "a retry
+  // that fails instantly and silently is worse than one that says so").
+  // `retrying` is that feedback, in the shape `account.astro:222-227`'s
+  // sign-out button already uses for the same problem: disable the button
+  // and relabel it while the attempt is in flight.
   async function handleRetry() {
+    setRetrying(true);
     try {
       const clerk = await getClerkAlways();
+      if (!mountedRef.current) return;
       applyClerk(clerk);
     } catch (e) {
       console.error("account:", e);
+      if (!mountedRef.current) return;
       setView({ kind: "error" });
+    } finally {
+      if (mountedRef.current) setRetrying(false);
     }
   }
 
@@ -223,7 +272,8 @@ export function AccountPanel() {
     // header's cookie check ... re-runs fresh") was written for Astro's
     // `<ClientRouter>`, which is gone, but the underlying problem —
     // a persistent header script that only ever syncs once — is the same
-    // one, just under a different navigation mechanism.
+    // one, just under a different navigation mechanism. No `mountedRef`
+    // check needed after this: the navigation itself unmounts everything.
     window.location.assign("/account");
   }
 
@@ -231,7 +281,7 @@ export function AccountPanel() {
     <div className="l-row" id="account-root">
       {view.kind === "signed-out" && <SignedOutHero onSignIn={handleSignIn} />}
       {view.kind === "loading" && <LoadingSkeleton />}
-      {view.kind === "error" && <WholePageError onRetry={handleRetry} />}
+      {view.kind === "error" && <WholePageError onRetry={handleRetry} retrying={retrying} />}
       {view.kind === "signed-in" && (
         <SignedIn
           identity={view.identity}
@@ -344,16 +394,17 @@ function SignedOutHero({ onSignIn }: { onSignIn: () => void }) {
 // boot, and Clerk's production instance answers any non-`sevenui.dev`
 // origin with `400 origin_invalid`, landing here through the ordinary code
 // path above — no separate test-only branch exists to reach it.
-function WholePageError({ onRetry }: { onRetry: () => void }) {
+function WholePageError({ onRetry, retrying }: { onRetry: () => void; retrying: boolean }) {
   return (
     <div className="px-6 py-14 sm:px-10">
       <p className="text-sm text-muted-foreground">{UNAVAILABLE_MESSAGE}</p>
       <button
-        className="mt-4 inline-flex h-8 items-center rounded-md border border-border px-3 text-sm hover:bg-muted"
+        className="mt-4 inline-flex h-8 items-center rounded-md border border-border px-3 text-sm hover:bg-muted disabled:opacity-60"
+        disabled={retrying}
         onClick={onRetry}
         type="button"
       >
-        Try again
+        {retrying ? "Retrying…" : "Try again"}
       </button>
     </div>
   );
