@@ -18,7 +18,7 @@ Next inlines the RSC flight payload, which roughly doubles a naive className cou
 | Breadcrumb: `nav > ol > li` + `aria-current="page"` | **PASS** — `aria-label="Breadcrumb"` 1 per breadcrumbed page, 0 on `/docs` |
 | `BreadcrumbList` in the `@graph` | **PASS** — `['WebSite','TechArticle','BreadcrumbList']`, items `(1 Docs) (2 Primitives) (3 Button)`, contiguous |
 | `/docs/components` renders 65 cards, appears in the nav **once** | **PASS** — 65 `rounded-xl` cards; the exactly-once assertion passes, and dropping the group `href` reproduces `nav must contain /docs/components exactly once, found 0` |
-| Docs 404 arrives with the sidebar, no group opened | **PARTIAL** — Next emits no prerendered HTML for a nested `not-found`. The boundary compiles to the root 404's own module (bundle-verified) and `/docs`, the nearest analogue, prerenders the group **closed**. The rendered DOM goes to the preview |
+| Docs 404 arrives with the sidebar, no group opened | **PASS (preview)** — `/docs/components/nope` returns **404**, titled `Page not found — SevenUI`, `<h1>Page not found</h1>`, with the sidebar and its **66** primitive links, the group **closed**, and **no tree row active** (the single `aria-current="page"` is the Primitives *tab* inside the `Sections` nav). Breadcrumb, both TOC variants, pagination, feedback and the rail all correctly absent |
 | `rounded-blume` appears nowhere in ported code | **PASS** — 0 in the built DOM and 0 in the shipped CSS (control: `--radius` 71×). One comment in `toc.tsx` names `--radius-blume` as the thing that was replaced; that is a record of removal, not a survival |
 
 **§8.3's prediction confirmed exactly**: `max-w-content` is **5** on a primitive page — article,
@@ -68,7 +68,14 @@ So these are recorded **UNVERIFIED**, not passing: scroll-spy tracking past the 
 document-bottom force, TOC correctness after the 84 demos hydrate, the mobile drawer's slide,
 backdrop, scroll lock and `inert` flip, close-on-resize past `lg`, a manually-collapsed group
 surviving navigation, the chevron rotation, the GA4 `feedback` event firing (gtag is production-only),
-and the docs-miss **status code** (a runtime `notFound()`).
+and the GA4 `feedback` event firing (gtag is production-only). The docs-miss status code was
+**closed on the preview** — see the table.
+
+**A trap worth carrying forward:** `fetch()`-ing a dynamic (non-prerendered) route returns an
+**empty streaming shell** — 80 KB of flight payload with no header, no `<h1>`, no chrome — and
+`<title>` resolves to the root layout's default. Read that way, the docs 404 looks broken. Only a
+real browser render shows the content. Any future check of a `notFound()` route must navigate, not
+fetch.
 
 **The instrument that can measure them already exists**:
 `.superpowers/sdd/2026-09-19-blume-to-nextjs/pw/stage2-preview.mjs` launches a real headless Chromium
