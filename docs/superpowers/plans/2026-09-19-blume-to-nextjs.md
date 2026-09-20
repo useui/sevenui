@@ -3964,6 +3964,8 @@ card draws the page's own words."
 - `/og/index.png` renders the landing card; `/og/docs/components/button.png` renders "Button".
 - An unknown slug (`/og/not-a-route.png`) returns **404**, not a generated image.
 - The page-meta ↔ `generateMetadata` assertion passes for every route.
+- **Every route declares the full `og:*` / `twitter:*` set, and the assertion is over the TAG SET, not just the image URL.** Added after Stage 4 measured the shortfall, because nothing in this stage's three tasks owned it and the gap is site-wide rather than confined to one surface. Production emits **10 `og:*` + 5 `twitter:*`** on every page — measured on `/`, `/docs/components/button` and `/components/button` alike. Against that, at the end of Stage 4 the branch stands at: docs routes **4 og + 5 twitter** (Stage 2 wrote `og:title`, `og:description`, `og:image`, `og:image:alt` and stopped); `/` and the **11 `/components` routes 0 and 0**. The six tags no route declares are `og:type`, `og:site_name`, `og:url`, `og:image:type`, `og:image:width`, `og:image:height`.
+- **The routes are enumerated, not sampled.** The non-docs set is `/`, `/components`, its 10 children, `/pro`, `/account`, `/terms`, `/privacy`, `/blocks` and its 17 group and category routes. Stage 0 pre-shipped `seo.og.titles` for the 10 gallery children precisely so this stage reproduces them, so a gallery route shipping bare would silently discard that pre-ship.
 - The 6-card human review is done and recorded.
 
 ### Stage 9 — Preview verification
