@@ -77,3 +77,38 @@ export function currentPackageManager(): PackageManager {
   const value = document.documentElement.dataset.pm;
   return isPackageManager(value) ? value : DEFAULT_PACKAGE_MANAGER;
 }
+
+/**
+ * One command in all four dialects, keyed by package manager.
+ *
+ * `<CopyCommand>` (components/copy-command.tsx) ships every variant and lets
+ * CSS reveal one off `[data-pm]` (§13.2), so its caller has to build the
+ * whole record — a builder function cannot be passed across the
+ * server/client boundary, only the plain data it produces. This exists so
+ * the landing page's three install rows and, next, the `/components` example
+ * cards (§17.6 #15) do not each rewrite the same `Object.fromEntries` over
+ * `PACKAGE_MANAGERS`.
+ *
+ * It lives HERE, not in `lib/registry.ts` (task-4.1 review, Minor): there is
+ * nothing registry-specific in it. It is a fan-out over `PACKAGE_MANAGERS`,
+ * which this module owns alongside `PACKAGE_MANAGER_RUNNERS`,
+ * `currentPackageManager` and `isPackageManager` — every other four-dialect
+ * concern. `lib/registry.ts` calls itself the single source of truth for
+ * shadcn CLI *install commands*, and this helper's own second case
+ * (`shadcn@latest init`) has no registry item at all; putting it there also
+ * forced that module to import `PACKAGE_MANAGERS` purely to serve it.
+ *
+ * `build` is called once per package manager, so it works for the two shapes
+ * this site has: `installCommand(item, pm)` (lib/registry.ts) for a registry
+ * item, and a plain `${PACKAGE_MANAGER_RUNNERS[pm]} …` template for a bare
+ * CLI invocation like `shadcn@latest init`, which has no registry item to
+ * name.
+ *
+ * `<InstallCommand>` deliberately does NOT go through this: its builder is
+ * async (each variant is Shiki-highlighted) and it needs the highlighted
+ * HTML alongside the string.
+ */
+export const packageManagerCommands = (
+  build: (pm: PackageManager) => string,
+): Record<PackageManager, string> =>
+  Object.fromEntries(PACKAGE_MANAGERS.map((pm) => [pm, build(pm)])) as Record<PackageManager, string>;

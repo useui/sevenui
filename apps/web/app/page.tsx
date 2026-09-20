@@ -6,9 +6,10 @@ import { JsonLd } from "../components/json-ld";
 import { LandingRuler } from "../components/landing-ruler";
 import LandingShowcase from "../components/landing-showcase";
 import { Logomark } from "../components/logomark";
-import { PACKAGE_MANAGER_RUNNERS, type PackageManager } from "../lib/package-manager";
+import { getNavTree, resolvePrimitivesHref } from "../lib/docs/nav";
+import { PACKAGE_MANAGER_RUNNERS, type PackageManager, packageManagerCommands } from "../lib/package-manager";
 import { getPageMeta } from "../lib/page-meta";
-import { installCommand, packageManagerCommands } from "../lib/registry";
+import { installCommand } from "../lib/registry";
 import { pageTitle } from "../lib/site";
 import registry from "../../../packages/registry/registry.json";
 
@@ -101,7 +102,26 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: pageTitle(meta.title), description: meta.description };
 }
 
-export default function Home() {
+export default async function Home() {
+  // The same resolution `app/layout.tsx` does for the header, drawer and
+  // footer, done again here because a page cannot read a layout's locals.
+  // `<ComponentWall>` stays presentational and takes the answer as a prop:
+  // `lib/docs` is `server-only`, and keeping the lookup in the one Server
+  // Component that owns this route means the wall never has to care where
+  // "the primitives index" is.
+  //
+  // This is Ruling 8 extended to the wall (task-4.1 review, Minor). Both the
+  // wall's trailing cell and the footer's "All primitives" link name the same
+  // semantic target; before Task 4.1 both were literals, so resolving only
+  // one of them created a new inconsistency 60 lines apart. It is
+  // href-neutral today — `resolvePrimitivesHref` returns
+  // `/docs/components/accordion`, the value both used to hard-code — and the
+  // built HTML is asserted against that in task-4.1-report.md.
+  const primitivesHref = resolvePrimitivesHref(await getNavTree());
+  if (!primitivesHref) {
+    throw new Error("app/page.tsx: nav tree has no Primitives group with a resolvable href");
+  }
+
   return (
     <>
       <div className="relative">
@@ -194,7 +214,7 @@ export default function Home() {
             <p className="font-mono text-xs text-muted-foreground">{uiCount} primitives · MIT</p>
           </div>
           <div className="l-row">
-            <ComponentWall />
+            <ComponentWall primitivesHref={primitivesHref} />
           </div>
         </section>
       </div>
