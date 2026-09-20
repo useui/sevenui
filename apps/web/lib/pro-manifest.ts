@@ -91,7 +91,18 @@ export async function loadProManifest(): Promise<ProManifest> {
     // .github/workflows/ci.yml — before pro ships). The fixture
     // (2 groups / 3 categories / 3 items) is load-bearing, not incidental:
     // CI builds against it so pull requests don't depend on pro.sevenui.dev.
-    raw = JSON.parse(readFileSync(source, "utf8"));
+    //
+    // `turbopackIgnore` (Task 5.2 fix round 1) is the documented escape at the
+    // warning's own site. `source` is not statically analysable, so Turbopack
+    // assumes this call could read ANY path and traces the whole project into
+    // every server function's file list — `public/r`, `dist/**`, the legacy
+    // `.astro` sources, `docs/**`, `tsconfig.tsbuildinfo`. This branch is the
+    // CI-fixture path only: `PRO_MANIFEST_URL` is a real https URL on Vercel
+    // and in local builds, so the `startsWith("http")` branch above is what
+    // actually runs there and this line is never reached. Suppressing the
+    // trace costs nothing it needs, because the fixture it reads is a
+    // repository file that is present whenever the env var that selects it is.
+    raw = JSON.parse(readFileSync(/* turbopackIgnore: true */ source, "utf8"));
   }
   return parseManifest(raw, (key) => key in icons);
 }

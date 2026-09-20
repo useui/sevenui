@@ -34,6 +34,18 @@ const CUSTOM: Record<string, PageMeta> = {
     description:
       "Composed, ready-to-use pieces built from the SevenUI primitives. Copy one into your project with a single command — the source is yours.",
   },
+  /**
+   * The `/blocks` directory page. A LITERAL, beside `/components`, and
+   * deliberately not in the manifest-backed branch below: this sentence is
+   * written in `legacy-pages/blocks/index.astro` (and nowhere in the pro
+   * manifest), so the pro repo does not own it and must not be able to change
+   * it. Its two children DO come from the manifest — see the `/blocks/`
+   * branch in `getPageMeta`.
+   */
+  "/blocks": {
+    title: "Blocks",
+    description: "Production-ready pro blocks built on SevenUI components.",
+  },
   "/pro": {
     title: "Pro",
     description:
@@ -125,6 +137,46 @@ export async function getPageMeta(route: string): Promise<PageMeta | undefined> 
     return { title: doc.title, description: doc.description };
   }
 
+  // The two manifest-backed `/blocks` levels (Task 5.2). `/blocks` itself is
+  // above, in `CUSTOM`, and is matched before this branch is reached.
+  //
+  // `import("./blocks")` is dynamic for the same reason the docs branch's
+  // `import("./docs")` is: it keeps a `server-only` module — and, through it,
+  // lucide-react's whole icon record — out of this file's static import graph,
+  // which `lib/docs/links.ts` reaches for its synchronous `CUSTOM_ROUTES`. It
+  // costs no extra network request: `loadProManifest`'s fetch is keyed by URL
+  // in Next's Data Cache, so by the time any page asks for its metadata the
+  // entry the route's own render made is already warm.
+  //
+  // A miss at either level returns `undefined` rather than throwing, and that
+  // is load-bearing under `dynamicParams = true` — see `requirePageMeta`'s
+  // docstring below. `rest.length` rejects a deeper path outright: nothing is
+  // mounted under a category, so `/blocks/a/b/c` is a miss and not a category
+  // whose id happens to contain a slash.
+  if (route.startsWith("/blocks/")) {
+    const { loadBlocksTree } = await import("./blocks");
+    const [groupId, categoryId, ...rest] = route.slice("/blocks/".length).split("/");
+    if (rest.length > 0 || !groupId) return undefined;
+    // `categoryId === ""` is NOT the same as `categoryId === undefined`, and
+    // conflating them is how a trailing slash resolves instead of missing:
+    // `"/blocks/marketing/".split("/")` yields `["marketing", ""]`, so a bare
+    // falsiness test below would hand back the GROUP's meta for a route this
+    // module's own contract (leading slash, no trailing slash) says does not
+    // exist. That is the same malformed-shape class `rest.length` rejects, and
+    // it slipped past it because the empty segment is the LAST one rather than
+    // an extra. No caller produces it today — `trailingSlash` is false and both
+    // route files build their own strings — so this is a contract guard, not a
+    // bug fix.
+    if (categoryId === "") return undefined;
+    const groups = await loadBlocksTree();
+    const group = groups.find((entry) => entry.id === groupId);
+    if (!group) return undefined;
+    if (categoryId === undefined) return { title: `${group.label} blocks`, description: group.description };
+    const category = group.categories.find((entry) => entry.id === categoryId);
+    if (!category) return undefined;
+    return { title: `${category.label} blocks`, description: category.description };
+  }
+
   return undefined;
 }
 
@@ -143,12 +195,25 @@ export async function getPageMeta(route: string): Promise<PageMeta | undefined> 
  * Passing it keeps the failure exactly as loud and exactly as specific as
  * the throws it replaces.
  *
- * Deliberately NOT adopted by the two other callers that could take it.
- * `app/page.tsx` has the identical shape and is outside this task's file
- * list. `app/docs/[[...slug]]/page.tsx` has a different shape on purpose: a
- * miss there is a real 404 that must render `app/docs/not-found.tsx` with
- * its own title, not a build failure, and its body reads
- * `meta?.title ?? doc.title`. See task-4.2-report.md.
+ * Deliberately NOT adopted by these callers, and the list is part of the
+ * contract rather than an accident:
+ *
+ *  - `app/page.tsx` has the identical shape and was simply outside Task 4.2's
+ *    file list.
+ *  - `app/docs/[[...slug]]/page.tsx` has a different shape on purpose: a miss
+ *    there is a real 404 that must render `app/docs/not-found.tsx` with its
+ *    own title, not a build failure, and its body reads
+ *    `meta?.title ?? doc.title`. See task-4.2-report.md.
+ *  - the three `/blocks` routes (Task 5.2), for the docs route's reason
+ *    arriving through a different door. `dynamicParams = true` on
+ *    `/blocks/[group]` and `/blocks/[group]/[category]` means an arbitrary
+ *    path reaches the component — so an unregistered route there is a USER
+ *    TYPING A URL, not a programming error, and it must resolve to
+ *    `notFound()`. Throwing would turn every mistyped category into a 500,
+ *    and during a build it would turn a category the pro repo removed into a
+ *    failed deploy. `/blocks` itself joins them for consistency of shape;
+ *    its entry is a literal in `CUSTOM`, so its miss branch is unreachable
+ *    while that stays true.
  */
 export async function requirePageMeta(route: string, file: string): Promise<PageMeta> {
   const meta = await getPageMeta(route);

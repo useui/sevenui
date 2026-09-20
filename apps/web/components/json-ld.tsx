@@ -1,4 +1,4 @@
-import { docsTrail, getNavTree } from "../lib/docs/nav";
+import { type Crumb, docsTrail, getNavTree } from "../lib/docs/nav";
 import { getPageMeta } from "../lib/page-meta";
 import { site } from "../lib/site";
 
@@ -16,7 +16,10 @@ import { site } from "../lib/site";
  *
  * `BreadcrumbList` is the third graph node, added for docs routes by Task 3.3
  * (§17.6 #23) — production emits only the two above, so this node is
- * genuinely new. Stage 5 brings `/blocks` onto the same node.
+ * genuinely new. Task 5.2 brings `/blocks` onto it through the optional
+ * `crumbs` prop: a caller that already has a trail hands it over, and only a
+ * caller that does not falls back to computing the docs trail. See the
+ * `trail` line below for why that is a prop rather than a second branch here.
  *
  * ROUTE FORMAT, and it is not cosmetic: `route` must have a leading slash and
  * NO trailing slash (`lib/page-meta.ts`'s own contract names this component
@@ -24,7 +27,7 @@ import { site } from "../lib/site";
  * return `undefined` and the `!meta` branch below fails the build). Every
  * mount point must normalise before passing.
  */
-export async function JsonLd({ route }: { route: string }) {
+export async function JsonLd({ route, crumbs }: { route: string; crumbs?: Crumb[] }) {
   const websiteId = `${site.url}#website`;
   const pageUrl = `${site.url}${route}`;
   const graph: Record<string, unknown>[] = [
@@ -54,22 +57,33 @@ export async function JsonLd({ route }: { route: string }) {
   // whole reason it is not assembled locally here.
   //
   // Emitted only for a trail of two or more, which mirrors
-  // `components/docs/breadcrumb.tsx`'s own guard: `/docs` is its own trail's
-  // only item, and a one-item breadcrumb list is as empty of information in
-  // the graph as it is on the page. Non-docs routes get an empty trail and so
-  // get no node either, which is what leaves `/blocks` to Stage 5.
+  // `components/breadcrumb.tsx`'s own guard: `/docs` is its own trail's only
+  // item, and a one-item breadcrumb list is as empty of information in the
+  // graph as it is on the page.
   //
-  // `getNavTree()` is called unconditionally rather than behind a
-  // "is this a docs route" test: `docsTrail` already answers `[]` for
-  // anything the nav does not contain, so a second route-shape predicate
-  // here would be a duplicate of `getPageMeta`'s free to drift from it. The
-  // tree is memoized through `getDocIndex()`, which every docs render has
-  // already resolved by this point, so this costs no extra filesystem pass.
+  // WHY `crumbs` IS A PROP AND NOT A SECOND BRANCH IN HERE (Task 5.2). The
+  // `/blocks` trail cannot be recomputed from `route` in this file without
+  // reaching for `lib/blocks.ts` and re-deriving a hierarchy the calling page
+  // has already resolved — a second derivation of the same thing, free to
+  // disagree with the first. Instead each `/blocks` page builds ONE array and
+  // passes it to both the rendered breadcrumb and this component, which is
+  // what preserves the property this comment has always insisted on: the
+  // markup and the structured data cannot describe two different hierarchies,
+  // because they are literally the same array.
+  //
+  // `??` short-circuits, so `getNavTree()` is not awaited at all on a route
+  // that brought its own trail. When no trail is passed, the tree is read
+  // unconditionally rather than behind a "is this a docs route" test:
+  // `docsTrail` already answers `[]` for anything the nav does not contain,
+  // so a second route-shape predicate here would be a duplicate of
+  // `getPageMeta`'s free to drift from it. The tree is memoized through
+  // `getDocIndex()`, which every docs render has already resolved by this
+  // point, so this costs no extra filesystem pass.
   //
   // `position` is 1-based and contiguous by construction (the array index),
   // and every `item` is absolute — Google resolves neither a relative `item`
   // nor a gap in the sequence.
-  const trail = docsTrail(await getNavTree(), route);
+  const trail = crumbs ?? docsTrail(await getNavTree(), route);
   if (trail.length > 1) {
     graph.push({
       "@id": `${pageUrl}#breadcrumb`,
