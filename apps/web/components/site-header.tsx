@@ -70,9 +70,12 @@ export function SiteHeader({ primitivesHref }: { primitivesHref: string }) {
   useEffect(() => {
     let cancelled = false;
     async function syncAuthControl() {
-      // No session hint at all means signed out; return before awaiting
-      // anything so `getClerkIfLikelySignedIn` never reaches its dynamic
-      // `import()` for the common case — an anonymous visitor pays nothing.
+      // No session hint at all means signed out. `getClerkIfLikelySignedIn`
+      // itself returns synchronously, before awaiting anything, when the
+      // hint is absent (Controller Ruling 34, `lib/clerk.ts`), so its
+      // dynamic `import()` is never reached for the common case — an
+      // anonymous visitor pays nothing — even though this call site still
+      // `await`s the result on the next line.
       try {
         const clerk = await getClerkIfLikelySignedIn();
         if (!clerk || cancelled) return;

@@ -30,17 +30,51 @@ import type { Clerk } from "@clerk/clerk-js";
 // Both exported functions resolve through one lazy singleton (`clerkPromise`
 // inside `loadClerk`), so a page that calls the gated function and then the
 // ungated one does not boot Clerk twice.
+//
+// `getClerkIfLikelySignedIn` is deliberately NOT `async` (Controller Ruling
+// 34). An `async` function always returns a Promise, even on its very first,
+// fully synchronous `return` — so a caller cannot tell "the hint was absent,
+// nothing happened" apart from "a boot is genuinely in flight" without
+// awaiting the result first, and awaiting is exactly the operation that
+// takes an unpredictable amount of real time once a hint IS present. A
+// plain function returning `Promise<Clerk> | undefined` lets a caller
+// branch on that distinction before awaiting anything: `/account`'s mount
+// effect uses this to show its loading skeleton only when a boot is
+// actually happening, by construction rather than by however a given React
+// version happens to schedule an effect's state update relative to an
+// already-settled promise's microtask.
 
 let clerkPromise: Promise<Clerk> | null = null;
 
 function loadClerk(): Promise<Clerk> {
-  clerkPromise ??= (async () => {
+  if (clerkPromise) return clerkPromise;
+  const attempt: Promise<Clerk> = (async () => {
     const { Clerk } = await import("@clerk/clerk-js");
     const clerk = new Clerk(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!);
     await clerk.load();
     return clerk;
-  })();
-  return clerkPromise;
+  })().catch((e) => {
+    // A rejected boot must NOT memoise forever — a plain `??=` (this
+    // function's shape before Controller Ruling 35) would leave
+    // `clerkPromise` holding a rejected promise, which is not nullish, so
+    // every later caller (in particular /account's whole-page "Try again")
+    // would keep getting handed back the exact same failed attempt with no
+    // way to actually retry. Clearing the memo here, inside the rejection
+    // handler, is what makes a retry a real second attempt.
+    //
+    // The `clerkPromise === attempt` check guards a narrower race: by the
+    // time this handler runs, a DIFFERENT call to `loadClerk` could
+    // already have cleared `clerkPromise` and started its own newer
+    // attempt (impossible while this call is still synchronously running,
+    // since `clerkPromise = attempt` below hasn't executed yet, but
+    // possible once this rejection is actually processed on a later
+    // microtask). Only reset the memo if it still points at THIS attempt,
+    // so a concurrent, newer attempt is never wiped out from under it.
+    if (clerkPromise === attempt) clerkPromise = null;
+    throw e;
+  });
+  clerkPromise = attempt;
+  return attempt;
 }
 
 // Ported verbatim from legacy-components/blume/Header.astro:304-311, which
@@ -62,13 +96,25 @@ function hasSessionHint(): boolean {
 
 /**
  * Loads Clerk only when the `__client_uat` cookie hints a signed-in visitor.
- * Returns `undefined` *before* awaiting anything when the hint is absent, so
- * the dynamic `import()` — and every network call `.load()` makes — is
- * never reached for the common case: an anonymous visitor browsing
- * docs/blocks pages. This is what the header calls, since it renders on
- * every page and must not pay for Clerk on each one.
+ *
+ * Returns `undefined` SYNCHRONOUSLY — not a Promise that resolves to
+ * `undefined` — when the hint is absent, so the dynamic `import()` and
+ * every network call `.load()` makes are never reached for the common
+ * case: an anonymous visitor browsing docs/blocks pages. This is what the
+ * header calls, since it renders on every page and must not pay for Clerk
+ * on each one.
+ *
+ * The synchronous-`undefined` contract is load-bearing, not incidental
+ * (Controller Ruling 34): a caller can and should branch on the return
+ * value BEFORE awaiting it — `if (!pending) return;` reads as "no hint, do
+ * nothing further" with no `await` in sight, while `await pending` is only
+ * ever reached when a real boot is in flight and is worth showing a
+ * loading state for. Do not wrap this back into an `async` function: doing
+ * so would force even the no-hint case through a Promise, and a caller
+ * could then only distinguish "no hint" from "booting" by awaiting first,
+ * which is precisely what defeats the distinction.
  */
-export async function getClerkIfLikelySignedIn(): Promise<Clerk | undefined> {
+export function getClerkIfLikelySignedIn(): Promise<Clerk> | undefined {
   if (!hasSessionHint()) return undefined;
   return loadClerk();
 }
