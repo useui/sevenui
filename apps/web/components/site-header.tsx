@@ -3,7 +3,9 @@
 import { Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useDrawer } from "./drawer-context";
+import { getClerkIfLikelySignedIn } from "../lib/clerk";
 import { Logomark } from "./logomark";
 import { currentTabForRoute, getSiteTabs } from "../lib/site-tabs";
 import { site } from "../lib/site";
@@ -30,9 +32,9 @@ const iconButton =
  * Ported from `legacy-components/blume/Header.astro`, stripped to what's
  * actually configured: no `Ask` (no `ai.ask`), no `LanguageSwitcher` /
  * locale switch (no locales), no `NavSelector` / version selector (none
- * configured), no banner. Two slots stay deliberately empty for now — the
- * search trigger (Stage 7, §9.5) and the auth pill (Stage 6, §12) — each
- * later stage adds its own element.
+ * configured), no banner. One slot stays deliberately empty for now — the
+ * search trigger (Stage 7, §9.5) — a later stage adds its element. The auth
+ * pill (Stage 6, §12) is implemented below.
  *
  * The logo and the tab bar use `next/link`, not a plain `<a>`: App Router
  * owns soft navigation now that Astro's `<ClientRouter>` is gone (spec
@@ -52,6 +54,44 @@ export function SiteHeader({ primitivesHref }: { primitivesHref: string }) {
   const activeTabHref = currentTabForRoute(pathname, tabs);
   const { setOpen } = useDrawer();
   const repoUrl = `https://github.com/${site.github.owner}/${site.github.repo}`;
+  // Signed-in display name, or `null` while signed out (the default) and
+  // while the signed-in check hasn't resolved yet. Ported from
+  // `Header.astro`'s `syncAuthControl`, but as derived render state instead
+  // of hand-written `querySelector`/`setAttribute` calls: this component is
+  // already a client component, so React owns the DOM here, not a script.
+  const [signedInName, setSignedInName] = useState<string | null>(null);
+
+  // Production re-ran this sync on Astro's `astro:page-load` event because
+  // `<ClientRouter>` replaced the DOM on every navigation. There's no
+  // equivalent here, and there shouldn't be one: this header lives in
+  // `app/layout.tsx` and never unmounts across route changes, so a single
+  // mount effect already covers every navigation — an empty dependency
+  // array is correct, not an oversight.
+  useEffect(() => {
+    let cancelled = false;
+    async function syncAuthControl() {
+      // No session hint at all means signed out; return before awaiting
+      // anything so `getClerkIfLikelySignedIn` never reaches its dynamic
+      // `import()` for the common case — an anonymous visitor pays nothing.
+      try {
+        const clerk = await getClerkIfLikelySignedIn();
+        if (!clerk || cancelled) return;
+        const name = clerk.user?.firstName || (clerk.user ? "Account" : null);
+        if (!name || cancelled) return; // signed out after all — leave "Sign in"
+        setSignedInName(name);
+      } catch (e) {
+        // A Clerk boot failure here (network hiccup, blocked cookie, a
+        // preview origin Clerk's production instance rejects with 400
+        // origin_invalid, etc.) must never surface as an uncaught rejection
+        // on every single page — the pill just stays "Sign in".
+        console.error("header:", e);
+      }
+    }
+    syncAuthControl();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <header className="sticky top-0 z-40 flex h-16 items-center gap-3 border-b bg-background/90 px-4 backdrop-blur md:px-6">
@@ -107,7 +147,35 @@ export function SiteHeader({ primitivesHref }: { primitivesHref: string }) {
           <GithubMark />
         </a>
         <ThemeToggle />
-        {/* Auth pill goes here — Stage 6, §12. */}
+        {/*
+          Signed out this is a "Sign in" pill. Signed in, `data-signed-in`
+          switches it to icon mode below `sm`, showing just the initial: a
+          first name is unbounded text in the one header cluster that cannot
+          be hidden, and at 375px its ~128px was the difference between the
+          row fitting and the logo and search trigger being squeezed to make
+          room. `id="auth-control"` and the two `data-auth-*` spans are kept
+          even though no script queries them anymore: `data-auth-label` and
+          `data-auth-initial` are the readable record of which span the
+          `group-data-[signed-in]:max-sm:*` classes below target, and
+          `id="auth-control"` is the stable handle the site has shipped.
+        */}
+        <Link
+          aria-label={signedInName ?? undefined}
+          className="group inline-flex max-w-32 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-3 py-1.5 font-medium text-muted-foreground text-sm uppercase transition-colors hover:bg-muted hover:text-foreground data-[signed-in]:max-sm:size-9 data-[signed-in]:max-sm:bg-muted data-[signed-in]:max-sm:px-0 data-[signed-in]:max-sm:text-foreground"
+          data-signed-in={signedInName ? "" : undefined}
+          href="/account"
+          id="auth-control"
+        >
+          <span className="hidden group-data-[signed-in]:max-sm:inline" data-auth-initial>
+            {signedInName?.slice(0, 1) ?? ""}
+          </span>
+          <span
+            className="min-w-0 truncate normal-case group-data-[signed-in]:max-sm:hidden"
+            data-auth-label
+          >
+            {signedInName ?? "Sign in"}
+          </span>
+        </Link>
       </div>
     </header>
   );
