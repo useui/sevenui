@@ -17,10 +17,61 @@ import { readFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import { parseHTML } from "linkedom";
 
+// Elements that are inline by HTML's default display (no stylesheet involved —
+// §17.2 must stay style-blind). An inline element's text joins its neighbours
+// with no separator, exactly like a bare text node would.
+const INLINE_TAGS = new Set([
+  "A", "ABBR", "B", "BDI", "BDO", "CITE", "CODE", "DATA", "DFN", "EM", "I", "KBD",
+  "MARK", "Q", "RP", "RT", "RUBY", "S", "SAMP", "SMALL", "SPAN", "STRONG", "SUB",
+  "SUP", "TIME", "U", "VAR", "WBR", "IMG", "PICTURE", "SOURCE", "BUTTON", "INPUT",
+  "LABEL", "SELECT", "TEXTAREA", "OUTPUT", "METER", "PROGRESS", "SLOT", "OBJECT",
+  "EMBED", "IFRAME", "AUDIO", "VIDEO", "CANVAS", "MAP", "AREA", "NOSCRIPT", "DEL",
+  "INS",
+]);
+
+// Block-level-aware text extraction. Fixes: `document.body.textContent`
+// concatenates sibling text nodes with no separator, so `<td>a</td><td>b</td>`
+// (our React SSR's table markup) extracts as "ab" where production's
+// pretty-printed Astro/remark markup has a newline between the cells. Walking
+// the tree and inserting a separator around every non-inline element restores
+// the word boundary a real browser's rendering would put there, without
+// depending on any stylesheet.
+function extractBlockText(root) {
+  let out = "";
+  const walk = (node) => {
+    if (node.nodeType === 3 /* Text */) {
+      out += node.textContent;
+      return;
+    }
+    if (node.nodeType !== 1 /* Element */) return;
+    // Uppercase defensively: the set lookup below must not depend on
+    // tagName casing, whatever it happens to be for this element.
+    const tag = node.tagName.toUpperCase();
+    if (tag === "WBR") return; // zero-width break opportunity: no whitespace, no content
+    if (tag === "BR") {
+      // A line break by definition — it separates even though BR is inline.
+      out += " ";
+      return;
+    }
+    if (tag === "SVG") {
+      // An icon subtree is opaque: separators go around it, never inside it,
+      // so an icon set can never contribute a word boundary.
+      out += " " + node.textContent + " ";
+      return;
+    }
+    const inline = INLINE_TAGS.has(tag);
+    if (!inline) out += " ";
+    for (const child of node.childNodes) walk(child);
+    if (!inline) out += " ";
+  };
+  if (root) walk(root);
+  return out;
+}
+
 export function extract(html, route) {
   const { document } = parseHTML(html);
   for (const el of document.querySelectorAll("script,style,template")) el.remove();
-  const text = (document.body?.textContent ?? "").replace(/\s+/gu, " ").trim();
+  const text = extractBlockText(document.body).replace(/\s+/gu, " ").trim();
   const headings = [...document.querySelectorAll("h1,h2,h3,h4,h5,h6")].map((h) => ({
     depth: Number(h.tagName.slice(1)),
     text: h.textContent.replace(/\s+/gu, " ").trim(),
