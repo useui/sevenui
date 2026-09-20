@@ -92,6 +92,7 @@ export default async function DocPage({ params }: { params: Promise<Params> }) {
   return (
     <article>
       <h1>{doc.title}</h1>
+      <p className="my-4 text-lg text-muted-foreground">{doc.description}</p>
       <MDXContent />
     </article>
   );
