@@ -72,12 +72,60 @@ contradicting the spec. Proposed as **#30–#34**.
    points at `…/edit/main/docs/<slug>.mdx`, and **all 68 are broken**: the corpus lives at
    `apps/web/docs/` on `main`. The port emits the working path. Lands in Stage 3 with the rail.
 
-## Hand-reviewed routes
+## Preview verification — RUN, on the deployment of `4ff9224`
 
-**None yet — Stage 2's preview verification has not run.** The branch was unpushed for the whole
-stage, so no deployment carried a docs route. The mandatory overlay check (§17.3, §17.6 #10 — a
-Dialog, Sheet, Drawer and Command palette opened *inside a demo*, each confirmed to cover the
-viewport) and the package-manager bar / stored-choice / `sidebar`-demo checks are outstanding.
+`https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app`, Chrome at 1866x1078, dark.
+Driven through the browser rather than `pw/stage2-preview.mjs`: that harness needs
+`VERCEL_BYPASS`, which was unavailable, and the signed-in Chrome session reaches the preview
+without it. Origin confirmed by reading our own content back (`<title>Button — SevenUI`, the
+em-dash separator of #17, and the lede of fix F1 — both absent from the Stage 1 shell the alias
+served before the push).
 
-**Verdict: the automated half of Stage 2 PASSES.** The stage is complete in code; its preview
-verification is carried forward and must run before the cutover.
+### The mandatory check — §17.6 #10, the one behaviour verified as CHANGED
+
+Every overlay opened **from inside a demo**, measured against the `measured-overlay-before.json`
+figures taken from production's iframes. `iframes: 0` on all four routes.
+
+| overlay | before (in-frame) | after (preview) | verdict |
+|---|---|---|---|
+| **Sheet** | 384x288, frame viewport 670x288 | 384x**1078**, `top 0`, `left 1522` — full viewport height, ratio **1.000** | **COVERS VIEWPORT** |
+| **Dialog** | 424x301 in 670x288 | 403x286, centred **horizontally and vertically in the 1866x1078 viewport**; backdrop 1866x1078 | **COVERS VIEWPORT** |
+| **Drawer** | 654x192 in 670x288 | 1850x272 at `top 798`, `bottom 1070`, `left 8` — flush to the viewport bottom inside the 8px `--drawer-inset`; width ratio **0.991** | **COVERS VIEWPORT** |
+| **Command** | — | 365x315 centred horizontally; backdrop 1866x1078 | **COVERS VIEWPORT** |
+
+All four are portaled out of the demo pane (`portaledOutOfPane: true`), which is the structural
+reason the clipping is gone.
+
+**One measurement caveat, diagnosed rather than worked around.** The drawer first measured stuck at
+`translateY(282px)` with both `data-open` and `data-starting-style` set. Cause: the automated tab
+reports `document.visibilityState === "hidden"`, so `requestAnimationFrame` never fires
+(`rafFired: false`) and Base UI never clears the enter-transition's starting style. A harness
+artifact, not a product defect — the resting geometry above was read after clearing that attribute
+by hand, and the element's own `position: fixed` with `inset: 790px 0px 0px` already proves its
+containing block is the viewport and not the old 288px frame.
+
+### The rest of the stage's preview list
+
+- **Package-manager bar (#7)** — **PASS.** All four commands are server-rendered as
+  `.pm-only.pm-only-{npm,pnpm,yarn,bun}` spans (8 elements = 4 labels + 4 commands) and CSS selects
+  one from `<html data-pm>`. Flipping `data-pm` pnpm→yarn switches exactly one label and one command.
+  **The no-flash property is structural**, not a timing accident: nothing is computed at runtime and
+  `data-pm` is set by the inline pre-paint script.
+- **Stored choice at first paint** — **PASS by construction**, same mechanism; `<html data-pm="pnpm">`
+  arrives in the served HTML. `localStorage` holds only `blume-theme`, so §8.1's single-key contract
+  is intact.
+- **The `sidebar` demo does not pin over the chrome** — **PASS.** The pane carries its documented
+  `contain: layout paint` opt-in and has **zero** fixed-position descendants escaping its box; the
+  header sits unobstructed at `top 0, height 64`.
+- **`calendar-range` two months** — PASS (verified in the built HTML: 2 grids, June/July 2026,
+  `flex flex-col gap-4 md:flex-row`).
+
+### Not covered here
+
+The 2-widths x 2-themes sweep over `/docs`, `/docs/installation` and the four sampled primitives was
+**not** run — the sampled-content matrix is cheaper to run once the Stage 3 chrome exists, and
+Stage 3's own preview verification covers the same six routes. Recorded as carried forward rather
+than claimed.
+
+**Verdict: Stage 2 PASSES, automated and preview halves both.** The defect the iframe removal exists
+to fix is confirmed fixed, measured against the before-numbers rather than asserted.
