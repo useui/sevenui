@@ -450,6 +450,93 @@ html {
   display: block;
 }
 
+/* ---------------------------------------------------------------------------
+   /blocks preview frame (Task 5.3b)
+   ---------------------------------------------------------------------------
+   The scoped `<style>` block of legacy-components/block-frame.astro, which
+   Astro scoped with a generated `data-astro-cid-*` attribute stamped onto
+   every element of the component. Nothing generates such an attribute here,
+   so every selector below is narrowed BY HAND to `[data-block-preview]` — the
+   single attribute components/blocks/block-preview.tsx puts on the track
+   wrapper, and this section's stand-in for that scope. No rule here can match
+   anything outside a /blocks preview card.
+
+   Unlayered, like the `.pm-only` rules above: `opacity: 1` below has to beat
+   the readout's own opacity-0 utility, and an unlayered rule outranks
+   anything Tailwind puts in `@layer utilities` regardless of specificity or
+   source order. */
+
+/* Drag-in-progress suppression: while `data-dragging` is set on the iframe's
+   wrapper (block-preview.tsx sets it for exactly the duration of a drag), the
+   iframe itself stops receiving pointer events, so a fast drag cannot be
+   swallowed by the now-interactive cross-document iframe — restored the
+   instant the drag ends. The width readout stays on screen for the same
+   duration even if the pointer strays off the handle mid-drag. */
+[data-block-preview] [data-preview-wrap][data-dragging="true"] iframe {
+  pointer-events: none;
+}
+[data-block-preview] [data-preview-wrap][data-dragging="true"] [data-width-readout] {
+  opacity: 1;
+}
+
+/* The handle is a SIBLING of the box (outside it, in the track's own area),
+   not a descendant, so it cannot reach the readout through a plain peer
+   variant — the readout is nested two levels down inside a DIFFERENT sibling.
+   `:has()` on their shared ancestor (`[data-resize-frame]`) bridges that gap
+   regardless of DOM order. */
+[data-block-preview] [data-resize-frame]:has([data-resize-handle]:hover) [data-width-readout],
+[data-block-preview] [data-resize-frame]:has([data-resize-handle]:focus-visible) [data-width-readout] {
+  opacity: 1;
+}
+
+/* Full screen, in two flavours that must look identical: `:fullscreen` when
+   the Fullscreen API is available, and `[data-fs]` — a plain overlay — when
+   it is not. iPhone has no Fullscreen API and will not get one (WebKit
+   #212934 is WONTFIX; iOS supports it on iPad only), so the fallback is not
+   an edge case, it is every iPhone.
+
+   The wrapper's own `max-width` has to go, or the promoted element would sit
+   in a 1442px column in the middle of the screen. The BOX's width is
+   deliberately NOT forced here: the UA's `!important` rules apply only to the
+   fullscreen element itself, so a box still pinned to the 384px mobile preset
+   would letterbox — but pinning it back with another `!important` would make
+   the width presets silently inert in full screen, since `applyWidth` writes
+   an ordinary style value. block-preview.tsx clears the pinned width on the
+   way in and restores it on the way out instead, which keeps every control
+   live at the larger size. */
+[data-block-preview]:fullscreen,
+[data-block-preview][data-fs] {
+  display: flex;
+  flex-direction: column;
+  max-width: none !important;
+  background: var(--background);
+}
+[data-block-preview][data-fs] {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+[data-block-preview]:fullscreen [data-resize-frame],
+[data-block-preview][data-fs] [data-resize-frame] {
+  flex: 1;
+  min-height: 0;
+}
+[data-block-preview]:fullscreen [data-resize-frame] > div,
+[data-block-preview][data-fs] [data-resize-frame] > div,
+[data-block-preview]:fullscreen [data-preview-wrap],
+[data-block-preview][data-fs] [data-preview-wrap],
+[data-block-preview]:fullscreen [data-resize-box],
+[data-block-preview][data-fs] [data-resize-box] {
+  height: 100%;
+}
+[data-block-preview]:fullscreen iframe,
+[data-block-preview][data-fs] iframe {
+  height: 100% !important;
+}
+[data-block-preview]:fullscreen::backdrop {
+  background: var(--background);
+}
+
 /* The exposed-grid canvas. Ported from legacy-pages/index.astro's `<style>`
    block, but it lives here rather than beside the landing page because it is
    not the landing page's alone: legacy-components/legal-page.astro draws the
