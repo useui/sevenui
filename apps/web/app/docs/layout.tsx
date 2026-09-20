@@ -1,4 +1,5 @@
 import { DocsBreadcrumb } from "../../components/docs/breadcrumb";
+import { DocsPageActions } from "../../components/docs/page-actions";
 import { DocsSidebar } from "../../components/docs/sidebar";
 import { DocsTocDesktop, DocsTocMobile, DocsTocProvider } from "../../components/docs/toc";
 import { getDocIndex } from "../../lib/docs";
@@ -131,14 +132,29 @@ export default async function DocsLayout({ children }: { children: React.ReactNo
           `showToc = !(isApiOperation || isBare)`, and neither flag is ever set
           on this site. The LIST inside is what disappears when a page has no
           h2/h3 — as does the mobile variant — and no docs page is in that state
-          today (the thinnest, `/docs/theming`, has one heading). Task 3.4 adds
-          the page-actions rail here, below the list.
+          today (the thinnest, `/docs/theming`, has one heading). The
+          page-actions rail follows the list, at `RootLayout.astro:724-733`'s
+          position.
         */}
         <aside
           aria-label="On this page"
           className="sticky top-16 hidden h-[calc(100dvh-4rem)] scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent overflow-y-auto px-4 pt-6 pb-10 text-sm xl:block"
         >
           <DocsTocDesktop />
+          {/*
+            The rail needs to know whether the current path is a real docs
+            page, because `app/docs/not-found.tsx` renders inside this same
+            layout and all four of the rail's actions are derived from the
+            route — see `page-actions.tsx`'s header. The route list comes from
+            the same memoized index the two maps above were built from, so it
+            costs no extra filesystem pass. Its only cost is the strings
+            themselves, measured on `/docs/components/button`: 69 entries,
+            2,032 B once escaped into the inlined flight payload, 415 B gzipped
+            on their own and less than that in place — they are a second copy
+            of keys `headingsByRoute` has already put in the same payload, well
+            inside gzip's window. The heading map beside them is ~38 kB.
+          */}
+          <DocsPageActions docRoutes={Object.keys(headingsByRoute)} />
         </aside>
       </div>
     </DocsTocProvider>

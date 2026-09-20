@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { DocsFeedback } from "../../../components/docs/feedback";
+import { DocsPagination } from "../../../components/docs/pagination";
 import { JsonLd } from "../../../components/json-ld";
 import { getDoc, getDocIndex } from "../../../lib/docs";
 import { getPageMeta } from "../../../lib/page-meta";
@@ -53,7 +55,16 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const route = routeFrom(await params);
   const meta = await getPageMeta(route);
-  if (!meta) return {};
+  // No page at this route: the component below calls `notFound()` and
+  // `app/docs/not-found.tsx` renders. Metadata is resolved from THIS function
+  // before that happens, so this branch is the only place the docs 404's
+  // `<title>` can be set — and without it the miss would inherit the root
+  // layout's bare `SevenUI`, where every 404 on the live site reads
+  // `Page not found — SevenUI`. Same string as `app/not-found.tsx`'s, through
+  // the same `pageTitle` (§15.8, intended diff #28). Nothing else is
+  // declared: Next injects the `noindex` itself for a route that resolves
+  // through a `not-found.tsx`.
+  if (!meta) return { title: pageTitle("Page not found") };
   return {
     title: pageTitle(meta.title),
     description: meta.description,
@@ -132,6 +143,31 @@ export default async function DocPage({ params }: { params: Promise<Params> }) {
   // which no build had ever executed before this mount); Task 2.5 widened
   // that resolver to answer every `/docs` route from the content index, so
   // all 69 resolve, `/docs/components` included, with no `CUSTOM` entry.
+  // The bare title the feedback event reports (§17.6 #25), taken from the
+  // §16.8 single lookup rather than off `doc` — the same reason
+  // `generateMetadata` above goes through it. For a route `getDoc` has just
+  // answered, `getPageMeta`'s docs branch returns `{ title: doc.title }` out
+  // of that same memoized call, so the fallback below is `doc.title` by
+  // construction and exists only to satisfy the optional return type:
+  // `<JsonLd>` already throws on a route this resolver cannot answer.
+  const meta = await getPageMeta(route);
+
+  // Blume's foot-of-page order (`RootLayout.astro:692-706`): the article,
+  // then feedback, then pagination — two separately-ruled strips, each with
+  // its own top margin and top rule. Blume's `lastUpdated` line sits between
+  // them in the source and is NOT ported, because it does not render on this
+  // site at all: the shipped HTML contains zero occurrences of it (no
+  // `lastModified` is configured), and neither the spec nor the plan
+  // mentions it anywhere. That is also the correction to this file's
+  // `max-w-content` comment above, which predicted the four siblings as
+  // "breadcrumb, mobile TOC, pagination, last-updated": the live four are
+  // the breadcrumb, the mobile TOC, FEEDBACK and the pagination, which is
+  // what the five live occurrences on a primitive page are.
+  //
+  // `<JsonLd>` moves to last. It renders a `<script>`, so its position among
+  // these siblings is invisible; keeping the two content blocks adjacent to
+  // the article they belong to reads better than threading a payload
+  // between them.
   return (
     <>
       <article className="mx-auto max-w-content">
@@ -139,6 +175,8 @@ export default async function DocPage({ params }: { params: Promise<Params> }) {
         <p className="my-4 text-lg text-muted-foreground">{doc.description}</p>
         <MDXContent />
       </article>
+      <DocsFeedback title={meta?.title ?? doc.title} />
+      <DocsPagination route={route} />
       <JsonLd route={route} />
     </>
   );
