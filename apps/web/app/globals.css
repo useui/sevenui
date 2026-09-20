@@ -496,6 +496,104 @@ html {
   }
 }
 
+/* Task 4.3: the `/terms` and `/privacy` prose scale, ported from
+   `legacy-components/legal-page.astro`'s own `<style>` block. Astro's
+   `:global()` there is scoping syntax with no runtime meaning —
+   `.legal :global(h1)` compiled to the plain descendant selector
+   `.legal h1`, written that way here. Element selectors (rather than a
+   utility class on every node) keep the two long documents' own markup
+   readable as plain prose; every declaration and selector is unchanged
+   from the source, including `li`'s hairline marker and the mono-stack
+   fallback on `code`/`th`. */
+.legal h1 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.legal h2 {
+  margin-top: 2.75rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.legal h2 + p,
+.legal h2 + ul {
+  margin-top: 0.75rem;
+}
+
+.legal p,
+.legal ul,
+.legal dl {
+  margin-top: 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--muted-foreground);
+}
+
+.legal ul {
+  list-style: none;
+  padding-left: 1.125rem;
+}
+
+.legal li {
+  position: relative;
+  margin-top: 0.5rem;
+}
+
+.legal li::before {
+  content: "";
+  position: absolute;
+  top: 0.6875rem;
+  left: -1.125rem;
+  width: 5px;
+  height: 1px;
+  background: var(--border);
+}
+
+.legal strong {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.legal code {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.8125rem;
+  color: var(--foreground);
+}
+
+.legal a {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Cookie/processor tables: the same hairline grid as the rest of the canvas. */
+.legal table {
+  margin-top: 1.25rem;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  text-align: start;
+}
+
+.legal th,
+.legal td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  vertical-align: top;
+  color: var(--muted-foreground);
+}
+
+.legal th {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--foreground);
+}
+
 /* The page's one authored motion moment: the hero settles into place on
    load. Content is visible by default; the animation only runs when motion
    is welcome. */
