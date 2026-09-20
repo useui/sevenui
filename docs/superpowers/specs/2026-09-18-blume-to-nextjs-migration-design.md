@@ -956,6 +956,17 @@ Every diff must be empty or appear here. This list is what separates "we fixed a
 | 27 | `rounded-blume` (12px) becomes `rounded-lg` (10px) on four furniture elements | §8.3 |
 | 28 | The 404 `<title>` gains the suffix: **"Page not found — SevenUI"** | §11.7 |
 | 29 | Three demos (`field-validation.tsx`, `chart-demo.tsx`, `chart-line.tsx`) gain a `"use client"` directive; their `/r/demo/*.json` content changes by one line each | §7 |
+| 30 | The site footer renders on docs pages; production has none there | §11.1 |
+| 31 | Inline demos contribute 16 headings to the outline on 5 routes, one of them with a generated id | §7 |
+| 32 | The code block's language label is text where production drew an icon | §11.5 |
+| 33 | The Preview/Code labels ship in the static HTML instead of being written by script | §7.3, §11.5 |
+| 34 | **"Edit on GitHub" is repaired** — production's 68 links all point at a path that has not existed since the monorepo move; the port emits the working one | §11.3 |
+| 35 | prev/next gains one hop, through `/docs/components` | consequence of #26 |
+| 36 | The docs `<aside>` is nested inside `<main>`, so **"Skip to content" no longer skips the docs navigation** — a declared accessibility regression, remedy deferred past cutover | §11.1 |
+| 37 | Each docs page carries ~5.3 KB gzip of serialized heading data | §11.1 |
+| 38 | §11.3's `docs/components/index.mdx` is the wrong path — `routeFor` maps it to `/docs/components/index`; the file is `docs/components.mdx` | spec text defect |
+
+Rows #30–#38 were added after Stage 3, each a consequence of a decision taken earlier in this document rather than a new choice. #34 is the only row that *repairs* something, and #36 the only one that costs the reader anything.
 
 **Two inventory observations that are expected and are not diffs:** `/blume-assets/*` is absent (it 404s today), and the 9 chrome anchors gain `target`/`rel` — which the post-build pass already added, so the built HTML is unchanged.
 
