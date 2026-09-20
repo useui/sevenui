@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useDrawer } from "./drawer-context";
 import { getClerkIfLikelySignedIn } from "../lib/clerk";
 import { Logomark } from "./logomark";
+import { SearchTrigger } from "./search/search-trigger";
 import { currentTabForRoute, getSiteTabs } from "../lib/site-tabs";
 import { site } from "../lib/site";
 import { ThemeToggle } from "./theme-toggle";
@@ -32,9 +33,12 @@ const iconButton =
  * Ported from `legacy-components/blume/Header.astro`, stripped to what's
  * actually configured: no `Ask` (no `ai.ask`), no `LanguageSwitcher` /
  * locale switch (no locales), no `NavSelector` / version selector (none
- * configured), no banner. One slot stays deliberately empty for now — the
- * search trigger (Stage 7, §9.5) — a later stage adds its element. The auth
- * pill (Stage 6, §12) is implemented below.
+ * configured), no banner. The auth pill (Stage 6, §12) is implemented below;
+ * the search trigger (Stage 7, §9.5) is `components/search/search-trigger.tsx`,
+ * which is a separate client component for a reason that outranks tidiness:
+ * the palette it opens must not be in this component's chunk, and the `⌘K`
+ * listener that opens the palette must be, since the chord has to work before
+ * the palette has ever been loaded.
  *
  * The logo and the tab bar use `next/link`, not a plain `<a>`: App Router
  * owns soft navigation now that Astro's `<ClientRouter>` is gone (spec
@@ -138,7 +142,7 @@ export function SiteHeader({ primitivesHref }: { primitivesHref: string }) {
         ))}
       </nav>
       <div className="flex-1" />
-      {/* Search trigger goes here — Stage 7, §9.5. */}
+      <SearchTrigger />
       <div className="flex shrink-0 items-center gap-2">
         <a
           aria-label="GitHub repository"
