@@ -19,9 +19,9 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          # Deliberately NOT ci.yml's 22.12: this job's script imports a
-          # .ts file (apps/web/lib/pro-manifest-schema.ts) directly with
-          # plain `node`, no build step. Node only strips TypeScript types
+          # This job's script imports a .ts file
+          # (apps/web/lib/pro-manifest-schema.ts) directly with plain
+          # `node`, no build step. Node only strips TypeScript types
           # from a .ts file's import without a flag from 22.18.0 — measured
           # empirically against this exact import on 22.12.0, 22.17.1, and
           # 22.18.0:
@@ -30,9 +30,13 @@ jobs:
           #     but prints an "experimental feature" warning every run.
           #   - 22.18.0, no flag: works, no warning — type stripping is the
           #     default from this version.
-          # 22.18 is the smallest version bump off ci.yml's 22.12 that
-          # avoids ERR_UNKNOWN_FILE_EXTENSION without also needing an
-          # experimental flag in the run command below.
+          # 22.18 was originally the smallest version bump off ci.yml's old
+          # 22.12 pin that avoided ERR_UNKNOWN_FILE_EXTENSION without also
+          # needing an experimental flag in the run command below. ci.yml
+          # has since moved to 22.18 too (lib/docs/serialize-md.ts's own
+          # off-graph .ts import needs the same floor), so this is no longer
+          # a deliberate divergence between the two workflows — just the
+          # version both now happen to share.
           node-version: 22.18
           cache: pnpm
       - run: pnpm install --frozen-lockfile

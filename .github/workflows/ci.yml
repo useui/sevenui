@@ -17,7 +17,14 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.12
+          # 22.18, matching manifest-canary.yml's own pin (and its comment):
+          # Task 8.2's build-md-mirrors script and lib/docs/serialize-md.ts's
+          # off-graph load both import a relative .ts specifier with plain
+          # `node`, no build step. Node only strips types from that shape
+          # without a flag from 22.18.0 — below it, ERR_UNKNOWN_FILE_EXTENSION.
+          # Keeping this at 22.12 would build green here while breaking on
+          # every contributor machine and CI run that isn't already on 22.18+.
+          node-version: 22.18
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
