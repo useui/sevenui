@@ -1,4 +1,7 @@
 import { DocsSidebar } from "../../components/docs/sidebar";
+import { DocsTocDesktop, DocsTocMobile, DocsTocProvider } from "../../components/docs/toc";
+import { getDocIndex } from "../../lib/docs";
+import type { Heading } from "../../lib/docs/headings";
 import { getNavTree, resolvePrimitivesHref } from "../../lib/docs/nav";
 
 /**
@@ -46,28 +49,76 @@ export default async function DocsLayout({ children }: { children: React.ReactNo
     throw new Error("app/docs/layout.tsx: nav tree has no Primitives group with a resolvable href");
   }
 
+  // The TOC's heading data, for EVERY docs route rather than just this one —
+  // see `components/docs/toc.tsx`'s header for why this layout cannot know
+  // which route it is wrapping, and for the measured cost of the map. Same
+  // memoized index the nav tree above came from, so no second filesystem pass.
+  // The headings themselves are the content index's h2+h3 text scan (§4.5),
+  // ids included; nothing here re-reads the MDX.
+  const headingsByRoute: Record<string, Heading[]> = {};
+  for (const page of await getDocIndex()) {
+    headingsByRoute[page.route] = page.headings;
+  }
+
   return (
-    // Ported verbatim from the shipped HTML's `[data-blume-doc-grid]` class
-    // attribute (`dist/docs/components/button/index.html`), which resolves
-    // `RootLayout.astro:557`'s `class:list` for a normal docs page:
-    // `mx-auto grid grid-cols-1 items-start
-    //  lg:grid-cols-[17.5rem_minmax(0,1fr)]
-    //  xl:grid-cols-[17.5rem_minmax(0,1fr)_17.5rem]`.
-    // The `data-blume-doc-grid` attribute itself is dropped (§13.3); it was
-    // a debugging hook with no CSS and no script reading it.
-    <div className="mx-auto grid grid-cols-1 items-start lg:grid-cols-[17.5rem_minmax(0,1fr)] xl:grid-cols-[17.5rem_minmax(0,1fr)_17.5rem]">
-      <DocsSidebar primitivesHref={primitivesHref} tree={tree} />
-      <div className="px-6 pt-6 pb-10 lg:px-8 xl:px-10">{children}</div>
+    // `DocsTocProvider` wraps the grid rather than sitting inside it: it is the
+    // nearest common ancestor of the two TOC renderers below, which land in two
+    // DIFFERENT grid tracks, and it must own the single scroll-spy both share.
+    // It renders no element of its own, so the grid's own child list is
+    // unchanged and so is its markup.
+    <DocsTocProvider headingsByRoute={headingsByRoute}>
       {/*
-        The third grid track — `<aside aria-label="On this page" …
-        xl:block>` — is Task 3.2's, and it is deliberately NOT stubbed here.
-        An empty `<aside>` with that label would ship a named but empty
-        landmark to production and to every axe run in between; the grid
-        template already reserves the column either way, so an empty shell
-        buys nothing a comment does not. Task 3.2 inserts the element at
-        this position with `RootLayout.astro:713-718`'s class list, and
-        Task 3.4 adds the page-actions rail inside it.
+        Ported verbatim from the shipped HTML's `[data-blume-doc-grid]` class
+        attribute (`dist/docs/components/button/index.html`), which resolves
+        `RootLayout.astro:557`'s `class:list` for a normal docs page:
+        `mx-auto grid grid-cols-1 items-start
+         lg:grid-cols-[17.5rem_minmax(0,1fr)]
+         xl:grid-cols-[17.5rem_minmax(0,1fr)_17.5rem]`.
+        The `data-blume-doc-grid` attribute itself is dropped (§13.3); it was
+        a debugging hook with no CSS and no script reading it.
       */}
-    </div>
+      <div className="mx-auto grid grid-cols-1 items-start lg:grid-cols-[17.5rem_minmax(0,1fr)] xl:grid-cols-[17.5rem_minmax(0,1fr)_17.5rem]">
+        <DocsSidebar primitivesHref={primitivesHref} tree={tree} />
+        <div className="px-6 pt-6 pb-10 lg:px-8 xl:px-10">
+          {/*
+            `RootLayout.astro:684-688`'s order: breadcrumb, mobile TOC, then the
+            page header. Task 3.3's breadcrumb goes ABOVE this line; the `<h1>`
+            that follows lives inside `{children}`
+            (`app/docs/[[...slug]]/page.tsx`'s `<article>`), so the mobile TOC
+            is the last thing this layout puts before it.
+
+            Note for whoever diffs build HTML next: React's `useId` numbering is
+            derived from each children array's slot index AND its length, and
+            this task changes both — the content column goes from one child to
+            two, and the grid from two to three. So every generated id under this
+            layout shifts. Expected here, and it will shift again in Tasks 3.3
+            and 3.4; it is internal id text, not markup structure, and §17.2's
+            extractor (route, text, headings, links) cannot see it.
+          */}
+          <DocsTocMobile />
+          {children}
+        </div>
+        {/*
+          The third grid track, with `RootLayout.astro:713-718`'s class list
+          verbatim minus `data-blume-toc` (§13.3 — a query hook with no CSS and,
+          since the custom element is gone, no reader). `aria-label` is the
+          third and last live occurrence of "On this page"; the other two are
+          the mobile summary's `<span>` and the desktop list's `<p>`.
+
+          Rendered unconditionally, which reproduces Blume: its own guard was
+          `showToc = !(isApiOperation || isBare)`, and neither flag is ever set
+          on this site. The LIST inside is what disappears when a page has no
+          h2/h3 — as does the mobile variant — and no docs page is in that state
+          today (the thinnest, `/docs/theming`, has one heading). Task 3.4 adds
+          the page-actions rail here, below the list.
+        */}
+        <aside
+          aria-label="On this page"
+          className="sticky top-16 hidden h-[calc(100dvh-4rem)] scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent overflow-y-auto px-4 pt-6 pb-10 text-sm xl:block"
+        >
+          <DocsTocDesktop />
+        </aside>
+      </div>
+    </DocsTocProvider>
   );
 }
