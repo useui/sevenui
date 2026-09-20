@@ -7,6 +7,21 @@
 @source "../../../packages/registry/registry";
 @source "../../../packages/registry/components";
 
+/* The Blume-era Astro sources in legacy-components/ and legacy-pages/ are
+   quarantined for deletion in Stage 10 and are compiled by nothing — Next
+   never sees a .astro file. Tailwind's automatic scan still reads them as
+   plain text, though, and it was lifting two dead identifiers out of
+   site-drawer.astro and blume/Header.astro into the shipped stylesheet:
+   `[data-blume-nav-open]` and `--blume-drawer-top`, four generated rules
+   each, referenced by zero elements in any built page. Both are §17.6 #5
+   violations on the letter of the row ("no blume-* names survive") and
+   pure dead weight on top. Excluding the two directories is safe for the
+   same reason they are dead: a class that appears only in an uncompiled
+   .astro file cannot be in use, and Stages 4-7 re-materialise the markup
+   they need as .tsx, which the scan does reach. */
+@source not "../legacy-components";
+@source not "../legacy-pages";
+
 /* Dark mode is driven by data-theme on the <html> element, not by OS
    preference. Without this, Tailwind v4's built-in `dark:` variant falls
    back to an OS-level color-scheme media query, which both desyncs from
@@ -222,6 +237,47 @@
   display: grid;
   width: 100%;
   justify-items: center;
+}
+
+/* Finding F3 — the two keycaps in `number-field.mdx` and `toast.mdx`.
+   Production styled them through Tailwind Typography's
+   `.prose :where(kbd)`; this port deleted `.prose` (§8.3), and the element
+   map in `mdx-components.tsx` provably cannot reach them: MDX flags a tag
+   the author types literally as `_mdxExplicitJsx` and
+   `recma-jsx-rewrite` deliberately does NOT route it through
+   `_components` ("a given `h1` component is used for `# heading` ... but
+   not for `<h1>heading</h1>`"). The 12 overrides all work because they
+   come from markdown SYNTAX; `<kbd>` is the first literal HTML tag this
+   map has ever needed, so a 13th override would have been dead code. The
+   rule therefore lives here, as an element rule rather than a bespoke
+   class name (§4.7).
+
+   Colour is `var(--foreground)` — the same substitution §17.6 #14 made
+   for the focus ring. Production's `--tw-prose-kbd` is
+   `oklch(21% .034 264.665)` light and `--tw-prose-invert-kbd` is `#fff`
+   dark, with each shadow at 10% alpha, i.e. the foreground in both
+   themes; using our token reproduces the light/dark flip for free.
+   `font-family: inherit` is load-bearing: Tailwind's preflight sets
+   `kbd,samp,pre` to the mono stack, so omitting it renders the keycap in
+   monospace.
+
+   Demo subtrees are excluded exactly as production excluded `not-prose`.
+   Inline demos now live INSIDE the article (§7), so an unscoped rule
+   would restyle the Kbd primitive's own demo and override the registry's
+   styling — the one page where that would obviously be wrong. `:where()`
+   keeps the whole selector at specificity (0,0,1) so any registry class
+   wins regardless. */
+article :where(kbd):not(:where([data-sevenui-example], [data-sevenui-example] *)) {
+  color: var(--foreground);
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--foreground) 10%, transparent),
+    0 3px 0 color-mix(in oklch, var(--foreground) 10%, transparent);
+  padding-block: 0.1875em;
+  padding-inline: 0.375em;
+  border-radius: 0.3125rem;
+  font-family: inherit;
+  font-size: 0.875em;
+  font-weight: 500;
 }
 
 /* Rule 2 (typographic root) is `demos/theme.css`'s `body { background-
