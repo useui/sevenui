@@ -170,6 +170,44 @@ export default async function DocPage({ params }: { params: Promise<Params> }) {
   // between them.
   return (
     <>
+      {/*
+        The three agent-facing `<link>` tags (§15.11), transcribed from the
+        shipped HTML:
+
+          <link href="/agent-readability.json" rel="describedby" type="application/json">
+          <link href="/llms.txt" rel="describedby" type="text/plain">
+          <link href="/docs/components/button.md" rel="alternate" type="text/markdown">
+
+        React hoists a `<link>` into the document head from wherever it is
+        rendered, so their position among these siblings is invisible — the
+        same property `<JsonLd>` relies on below.
+
+        HERE, NOT IN `app/docs/layout.tsx`, and not in a client component
+        mounted by it. The third tag's href is the current route's `.md`
+        mirror; the layout sits above the `[[...slug]]` segment, is handed no
+        params, and cannot know which route it is wrapping (the constraint
+        `toc.tsx`, `breadcrumb.tsx` and `page-actions.tsx` each document). This
+        page already owns `route` — the one conversion from slug array to route
+        string, above — so it needs neither `usePathname()` nor a client
+        boundary to build the href.
+
+        It also needs no "is this a real docs page" guard. `getDoc` has already
+        returned above and `notFound()` has already run for a miss, so
+        `app/docs/not-found.tsx` renders WITHOUT this element in the tree at
+        all — where a layout-mounted version had to be handed all 69 route
+        strings just to decide to render nothing. The docs-only scope is
+        unchanged either way: this subtree is the only place these tags exist,
+        verified absent on `/`, `/components/button` and `/blocks`.
+
+        `${route}.md` is the mirror's URL, built the same way
+        `page-actions.tsx` builds its "Copy as Markdown" target and the same
+        way `scripts/build-md-mirrors.ts` names the file it writes into
+        `public/` (§15.2's slug rule). Three call sites, one shape; if the
+        mirrors ever move, all three move together.
+      */}
+      <link href="/agent-readability.json" rel="describedby" type="application/json" />
+      <link href="/llms.txt" rel="describedby" type="text/plain" />
+      <link href={`${route}.md`} rel="alternate" type="text/markdown" />
       <article className="mx-auto max-w-content">
         <h1>{doc.title}</h1>
         <p className="my-4 text-lg text-muted-foreground">{doc.description}</p>
