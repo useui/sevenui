@@ -264,6 +264,9 @@ importers:
       react-dom:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
+      react-hook-form:
+        specifier: ^7.87.0
+        version: 7.87.0(react@19.2.8)
       react-resizable-panels:
         specifier: ^4.12.3
         version: 4.12.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -286,9 +289,6 @@ importers:
       jsdom:
         specifier: ^30.0.1
         version: 30.0.1(@noble/hashes@2.4.0)
-      react-hook-form:
-        specifier: ^7.87.0
-        version: 7.87.0(react@19.2.8)
       typescript:
         specifier: ^7.0.2
         version: 7.0.2

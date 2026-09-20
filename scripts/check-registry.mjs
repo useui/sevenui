@@ -155,13 +155,24 @@ for (const item of ui.items) {
 checkRegistry(demos, DEMOS_ROOT, "demos");
 checkAllFilesRegistered(demos, DEMOS_ROOT, "demos", { skip: ["theme.css", "registry.json", "package.json"] });
 
-// Theme parity: every cssVars token appears in demos/theme.css with the same value
+// Theme parity: every cssVars token appears, with the same value, in both
+// demos/theme.css AND apps/web/app/globals.css.
+//
+// demos/theme.css stays on disk but the site no longer loads it: its only
+// site consumer was blume.config.ts's examples.css, and demos now render
+// inline (§7). It is not inert — this check still reads it to verify the
+// published `theme` registry item. Registry changes are out of scope, so the
+// file is not deleted and carries no comment of its own (that would be a
+// registry edit).
 const themeItem = ui.items.find((i) => i.name === "theme");
-const css = readFileSync(join(DEMOS_ROOT, "theme.css"), "utf8");
-for (const [mode, vars] of Object.entries(themeItem.cssVars)) {
-  for (const [key, val] of Object.entries(vars)) {
-    if (!css.includes(`--${key}: ${val};`)) {
-      errors.push(`theme ${mode} token --${key} missing or differs in demos/theme.css`);
+const THEME_CONSUMER_FILES = [join(DEMOS_ROOT, "theme.css"), "apps/web/app/globals.css"];
+for (const themeFile of THEME_CONSUMER_FILES) {
+  const css = readFileSync(themeFile, "utf8");
+  for (const [mode, vars] of Object.entries(themeItem.cssVars)) {
+    for (const [key, val] of Object.entries(vars)) {
+      if (!css.includes(`--${key}: ${val};`)) {
+        errors.push(`theme ${mode} token --${key} missing or differs in ${themeFile}`);
+      }
     }
   }
 }

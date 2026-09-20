@@ -1,4 +1,8 @@
+"use client";
+
 import * as React from "react";
+import { usePresetScope } from "../preset-scope";
+import { PRESET_SCOPE_ATTR } from "../preset-scope-attr";
 
 /**
  * The live-example box every demo renders inside (task-2.6 brief step 1/3).
@@ -86,8 +90,46 @@ export function PreviewPane({
   children: React.ReactNode;
   contain?: boolean;
 }) {
+  // `usePresetScope()` is called here as a HOOK, not rendered as a separate
+  // `<PresetScope />` element (fix round 1, MINOR 2). The two are behaviorally
+  // identical — same effect, same singleton `<style>` tag — but a mounted
+  // element is a real node in the render tree, and measured against this
+  // app's own build, adding ANY extra child here (before OR after
+  // `children`) changed the sibling count of this component's returned div
+  // from 1 to 2, which was enough on its own to shift Base UI's `useId`
+  // output for the actual demo on every single docs page — reordering the
+  // sibling did not undo it, only removing the extra node did. This file
+  // becomes `"use client"` as the cost of that: `children` (the demo itself,
+  // e.g. `AccordionDemo`) is still rendered on the server and passed in as
+  // an opaque already-rendered subtree — a Server Component's JSX given to
+  // a Client Component as `children` does not itself become client-rendered
+  // — so this does not turn the 137 demos into client components, only this
+  // thin wrapper.
+  usePresetScope();
   return (
-    <div className="flex min-h-72 items-center justify-center bg-background p-6 sm:p-10">
+    // `data-preset-scope` lands on THIS outer box, not the inner
+    // `data-sevenui-example` grid box (task-2.8 brief, §8.4). The live
+    // analogue was an iframe whose entire document was themed, background
+    // included — this outer box is the one that carries `bg-background`
+    // (the pane's own canvas, padding included), so scoping here and
+    // letting the CSS custom properties inherit down to the inner box
+    // reproduces "the whole document was themed" instead of leaving a
+    // ring of unthemed padding around a themed inner box. The inner box's
+    // own `background: var(--background)` rule (globals.css §7.2c) then
+    // reads whatever this outer box's scoped token resolves to, since the
+    // custom property inherits downward.
+    //
+    // `PRESET_SCOPE_ATTR` comes from `../preset-scope-attr`, a plain module
+    // with no `"use client"`, imported here rather than re-declared: this
+    // file is now `"use client"` itself (see above), so importing the
+    // constant from `../preset-scope` (also `"use client"`) would work fine
+    // today, but keeping the string in the one plain module both files can
+    // safely depend on — client or server — means this file staying client
+    // is never load-bearing for the attribute's correctness.
+    <div
+      className="flex min-h-72 items-center justify-center bg-background p-6 sm:p-10"
+      {...{ [PRESET_SCOPE_ATTR]: "" }}
+    >
       <div data-sevenui-example="" style={contain ? { contain: "layout paint" } : undefined}>
         {children}
       </div>
