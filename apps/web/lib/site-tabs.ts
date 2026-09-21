@@ -1,7 +1,10 @@
-// Single source of truth for the header tabs. Consumed in two places so every
-// page renders the same navigation: the custom Blume Header override
-// (components/blume/Header.astro — docs pages reach the header only through
-// it) and site-drawer-tabs.astro (the mobile drawer, on every page).
+// Single source of truth for the header tabs. `getSiteTabs()` is imported by
+// three renderers today so every page shows the same navigation:
+// `components/site-header.tsx` (the header, on every page),
+// `components/drawer-shell.tsx` (the shared mobile-drawer machinery, mounted
+// by `site-drawer.tsx` for most routes and by `blocks/blocks-drawer.tsx` for
+// `/blocks`), and `components/docs/sidebar.tsx` (the docs section's own
+// mobile drawer, which replaces `site-drawer.tsx` under `/docs` — Task 3.1).
 //
 // Paths are in final URL space: `path` drives the active-tab match, `href` is
 // the link target. Matching is longest-prefix, which is what lets `Primitives`

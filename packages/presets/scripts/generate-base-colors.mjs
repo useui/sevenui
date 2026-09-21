@@ -25,8 +25,9 @@
 //   So all five bases now carry the same colorful chart-1..5, which is also
 //   what gray and slate already fetch.
 // - success/warning are NOT added. They are semantic status colors that mean
-//   the same thing under every base color, so they live as constants in
-//   theme.css rather than in the preset system. See BASE_TOKEN_KEYS.
+//   the same thing under every base color, so they live as site theme
+//   constants (see presets.ts's BASE_TOKEN_KEYS header) rather than in the
+//   preset system. See BASE_TOKEN_KEYS.
 const NAMES = ["neutral", "stone", "zinc", "gray", "slate"];
 const DROP = new Set(["radius"]);
 const EXTRA = { "destructive-foreground": { light: "oklch(0.985 0 0)", dark: "oklch(0.985 0 0)" } };

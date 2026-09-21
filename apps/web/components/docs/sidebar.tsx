@@ -187,9 +187,12 @@ export function DocsSidebar({ primitivesHref, tree }: { primitivesHref: string; 
         file on purpose, because Tailwind's `@source` scan is a plain text
         scan and lifts a bracket variant out of a COMMENT into the shipped
         sheet — two dead rules, verified in `.next/static/chunks/*.css` on
-        the first build of this file. That is the same §17.6 #5 leak
-        `globals.css`'s `@source not "../legacy-components"` exclusion
-        exists to stop. `lg:translate-x-0!` is kept verbatim, `!` included: from `lg`
+        the first build of this file. That is the same kind of §17.6 #5 leak
+        that made `globals.css`'s `@source not "../legacy-components"`
+        exclusion necessary while that directory still existed for the scan
+        to reach (removed in Stage 10 along with the directory itself); the
+        precaution here stays regardless, because this file is a live
+        component still covered by the scan. `lg:translate-x-0!` is kept verbatim, `!` included: from `lg`
         up this element is the static column and must never be translated,
         whichever way the mobile state happens to be pointing.
 

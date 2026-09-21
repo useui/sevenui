@@ -7,7 +7,7 @@ export type TokenMap = Record<string, string>;
 //
 // The semantic status tokens (success/warning and their foregrounds) are
 // deliberately absent: green means green under every base color, so they stay
-// theme-level constants defined once in apps/web/theme.css and
+// theme-level constants defined once in apps/web/app/globals.css and
 // packages/registry/demos/theme.css. buildPresetCss emits only the keys listed
 // here, and a partial :root rule overrides nothing else, so those constants
 // survive every preset unchanged.

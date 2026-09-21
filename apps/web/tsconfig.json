@@ -40,10 +40,6 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    "legacy-pages",
-    "legacy-components",
-    "blume.config.ts",
-    "components.ts"
+    "node_modules"
   ]
 }

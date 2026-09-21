@@ -15,21 +15,31 @@ import type { SVGProps } from "react";
  * leaving every social card drawing the previous mark with nothing able to
  * see it (§16.8: one fact, one spelling).
  *
- * THREE static copies remain, and they are listed in full because a comment
- * whose whole job is to explain why the mark does NOT have one spelling
- * everywhere is worthless if it undercounts the spellings (an earlier revision
- * named two of the three):
+ * TWO static copies remain (a third, `apps/web/assets/logomark.svg`, was
+ * byte-identical to `public/logomark.svg`, had no reader of its own anywhere
+ * in the repo, and was deleted along with the rest of the Blume-shaped
+ * `assets/` directory in Stage 10's retirement sweep). They are listed in
+ * full because a comment whose whole job is to explain why the mark does NOT
+ * have one spelling everywhere is worthless if it undercounts the spellings:
  *
- *   - `apps/web/public/icon.svg`      — the favicon; carries a `<style>` block
- *                                       with a `prefers-color-scheme` rule
- *   - `apps/web/public/logomark.svg`  — 653 B
- *   - `apps/web/assets/logomark.svg`  — 653 B, byte-identical to the one above
- *                                       (same md5; verified 2026-09-21)
+ *   - `apps/web/public/icon.svg`      — the favicon; 720 B; carries a
+ *                                       `<style>` block with a
+ *                                       `prefers-color-scheme` rule and no
+ *                                       `fill` attribute on its `<path>`s
+ *   - `apps/web/public/logomark.svg`  — 653 B; plain `fill="currentColor"`
+ *                                       on each `<path>`, `height="1em"` on
+ *                                       the root
  *
- * All three are static assets served as files and cannot import anything, so
- * they stay separate copies by necessity. What this module removed is the
- * duplication between the two CODE paths — this component and the OG card —
- * which is the pair that could drift silently.
+ * These two are NOT byte-identical to each other — different size, different
+ * markup around the same shape (verified by md5: `dceb4f53…` vs `40ebb3ec…`,
+ * 2026-09-21) — but their GEOMETRY is: both files' `<path d="…">` values
+ * match `LOGOMARK_PATHS` below character-for-character. That sameness, not
+ * file-level byte identity, is what this module actually guards: the
+ * geometry has exactly one source of truth here (read by this component and
+ * by `lib/og/card.tsx`), and each static file carries its own independent
+ * copy of it because a static asset cannot import anything. What this module
+ * removed is the duplication between the two CODE paths — this component and
+ * the OG card — which is the pair that could drift silently.
  *
  * The viewBox is a 64x64 square. `lib/og/card.tsx` relies on that — it sizes
  * the mark without aspect-ratio arithmetic — so it is exported too rather than

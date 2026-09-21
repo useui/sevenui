@@ -99,12 +99,15 @@ const WHITESPACE_RUN = /\s+/g;
  * the exact function `rehype`'s own heading scan uses to blank fenced code
  * before it runs — rather than writing a second fence stripper that could
  * drift from it. This is intentionally not a full Markdown parse (Blume's
- * `toPlainText` in `documents.ts` walks an mdast tree for that, at the cost
- * of two new production dependencies — `mdast-util-from-markdown` and
- * `mdast-util-gfm` are today only transitive under the `blume`
- * devDependency); a page-level search body does not need a perfect
- * reduction, and a regex pipeline gets close for a fraction of the
- * dependency cost.
+ * `toPlainText` in `documents.ts` walked an mdast tree for that, at a cost
+ * that mattered when this decision was made: `mdast-util-from-markdown` and
+ * `mdast-util-gfm` were then only transitive under the `blume` devDependency,
+ * not something the production build paid for. `blume` is gone since
+ * Stage 10 — both packages are transitive dependencies of this project's own
+ * MDX toolchain now instead, `remark-frontmatter`/`remark-gfm`/`@mdx-js/mdx`,
+ * so that specific cost no longer applies); a page-level search body does not
+ * need a perfect reduction, and a regex pipeline gets close for a fraction of
+ * a full mdast walk's runtime cost.
  *
  * "Close" is deliberate wording, not "complete" — this pipeline has two
  * known blind spots, found in review, that are accepted rather than chased

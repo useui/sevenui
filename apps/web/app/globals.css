@@ -7,21 +7,6 @@
 @source "../../../packages/registry/registry";
 @source "../../../packages/registry/components";
 
-/* The Blume-era Astro sources in legacy-components/ and legacy-pages/ are
-   quarantined for deletion in Stage 10 and are compiled by nothing — Next
-   never sees a .astro file. Tailwind's automatic scan still reads them as
-   plain text, though, and it was lifting two dead identifiers out of
-   site-drawer.astro and blume/Header.astro into the shipped stylesheet:
-   `[data-blume-nav-open]` and `--blume-drawer-top`, four generated rules
-   each, referenced by zero elements in any built page. Both are §17.6 #5
-   violations on the letter of the row ("no blume-* names survive") and
-   pure dead weight on top. Excluding the two directories is safe for the
-   same reason they are dead: a class that appears only in an uncompiled
-   .astro file cannot be in use, and Stages 4-7 re-materialise the markup
-   they need as .tsx, which the scan does reach. */
-@source not "../legacy-components";
-@source not "../legacy-pages";
-
 /* Dark mode is driven by data-theme on the <html> element, not by OS
    preference. Without this, Tailwind v4's built-in `dark:` variant falls
    back to an OS-level color-scheme media query, which both desyncs from
