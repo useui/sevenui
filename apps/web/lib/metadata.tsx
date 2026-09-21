@@ -170,8 +170,10 @@ export function notFoundMetadata(): Metadata {
  * paraphrase in `app/page.tsx`'s JSX).
  *
  * Next's own resolver (`resolveAbsoluteUrlWithPathname` in
- * `next/dist/{cjs,esm}/lib/metadata/resolvers/resolve-url.js`, read against
- * this repo's installed next@16.3.5) collapses `alternates.canonical` and
+ * `next/dist/lib/metadata/resolvers/resolve-url.js`, with the ESM copy at
+ * `next/dist/esm/lib/metadata/resolvers/resolve-url.js` — read against this
+ * repo's installed next@16.3.5; there is no `next/dist/cjs` directory, and an
+ * earlier revision of this comment cited one) collapses `alternates.canonical` and
  * `openGraph.url` to the bare **origin — no trailing slash** whenever the
  * resolved pathname is exactly `"/"`, no matter what value either field is
  * given:

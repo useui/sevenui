@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { LOGOMARK_PATHS, LOGOMARK_VIEWBOX } from "../../components/logomark";
 import { site } from "../site";
 import { HEIGHT, WIDTH } from "./dimensions";
 
@@ -87,21 +88,25 @@ const truncate = (value: string, max: number): string => {
 
 // --- logomark (§16.2, A3) --------------------------------------------------
 //
-// The two path `d` attributes below are copied verbatim from
-// `apps/web/components/logomark.tsx`. Neither that component nor
-// `apps/web/public/icon.svg` (the other existing form of this mark) can be
-// imported by this module: the component paints with `fill="currentColor"`,
-// which Satori does not resolve (it has no concept of an inherited paint
-// server the way a browser does), and the public SVG hides its actual color
-// behind a `<style>` block with a `prefers-color-scheme` rule, which Satori
-// does not execute at all. So the mark is redrawn here as a standalone SVG
-// string with the fill already baked to `FOREGROUND`, then inlined as a
-// base64 `data:` URI — exactly what §16.2 specifies and what Blume's own
-// `logoMark()` (`blume/og/card.ts`) did for the equivalent step.
+// THE GEOMETRY IS IMPORTED, THE FILL IS NOT — and the distinction is the whole
+// point. Satori can paint from neither `components/logomark.tsx` (its
+// `fill="currentColor"` has no inherited paint server to resolve) nor
+// `apps/web/public/icon.svg` (whose colour hides behind a `<style>` block with
+// a `prefers-color-scheme` rule Satori never executes), so this module rebuilds
+// the SVG with the fill baked to `FOREGROUND` and inlines it as a base64
+// `data:` URI — exactly what §16.2 specifies and what Blume's own `logoMark()`
+// (`blume/og/card.ts`) did for the equivalent step.
+//
+// That argument is about the FILL. An earlier revision took it to licence
+// copying the two `d` strings in here as well, which it does not: the geometry
+// is a plain string with no paint semantics, so it imports cleanly. It now
+// does. Otherwise a mark refresh would edit the component and the favicon and
+// leave every social card drawing the old mark, with nothing in this stage's
+// gate able to see it — `og-sweep.mjs` proves each card is a real 1200x630 PNG
+// that varies with the page's words, not what the mark in it looks like.
 const LOGOMARK_SVG =
-  `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">` +
-  `<path d="M9.08426 12.4419C9.65668 8.91164 12.987 6.51285 16.5232 7.08412L49.549 12.4213C53.0852 12.9928 55.488 16.3176 54.9157 19.8479C54.3433 23.3782 51.013 25.7769 47.4768 25.2057L14.451 19.8685C10.9148 19.297 8.51204 15.9722 9.08426 12.4419Z" fill="${FOREGROUND}"/>` +
-  `<path d="M43.1816 15.1254C45.222 12.1858 49.2627 11.4541 52.2072 13.4911C55.1516 15.528 55.8845 19.562 53.8442 22.5016L25.5487 54.2121C23.5083 57.1517 19.4676 57.8834 16.5232 55.8464C13.5787 53.8095 12.8458 49.7755 14.8861 46.8359L43.1816 15.1254Z" fill="${FOREGROUND}"/>` +
+  `<svg viewBox="${LOGOMARK_VIEWBOX}" fill="none" xmlns="http://www.w3.org/2000/svg">` +
+  LOGOMARK_PATHS.map((d) => `<path d="${d}" fill="${FOREGROUND}"/>`).join("") +
   `</svg>`;
 
 // The mark's own viewBox is a 64x64 square, so its rendered width equals its
