@@ -305,3 +305,54 @@ its content, and the theme dock).
 
 **Nothing stopped working.** The five heavy dependencies whose hoist was removed in `fdfe40e` all
 render in a browser, on Vercel's own from-scratch install, in both themes.
+
+## Closing the record against the final deployment (controller)
+
+The whole-stage review, run after this record's twenty rows were already green, found **one
+Critical that no row of this record could have caught** — and saying so here is the point of
+appending this section rather than editing the table above.
+
+**`scripts/check-pro-manifest.mjs` stopped being able to run.** It imports `lucide-react` bare;
+`scripts/` is not a package root; the import resolved only because `publicHoistPattern` — row 3 of
+the table above, asserted gone and correctly so — had placed the package at the workspace root for
+Node's ancestor walk. Removing the hoist was right and its five-page proof was sound; §14.1's
+argument is simply silent about a plain Node script, which does exactly the thing it says Next.js
+never does.
+
+Why every check here missed it: this record walks **§14.7's inventory of retired inputs**, and
+`check-pro-manifest.mjs` is not a retired input — it is a *consumer* of one. Row 3 asks "is
+`publicHoistPattern` gone?" and the answer is yes. Nothing in the table asks "what was resolving
+through it?" The stage's own gate ("if the extractor reports a new diff here, a retirement removed
+something live") reads rendered pages, where a CI script never appears.
+
+And nothing was red. `.github/workflows/manifest-canary.yml` is a `schedule:` workflow, GitHub
+fires schedules only from the default branch, so it had never run from this branch — it would have
+started failing the moment this merged, silently ending the only signal that checks the live pro
+manifest's shape, on a surface whose ISR stale-serve is precisely what would keep the failure quiet.
+
+Fixed in `0b9c9bd`: `lucide-react` declared in the root `package.json`, and a `ci.yml` step running
+the canary against the committed fixture `pnpm build` already uses — offline, deterministic, and on
+the pull request rather than after the merge. Proven both directions, including with the
+`lucide-react` symlink renamed aside so the guard was seen to fail on its own axis.
+
+**Stated with its limit:** `ci.yml`'s triggers are `push: branches: [main]` and `pull_request`.
+There is no PR and `main` is untouched, so that new step has never executed on a GitHub runner. It
+is proven by running its exact command locally, with a control. A runner has not done it.
+
+### The lesson this record should carry forward
+
+A retirement inventory answers *is the retired thing gone?* It cannot answer *what was depending on
+it?* — and the second question is where the damage lives. Before Stage 11 removes anything else:
+enumerate the removed capability's consumers **from the repo** — every entry point that resolves a
+bare specifier, and whatever invokes each one — not from the stage's own narrative of which
+consumers matter. A definition of done that lists consumers by name is a hand-mirrored list, which
+is the defect this stage spent three sweeps learning to stop writing.
+
+### Final state, measured against the deployment of `0b9c9bd` (Vercel check `success`)
+
+| probe | result |
+|---|---|
+| `/`, `/docs/components/button`, `/blocks/marketing/hero`, `/og/index.png`, `/llms.txt`, `/sitemap.xml` | 200 |
+| `node scripts/route-inventory.mjs` | total **110** (docs 69 / gallery 11 / blocks 24 / standalone 5 / notFound 1) |
+| `pnpm -r typecheck` / `check:registry` / `test` / `build` / `test:smoke` | clean / ok (67, 137, 40) / 525 + 46 / 227 routes / passed |
+| `node scripts/check-pro-manifest.mjs` | exit 0 live, exit 1 on a broken fixture |
