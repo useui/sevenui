@@ -250,3 +250,58 @@ retirement that turned out to have failed.
 
 No `git commit` was run from this task, per Addendum A1 — file changes and the record are left for
 the controller/PR flow.
+
+## Stage 10 — preview verification (controller, Ruling 89)
+
+Written by the controller, not by the task's implementer: this pass has no diff of its own, and
+Ruling 89 assigns it here for the same reason Stage 9's Ruling 81 assigned its card review. Run
+against the preview deployment of `9e1ec3f`, for which GitHub reports the Vercel check `success`.
+**The commit status is what says which build answered** — this stage's commits are output-neutral
+for the most part, so a fetch alone could not distinguish them.
+
+The plan asks for "one route per surface plus the five heavy-dependency pages, light and dark, 1440
+— looking for **things that stopped working**, not for drift."
+
+### HTTP pass, 13 surfaces
+
+All 200 except the deliberate miss. Byte sizes and a per-surface content needle:
+
+| route | status | bytes | needle |
+|---|---|---|---|
+| `/` | 200 | 212,669 | `SevenUI` |
+| `/docs` | 200 | 160,055 | `Introduction` ×2 |
+| `/docs/components/button` | 200 | 325,696 | `data-sevenui-example` ×5 |
+| `/components` | 200 | 40,997 | `href="/components/button"`, `Accordion`, `Dropdown Menu` — production's own `/components` is 38,347 B with the same link |
+| `/components/dialog` | 200 | 214,879 | `data-sevenui-example` ×4 |
+| `/blocks` | 200 | 126,843 | category cards |
+| `/blocks/marketing` | 200 | 98,985 | `href="/blocks/marketing…"` |
+| `/blocks/marketing/hero` | 200 | 257,459 | `iframe` |
+| `/pro` | 200 | 104,745 | — |
+| `/account` | 200 | 72,939 | `Sign` |
+| `/terms` | 200 | 90,699 | `Terms of Service` |
+| `/privacy` | 200 | 92,097 | `Privacy` |
+| `/not-a-real-page` | **404** | 25,457 | `Page not found` |
+
+One needle in the first run returned zero — `data-slot` on `/components` — and it was the needle
+that was wrong, not the page: the gallery index is a link grid, not a demo surface, and it carries
+every link and label it should. Recorded rather than quietly re-run, because "the check found
+nothing" and "the check was pointed at the wrong thing" look identical in a table.
+
+### Browser pass, 17 routes × 2 themes = 34 loads, Chromium at 1440×900
+
+Every load: correct status, `data-theme` actually applied, a distinct computed `body` background per
+theme (`lab(100 0 0)` light / `lab(2.75381 0 0)` dark — so the theme took effect rather than being
+merely set), the expected `<h1>`, and **zero console errors and zero page errors** on all 33 live
+routes. The 34th, `/not-a-real-page`, logs exactly one console error — the 404 itself — which is
+this pass's own positive control: an error listener that reports nothing on a page known to produce
+one is not listening.
+
+Screenshots reviewed: the landing in light (exposed grid, ruler, live component row all intact),
+`/docs/components/chart` in dark (Recharts bars, axis labels and legend drawn — the failure mode
+§Task 10.1 Step 3 called out as a *runtime* rather than build error), `/docs/components/calendar` in
+light (react-day-picker's grid, June 2026, selected day), and `/blocks/marketing/hero` in light (the
+sidebar tree with its counts, the pro banner, the block frame's toolbar, the pro iframe rendering
+its content, and the theme dock).
+
+**Nothing stopped working.** The five heavy dependencies whose hoist was removed in `fdfe40e` all
+render in a browser, on Vercel's own from-scratch install, in both themes.
