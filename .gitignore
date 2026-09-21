@@ -13,3 +13,5 @@ apps/web/public/*.md
 !.env.example
 .next/
 *.tsbuildinfo
+# Migration verification evidence — local only, never published.
+.scratch/
