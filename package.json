@@ -19,6 +19,7 @@
     "extract": "node scripts/extract-page-features.mjs"
   },
   "devDependencies": {
-    "linkedom": "^0.18.13"
+    "linkedom": "^0.18.13",
+    "lucide-react": "^1.41.0"
   }
 }

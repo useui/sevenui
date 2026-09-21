@@ -33,4 +33,18 @@ jobs:
       - run: pnpm build
         env:
           PRO_MANIFEST_URL: lib/pro-manifest.fixture.json
+      # Not a live-manifest check — pnpm build, above, already stopped doing
+      # that in Task 5.1, and this step must not reintroduce it. What this
+      # exercises is scripts/check-pro-manifest.mjs's own ability to run: its
+      # `import { icons } from "lucide-react"` resolves from scripts/, which
+      # is not a package root, so it depends on lucide-react being declared
+      # at the workspace root rather than hoisted there — a lockfile
+      # regression can silently break just that import. The same offline
+      # fixture pnpm build already uses above stands in for the live
+      # manifest, so this is deterministic and needs no network. Before this
+      # step existed, the only thing that ran this script at all was
+      # manifest-canary.yml's scheduled job — which fires only from the
+      # default branch, i.e. only after a breaking change has already
+      # merged. This step catches it on the pull request instead.
+      - run: node scripts/check-pro-manifest.mjs apps/web/lib/pro-manifest.fixture.json
       - run: pnpm test:smoke

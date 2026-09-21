@@ -382,10 +382,11 @@ html {
    React-shaped alternative — read localStorage in an effect and re-render —
    reintroduces exactly the post-hydration repaint the inline script was
    written to avoid, and would do it once per card (§13.2). Ported verbatim
-   from legacy-components/blocks-prefs.astro, which /blocks still owns until
-   Stage 5: one shared `.pm-only` class carries `display: none`, and each
-   element also carries a `.pm-only-{pm}` class that the matching `[data-pm]`
-   selector reveals. `:root:not([data-pm]) .pm-only-pnpm` is the pre-script
+   from legacy-components/blocks-prefs.astro (deleted in Stage 10; /blocks
+   owned it through Stage 5): one shared `.pm-only` class carries `display:
+   none`, and each element also carries a `.pm-only-{pm}` class that the
+   matching `[data-pm]` selector reveals. `:root:not([data-pm]) .pm-only-pnpm`
+   is the pre-script
    default — it must name DEFAULT_PACKAGE_MANAGER (pnpm), since the inline
    script only ever narrows from it. */
 .pm-only {
@@ -424,9 +425,9 @@ html {
    because the outcome changes. The revealed install-command variant ends up
    `display: block` instead of `inline`, and CodeBlock's own `max-h-96
    overflow-auto` utilities can actually take effect. Every other `.pm-only`
-   consumer (a bare word/icon, e.g. /blocks' trigger label — legacy-
-   components/install-control.astro) is untouched: it has no `.shiki` class,
-   so only the base `display: inline` rule above ever matches it. */
+   consumer (a bare word/icon, e.g. /blocks' trigger label —
+   components/blocks/install-control.tsx) is untouched: it has no `.shiki`
+   class, so only the base `display: inline` rule above ever matches it. */
 :root:not([data-pm]) .pm-only-pnpm.shiki,
 [data-pm="pnpm"] .pm-only-pnpm.shiki,
 [data-pm="npm"] .pm-only-npm.shiki,

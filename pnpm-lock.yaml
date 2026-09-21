@@ -112,6 +112,9 @@ importers:
       linkedom:
         specifier: ^0.18.13
         version: 0.18.13
+      lucide-react:
+        specifier: ^1.41.0
+        version: 1.41.0(react@19.2.8)
 
   apps/web:
     dependencies:

@@ -39,6 +39,18 @@
 // throw is the one with a realistic real-world cause: a typo in a manifest
 // entry from the pro repo.
 //
+// This file runs from scripts/, which is not a package root, so that bare
+// import resolves only because lucide-react is declared as a devDependency
+// on the workspace root's own package.json, not inherited via the hoisting
+// that Stage 10 removed. The root's pnpm-lock.yaml entry for lucide-react
+// must resolve to the peer-matched snapshot (suffixed `(react@…)`, the same
+// one apps/web and packages/registry use) rather than the peerless one —
+// only the peer-matched snapshot is ever materialized in node_modules. A
+// plain `pnpm install` has been observed to regenerate either form
+// depending on local store state, with no change to this file's own
+// inputs; if this import starts failing with ERR_MODULE_NOT_FOUND again,
+// check that lockfile line before suspecting this script.
+//
 // Source selection: defaults to the live URL. Pass a local file path as
 // argv[2], or set CHECK_PRO_MANIFEST_SOURCE, to point this at a local copy
 // instead (used to prove the canary actually fails on a malformed

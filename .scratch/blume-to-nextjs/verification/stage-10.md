@@ -12,7 +12,7 @@ c64566e chore(web): delete the Blume config, the Astro sources and the assets di
 
 `git show --name-only --diff-filter=D --format=` file counts: `fdfe40e` 0 (line edit inside
 `pnpm-workspace.yaml`, no file deletion), `b853102` 2 (`apps/web/.gitignore`,
-`patches/blume@1.5.3.patch`), `c64566e` 47 (`blume.config.ts`, `components.ts`, `theme.css`,
+`patches/blume@1.5.3.patch`), `c64566e` 48 (`blume.config.ts`, `components.ts`, `theme.css`,
 `assets/*`, `legacy-pages/**`, `legacy-components/**`), `7fcfee7` 0 (docs only).
 
 This task exists so that no retired input is discovered later and mistaken for live code. Every
