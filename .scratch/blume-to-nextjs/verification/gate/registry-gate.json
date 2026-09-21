@@ -1,0 +1,60 @@
+{
+  "branchDir": "apps/web/public/r",
+  "mainDir": "/private/tmp/claude-501/-Users-oguzhanyilmaz-Documents-Projects-github-useui-sevenui/91011a91-4d1f-4cfc-b44a-975176e25c93/scratchpad/main-registry/apps/web/public/r",
+  "results": [
+    {
+      "name": "fileset.equal",
+      "ok": true,
+      "detail": {
+        "branch": 247,
+        "main": 247,
+        "onlyBranch": [],
+        "onlyMain": []
+      }
+    },
+    {
+      "name": "nonexception.byteIdentical",
+      "ok": true,
+      "detail": {
+        "identical": 244,
+        "differing": 3,
+        "unexpected": []
+      }
+    },
+    {
+      "name": "exception.demo/chart-demo.json",
+      "ok": true,
+      "detail": {
+        "differs": true,
+        "directiveInBranch": 1,
+        "directiveInMain": 0,
+        "reversesToMain": true,
+        "byteDelta": 19
+      }
+    },
+    {
+      "name": "exception.demo/chart-line.json",
+      "ok": true,
+      "detail": {
+        "differs": true,
+        "directiveInBranch": 1,
+        "directiveInMain": 0,
+        "reversesToMain": true,
+        "byteDelta": 19
+      }
+    },
+    {
+      "name": "exception.demo/field-validation.json",
+      "ok": true,
+      "detail": {
+        "differs": true,
+        "directiveInBranch": 1,
+        "directiveInMain": 0,
+        "reversesToMain": true,
+        "byteDelta": 19
+      }
+    }
+  ],
+  "pass": 5,
+  "total": 5
+}

@@ -1,0 +1,110 @@
+[
+  {
+    "mode": "as-shipped",
+    "aborted": 0,
+    "reqs": 138,
+    "total": 1611184,
+    "js": 948961,
+    "jsN": 44,
+    "pf": 86,
+    "pfBytes": 512625,
+    "wallPf": 66,
+    "tbt": 137
+  },
+  {
+    "mode": "as-shipped",
+    "aborted": 0,
+    "reqs": 138,
+    "total": 1611091,
+    "js": 948802,
+    "jsN": 44,
+    "pf": 86,
+    "pfBytes": 512744,
+    "wallPf": 66,
+    "tbt": 130
+  },
+  {
+    "mode": "as-shipped",
+    "aborted": 0,
+    "reqs": 138,
+    "total": 1611005,
+    "js": 948824,
+    "jsN": 44,
+    "pf": 86,
+    "pfBytes": 512634,
+    "wallPf": 66,
+    "tbt": 117
+  },
+  {
+    "mode": "wall-off",
+    "aborted": 65,
+    "reqs": 71,
+    "total": 1172313,
+    "js": 948896,
+    "jsN": 44,
+    "pf": 20,
+    "pfBytes": 75010,
+    "wallPf": 0,
+    "tbt": 159
+  },
+  {
+    "mode": "wall-off",
+    "aborted": 65,
+    "reqs": 71,
+    "total": 1172242,
+    "js": 948784,
+    "jsN": 44,
+    "pf": 20,
+    "pfBytes": 75057,
+    "wallPf": 0,
+    "tbt": 116
+  },
+  {
+    "mode": "wall-off",
+    "aborted": 65,
+    "reqs": 71,
+    "total": 1172286,
+    "js": 948866,
+    "jsN": 44,
+    "pf": 20,
+    "pfBytes": 75018,
+    "wallPf": 0,
+    "tbt": 134
+  },
+  {
+    "mode": "all-off",
+    "aborted": 75,
+    "reqs": 27,
+    "total": 645931,
+    "js": 497521,
+    "jsN": 20,
+    "pf": 0,
+    "pfBytes": 0,
+    "wallPf": 0,
+    "tbt": 123
+  },
+  {
+    "mode": "all-off",
+    "aborted": 75,
+    "reqs": 27,
+    "total": 645904,
+    "js": 497491,
+    "jsN": 20,
+    "pf": 0,
+    "pfBytes": 0,
+    "wallPf": 0,
+    "tbt": 156
+  },
+  {
+    "mode": "all-off",
+    "aborted": 75,
+    "reqs": 27,
+    "total": 645995,
+    "js": 497581,
+    "jsN": 20,
+    "pf": 0,
+    "pfBytes": 0,
+    "wallPf": 0,
+    "tbt": 115
+  }
+]

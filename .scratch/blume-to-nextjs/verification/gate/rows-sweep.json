@@ -1,0 +1,345 @@
+{
+  "blocksRoutes": 24,
+  "q3": {
+    "blocks": [
+      "/blocks",
+      "/blocks/ai-and-agents",
+      "/blocks/ai-and-agents/ai-chat",
+      "/blocks/application",
+      "/blocks/application/account",
+      "/blocks/application/app-shell",
+      "/blocks/application/auth",
+      "/blocks/application/dashboard",
+      "/blocks/application/empty-state",
+      "/blocks/application/profile",
+      "/blocks/application/stats",
+      "/blocks/ecommerce",
+      "/blocks/ecommerce/coupon",
+      "/blocks/ecommerce/product-category",
+      "/blocks/ecommerce/product-detail",
+      "/blocks/marketing",
+      "/blocks/marketing/contact",
+      "/blocks/marketing/cta",
+      "/blocks/marketing/faq",
+      "/blocks/marketing/feature",
+      "/blocks/marketing/footer",
+      "/blocks/marketing/hero",
+      "/blocks/marketing/logo-cloud",
+      "/blocks/marketing/pricing"
+    ],
+    "prodOgImage": {
+      "/blocks": "https://sevenui.dev/og/blocks.png",
+      "/blocks/ai-and-agents": "https://sevenui.dev/og/blocks/ai-and-agents.png",
+      "/blocks/ai-and-agents/ai-chat": "https://sevenui.dev/og/blocks/ai-and-agents/ai-chat.png",
+      "/blocks/application": "https://sevenui.dev/og/blocks/application.png",
+      "/blocks/application/account": "https://sevenui.dev/og/blocks/application/account.png",
+      "/blocks/application/app-shell": "https://sevenui.dev/og/blocks/application/app-shell.png",
+      "/blocks/application/auth": "https://sevenui.dev/og/blocks/application/auth.png",
+      "/blocks/application/dashboard": "https://sevenui.dev/og/blocks/application/dashboard.png",
+      "/blocks/application/empty-state": "https://sevenui.dev/og/blocks/application/empty-state.png",
+      "/blocks/application/profile": "https://sevenui.dev/og/blocks/application/profile.png",
+      "/blocks/application/stats": "https://sevenui.dev/og/blocks/application/stats.png",
+      "/blocks/ecommerce": "https://sevenui.dev/og/blocks/ecommerce.png",
+      "/blocks/ecommerce/coupon": "https://sevenui.dev/og/blocks/ecommerce/coupon.png",
+      "/blocks/ecommerce/product-category": "https://sevenui.dev/og/blocks/ecommerce/product-category.png",
+      "/blocks/ecommerce/product-detail": "https://sevenui.dev/og/blocks/ecommerce/product-detail.png",
+      "/blocks/marketing": "https://sevenui.dev/og/blocks/marketing.png",
+      "/blocks/marketing/contact": "https://sevenui.dev/og/blocks/marketing/contact.png",
+      "/blocks/marketing/cta": "https://sevenui.dev/og/blocks/marketing/cta.png",
+      "/blocks/marketing/faq": "https://sevenui.dev/og/blocks/marketing/faq.png",
+      "/blocks/marketing/feature": "https://sevenui.dev/og/blocks/marketing/feature.png",
+      "/blocks/marketing/footer": "https://sevenui.dev/og/blocks/marketing/footer.png",
+      "/blocks/marketing/hero": "https://sevenui.dev/og/blocks/marketing/hero.png",
+      "/blocks/marketing/logo-cloud": "https://sevenui.dev/og/blocks/marketing/logo-cloud.png",
+      "/blocks/marketing/pricing": "https://sevenui.dev/og/blocks/marketing/pricing.png"
+    },
+    "oursOgImage": {
+      "/blocks": "https://sevenui.dev/og/blocks.png",
+      "/blocks/ai-and-agents": "https://sevenui.dev/og/blocks/ai-and-agents.png",
+      "/blocks/ai-and-agents/ai-chat": "https://sevenui.dev/og/blocks/ai-and-agents/ai-chat.png",
+      "/blocks/application": "https://sevenui.dev/og/blocks/application.png",
+      "/blocks/application/account": "https://sevenui.dev/og/blocks/application/account.png",
+      "/blocks/application/app-shell": "https://sevenui.dev/og/blocks/application/app-shell.png",
+      "/blocks/application/auth": "https://sevenui.dev/og/blocks/application/auth.png",
+      "/blocks/application/dashboard": "https://sevenui.dev/og/blocks/application/dashboard.png",
+      "/blocks/application/empty-state": "https://sevenui.dev/og/blocks/application/empty-state.png",
+      "/blocks/application/profile": "https://sevenui.dev/og/blocks/application/profile.png",
+      "/blocks/application/stats": "https://sevenui.dev/og/blocks/application/stats.png",
+      "/blocks/ecommerce": "https://sevenui.dev/og/blocks/ecommerce.png",
+      "/blocks/ecommerce/coupon": "https://sevenui.dev/og/blocks/ecommerce/coupon.png",
+      "/blocks/ecommerce/product-category": "https://sevenui.dev/og/blocks/ecommerce/product-category.png",
+      "/blocks/ecommerce/product-detail": "https://sevenui.dev/og/blocks/ecommerce/product-detail.png",
+      "/blocks/marketing": "https://sevenui.dev/og/blocks/marketing.png",
+      "/blocks/marketing/contact": "https://sevenui.dev/og/blocks/marketing/contact.png",
+      "/blocks/marketing/cta": "https://sevenui.dev/og/blocks/marketing/cta.png",
+      "/blocks/marketing/faq": "https://sevenui.dev/og/blocks/marketing/faq.png",
+      "/blocks/marketing/feature": "https://sevenui.dev/og/blocks/marketing/feature.png",
+      "/blocks/marketing/footer": "https://sevenui.dev/og/blocks/marketing/footer.png",
+      "/blocks/marketing/hero": "https://sevenui.dev/og/blocks/marketing/hero.png",
+      "/blocks/marketing/logo-cloud": "https://sevenui.dev/og/blocks/marketing/logo-cloud.png",
+      "/blocks/marketing/pricing": "https://sevenui.dev/og/blocks/marketing/pricing.png"
+    }
+  },
+  "q4": {
+    "prodLiveRoutes": 108,
+    "prodDistinctOgDescription": 106,
+    "prodMostCommon": {
+      "count": 3,
+      "value": "Base UI powered primitives, distributed through the shadcn registry."
+    },
+    "prodRoutesSharingMostCommon": [
+      "/",
+      "/account",
+      "/docs"
+    ],
+    "oursRoutes": 109,
+    "oursDistinctOgDescription": 107,
+    "oursMaxRepeat": 3,
+    "oursRepeated": [
+      {
+        "n": 3,
+        "v": "Base UI powered primitives, distributed through the shadcn registry."
+      }
+    ]
+  },
+  "q5": {
+    "rows39": {
+      "/components/button": {
+        "ariaCurrentPage": [
+          2,
+          4
+        ],
+        "detailsTotal": [
+          0,
+          0
+        ],
+        "detailsOpen": [
+          0,
+          0
+        ]
+      },
+      "/components": {
+        "ariaCurrentPage": [
+          2,
+          2
+        ],
+        "detailsTotal": [
+          0,
+          0
+        ],
+        "detailsOpen": [
+          0,
+          0
+        ]
+      },
+      "/components/dialog": {
+        "ariaCurrentPage": [
+          2,
+          4
+        ],
+        "detailsTotal": [
+          0,
+          0
+        ],
+        "detailsOpen": [
+          0,
+          0
+        ]
+      }
+    },
+    "rows41": {
+      "/blocks": {
+        "ariaCurrentPage": [
+          2,
+          2
+        ],
+        "detailsTotal": [
+          8,
+          8
+        ],
+        "detailsOpen": [
+          8,
+          0
+        ]
+      },
+      "/blocks/marketing": {
+        "ariaCurrentPage": [
+          2,
+          3
+        ],
+        "detailsTotal": [
+          8,
+          8
+        ],
+        "detailsOpen": [
+          2,
+          0
+        ]
+      },
+      "/blocks/marketing/hero": {
+        "ariaCurrentPage": [
+          2,
+          5
+        ],
+        "detailsTotal": [
+          8,
+          8
+        ],
+        "detailsOpen": [
+          2,
+          0
+        ]
+      }
+    },
+    "rows24": {
+      "/blocks": {
+        "prod": {
+          "navOl": 0,
+          "olTags": 0,
+          "ariaCurrentPage": 2,
+          "breadcrumbLabel": 0
+        },
+        "ours": {
+          "navOl": 0,
+          "olTags": 0,
+          "ariaCurrentPage": 2,
+          "breadcrumbLabel": 0
+        }
+      },
+      "/blocks/marketing": {
+        "prod": {
+          "navOl": 0,
+          "olTags": 0,
+          "ariaCurrentPage": 2,
+          "breadcrumbLabel": 1
+        },
+        "ours": {
+          "navOl": 1,
+          "olTags": 1,
+          "ariaCurrentPage": 3,
+          "breadcrumbLabel": 1
+        }
+      },
+      "/blocks/marketing/hero": {
+        "prod": {
+          "navOl": 0,
+          "olTags": 0,
+          "ariaCurrentPage": 2,
+          "breadcrumbLabel": 1
+        },
+        "ours": {
+          "navOl": 1,
+          "olTags": 1,
+          "ariaCurrentPage": 5,
+          "breadcrumbLabel": 1
+        }
+      }
+    },
+    "rows42": {
+      "data-tip": {
+        "prod": 81,
+        "ours": 0
+      },
+      "data-title": {
+        "prod": 18,
+        "ours": 9
+      },
+      "data-cmd-npm": {
+        "prod": 9,
+        "ours": 0
+      },
+      "data-cmd-pnpm": {
+        "prod": 9,
+        "ours": 0
+      },
+      "data-cmd-yarn": {
+        "prod": 9,
+        "ours": 0
+      },
+      "data-cmd-bun": {
+        "prod": 9,
+        "ours": 0
+      },
+      "data-src": {
+        "prod": 9,
+        "ours": 0
+      },
+      "data-preset": {
+        "prod": 27,
+        "ours": 0
+      },
+      "data-panel": {
+        "prod": 1,
+        "ours": 0
+      },
+      "data-rail": {
+        "prod": 1,
+        "ours": 0
+      },
+      "data-cap": {
+        "prod": 1,
+        "ours": 0
+      },
+      "data-chevron": {
+        "prod": 1,
+        "ours": 0
+      },
+      "data-rail-glyph": {
+        "prod": 1,
+        "ours": 0
+      },
+      "data-readout": {
+        "prod": 3,
+        "ours": 0
+      },
+      "data-rail-readout": {
+        "prod": 3,
+        "ours": 0
+      },
+      "data-field": {
+        "prod": 17,
+        "ours": 0
+      },
+      "data-value": {
+        "prod": 17,
+        "ours": 0
+      },
+      "data-label": {
+        "prod": 17,
+        "ours": 0
+      },
+      "data-glyph": {
+        "prod": 4,
+        "ours": 0
+      },
+      "data-action": {
+        "prod": 1,
+        "ours": 0
+      },
+      "data-bound": {
+        "prod": 0,
+        "ours": 0
+      },
+      "data-customizer": {
+        "prod": 1,
+        "ours": 1
+      },
+      "id=\"blocks-theme-panel\"": {
+        "prod": 1,
+        "ours": 1
+      }
+    }
+  },
+  "step5": {
+    "prodTotalIframeSrcsOnBlocks": 0,
+    "oursTotalIframeSrcsOnBlocks": 0,
+    "prodDistinct": 0,
+    "oursDistinct": 0,
+    "setEqual": true,
+    "onlyProd": [],
+    "onlyOurs": [],
+    "perRouteEqual": true,
+    "perRouteMismatch": [],
+    "oursSrcList": []
+  }
+}

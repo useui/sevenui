@@ -1,0 +1,3066 @@
+{
+  "prod|/": [
+    {
+      "tag": "H1",
+      "t": "Base UI primitives.shadcn workflow",
+      "fs": "60px",
+      "fw": "600",
+      "ls": "-1.5px",
+      "lh": "60px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Create your account",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "-0.8px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Preferences",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "-0.8px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Volume60%",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "-0.8px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Open the overlays",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "-0.8px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Notify",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "-0.8px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Find a component",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "-0.8px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Verify it's you",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "-0.8px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Recent invoices",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "-0.8px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Install in three steps",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "1. Initialize",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "-0.8px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "2. Add primitives",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "-0.8px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "3. Use them",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "-0.8px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Same CLI. Different primitives.",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Base UI, exclusively",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "-0.8px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "The shadcn workflow",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "-0.8px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Source, not a dependency",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "-0.8px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Every primitive in the registry",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/blocks": [
+    {
+      "tag": "H1",
+      "t": "Blocks",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Application39",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.45px",
+      "lh": "28px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Dashboard",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Auth",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Profile",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Account",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "App Shell",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Empty State",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Stats",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Marketing44",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.45px",
+      "lh": "28px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Logo Cloud",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "CTA",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Pricing",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "FAQ",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Hero",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Footer",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Feature",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Contact",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "AI & Agents3",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.45px",
+      "lh": "28px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "AI Chat",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "eCommerce27",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.45px",
+      "lh": "28px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Product Category",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Product Detail",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Coupon",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/blocks/marketing": [
+    {
+      "tag": "H1",
+      "t": "Marketing",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Logo Cloud",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "CTA",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Pricing",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "FAQ",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Hero",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Footer",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Feature",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Contact",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/blocks/marketing/hero": [
+    {
+      "tag": "H1",
+      "t": "Hero",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 01Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 02Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 03Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 04Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 05Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 06Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 07Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 08Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 09Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/docs": [
+    {
+      "tag": "H1",
+      "t": "Introduction",
+      "fs": "48px",
+      "fw": "500",
+      "ls": "-2.4px",
+      "lh": "52.8px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Why SevenUI",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Coverage",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/docs/installation": [
+    {
+      "tag": "H1",
+      "t": "Installation",
+      "fs": "48px",
+      "fw": "500",
+      "ls": "-2.4px",
+      "lh": "52.8px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Add primitives",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Registry namespace (optional)",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Animations",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Registry layout",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/docs/components/button": [
+    {
+      "tag": "H1",
+      "t": "Button",
+      "fs": "48px",
+      "fw": "500",
+      "ls": "-2.4px",
+      "lh": "52.8px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Installation",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Usage",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Examples",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Variants",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Sizes",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Disabled",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Loading",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "API reference",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Button",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/docs/components/dialog": [
+    {
+      "tag": "H1",
+      "t": "Dialog",
+      "fs": "48px",
+      "fw": "500",
+      "ls": "-2.4px",
+      "lh": "52.8px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Installation",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Usage",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "API reference",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Dialog",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Detached triggers (createHandle)",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "DialogContent",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "DialogFooter",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "DialogTrigger, DialogClose, Dialog",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/docs/components/chart": [
+    {
+      "tag": "H1",
+      "t": "Chart",
+      "fs": "48px",
+      "fw": "500",
+      "ls": "-2.4px",
+      "lh": "52.8px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Installation",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Usage",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Examples",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Line chart",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "API reference",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/docs/components/field": [
+    {
+      "tag": "H1",
+      "t": "Field",
+      "fs": "48px",
+      "fw": "500",
+      "ls": "-2.4px",
+      "lh": "52.8px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Installation",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Usage",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Examples",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Orientation",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Validation",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "React Hook Form",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "API reference",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Field",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "FieldLabel",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "FieldDescription",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "FieldError",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Layout parts",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/components": [
+    {
+      "tag": "H1",
+      "t": "Components",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Accordion",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Badge",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Button",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Card",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Dialog",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Dropdown Menu",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Input",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Select",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Switch",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Tabs",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/components/button": [
+    {
+      "tag": "H1",
+      "t": "Button",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Loading button",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "With icons",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Call to action pair",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Ready to get started?",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.9px",
+      "lh": "28px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Icon-only actions",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/components/dialog": [
+    {
+      "tag": "H1",
+      "t": "Dialog",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Delete confirmation",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Edit profile",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Share link",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Scrollable terms",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/components/dropdown-menu": [
+    {
+      "tag": "H1",
+      "t": "Dropdown Menu",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Account menu",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "View options",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Sort by",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "With submenu",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/pro": [
+    {
+      "tag": "H1",
+      "t": "The application layeris coming.",
+      "fs": "60px",
+      "fw": "600",
+      "ls": "-1.5px",
+      "lh": "60px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/account": [
+    {
+      "tag": "H1",
+      "t": "Your license keylives here.",
+      "fs": "36px",
+      "fw": "600",
+      "ls": "-0.9px",
+      "lh": "40px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/terms": [
+    {
+      "tag": "H1",
+      "t": "Terms of Service",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.6px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "1. The free component registry",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "2. Accounts",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "3. SevenUI Pro is sold as a pre-or",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "4. Payments and taxes",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "5. Refunds",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "6. What your Pro licence allows",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "7. Licence keys",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "8. Acceptable use",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "9. Intellectual property",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "10. Availability and changes",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "11. No warranty",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "12. Limitation of liability",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "13. Termination",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "14. Governing law and disputes",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "15. Changes to these terms",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "16. Contact",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/privacy": [
+    {
+      "tag": "H1",
+      "t": "Privacy Policy",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.6px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "1. What we collect",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "2. Why we process it, and on what ",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "3. Who processes data for us",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "4. International transfers",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "5. Cookies",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "6. How long we keep it",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "7. Your rights",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "8. Security",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "9. Children",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "10. Changes to this policy",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "11. Contact",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    }
+  ],
+  "prod|/definitely-not-a-page": [
+    {
+      "tag": "H1",
+      "t": "Page not found",
+      "fs": "24px",
+      "fw": "600",
+      "ls": "-1.2px",
+      "lh": "32px",
+      "ff": "sans"
+    }
+  ],
+  "port|/": [
+    {
+      "tag": "H1",
+      "t": "Base UI primitives.shadcn workflow",
+      "fs": "60px",
+      "fw": "600",
+      "ls": "-1.5px",
+      "lh": "60px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Create your account",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Preferences",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Volume60%",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Open the overlays",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Notify",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Find a component",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Verify it's you",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Recent invoices",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Install in three steps",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "1. Initialize",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "2. Add primitives",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "3. Use them",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Same CLI. Different primitives.",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Base UI, exclusively",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "The shadcn workflow",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Source, not a dependency",
+      "fs": "16px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Every primitive in the registry",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    }
+  ],
+  "port|/blocks": [
+    {
+      "tag": "H1",
+      "t": "Blocks",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Application39",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.45px",
+      "lh": "28px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Dashboard",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Auth",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Profile",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Account",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "App Shell",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Empty State",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Stats",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Marketing44",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.45px",
+      "lh": "28px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Logo Cloud",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "CTA",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Pricing",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "FAQ",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Hero",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Footer",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Feature",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Contact",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "AI & Agents3",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.45px",
+      "lh": "28px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "AI Chat",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "eCommerce27",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.45px",
+      "lh": "28px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Product Category",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Product Detail",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Coupon",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    }
+  ],
+  "port|/blocks/marketing": [
+    {
+      "tag": "H1",
+      "t": "Marketing",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Logo Cloud",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "CTA",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Pricing",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "FAQ",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Hero",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Footer",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Feature",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Contact",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    }
+  ],
+  "port|/blocks/marketing/hero": [
+    {
+      "tag": "H1",
+      "t": "Hero",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 01Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 02Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 03Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 04Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 05Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 06Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 07Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 08Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Hero 09Pro",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "-0.7px",
+      "lh": "20px",
+      "ff": "sans"
+    }
+  ],
+  "port|/docs": [
+    {
+      "tag": "H1",
+      "t": "Introduction",
+      "fs": "16px",
+      "fw": "400",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Why SevenUI",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Coverage",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    }
+  ],
+  "port|/docs/installation": [
+    {
+      "tag": "H1",
+      "t": "Installation",
+      "fs": "16px",
+      "fw": "400",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Add primitives",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Registry namespace (optional)",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Animations",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Registry layout",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    }
+  ],
+  "port|/docs/components/button": [
+    {
+      "tag": "H1",
+      "t": "Button",
+      "fs": "16px",
+      "fw": "400",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Installation",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Usage",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Examples",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Variants",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Sizes",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Disabled",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Loading",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "API reference",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Button",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    }
+  ],
+  "port|/docs/components/dialog": [
+    {
+      "tag": "H1",
+      "t": "Dialog",
+      "fs": "16px",
+      "fw": "400",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Installation",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Usage",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "API reference",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Dialog",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Detached triggers (createHandle)",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "DialogContent",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "DialogFooter",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "DialogTrigger, DialogClose, Dialog",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    }
+  ],
+  "port|/docs/components/chart": [
+    {
+      "tag": "H1",
+      "t": "Chart",
+      "fs": "16px",
+      "fw": "400",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Installation",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Usage",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Examples",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Line chart",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "API reference",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    }
+  ],
+  "port|/docs/components/field": [
+    {
+      "tag": "H1",
+      "t": "Field",
+      "fs": "16px",
+      "fw": "400",
+      "ls": "normal",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Installation",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Usage",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Examples",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Orientation",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Validation",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "React Hook Form",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "API reference",
+      "fs": "30px",
+      "fw": "500",
+      "ls": "-1.5px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Field",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "FieldLabel",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "FieldDescription",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "FieldError",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Layout parts",
+      "fs": "20px",
+      "fw": "500",
+      "ls": "-1px",
+      "lh": "27px",
+      "ff": "sans"
+    }
+  ],
+  "port|/components": [
+    {
+      "tag": "H1",
+      "t": "Components",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Accordion",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Badge",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Button",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Card",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Dialog",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Dropdown Menu",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Input",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Select",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Switch",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "20px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Tabs",
+      "fs": "14px",
+      "fw": "500",
+      "ls": "normal",
+      "lh": "20px",
+      "ff": "sans"
+    }
+  ],
+  "port|/components/button": [
+    {
+      "tag": "H1",
+      "t": "Button",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Loading button",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "With icons",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Call to action pair",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H3",
+      "t": "Ready to get started?",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "normal",
+      "lh": "28px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Icon-only actions",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    }
+  ],
+  "port|/components/dialog": [
+    {
+      "tag": "H1",
+      "t": "Dialog",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Delete confirmation",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Edit profile",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Share link",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Scrollable terms",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    }
+  ],
+  "port|/components/dropdown-menu": [
+    {
+      "tag": "H1",
+      "t": "Dropdown Menu",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.75px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Account menu",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "View options",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "Sort by",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "With submenu",
+      "fs": "16px",
+      "fw": "600",
+      "ls": "-0.4px",
+      "lh": "24px",
+      "ff": "sans"
+    }
+  ],
+  "port|/pro": [
+    {
+      "tag": "H1",
+      "t": "The application layeris coming.",
+      "fs": "60px",
+      "fw": "600",
+      "ls": "-1.5px",
+      "lh": "60px",
+      "ff": "sans"
+    }
+  ],
+  "port|/account": [
+    {
+      "tag": "H1",
+      "t": "Your license keylives here.",
+      "fs": "36px",
+      "fw": "600",
+      "ls": "-0.9px",
+      "lh": "40px",
+      "ff": "sans"
+    }
+  ],
+  "port|/terms": [
+    {
+      "tag": "H1",
+      "t": "Terms of Service",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.6px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "1. The free component registry",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "2. Accounts",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "3. SevenUI Pro is sold as a pre-or",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "4. Payments and taxes",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "5. Refunds",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "6. What your Pro licence allows",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "7. Licence keys",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "8. Acceptable use",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "9. Intellectual property",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "10. Availability and changes",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "11. No warranty",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "12. Limitation of liability",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "13. Termination",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "14. Governing law and disputes",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "15. Changes to these terms",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "16. Contact",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    }
+  ],
+  "port|/privacy": [
+    {
+      "tag": "H1",
+      "t": "Privacy Policy",
+      "fs": "30px",
+      "fw": "600",
+      "ls": "-0.6px",
+      "lh": "36px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "1. What we collect",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "2. Why we process it, and on what ",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "3. Who processes data for us",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "4. International transfers",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "5. Cookies",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "6. How long we keep it",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "7. Your rights",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "8. Security",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "9. Children",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "10. Changes to this policy",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    },
+    {
+      "tag": "H2",
+      "t": "11. Contact",
+      "fs": "18px",
+      "fw": "600",
+      "ls": "-0.18px",
+      "lh": "27px",
+      "ff": "sans"
+    }
+  ],
+  "port|/definitely-not-a-page": [
+    {
+      "tag": "H1",
+      "t": "Page not found",
+      "fs": "24px",
+      "fw": "600",
+      "ls": "normal",
+      "lh": "32px",
+      "ff": "sans"
+    }
+  ]
+}

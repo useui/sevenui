@@ -1,0 +1,1563 @@
+{
+  "perRoute": {
+    "/blocks": {
+      "prod": [],
+      "ours": [],
+      "equal": true
+    },
+    "/blocks/ai-and-agents": {
+      "prod": [],
+      "ours": [],
+      "equal": true
+    },
+    "/blocks/ai-and-agents/ai-chat": {
+      "prod": [
+        "/previews/ai-chat-01",
+        "/previews/ai-chat-02",
+        "/previews/ai-chat-03"
+      ],
+      "ours": [
+        "/previews/ai-chat-01",
+        "/previews/ai-chat-02",
+        "/previews/ai-chat-03"
+      ],
+      "equal": true
+    },
+    "/blocks/application": {
+      "prod": [],
+      "ours": [],
+      "equal": true
+    },
+    "/blocks/application/account": {
+      "prod": [
+        "/previews/account-01",
+        "/previews/account-02"
+      ],
+      "ours": [
+        "/previews/account-01",
+        "/previews/account-02"
+      ],
+      "equal": true
+    },
+    "/blocks/application/app-shell": {
+      "prod": [
+        "/previews/app-shell-01",
+        "/previews/app-shell-02",
+        "/previews/app-shell-03"
+      ],
+      "ours": [
+        "/previews/app-shell-01",
+        "/previews/app-shell-02",
+        "/previews/app-shell-03"
+      ],
+      "equal": true
+    },
+    "/blocks/application/auth": {
+      "prod": [
+        "/previews/auth-01",
+        "/previews/auth-02",
+        "/previews/auth-03"
+      ],
+      "ours": [
+        "/previews/auth-01",
+        "/previews/auth-02",
+        "/previews/auth-03"
+      ],
+      "equal": true
+    },
+    "/blocks/application/dashboard": {
+      "prod": [
+        "/previews/dashboard-01",
+        "/previews/dashboard-02",
+        "/previews/dashboard-03",
+        "/previews/dashboard-04",
+        "/previews/dashboard-05"
+      ],
+      "ours": [
+        "/previews/dashboard-01",
+        "/previews/dashboard-02",
+        "/previews/dashboard-03",
+        "/previews/dashboard-04",
+        "/previews/dashboard-05"
+      ],
+      "equal": true
+    },
+    "/blocks/application/empty-state": {
+      "prod": [
+        "/previews/empty-state-01",
+        "/previews/empty-state-02",
+        "/previews/empty-state-03",
+        "/previews/empty-state-04",
+        "/previews/empty-state-05",
+        "/previews/empty-state-06"
+      ],
+      "ours": [
+        "/previews/empty-state-01",
+        "/previews/empty-state-02",
+        "/previews/empty-state-03",
+        "/previews/empty-state-04",
+        "/previews/empty-state-05",
+        "/previews/empty-state-06"
+      ],
+      "equal": true
+    },
+    "/blocks/application/profile": {
+      "prod": [
+        "/previews/profile-01",
+        "/previews/profile-02",
+        "/previews/profile-03",
+        "/previews/profile-04"
+      ],
+      "ours": [
+        "/previews/profile-01",
+        "/previews/profile-02",
+        "/previews/profile-03",
+        "/previews/profile-04"
+      ],
+      "equal": true
+    },
+    "/blocks/application/stats": {
+      "prod": [
+        "/previews/stats-01",
+        "/previews/stats-02",
+        "/previews/stats-03",
+        "/previews/stats-04",
+        "/previews/stats-05",
+        "/previews/stats-06",
+        "/previews/stats-07",
+        "/previews/stats-08",
+        "/previews/stats-09",
+        "/previews/stats-10",
+        "/previews/stats-11",
+        "/previews/stats-12",
+        "/previews/stats-13",
+        "/previews/stats-14",
+        "/previews/stats-15",
+        "/previews/stats-16"
+      ],
+      "ours": [
+        "/previews/stats-01",
+        "/previews/stats-02",
+        "/previews/stats-03",
+        "/previews/stats-04",
+        "/previews/stats-05",
+        "/previews/stats-06",
+        "/previews/stats-07",
+        "/previews/stats-08",
+        "/previews/stats-09",
+        "/previews/stats-10",
+        "/previews/stats-11",
+        "/previews/stats-12",
+        "/previews/stats-13",
+        "/previews/stats-14",
+        "/previews/stats-15",
+        "/previews/stats-16"
+      ],
+      "equal": true
+    },
+    "/blocks/ecommerce": {
+      "prod": [],
+      "ours": [],
+      "equal": true
+    },
+    "/blocks/ecommerce/coupon": {
+      "prod": [
+        "/previews/coupon-01",
+        "/previews/coupon-02",
+        "/previews/coupon-03",
+        "/previews/coupon-04",
+        "/previews/coupon-05",
+        "/previews/coupon-06",
+        "/previews/coupon-07",
+        "/previews/coupon-08",
+        "/previews/coupon-09",
+        "/previews/coupon-10"
+      ],
+      "ours": [
+        "/previews/coupon-01",
+        "/previews/coupon-02",
+        "/previews/coupon-03",
+        "/previews/coupon-04",
+        "/previews/coupon-05",
+        "/previews/coupon-06",
+        "/previews/coupon-07",
+        "/previews/coupon-08",
+        "/previews/coupon-09",
+        "/previews/coupon-10"
+      ],
+      "equal": true
+    },
+    "/blocks/ecommerce/product-category": {
+      "prod": [
+        "/previews/product-category-01",
+        "/previews/product-category-02",
+        "/previews/product-category-03",
+        "/previews/product-category-04",
+        "/previews/product-category-05",
+        "/previews/product-category-06",
+        "/previews/product-category-07",
+        "/previews/product-category-08",
+        "/previews/product-category-09",
+        "/previews/product-category-10"
+      ],
+      "ours": [
+        "/previews/product-category-01",
+        "/previews/product-category-02",
+        "/previews/product-category-03",
+        "/previews/product-category-04",
+        "/previews/product-category-05",
+        "/previews/product-category-06",
+        "/previews/product-category-07",
+        "/previews/product-category-08",
+        "/previews/product-category-09",
+        "/previews/product-category-10"
+      ],
+      "equal": true
+    },
+    "/blocks/ecommerce/product-detail": {
+      "prod": [
+        "/previews/product-detail-01",
+        "/previews/product-detail-02",
+        "/previews/product-detail-03",
+        "/previews/product-detail-04",
+        "/previews/product-detail-05",
+        "/previews/product-detail-06",
+        "/previews/product-detail-07"
+      ],
+      "ours": [
+        "/previews/product-detail-01",
+        "/previews/product-detail-02",
+        "/previews/product-detail-03",
+        "/previews/product-detail-04",
+        "/previews/product-detail-05",
+        "/previews/product-detail-06",
+        "/previews/product-detail-07"
+      ],
+      "equal": true
+    },
+    "/blocks/marketing": {
+      "prod": [],
+      "ours": [],
+      "equal": true
+    },
+    "/blocks/marketing/contact": {
+      "prod": [
+        "/previews/contact-01",
+        "/previews/contact-02",
+        "/previews/contact-03",
+        "/previews/contact-04",
+        "/previews/contact-05"
+      ],
+      "ours": [
+        "/previews/contact-01",
+        "/previews/contact-02",
+        "/previews/contact-03",
+        "/previews/contact-04",
+        "/previews/contact-05"
+      ],
+      "equal": true
+    },
+    "/blocks/marketing/cta": {
+      "prod": [
+        "/previews/cta-01",
+        "/previews/cta-02",
+        "/previews/cta-03",
+        "/previews/cta-04",
+        "/previews/cta-05",
+        "/previews/cta-06"
+      ],
+      "ours": [
+        "/previews/cta-01",
+        "/previews/cta-02",
+        "/previews/cta-03",
+        "/previews/cta-04",
+        "/previews/cta-05",
+        "/previews/cta-06"
+      ],
+      "equal": true
+    },
+    "/blocks/marketing/faq": {
+      "prod": [
+        "/previews/faq-01",
+        "/previews/faq-02",
+        "/previews/faq-03",
+        "/previews/faq-04",
+        "/previews/faq-05"
+      ],
+      "ours": [
+        "/previews/faq-01",
+        "/previews/faq-02",
+        "/previews/faq-03",
+        "/previews/faq-04",
+        "/previews/faq-05"
+      ],
+      "equal": true
+    },
+    "/blocks/marketing/feature": {
+      "prod": [
+        "/previews/feature-01",
+        "/previews/feature-02",
+        "/previews/feature-03",
+        "/previews/feature-04",
+        "/previews/feature-05"
+      ],
+      "ours": [
+        "/previews/feature-01",
+        "/previews/feature-02",
+        "/previews/feature-03",
+        "/previews/feature-04",
+        "/previews/feature-05"
+      ],
+      "equal": true
+    },
+    "/blocks/marketing/footer": {
+      "prod": [
+        "/previews/footer-01",
+        "/previews/footer-02",
+        "/previews/footer-03",
+        "/previews/footer-04",
+        "/previews/footer-05"
+      ],
+      "ours": [
+        "/previews/footer-01",
+        "/previews/footer-02",
+        "/previews/footer-03",
+        "/previews/footer-04",
+        "/previews/footer-05"
+      ],
+      "equal": true
+    },
+    "/blocks/marketing/hero": {
+      "prod": [
+        "/previews/hero-01",
+        "/previews/hero-02",
+        "/previews/hero-03",
+        "/previews/hero-04",
+        "/previews/hero-05",
+        "/previews/hero-06",
+        "/previews/hero-07",
+        "/previews/hero-08",
+        "/previews/hero-09"
+      ],
+      "ours": [
+        "/previews/hero-01",
+        "/previews/hero-02",
+        "/previews/hero-03",
+        "/previews/hero-04",
+        "/previews/hero-05",
+        "/previews/hero-06",
+        "/previews/hero-07",
+        "/previews/hero-08",
+        "/previews/hero-09"
+      ],
+      "equal": true
+    },
+    "/blocks/marketing/logo-cloud": {
+      "prod": [
+        "/previews/logo-cloud-01",
+        "/previews/logo-cloud-02",
+        "/previews/logo-cloud-03",
+        "/previews/logo-cloud-04"
+      ],
+      "ours": [
+        "/previews/logo-cloud-01",
+        "/previews/logo-cloud-02",
+        "/previews/logo-cloud-03",
+        "/previews/logo-cloud-04"
+      ],
+      "equal": true
+    },
+    "/blocks/marketing/pricing": {
+      "prod": [
+        "/previews/pricing-01",
+        "/previews/pricing-02",
+        "/previews/pricing-03",
+        "/previews/pricing-04",
+        "/previews/pricing-05"
+      ],
+      "ours": [
+        "/previews/pricing-01",
+        "/previews/pricing-02",
+        "/previews/pricing-03",
+        "/previews/pricing-04",
+        "/previews/pricing-05"
+      ],
+      "equal": true
+    }
+  },
+  "prodSet": [
+    "/previews/account-01",
+    "/previews/account-02",
+    "/previews/ai-chat-01",
+    "/previews/ai-chat-02",
+    "/previews/ai-chat-03",
+    "/previews/app-shell-01",
+    "/previews/app-shell-02",
+    "/previews/app-shell-03",
+    "/previews/auth-01",
+    "/previews/auth-02",
+    "/previews/auth-03",
+    "/previews/contact-01",
+    "/previews/contact-02",
+    "/previews/contact-03",
+    "/previews/contact-04",
+    "/previews/contact-05",
+    "/previews/coupon-01",
+    "/previews/coupon-02",
+    "/previews/coupon-03",
+    "/previews/coupon-04",
+    "/previews/coupon-05",
+    "/previews/coupon-06",
+    "/previews/coupon-07",
+    "/previews/coupon-08",
+    "/previews/coupon-09",
+    "/previews/coupon-10",
+    "/previews/cta-01",
+    "/previews/cta-02",
+    "/previews/cta-03",
+    "/previews/cta-04",
+    "/previews/cta-05",
+    "/previews/cta-06",
+    "/previews/dashboard-01",
+    "/previews/dashboard-02",
+    "/previews/dashboard-03",
+    "/previews/dashboard-04",
+    "/previews/dashboard-05",
+    "/previews/empty-state-01",
+    "/previews/empty-state-02",
+    "/previews/empty-state-03",
+    "/previews/empty-state-04",
+    "/previews/empty-state-05",
+    "/previews/empty-state-06",
+    "/previews/faq-01",
+    "/previews/faq-02",
+    "/previews/faq-03",
+    "/previews/faq-04",
+    "/previews/faq-05",
+    "/previews/feature-01",
+    "/previews/feature-02",
+    "/previews/feature-03",
+    "/previews/feature-04",
+    "/previews/feature-05",
+    "/previews/footer-01",
+    "/previews/footer-02",
+    "/previews/footer-03",
+    "/previews/footer-04",
+    "/previews/footer-05",
+    "/previews/hero-01",
+    "/previews/hero-02",
+    "/previews/hero-03",
+    "/previews/hero-04",
+    "/previews/hero-05",
+    "/previews/hero-06",
+    "/previews/hero-07",
+    "/previews/hero-08",
+    "/previews/hero-09",
+    "/previews/logo-cloud-01",
+    "/previews/logo-cloud-02",
+    "/previews/logo-cloud-03",
+    "/previews/logo-cloud-04",
+    "/previews/pricing-01",
+    "/previews/pricing-02",
+    "/previews/pricing-03",
+    "/previews/pricing-04",
+    "/previews/pricing-05",
+    "/previews/product-category-01",
+    "/previews/product-category-02",
+    "/previews/product-category-03",
+    "/previews/product-category-04",
+    "/previews/product-category-05",
+    "/previews/product-category-06",
+    "/previews/product-category-07",
+    "/previews/product-category-08",
+    "/previews/product-category-09",
+    "/previews/product-category-10",
+    "/previews/product-detail-01",
+    "/previews/product-detail-02",
+    "/previews/product-detail-03",
+    "/previews/product-detail-04",
+    "/previews/product-detail-05",
+    "/previews/product-detail-06",
+    "/previews/product-detail-07",
+    "/previews/profile-01",
+    "/previews/profile-02",
+    "/previews/profile-03",
+    "/previews/profile-04",
+    "/previews/stats-01",
+    "/previews/stats-02",
+    "/previews/stats-03",
+    "/previews/stats-04",
+    "/previews/stats-05",
+    "/previews/stats-06",
+    "/previews/stats-07",
+    "/previews/stats-08",
+    "/previews/stats-09",
+    "/previews/stats-10",
+    "/previews/stats-11",
+    "/previews/stats-12",
+    "/previews/stats-13",
+    "/previews/stats-14",
+    "/previews/stats-15",
+    "/previews/stats-16"
+  ],
+  "oursSet": [
+    "/previews/account-01",
+    "/previews/account-02",
+    "/previews/ai-chat-01",
+    "/previews/ai-chat-02",
+    "/previews/ai-chat-03",
+    "/previews/app-shell-01",
+    "/previews/app-shell-02",
+    "/previews/app-shell-03",
+    "/previews/auth-01",
+    "/previews/auth-02",
+    "/previews/auth-03",
+    "/previews/contact-01",
+    "/previews/contact-02",
+    "/previews/contact-03",
+    "/previews/contact-04",
+    "/previews/contact-05",
+    "/previews/coupon-01",
+    "/previews/coupon-02",
+    "/previews/coupon-03",
+    "/previews/coupon-04",
+    "/previews/coupon-05",
+    "/previews/coupon-06",
+    "/previews/coupon-07",
+    "/previews/coupon-08",
+    "/previews/coupon-09",
+    "/previews/coupon-10",
+    "/previews/cta-01",
+    "/previews/cta-02",
+    "/previews/cta-03",
+    "/previews/cta-04",
+    "/previews/cta-05",
+    "/previews/cta-06",
+    "/previews/dashboard-01",
+    "/previews/dashboard-02",
+    "/previews/dashboard-03",
+    "/previews/dashboard-04",
+    "/previews/dashboard-05",
+    "/previews/empty-state-01",
+    "/previews/empty-state-02",
+    "/previews/empty-state-03",
+    "/previews/empty-state-04",
+    "/previews/empty-state-05",
+    "/previews/empty-state-06",
+    "/previews/faq-01",
+    "/previews/faq-02",
+    "/previews/faq-03",
+    "/previews/faq-04",
+    "/previews/faq-05",
+    "/previews/feature-01",
+    "/previews/feature-02",
+    "/previews/feature-03",
+    "/previews/feature-04",
+    "/previews/feature-05",
+    "/previews/footer-01",
+    "/previews/footer-02",
+    "/previews/footer-03",
+    "/previews/footer-04",
+    "/previews/footer-05",
+    "/previews/hero-01",
+    "/previews/hero-02",
+    "/previews/hero-03",
+    "/previews/hero-04",
+    "/previews/hero-05",
+    "/previews/hero-06",
+    "/previews/hero-07",
+    "/previews/hero-08",
+    "/previews/hero-09",
+    "/previews/logo-cloud-01",
+    "/previews/logo-cloud-02",
+    "/previews/logo-cloud-03",
+    "/previews/logo-cloud-04",
+    "/previews/pricing-01",
+    "/previews/pricing-02",
+    "/previews/pricing-03",
+    "/previews/pricing-04",
+    "/previews/pricing-05",
+    "/previews/product-category-01",
+    "/previews/product-category-02",
+    "/previews/product-category-03",
+    "/previews/product-category-04",
+    "/previews/product-category-05",
+    "/previews/product-category-06",
+    "/previews/product-category-07",
+    "/previews/product-category-08",
+    "/previews/product-category-09",
+    "/previews/product-category-10",
+    "/previews/product-detail-01",
+    "/previews/product-detail-02",
+    "/previews/product-detail-03",
+    "/previews/product-detail-04",
+    "/previews/product-detail-05",
+    "/previews/product-detail-06",
+    "/previews/product-detail-07",
+    "/previews/profile-01",
+    "/previews/profile-02",
+    "/previews/profile-03",
+    "/previews/profile-04",
+    "/previews/stats-01",
+    "/previews/stats-02",
+    "/previews/stats-03",
+    "/previews/stats-04",
+    "/previews/stats-05",
+    "/previews/stats-06",
+    "/previews/stats-07",
+    "/previews/stats-08",
+    "/previews/stats-09",
+    "/previews/stats-10",
+    "/previews/stats-11",
+    "/previews/stats-12",
+    "/previews/stats-13",
+    "/previews/stats-14",
+    "/previews/stats-15",
+    "/previews/stats-16"
+  ],
+  "rows": [
+    {
+      "src": "/previews/account-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/account-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/ai-chat-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/ai-chat-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/ai-chat-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/app-shell-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/app-shell-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/app-shell-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/auth-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/auth-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/auth-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/contact-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/contact-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/contact-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/contact-04/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/contact-05/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/coupon-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/coupon-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/coupon-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/coupon-04/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/coupon-05/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/coupon-06/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/coupon-07/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/coupon-08/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/coupon-09/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/coupon-10/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/cta-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/cta-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/cta-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/cta-04/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/cta-05/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/cta-06/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/dashboard-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/dashboard-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/dashboard-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/dashboard-04/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/dashboard-05/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/empty-state-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/empty-state-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/empty-state-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/empty-state-04/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/empty-state-05/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/empty-state-06/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/faq-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/faq-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/faq-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/faq-04/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/faq-05/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/feature-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/feature-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/feature-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/feature-04/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/feature-05/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/footer-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/footer-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/footer-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/footer-04/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/footer-05/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/hero-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/hero-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/hero-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/hero-04/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/hero-05/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/hero-06/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/hero-07/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/hero-08/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/hero-09/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/logo-cloud-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/logo-cloud-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/logo-cloud-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/logo-cloud-04/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/pricing-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/pricing-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/pricing-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/pricing-04/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/pricing-05/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-category-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-category-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-category-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-category-04/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-category-05/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-category-06/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-category-07/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-category-08/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-category-09/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-category-10/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-detail-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-detail-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-detail-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-detail-04/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-detail-05/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-detail-06/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/product-detail-07/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/profile-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/profile-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/profile-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/profile-04/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/stats-01/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/stats-02/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/stats-03/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/stats-04/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/stats-05/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/stats-06/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/stats-07/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/stats-08/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/stats-09/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/stats-10/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/stats-11/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/stats-12/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/stats-13/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/stats-14/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/stats-15/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    },
+    {
+      "src": "/previews/stats-16/",
+      "status": 308,
+      "type": "text/plain",
+      "bytes": 15,
+      "hasHtml": false
+    }
+  ],
+  "results": [
+    {
+      "name": "step5.setEquality",
+      "ok": true,
+      "detail": {
+        "prodDistinct": 113,
+        "oursDistinct": 113,
+        "onlyProd": [],
+        "onlyOurs": []
+      }
+    },
+    {
+      "name": "step5.perRouteSetEquality",
+      "ok": true,
+      "detail": {
+        "routes": 24,
+        "mismatched": []
+      }
+    },
+    {
+      "name": "step5.nonVacuous",
+      "ok": true,
+      "detail": {
+        "oursDistinct": 113
+      }
+    },
+    {
+      "name": "step5.resolveTrailingSlash",
+      "ok": false,
+      "detail": {
+        "requested": 113,
+        "ok": 0,
+        "failures": [
+          "/previews/account-01/ 308 text/plain 15B",
+          "/previews/account-02/ 308 text/plain 15B",
+          "/previews/ai-chat-01/ 308 text/plain 15B",
+          "/previews/ai-chat-02/ 308 text/plain 15B",
+          "/previews/ai-chat-03/ 308 text/plain 15B",
+          "/previews/app-shell-01/ 308 text/plain 15B",
+          "/previews/app-shell-02/ 308 text/plain 15B",
+          "/previews/app-shell-03/ 308 text/plain 15B",
+          "/previews/auth-01/ 308 text/plain 15B",
+          "/previews/auth-02/ 308 text/plain 15B",
+          "/previews/auth-03/ 308 text/plain 15B",
+          "/previews/contact-01/ 308 text/plain 15B",
+          "/previews/contact-02/ 308 text/plain 15B",
+          "/previews/contact-03/ 308 text/plain 15B",
+          "/previews/contact-04/ 308 text/plain 15B",
+          "/previews/contact-05/ 308 text/plain 15B",
+          "/previews/coupon-01/ 308 text/plain 15B",
+          "/previews/coupon-02/ 308 text/plain 15B",
+          "/previews/coupon-03/ 308 text/plain 15B",
+          "/previews/coupon-04/ 308 text/plain 15B",
+          "/previews/coupon-05/ 308 text/plain 15B",
+          "/previews/coupon-06/ 308 text/plain 15B",
+          "/previews/coupon-07/ 308 text/plain 15B",
+          "/previews/coupon-08/ 308 text/plain 15B",
+          "/previews/coupon-09/ 308 text/plain 15B",
+          "/previews/coupon-10/ 308 text/plain 15B",
+          "/previews/cta-01/ 308 text/plain 15B",
+          "/previews/cta-02/ 308 text/plain 15B",
+          "/previews/cta-03/ 308 text/plain 15B",
+          "/previews/cta-04/ 308 text/plain 15B",
+          "/previews/cta-05/ 308 text/plain 15B",
+          "/previews/cta-06/ 308 text/plain 15B",
+          "/previews/dashboard-01/ 308 text/plain 15B",
+          "/previews/dashboard-02/ 308 text/plain 15B",
+          "/previews/dashboard-03/ 308 text/plain 15B",
+          "/previews/dashboard-04/ 308 text/plain 15B",
+          "/previews/dashboard-05/ 308 text/plain 15B",
+          "/previews/empty-state-01/ 308 text/plain 15B",
+          "/previews/empty-state-02/ 308 text/plain 15B",
+          "/previews/empty-state-03/ 308 text/plain 15B",
+          "/previews/empty-state-04/ 308 text/plain 15B",
+          "/previews/empty-state-05/ 308 text/plain 15B",
+          "/previews/empty-state-06/ 308 text/plain 15B",
+          "/previews/faq-01/ 308 text/plain 15B",
+          "/previews/faq-02/ 308 text/plain 15B",
+          "/previews/faq-03/ 308 text/plain 15B",
+          "/previews/faq-04/ 308 text/plain 15B",
+          "/previews/faq-05/ 308 text/plain 15B",
+          "/previews/feature-01/ 308 text/plain 15B",
+          "/previews/feature-02/ 308 text/plain 15B",
+          "/previews/feature-03/ 308 text/plain 15B",
+          "/previews/feature-04/ 308 text/plain 15B",
+          "/previews/feature-05/ 308 text/plain 15B",
+          "/previews/footer-01/ 308 text/plain 15B",
+          "/previews/footer-02/ 308 text/plain 15B",
+          "/previews/footer-03/ 308 text/plain 15B",
+          "/previews/footer-04/ 308 text/plain 15B",
+          "/previews/footer-05/ 308 text/plain 15B",
+          "/previews/hero-01/ 308 text/plain 15B",
+          "/previews/hero-02/ 308 text/plain 15B",
+          "/previews/hero-03/ 308 text/plain 15B",
+          "/previews/hero-04/ 308 text/plain 15B",
+          "/previews/hero-05/ 308 text/plain 15B",
+          "/previews/hero-06/ 308 text/plain 15B",
+          "/previews/hero-07/ 308 text/plain 15B",
+          "/previews/hero-08/ 308 text/plain 15B",
+          "/previews/hero-09/ 308 text/plain 15B",
+          "/previews/logo-cloud-01/ 308 text/plain 15B",
+          "/previews/logo-cloud-02/ 308 text/plain 15B",
+          "/previews/logo-cloud-03/ 308 text/plain 15B",
+          "/previews/logo-cloud-04/ 308 text/plain 15B",
+          "/previews/pricing-01/ 308 text/plain 15B",
+          "/previews/pricing-02/ 308 text/plain 15B",
+          "/previews/pricing-03/ 308 text/plain 15B",
+          "/previews/pricing-04/ 308 text/plain 15B",
+          "/previews/pricing-05/ 308 text/plain 15B",
+          "/previews/product-category-01/ 308 text/plain 15B",
+          "/previews/product-category-02/ 308 text/plain 15B",
+          "/previews/product-category-03/ 308 text/plain 15B",
+          "/previews/product-category-04/ 308 text/plain 15B",
+          "/previews/product-category-05/ 308 text/plain 15B",
+          "/previews/product-category-06/ 308 text/plain 15B",
+          "/previews/product-category-07/ 308 text/plain 15B",
+          "/previews/product-category-08/ 308 text/plain 15B",
+          "/previews/product-category-09/ 308 text/plain 15B",
+          "/previews/product-category-10/ 308 text/plain 15B",
+          "/previews/product-detail-01/ 308 text/plain 15B",
+          "/previews/product-detail-02/ 308 text/plain 15B",
+          "/previews/product-detail-03/ 308 text/plain 15B",
+          "/previews/product-detail-04/ 308 text/plain 15B",
+          "/previews/product-detail-05/ 308 text/plain 15B",
+          "/previews/product-detail-06/ 308 text/plain 15B",
+          "/previews/product-detail-07/ 308 text/plain 15B",
+          "/previews/profile-01/ 308 text/plain 15B",
+          "/previews/profile-02/ 308 text/plain 15B",
+          "/previews/profile-03/ 308 text/plain 15B",
+          "/previews/profile-04/ 308 text/plain 15B",
+          "/previews/stats-01/ 308 text/plain 15B",
+          "/previews/stats-02/ 308 text/plain 15B",
+          "/previews/stats-03/ 308 text/plain 15B",
+          "/previews/stats-04/ 308 text/plain 15B",
+          "/previews/stats-05/ 308 text/plain 15B",
+          "/previews/stats-06/ 308 text/plain 15B",
+          "/previews/stats-07/ 308 text/plain 15B",
+          "/previews/stats-08/ 308 text/plain 15B",
+          "/previews/stats-09/ 308 text/plain 15B",
+          "/previews/stats-10/ 308 text/plain 15B",
+          "/previews/stats-11/ 308 text/plain 15B",
+          "/previews/stats-12/ 308 text/plain 15B",
+          "/previews/stats-13/ 308 text/plain 15B",
+          "/previews/stats-14/ 308 text/plain 15B",
+          "/previews/stats-15/ 308 text/plain 15B",
+          "/previews/stats-16/ 308 text/plain 15B"
+        ],
+        "minBytes": 15,
+        "maxBytes": 15
+      }
+    }
+  ]
+}

@@ -1,0 +1,4124 @@
+{
+  "routes": 109,
+  "rows": [
+    {
+      "route": "/",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite"
+        ],
+        "headline": null,
+        "ldName": null,
+        "breadcrumb": null,
+        "title": "SevenUI",
+        "ogTitle": "SevenUI",
+        "ogDescription": "Base UI powered primitives, distributed through the shadcn registry.",
+        "ogImage": "https://sevenui.dev/og/index.png",
+        "ariaCurrent": 0,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite"
+        ],
+        "headline": null,
+        "ldName": null,
+        "breadcrumb": null,
+        "title": "SevenUI",
+        "ogTitle": "SevenUI",
+        "ogDescription": "Base UI powered primitives, distributed through the shadcn registry.",
+        "ogImage": "https://sevenui.dev/og/index.png",
+        "ariaCurrent": 0,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      }
+    },
+    {
+      "route": "/account",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Account — SevenUI",
+        "ldName": "Account — SevenUI",
+        "breadcrumb": null,
+        "title": "Account — SevenUI",
+        "ogTitle": "Account — SevenUI",
+        "ogDescription": "Base UI powered primitives, distributed through the shadcn registry.",
+        "ogImage": "https://sevenui.dev/og/account.png",
+        "ariaCurrent": 0,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Account",
+        "ldName": "Account",
+        "breadcrumb": null,
+        "title": "Account — SevenUI",
+        "ogTitle": "Account — SevenUI",
+        "ogDescription": "Base UI powered primitives, distributed through the shadcn registry.",
+        "ogImage": "https://sevenui.dev/og/account.png",
+        "ariaCurrent": 0,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      }
+    },
+    {
+      "route": "/blocks",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Blocks — SevenUI",
+        "ldName": "Blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Blocks — SevenUI",
+        "ogTitle": "Blocks — SevenUI",
+        "ogDescription": "Production-ready pro blocks built on SevenUI components.",
+        "ogImage": "https://sevenui.dev/og/blocks.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 8,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Blocks",
+        "ldName": "Blocks",
+        "breadcrumb": null,
+        "title": "Blocks — SevenUI",
+        "ogTitle": "Blocks — SevenUI",
+        "ogDescription": "Production-ready pro blocks built on SevenUI components.",
+        "ogImage": "https://sevenui.dev/og/blocks.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/ai-and-agents",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "AI & Agents blocks — SevenUI",
+        "ldName": "AI & Agents blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "AI & Agents blocks — SevenUI",
+        "ogTitle": "AI & Agents blocks — SevenUI",
+        "ogDescription": "Blocks for assistants, agent runs, and the surfaces around a model.",
+        "ogImage": "https://sevenui.dev/og/blocks/ai-and-agents.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "AI & Agents blocks",
+        "ldName": "AI & Agents blocks",
+        "breadcrumb": 2,
+        "title": "AI & Agents blocks — SevenUI",
+        "ogTitle": "AI & Agents blocks — SevenUI",
+        "ogDescription": "Blocks for assistants, agent runs, and the surfaces around a model.",
+        "ogImage": "https://sevenui.dev/og/blocks/ai-and-agents.png",
+        "ariaCurrent": 3,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/ai-and-agents/ai-chat",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "AI Chat blocks — SevenUI",
+        "ldName": "AI Chat blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "AI Chat blocks — SevenUI",
+        "ogTitle": "AI Chat blocks — SevenUI",
+        "ogDescription": "Conversation surfaces with history, a thread, and a detail panel.",
+        "ogImage": "https://sevenui.dev/og/blocks/ai-and-agents/ai-chat.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "AI Chat blocks",
+        "ldName": "AI Chat blocks",
+        "breadcrumb": 3,
+        "title": "AI Chat blocks — SevenUI",
+        "ogTitle": "AI Chat blocks — SevenUI",
+        "ogDescription": "Conversation surfaces with history, a thread, and a detail panel.",
+        "ogImage": "https://sevenui.dev/og/blocks/ai-and-agents/ai-chat.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/application",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Application blocks — SevenUI",
+        "ldName": "Application blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Application blocks — SevenUI",
+        "ogTitle": "Application blocks — SevenUI",
+        "ogDescription": "Blocks for product interfaces.",
+        "ogImage": "https://sevenui.dev/og/blocks/application.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Application blocks",
+        "ldName": "Application blocks",
+        "breadcrumb": 2,
+        "title": "Application blocks — SevenUI",
+        "ogTitle": "Application blocks — SevenUI",
+        "ogDescription": "Blocks for product interfaces.",
+        "ogImage": "https://sevenui.dev/og/blocks/application.png",
+        "ariaCurrent": 3,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/application/account",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Account blocks — SevenUI",
+        "ldName": "Account blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Account blocks — SevenUI",
+        "ogTitle": "Account blocks — SevenUI",
+        "ogDescription": "Self-service surfaces for your own identity and account state.",
+        "ogImage": "https://sevenui.dev/og/blocks/application/account.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Account blocks",
+        "ldName": "Account blocks",
+        "breadcrumb": 3,
+        "title": "Account blocks — SevenUI",
+        "ogTitle": "Account blocks — SevenUI",
+        "ogDescription": "Self-service surfaces for your own identity and account state.",
+        "ogImage": "https://sevenui.dev/og/blocks/application/account.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/application/app-shell",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "App Shell blocks — SevenUI",
+        "ldName": "App Shell blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "App Shell blocks — SevenUI",
+        "ogTitle": "App Shell blocks — SevenUI",
+        "ogDescription": "Sidebar-driven frames that hold a product's navigation, context, and account.",
+        "ogImage": "https://sevenui.dev/og/blocks/application/app-shell.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "App Shell blocks",
+        "ldName": "App Shell blocks",
+        "breadcrumb": 3,
+        "title": "App Shell blocks — SevenUI",
+        "ogTitle": "App Shell blocks — SevenUI",
+        "ogDescription": "Sidebar-driven frames that hold a product's navigation, context, and account.",
+        "ogImage": "https://sevenui.dev/og/blocks/application/app-shell.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/application/auth",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Auth blocks — SevenUI",
+        "ldName": "Auth blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Auth blocks — SevenUI",
+        "ogTitle": "Auth blocks — SevenUI",
+        "ogDescription": "Sign-in, sign-up, and account access flows.",
+        "ogImage": "https://sevenui.dev/og/blocks/application/auth.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Auth blocks",
+        "ldName": "Auth blocks",
+        "breadcrumb": 3,
+        "title": "Auth blocks — SevenUI",
+        "ogTitle": "Auth blocks — SevenUI",
+        "ogDescription": "Sign-in, sign-up, and account access flows.",
+        "ogImage": "https://sevenui.dev/og/blocks/application/auth.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/application/dashboard",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Dashboard blocks — SevenUI",
+        "ldName": "Dashboard blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Dashboard blocks — SevenUI",
+        "ogTitle": "Dashboard blocks — SevenUI",
+        "ogDescription": "Operational overviews and stat surfaces.",
+        "ogImage": "https://sevenui.dev/og/blocks/application/dashboard.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Dashboard blocks",
+        "ldName": "Dashboard blocks",
+        "breadcrumb": 3,
+        "title": "Dashboard blocks — SevenUI",
+        "ogTitle": "Dashboard blocks — SevenUI",
+        "ogDescription": "Operational overviews and stat surfaces.",
+        "ogImage": "https://sevenui.dev/og/blocks/application/dashboard.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/application/empty-state",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Empty State blocks — SevenUI",
+        "ldName": "Empty State blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Empty State blocks — SevenUI",
+        "ogTitle": "Empty State blocks — SevenUI",
+        "ogDescription": "What a table or a card grid shows before it holds a single record.",
+        "ogImage": "https://sevenui.dev/og/blocks/application/empty-state.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Empty State blocks",
+        "ldName": "Empty State blocks",
+        "breadcrumb": 3,
+        "title": "Empty State blocks — SevenUI",
+        "ogTitle": "Empty State blocks — SevenUI",
+        "ogDescription": "What a table or a card grid shows before it holds a single record.",
+        "ogImage": "https://sevenui.dev/og/blocks/application/empty-state.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/application/profile",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Profile blocks — SevenUI",
+        "ldName": "Profile blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Profile blocks — SevenUI",
+        "ogTitle": "Profile blocks — SevenUI",
+        "ogDescription": "Identity surfaces that present a person to everyone else.",
+        "ogImage": "https://sevenui.dev/og/blocks/application/profile.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Profile blocks",
+        "ldName": "Profile blocks",
+        "breadcrumb": 3,
+        "title": "Profile blocks — SevenUI",
+        "ogTitle": "Profile blocks — SevenUI",
+        "ogDescription": "Identity surfaces that present a person to everyone else.",
+        "ogImage": "https://sevenui.dev/og/blocks/application/profile.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/application/stats",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Stats blocks — SevenUI",
+        "ldName": "Stats blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Stats blocks — SevenUI",
+        "ogTitle": "Stats blocks — SevenUI",
+        "ogDescription": "A number given enough context to act on — a comparison, a ceiling, a history, a split or a target.",
+        "ogImage": "https://sevenui.dev/og/blocks/application/stats.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Stats blocks",
+        "ldName": "Stats blocks",
+        "breadcrumb": 3,
+        "title": "Stats blocks — SevenUI",
+        "ogTitle": "Stats blocks — SevenUI",
+        "ogDescription": "A number given enough context to act on — a comparison, a ceiling, a history, a split or a target.",
+        "ogImage": "https://sevenui.dev/og/blocks/application/stats.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/ecommerce",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "eCommerce blocks — SevenUI",
+        "ldName": "eCommerce blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "eCommerce blocks — SevenUI",
+        "ogTitle": "eCommerce blocks — SevenUI",
+        "ogDescription": "Blocks for storefronts — browsing, choosing, and buying.",
+        "ogImage": "https://sevenui.dev/og/blocks/ecommerce.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "eCommerce blocks",
+        "ldName": "eCommerce blocks",
+        "breadcrumb": 2,
+        "title": "eCommerce blocks — SevenUI",
+        "ogTitle": "eCommerce blocks — SevenUI",
+        "ogDescription": "Blocks for storefronts — browsing, choosing, and buying.",
+        "ogImage": "https://sevenui.dev/og/blocks/ecommerce.png",
+        "ariaCurrent": 3,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/ecommerce/coupon",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Coupon blocks — SevenUI",
+        "ldName": "Coupon blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Coupon blocks — SevenUI",
+        "ogTitle": "Coupon blocks — SevenUI",
+        "ogDescription": "Discount codes on offer — cards, banners, strips and sections that hand a shopper a code.",
+        "ogImage": "https://sevenui.dev/og/blocks/ecommerce/coupon.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Coupon blocks",
+        "ldName": "Coupon blocks",
+        "breadcrumb": 3,
+        "title": "Coupon blocks — SevenUI",
+        "ogTitle": "Coupon blocks — SevenUI",
+        "ogDescription": "Discount codes on offer — cards, banners, strips and sections that hand a shopper a code.",
+        "ogImage": "https://sevenui.dev/og/blocks/ecommerce/coupon.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/ecommerce/product-category",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Product Category blocks — SevenUI",
+        "ldName": "Product Category blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Product Category blocks — SevenUI",
+        "ogTitle": "Product Category blocks — SevenUI",
+        "ogDescription": "Category indexes that show a shop's departments and route a browser into one.",
+        "ogImage": "https://sevenui.dev/og/blocks/ecommerce/product-category.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Product Category blocks",
+        "ldName": "Product Category blocks",
+        "breadcrumb": 3,
+        "title": "Product Category blocks — SevenUI",
+        "ogTitle": "Product Category blocks — SevenUI",
+        "ogDescription": "Category indexes that show a shop's departments and route a browser into one.",
+        "ogImage": "https://sevenui.dev/og/blocks/ecommerce/product-category.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/ecommerce/product-detail",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Product Detail blocks — SevenUI",
+        "ldName": "Product Detail blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Product Detail blocks — SevenUI",
+        "ogTitle": "Product Detail blocks — SevenUI",
+        "ogDescription": "The page a shopper decides on: photography, the variant they pick, the detail they check, and the proof they read before buying.",
+        "ogImage": "https://sevenui.dev/og/blocks/ecommerce/product-detail.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Product Detail blocks",
+        "ldName": "Product Detail blocks",
+        "breadcrumb": 3,
+        "title": "Product Detail blocks — SevenUI",
+        "ogTitle": "Product Detail blocks — SevenUI",
+        "ogDescription": "The page a shopper decides on: photography, the variant they pick, the detail they check, and the proof they read before buying.",
+        "ogImage": "https://sevenui.dev/og/blocks/ecommerce/product-detail.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/marketing",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Marketing blocks — SevenUI",
+        "ldName": "Marketing blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Marketing blocks — SevenUI",
+        "ogTitle": "Marketing blocks — SevenUI",
+        "ogDescription": "Blocks for landing pages and campaigns.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Marketing blocks",
+        "ldName": "Marketing blocks",
+        "breadcrumb": 2,
+        "title": "Marketing blocks — SevenUI",
+        "ogTitle": "Marketing blocks — SevenUI",
+        "ogDescription": "Blocks for landing pages and campaigns.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing.png",
+        "ariaCurrent": 3,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/marketing/contact",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Contact blocks — SevenUI",
+        "ldName": "Contact blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Contact blocks — SevenUI",
+        "ogTitle": "Contact blocks — SevenUI",
+        "ogDescription": "Sections that open a conversation — a form, a routed desk, an office, or a door to walk through.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing/contact.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Contact blocks",
+        "ldName": "Contact blocks",
+        "breadcrumb": 3,
+        "title": "Contact blocks — SevenUI",
+        "ogTitle": "Contact blocks — SevenUI",
+        "ogDescription": "Sections that open a conversation — a form, a routed desk, an office, or a door to walk through.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing/contact.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/marketing/cta",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "CTA blocks — SevenUI",
+        "ldName": "CTA blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "CTA blocks — SevenUI",
+        "ogTitle": "CTA blocks — SevenUI",
+        "ogDescription": "Closing sections that turn intent into an action.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing/cta.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "CTA blocks",
+        "ldName": "CTA blocks",
+        "breadcrumb": 3,
+        "title": "CTA blocks — SevenUI",
+        "ogTitle": "CTA blocks — SevenUI",
+        "ogDescription": "Closing sections that turn intent into an action.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing/cta.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/marketing/faq",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "FAQ blocks — SevenUI",
+        "ldName": "FAQ blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "FAQ blocks — SevenUI",
+        "ogTitle": "FAQ blocks — SevenUI",
+        "ogDescription": "Question-and-answer sections that clear the last objections before a visitor commits.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing/faq.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "FAQ blocks",
+        "ldName": "FAQ blocks",
+        "breadcrumb": 3,
+        "title": "FAQ blocks — SevenUI",
+        "ogTitle": "FAQ blocks — SevenUI",
+        "ogDescription": "Question-and-answer sections that clear the last objections before a visitor commits.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing/faq.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/marketing/feature",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Feature blocks — SevenUI",
+        "ldName": "Feature blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Feature blocks — SevenUI",
+        "ogTitle": "Feature blocks — SevenUI",
+        "ogDescription": "Capability sections that answer what the product actually does, and show it working.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing/feature.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Feature blocks",
+        "ldName": "Feature blocks",
+        "breadcrumb": 3,
+        "title": "Feature blocks — SevenUI",
+        "ogTitle": "Feature blocks — SevenUI",
+        "ogDescription": "Capability sections that answer what the product actually does, and show it working.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing/feature.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/marketing/footer",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Footer blocks — SevenUI",
+        "ldName": "Footer blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Footer blocks — SevenUI",
+        "ogTitle": "Footer blocks — SevenUI",
+        "ogDescription": "Page-ending surfaces that carry wayfinding, trust signals, and the legal record.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing/footer.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Footer blocks",
+        "ldName": "Footer blocks",
+        "breadcrumb": 3,
+        "title": "Footer blocks — SevenUI",
+        "ogTitle": "Footer blocks — SevenUI",
+        "ogDescription": "Page-ending surfaces that carry wayfinding, trust signals, and the legal record.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing/footer.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/marketing/hero",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Hero blocks — SevenUI",
+        "ldName": "Hero blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Hero blocks — SevenUI",
+        "ogTitle": "Hero blocks — SevenUI",
+        "ogDescription": "Opening sections that state the offer and prove it in the first viewport.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing/hero.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Hero blocks",
+        "ldName": "Hero blocks",
+        "breadcrumb": 3,
+        "title": "Hero blocks — SevenUI",
+        "ogTitle": "Hero blocks — SevenUI",
+        "ogDescription": "Opening sections that state the offer and prove it in the first viewport.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing/hero.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/marketing/logo-cloud",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Logo Cloud blocks — SevenUI",
+        "ldName": "Logo Cloud blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Logo Cloud blocks — SevenUI",
+        "ogTitle": "Logo Cloud blocks — SevenUI",
+        "ogDescription": "Customer logo sets that carry social proof.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing/logo-cloud.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Logo Cloud blocks",
+        "ldName": "Logo Cloud blocks",
+        "breadcrumb": 3,
+        "title": "Logo Cloud blocks — SevenUI",
+        "ogTitle": "Logo Cloud blocks — SevenUI",
+        "ogDescription": "Customer logo sets that carry social proof.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing/logo-cloud.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/blocks/marketing/pricing",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Pricing blocks — SevenUI",
+        "ldName": "Pricing blocks — SevenUI",
+        "breadcrumb": null,
+        "title": "Pricing blocks — SevenUI",
+        "ogTitle": "Pricing blocks — SevenUI",
+        "ogDescription": "Plan and price surfaces that help a visitor choose a tier.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing/pricing.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 2,
+        "detailsTotal": 8
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Pricing blocks",
+        "ldName": "Pricing blocks",
+        "breadcrumb": 3,
+        "title": "Pricing blocks — SevenUI",
+        "ogTitle": "Pricing blocks — SevenUI",
+        "ogDescription": "Plan and price surfaces that help a visitor choose a tier.",
+        "ogImage": "https://sevenui.dev/og/blocks/marketing/pricing.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 8
+      }
+    },
+    {
+      "route": "/components",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Components — SevenUI",
+        "ldName": "Components — SevenUI",
+        "breadcrumb": null,
+        "title": "Components — SevenUI",
+        "ogTitle": "Components — SevenUI",
+        "ogDescription": "Composed, ready-to-use pieces built from the SevenUI primitives. Copy one into your project with a single command — the source is yours.",
+        "ogImage": "https://sevenui.dev/og/components.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Components",
+        "ldName": "Components",
+        "breadcrumb": null,
+        "title": "Components — SevenUI",
+        "ogTitle": "Components — SevenUI",
+        "ogDescription": "Composed, ready-to-use pieces built from the SevenUI primitives. Copy one into your project with a single command — the source is yours.",
+        "ogImage": "https://sevenui.dev/og/components.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      }
+    },
+    {
+      "route": "/components/accordion",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Accordion Components — SevenUI",
+        "ldName": "Accordion Components — SevenUI",
+        "breadcrumb": null,
+        "title": "Accordion Components — SevenUI",
+        "ogTitle": "Accordion Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Accordion components built on the SevenUI Accordion primitive.",
+        "ogImage": "https://sevenui.dev/og/components/accordion.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Accordion",
+        "ldName": "Accordion",
+        "breadcrumb": null,
+        "title": "Accordion Components — SevenUI",
+        "ogTitle": "Accordion Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Accordion components built on the SevenUI Accordion primitive.",
+        "ogImage": "https://sevenui.dev/og/components/accordion.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      }
+    },
+    {
+      "route": "/components/badge",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Badge Components — SevenUI",
+        "ldName": "Badge Components — SevenUI",
+        "breadcrumb": null,
+        "title": "Badge Components — SevenUI",
+        "ogTitle": "Badge Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Badge components built on the SevenUI Badge primitive.",
+        "ogImage": "https://sevenui.dev/og/components/badge.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Badge",
+        "ldName": "Badge",
+        "breadcrumb": null,
+        "title": "Badge Components — SevenUI",
+        "ogTitle": "Badge Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Badge components built on the SevenUI Badge primitive.",
+        "ogImage": "https://sevenui.dev/og/components/badge.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      }
+    },
+    {
+      "route": "/components/button",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Button Components — SevenUI",
+        "ldName": "Button Components — SevenUI",
+        "breadcrumb": null,
+        "title": "Button Components — SevenUI",
+        "ogTitle": "Button Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Button components built on the SevenUI Button primitive.",
+        "ogImage": "https://sevenui.dev/og/components/button.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Button",
+        "ldName": "Button",
+        "breadcrumb": null,
+        "title": "Button Components — SevenUI",
+        "ogTitle": "Button Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Button components built on the SevenUI Button primitive.",
+        "ogImage": "https://sevenui.dev/og/components/button.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      }
+    },
+    {
+      "route": "/components/card",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Card Components — SevenUI",
+        "ldName": "Card Components — SevenUI",
+        "breadcrumb": null,
+        "title": "Card Components — SevenUI",
+        "ogTitle": "Card Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Card components built on the SevenUI Card primitive.",
+        "ogImage": "https://sevenui.dev/og/components/card.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Card",
+        "ldName": "Card",
+        "breadcrumb": null,
+        "title": "Card Components — SevenUI",
+        "ogTitle": "Card Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Card components built on the SevenUI Card primitive.",
+        "ogImage": "https://sevenui.dev/og/components/card.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      }
+    },
+    {
+      "route": "/components/dialog",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Dialog Components — SevenUI",
+        "ldName": "Dialog Components — SevenUI",
+        "breadcrumb": null,
+        "title": "Dialog Components — SevenUI",
+        "ogTitle": "Dialog Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Dialog components built on the SevenUI Dialog primitive.",
+        "ogImage": "https://sevenui.dev/og/components/dialog.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Dialog",
+        "ldName": "Dialog",
+        "breadcrumb": null,
+        "title": "Dialog Components — SevenUI",
+        "ogTitle": "Dialog Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Dialog components built on the SevenUI Dialog primitive.",
+        "ogImage": "https://sevenui.dev/og/components/dialog.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      }
+    },
+    {
+      "route": "/components/dropdown-menu",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Dropdown Menu Components — SevenUI",
+        "ldName": "Dropdown Menu Components — SevenUI",
+        "breadcrumb": null,
+        "title": "Dropdown Menu Components — SevenUI",
+        "ogTitle": "Dropdown Menu Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Dropdown Menu components built on the SevenUI Dropdown Menu primitive.",
+        "ogImage": "https://sevenui.dev/og/components/dropdown-menu.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Dropdown Menu",
+        "ldName": "Dropdown Menu",
+        "breadcrumb": null,
+        "title": "Dropdown Menu Components — SevenUI",
+        "ogTitle": "Dropdown Menu Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Dropdown Menu components built on the SevenUI Dropdown Menu primitive.",
+        "ogImage": "https://sevenui.dev/og/components/dropdown-menu.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      }
+    },
+    {
+      "route": "/components/input",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Input Components — SevenUI",
+        "ldName": "Input Components — SevenUI",
+        "breadcrumb": null,
+        "title": "Input Components — SevenUI",
+        "ogTitle": "Input Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Input components built on the SevenUI Input primitive.",
+        "ogImage": "https://sevenui.dev/og/components/input.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Input",
+        "ldName": "Input",
+        "breadcrumb": null,
+        "title": "Input Components — SevenUI",
+        "ogTitle": "Input Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Input components built on the SevenUI Input primitive.",
+        "ogImage": "https://sevenui.dev/og/components/input.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      }
+    },
+    {
+      "route": "/components/select",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Select Components — SevenUI",
+        "ldName": "Select Components — SevenUI",
+        "breadcrumb": null,
+        "title": "Select Components — SevenUI",
+        "ogTitle": "Select Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Select components built on the SevenUI Select primitive.",
+        "ogImage": "https://sevenui.dev/og/components/select.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Select",
+        "ldName": "Select",
+        "breadcrumb": null,
+        "title": "Select Components — SevenUI",
+        "ogTitle": "Select Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Select components built on the SevenUI Select primitive.",
+        "ogImage": "https://sevenui.dev/og/components/select.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      }
+    },
+    {
+      "route": "/components/switch",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Switch Components — SevenUI",
+        "ldName": "Switch Components — SevenUI",
+        "breadcrumb": null,
+        "title": "Switch Components — SevenUI",
+        "ogTitle": "Switch Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Switch components built on the SevenUI Switch primitive.",
+        "ogImage": "https://sevenui.dev/og/components/switch.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Switch",
+        "ldName": "Switch",
+        "breadcrumb": null,
+        "title": "Switch Components — SevenUI",
+        "ogTitle": "Switch Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Switch components built on the SevenUI Switch primitive.",
+        "ogImage": "https://sevenui.dev/og/components/switch.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      }
+    },
+    {
+      "route": "/components/tabs",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Tabs Components — SevenUI",
+        "ldName": "Tabs Components — SevenUI",
+        "breadcrumb": null,
+        "title": "Tabs Components — SevenUI",
+        "ogTitle": "Tabs Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Tabs components built on the SevenUI Tabs primitive.",
+        "ogImage": "https://sevenui.dev/og/components/tabs.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Tabs",
+        "ldName": "Tabs",
+        "breadcrumb": null,
+        "title": "Tabs Components — SevenUI",
+        "ogTitle": "Tabs Components — SevenUI",
+        "ogDescription": "Free, copy-and-go Tabs components built on the SevenUI Tabs primitive.",
+        "ogImage": "https://sevenui.dev/og/components/tabs.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      }
+    },
+    {
+      "route": "/docs",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Introduction",
+        "ldName": "Introduction",
+        "breadcrumb": null,
+        "title": "Introduction - SevenUI",
+        "ogTitle": "Introduction - SevenUI",
+        "ogDescription": "Base UI powered primitives, distributed through the shadcn registry.",
+        "ogImage": "https://sevenui.dev/og/docs.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Introduction",
+        "ldName": "Introduction",
+        "breadcrumb": null,
+        "title": "Introduction — SevenUI",
+        "ogTitle": "Introduction — SevenUI",
+        "ogDescription": "Base UI powered primitives, distributed through the shadcn registry.",
+        "ogImage": "https://sevenui.dev/og/docs.png",
+        "ariaCurrent": 3,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components",
+      "prod": {
+        "ldBlocks": 0,
+        "ldTypes": [],
+        "headline": null,
+        "ldName": null,
+        "breadcrumb": null,
+        "title": "Page not found",
+        "ogTitle": "Page not found",
+        "ogDescription": "Base UI powered primitives, distributed through the shadcn registry.",
+        "ogImage": null,
+        "ariaCurrent": 0,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Primitives",
+        "ldName": "Primitives",
+        "breadcrumb": 2,
+        "title": "Primitives — SevenUI",
+        "ogTitle": "Primitives — SevenUI",
+        "ogDescription": "Every SevenUI primitive, built on Base UI and installed into your project as source code through the shadcn CLI.",
+        "ogImage": "https://sevenui.dev/og/docs/components.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 2
+      }
+    },
+    {
+      "route": "/docs/components/accordion",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Accordion",
+        "ldName": "Accordion",
+        "breadcrumb": null,
+        "title": "Accordion - SevenUI",
+        "ogTitle": "Accordion - SevenUI",
+        "ogDescription": "A vertically stacked set of interactive headings that each reveal an associated panel of content, built on the Base UI Accordion primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/accordion.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Accordion",
+        "ldName": "Accordion",
+        "breadcrumb": 3,
+        "title": "Accordion — SevenUI",
+        "ogTitle": "Accordion — SevenUI",
+        "ogDescription": "A vertically stacked set of interactive headings that each reveal an associated panel of content, built on the Base UI Accordion primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/accordion.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/alert",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Alert",
+        "ldName": "Alert",
+        "breadcrumb": null,
+        "title": "Alert - SevenUI",
+        "ogTitle": "Alert - SevenUI",
+        "ogDescription": "Displays a message with optional title and description for the user.",
+        "ogImage": "https://sevenui.dev/og/docs/components/alert.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Alert",
+        "ldName": "Alert",
+        "breadcrumb": 3,
+        "title": "Alert — SevenUI",
+        "ogTitle": "Alert — SevenUI",
+        "ogDescription": "Displays a message with optional title and description for the user.",
+        "ogImage": "https://sevenui.dev/og/docs/components/alert.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/alert-dialog",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Alert Dialog",
+        "ldName": "Alert Dialog",
+        "breadcrumb": null,
+        "title": "Alert Dialog - SevenUI",
+        "ogTitle": "Alert Dialog - SevenUI",
+        "ogDescription": "A modal dialog that interrupts the user with important content and expects a response, built on the Base UI Alert Dialog primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/alert-dialog.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Alert Dialog",
+        "ldName": "Alert Dialog",
+        "breadcrumb": 3,
+        "title": "Alert Dialog — SevenUI",
+        "ogTitle": "Alert Dialog — SevenUI",
+        "ogDescription": "A modal dialog that interrupts the user with important content and expects a response, built on the Base UI Alert Dialog primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/alert-dialog.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/aspect-ratio",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Aspect Ratio",
+        "ldName": "Aspect Ratio",
+        "breadcrumb": null,
+        "title": "Aspect Ratio - SevenUI",
+        "ogTitle": "Aspect Ratio - SevenUI",
+        "ogDescription": "Displays content with a fixed aspect ratio.",
+        "ogImage": "https://sevenui.dev/og/docs/components/aspect-ratio.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Aspect Ratio",
+        "ldName": "Aspect Ratio",
+        "breadcrumb": 3,
+        "title": "Aspect Ratio — SevenUI",
+        "ogTitle": "Aspect Ratio — SevenUI",
+        "ogDescription": "Displays content with a fixed aspect ratio.",
+        "ogImage": "https://sevenui.dev/og/docs/components/aspect-ratio.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/attachment",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Attachment",
+        "ldName": "Attachment",
+        "breadcrumb": null,
+        "title": "Attachment - SevenUI",
+        "ogTitle": "Attachment - SevenUI",
+        "ogDescription": "Displays file attachments with media previews and actions.",
+        "ogImage": "https://sevenui.dev/og/docs/components/attachment.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Attachment",
+        "ldName": "Attachment",
+        "breadcrumb": 3,
+        "title": "Attachment — SevenUI",
+        "ogTitle": "Attachment — SevenUI",
+        "ogDescription": "Displays file attachments with media previews and actions.",
+        "ogImage": "https://sevenui.dev/og/docs/components/attachment.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/avatar",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Avatar",
+        "ldName": "Avatar",
+        "breadcrumb": null,
+        "title": "Avatar - SevenUI",
+        "ogTitle": "Avatar - SevenUI",
+        "ogDescription": "An image element with a fallback for representing the user.",
+        "ogImage": "https://sevenui.dev/og/docs/components/avatar.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Avatar",
+        "ldName": "Avatar",
+        "breadcrumb": 3,
+        "title": "Avatar — SevenUI",
+        "ogTitle": "Avatar — SevenUI",
+        "ogDescription": "An image element with a fallback for representing the user.",
+        "ogImage": "https://sevenui.dev/og/docs/components/avatar.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/badge",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Badge",
+        "ldName": "Badge",
+        "breadcrumb": null,
+        "title": "Badge - SevenUI",
+        "ogTitle": "Badge - SevenUI",
+        "ogDescription": "Displays a small status descriptor.",
+        "ogImage": "https://sevenui.dev/og/docs/components/badge.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Badge",
+        "ldName": "Badge",
+        "breadcrumb": 3,
+        "title": "Badge — SevenUI",
+        "ogTitle": "Badge — SevenUI",
+        "ogDescription": "Displays a small status descriptor.",
+        "ogImage": "https://sevenui.dev/og/docs/components/badge.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/breadcrumb",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Breadcrumb",
+        "ldName": "Breadcrumb",
+        "breadcrumb": null,
+        "title": "Breadcrumb - SevenUI",
+        "ogTitle": "Breadcrumb - SevenUI",
+        "ogDescription": "Displays the current location within a hierarchical navigation structure.",
+        "ogImage": "https://sevenui.dev/og/docs/components/breadcrumb.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Breadcrumb",
+        "ldName": "Breadcrumb",
+        "breadcrumb": 3,
+        "title": "Breadcrumb — SevenUI",
+        "ogTitle": "Breadcrumb — SevenUI",
+        "ogDescription": "Displays the current location within a hierarchical navigation structure.",
+        "ogImage": "https://sevenui.dev/og/docs/components/breadcrumb.png",
+        "ariaCurrent": 6,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/bubble",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Bubble",
+        "ldName": "Bubble",
+        "breadcrumb": null,
+        "title": "Bubble - SevenUI",
+        "ogTitle": "Bubble - SevenUI",
+        "ogDescription": "Chat message bubbles for conversational interfaces.",
+        "ogImage": "https://sevenui.dev/og/docs/components/bubble.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Bubble",
+        "ldName": "Bubble",
+        "breadcrumb": 3,
+        "title": "Bubble — SevenUI",
+        "ogTitle": "Bubble — SevenUI",
+        "ogDescription": "Chat message bubbles for conversational interfaces.",
+        "ogImage": "https://sevenui.dev/og/docs/components/bubble.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/button",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Button",
+        "ldName": "Button",
+        "breadcrumb": null,
+        "title": "Button - SevenUI",
+        "ogTitle": "Button - SevenUI",
+        "ogDescription": "Displays a button built on the Base UI Button primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/button.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Button",
+        "ldName": "Button",
+        "breadcrumb": 3,
+        "title": "Button — SevenUI",
+        "ogTitle": "Button — SevenUI",
+        "ogDescription": "Displays a button built on the Base UI Button primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/button.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/button-group",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Button Group",
+        "ldName": "Button Group",
+        "breadcrumb": null,
+        "title": "Button Group - SevenUI",
+        "ogTitle": "Button Group - SevenUI",
+        "ogDescription": "Groups related buttons with shared borders and separators.",
+        "ogImage": "https://sevenui.dev/og/docs/components/button-group.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Button Group",
+        "ldName": "Button Group",
+        "breadcrumb": 3,
+        "title": "Button Group — SevenUI",
+        "ogTitle": "Button Group — SevenUI",
+        "ogDescription": "Groups related buttons with shared borders and separators.",
+        "ogImage": "https://sevenui.dev/og/docs/components/button-group.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/calendar",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Calendar",
+        "ldName": "Calendar",
+        "breadcrumb": null,
+        "title": "Calendar - SevenUI",
+        "ogTitle": "Calendar - SevenUI",
+        "ogDescription": "A date field primitive that lets users select dates or ranges.",
+        "ogImage": "https://sevenui.dev/og/docs/components/calendar.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Calendar",
+        "ldName": "Calendar",
+        "breadcrumb": 3,
+        "title": "Calendar — SevenUI",
+        "ogTitle": "Calendar — SevenUI",
+        "ogDescription": "A date field primitive that lets users select dates or ranges.",
+        "ogImage": "https://sevenui.dev/og/docs/components/calendar.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/card",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Card",
+        "ldName": "Card",
+        "breadcrumb": null,
+        "title": "Card - SevenUI",
+        "ogTitle": "Card - SevenUI",
+        "ogDescription": "Displays a container with optional header, content, and footer sections.",
+        "ogImage": "https://sevenui.dev/og/docs/components/card.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Card",
+        "ldName": "Card",
+        "breadcrumb": 3,
+        "title": "Card — SevenUI",
+        "ogTitle": "Card — SevenUI",
+        "ogDescription": "Displays a container with optional header, content, and footer sections.",
+        "ogImage": "https://sevenui.dev/og/docs/components/card.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/carousel",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Carousel",
+        "ldName": "Carousel",
+        "breadcrumb": null,
+        "title": "Carousel - SevenUI",
+        "ogTitle": "Carousel - SevenUI",
+        "ogDescription": "A carousel with motion and swipe built using Embla.",
+        "ogImage": "https://sevenui.dev/og/docs/components/carousel.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Carousel",
+        "ldName": "Carousel",
+        "breadcrumb": 3,
+        "title": "Carousel — SevenUI",
+        "ogTitle": "Carousel — SevenUI",
+        "ogDescription": "A carousel with motion and swipe built using Embla.",
+        "ogImage": "https://sevenui.dev/og/docs/components/carousel.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/chart",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Chart",
+        "ldName": "Chart",
+        "breadcrumb": null,
+        "title": "Chart - SevenUI",
+        "ogTitle": "Chart - SevenUI",
+        "ogDescription": "Composable chart primitives built on Recharts.",
+        "ogImage": "https://sevenui.dev/og/docs/components/chart.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Chart",
+        "ldName": "Chart",
+        "breadcrumb": 3,
+        "title": "Chart — SevenUI",
+        "ogTitle": "Chart — SevenUI",
+        "ogDescription": "Composable chart primitives built on Recharts.",
+        "ogImage": "https://sevenui.dev/og/docs/components/chart.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/checkbox",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Checkbox",
+        "ldName": "Checkbox",
+        "breadcrumb": null,
+        "title": "Checkbox - SevenUI",
+        "ogTitle": "Checkbox - SevenUI",
+        "ogDescription": "Displays a checkbox built on the Base UI Checkbox primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/checkbox.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Checkbox",
+        "ldName": "Checkbox",
+        "breadcrumb": 3,
+        "title": "Checkbox — SevenUI",
+        "ogTitle": "Checkbox — SevenUI",
+        "ogDescription": "Displays a checkbox built on the Base UI Checkbox primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/checkbox.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/collapsible",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Collapsible",
+        "ldName": "Collapsible",
+        "breadcrumb": null,
+        "title": "Collapsible - SevenUI",
+        "ogTitle": "Collapsible - SevenUI",
+        "ogDescription": "An interactive primitive which expands/collapses a panel, built on the Base UI Collapsible.",
+        "ogImage": "https://sevenui.dev/og/docs/components/collapsible.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Collapsible",
+        "ldName": "Collapsible",
+        "breadcrumb": 3,
+        "title": "Collapsible — SevenUI",
+        "ogTitle": "Collapsible — SevenUI",
+        "ogDescription": "An interactive primitive which expands/collapses a panel, built on the Base UI Collapsible.",
+        "ogImage": "https://sevenui.dev/og/docs/components/collapsible.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/combobox",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Combobox",
+        "ldName": "Combobox",
+        "breadcrumb": null,
+        "title": "Combobox - SevenUI",
+        "ogTitle": "Combobox - SevenUI",
+        "ogDescription": "An input combined with a filterable popup list, built on the Base UI Combobox primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/combobox.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Combobox",
+        "ldName": "Combobox",
+        "breadcrumb": 3,
+        "title": "Combobox — SevenUI",
+        "ogTitle": "Combobox — SevenUI",
+        "ogDescription": "An input combined with a filterable popup list, built on the Base UI Combobox primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/combobox.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/command",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Command",
+        "ldName": "Command",
+        "breadcrumb": null,
+        "title": "Command - SevenUI",
+        "ogTitle": "Command - SevenUI",
+        "ogDescription": "A fast, composable command palette built on the Base UI Autocomplete primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/command.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Command",
+        "ldName": "Command",
+        "breadcrumb": 3,
+        "title": "Command — SevenUI",
+        "ogTitle": "Command — SevenUI",
+        "ogDescription": "A fast, composable command palette built on the Base UI Autocomplete primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/command.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/context-menu",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Context Menu",
+        "ldName": "Context Menu",
+        "breadcrumb": null,
+        "title": "Context Menu - SevenUI",
+        "ogTitle": "Context Menu - SevenUI",
+        "ogDescription": "Displays a menu to the user — such as a set of actions or functions — triggered by right click or touch long-press, built on the Base UI Menu primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/context-menu.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Context Menu",
+        "ldName": "Context Menu",
+        "breadcrumb": 3,
+        "title": "Context Menu — SevenUI",
+        "ogTitle": "Context Menu — SevenUI",
+        "ogDescription": "Displays a menu to the user — such as a set of actions or functions — triggered by right click or touch long-press, built on the Base UI Menu primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/context-menu.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/dialog",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Dialog",
+        "ldName": "Dialog",
+        "breadcrumb": null,
+        "title": "Dialog - SevenUI",
+        "ogTitle": "Dialog - SevenUI",
+        "ogDescription": "A window overlaid on either the primary window or another dialog window, rendering the content underneath inert, built on the Base UI Dialog primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/dialog.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Dialog",
+        "ldName": "Dialog",
+        "breadcrumb": 3,
+        "title": "Dialog — SevenUI",
+        "ogTitle": "Dialog — SevenUI",
+        "ogDescription": "A window overlaid on either the primary window or another dialog window, rendering the content underneath inert, built on the Base UI Dialog primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/dialog.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/direction",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Direction",
+        "ldName": "Direction",
+        "breadcrumb": null,
+        "title": "Direction - SevenUI",
+        "ogTitle": "Direction - SevenUI",
+        "ogDescription": "Re-exports the Base UI DirectionProvider for RTL support.",
+        "ogImage": "https://sevenui.dev/og/docs/components/direction.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Direction",
+        "ldName": "Direction",
+        "breadcrumb": 3,
+        "title": "Direction — SevenUI",
+        "ogTitle": "Direction — SevenUI",
+        "ogDescription": "Re-exports the Base UI DirectionProvider for RTL support.",
+        "ogImage": "https://sevenui.dev/og/docs/components/direction.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/drawer",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Drawer",
+        "ldName": "Drawer",
+        "breadcrumb": null,
+        "title": "Drawer - SevenUI",
+        "ogTitle": "Drawer - SevenUI",
+        "ogDescription": "A panel that slides in from an edge of the screen and can be dismissed with a swipe gesture, built on the Base UI Drawer primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/drawer.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Drawer",
+        "ldName": "Drawer",
+        "breadcrumb": 3,
+        "title": "Drawer — SevenUI",
+        "ogTitle": "Drawer — SevenUI",
+        "ogDescription": "A panel that slides in from an edge of the screen and can be dismissed with a swipe gesture, built on the Base UI Drawer primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/drawer.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/dropdown-menu",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Dropdown Menu",
+        "ldName": "Dropdown Menu",
+        "breadcrumb": null,
+        "title": "Dropdown Menu - SevenUI",
+        "ogTitle": "Dropdown Menu - SevenUI",
+        "ogDescription": "Displays a menu to the user — such as a set of actions or functions — triggered by a button, built on the Base UI Menu primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/dropdown-menu.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Dropdown Menu",
+        "ldName": "Dropdown Menu",
+        "breadcrumb": 3,
+        "title": "Dropdown Menu — SevenUI",
+        "ogTitle": "Dropdown Menu — SevenUI",
+        "ogDescription": "Displays a menu to the user — such as a set of actions or functions — triggered by a button, built on the Base UI Menu primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/dropdown-menu.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/empty",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Empty",
+        "ldName": "Empty",
+        "breadcrumb": null,
+        "title": "Empty - SevenUI",
+        "ogTitle": "Empty - SevenUI",
+        "ogDescription": "Displays an empty state with media, title, description, and actions.",
+        "ogImage": "https://sevenui.dev/og/docs/components/empty.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Empty",
+        "ldName": "Empty",
+        "breadcrumb": 3,
+        "title": "Empty — SevenUI",
+        "ogTitle": "Empty — SevenUI",
+        "ogDescription": "Displays an empty state with media, title, description, and actions.",
+        "ogImage": "https://sevenui.dev/og/docs/components/empty.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/field",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Field",
+        "ldName": "Field",
+        "breadcrumb": null,
+        "title": "Field - SevenUI",
+        "ogTitle": "Field - SevenUI",
+        "ogDescription": "Associates a label, control, description, and validation error for a form field.",
+        "ogImage": "https://sevenui.dev/og/docs/components/field.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Field",
+        "ldName": "Field",
+        "breadcrumb": 3,
+        "title": "Field — SevenUI",
+        "ogTitle": "Field — SevenUI",
+        "ogDescription": "Associates a label, control, description, and validation error for a form field.",
+        "ogImage": "https://sevenui.dev/og/docs/components/field.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/form",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Form",
+        "ldName": "Form",
+        "breadcrumb": null,
+        "title": "Form - SevenUI",
+        "ogTitle": "Form - SevenUI",
+        "ogDescription": "A native form with consolidated, auto-clearing validation error handling.",
+        "ogImage": "https://sevenui.dev/og/docs/components/form.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Form",
+        "ldName": "Form",
+        "breadcrumb": 3,
+        "title": "Form — SevenUI",
+        "ogTitle": "Form — SevenUI",
+        "ogDescription": "A native form with consolidated, auto-clearing validation error handling.",
+        "ogImage": "https://sevenui.dev/og/docs/components/form.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/hover-card",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Hover Card",
+        "ldName": "Hover Card",
+        "breadcrumb": null,
+        "title": "Hover Card - SevenUI",
+        "ogTitle": "Hover Card - SevenUI",
+        "ogDescription": "Displays a preview card when hovering or focusing a link, built on the Base UI Preview Card primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/hover-card.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Hover Card",
+        "ldName": "Hover Card",
+        "breadcrumb": 3,
+        "title": "Hover Card — SevenUI",
+        "ogTitle": "Hover Card — SevenUI",
+        "ogDescription": "Displays a preview card when hovering or focusing a link, built on the Base UI Preview Card primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/hover-card.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/input",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Input",
+        "ldName": "Input",
+        "breadcrumb": null,
+        "title": "Input - SevenUI",
+        "ogTitle": "Input - SevenUI",
+        "ogDescription": "Displays a text input built on the Base UI Input primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/input.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Input",
+        "ldName": "Input",
+        "breadcrumb": 3,
+        "title": "Input — SevenUI",
+        "ogTitle": "Input — SevenUI",
+        "ogDescription": "Displays a text input built on the Base UI Input primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/input.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/input-group",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Input Group",
+        "ldName": "Input Group",
+        "breadcrumb": null,
+        "title": "Input Group - SevenUI",
+        "ogTitle": "Input Group - SevenUI",
+        "ogDescription": "Groups an input with addons, buttons, and inline text.",
+        "ogImage": "https://sevenui.dev/og/docs/components/input-group.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Input Group",
+        "ldName": "Input Group",
+        "breadcrumb": 3,
+        "title": "Input Group — SevenUI",
+        "ogTitle": "Input Group — SevenUI",
+        "ogDescription": "Groups an input with addons, buttons, and inline text.",
+        "ogImage": "https://sevenui.dev/og/docs/components/input-group.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/input-otp",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Input OTP",
+        "ldName": "Input OTP",
+        "breadcrumb": null,
+        "title": "Input OTP - SevenUI",
+        "ogTitle": "Input OTP - SevenUI",
+        "ogDescription": "Displays an OTP input field built on the Base UI OTPField primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/input-otp.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Input OTP",
+        "ldName": "Input OTP",
+        "breadcrumb": 3,
+        "title": "Input OTP — SevenUI",
+        "ogTitle": "Input OTP — SevenUI",
+        "ogDescription": "Displays an OTP input field built on the Base UI OTPField primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/input-otp.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/item",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Item",
+        "ldName": "Item",
+        "breadcrumb": null,
+        "title": "Item - SevenUI",
+        "ogTitle": "Item - SevenUI",
+        "ogDescription": "A flexible list item with media, content, and actions.",
+        "ogImage": "https://sevenui.dev/og/docs/components/item.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Item",
+        "ldName": "Item",
+        "breadcrumb": 3,
+        "title": "Item — SevenUI",
+        "ogTitle": "Item — SevenUI",
+        "ogDescription": "A flexible list item with media, content, and actions.",
+        "ogImage": "https://sevenui.dev/og/docs/components/item.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/kbd",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Kbd",
+        "ldName": "Kbd",
+        "breadcrumb": null,
+        "title": "Kbd - SevenUI",
+        "ogTitle": "Kbd - SevenUI",
+        "ogDescription": "Displays a keyboard key.",
+        "ogImage": "https://sevenui.dev/og/docs/components/kbd.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Kbd",
+        "ldName": "Kbd",
+        "breadcrumb": 3,
+        "title": "Kbd — SevenUI",
+        "ogTitle": "Kbd — SevenUI",
+        "ogDescription": "Displays a keyboard key.",
+        "ogImage": "https://sevenui.dev/og/docs/components/kbd.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/label",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Label",
+        "ldName": "Label",
+        "breadcrumb": null,
+        "title": "Label - SevenUI",
+        "ogTitle": "Label - SevenUI",
+        "ogDescription": "Displays a label for form inputs.",
+        "ogImage": "https://sevenui.dev/og/docs/components/label.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Label",
+        "ldName": "Label",
+        "breadcrumb": 3,
+        "title": "Label — SevenUI",
+        "ogTitle": "Label — SevenUI",
+        "ogDescription": "Displays a label for form inputs.",
+        "ogImage": "https://sevenui.dev/og/docs/components/label.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/marker",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Marker",
+        "ldName": "Marker",
+        "breadcrumb": null,
+        "title": "Marker - SevenUI",
+        "ogTitle": "Marker - SevenUI",
+        "ogDescription": "An inline marker with icon and content for annotating UI.",
+        "ogImage": "https://sevenui.dev/og/docs/components/marker.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Marker",
+        "ldName": "Marker",
+        "breadcrumb": 3,
+        "title": "Marker — SevenUI",
+        "ogTitle": "Marker — SevenUI",
+        "ogDescription": "An inline marker with icon and content for annotating UI.",
+        "ogImage": "https://sevenui.dev/og/docs/components/marker.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/menubar",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Menubar",
+        "ldName": "Menubar",
+        "breadcrumb": null,
+        "title": "Menubar - SevenUI",
+        "ogTitle": "Menubar - SevenUI",
+        "ogDescription": "A horizontal menu bar with multiple menus — such as File, Edit, and View — built on the Base UI Menu primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/menubar.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Menubar",
+        "ldName": "Menubar",
+        "breadcrumb": 3,
+        "title": "Menubar — SevenUI",
+        "ogTitle": "Menubar — SevenUI",
+        "ogDescription": "A horizontal menu bar with multiple menus — such as File, Edit, and View — built on the Base UI Menu primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/menubar.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/message",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Message",
+        "ldName": "Message",
+        "breadcrumb": null,
+        "title": "Message - SevenUI",
+        "ogTitle": "Message - SevenUI",
+        "ogDescription": "Chat message layout with avatar, content, header, and footer.",
+        "ogImage": "https://sevenui.dev/og/docs/components/message.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Message",
+        "ldName": "Message",
+        "breadcrumb": 3,
+        "title": "Message — SevenUI",
+        "ogTitle": "Message — SevenUI",
+        "ogDescription": "Chat message layout with avatar, content, header, and footer.",
+        "ogImage": "https://sevenui.dev/og/docs/components/message.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/message-scroller",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Message Scroller",
+        "ldName": "Message Scroller",
+        "breadcrumb": null,
+        "title": "Message Scroller - SevenUI",
+        "ogTitle": "Message Scroller - SevenUI",
+        "ogDescription": "Auto-scrolling chat viewport built on the shadcn MessageScroller primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/message-scroller.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Message Scroller",
+        "ldName": "Message Scroller",
+        "breadcrumb": 3,
+        "title": "Message Scroller — SevenUI",
+        "ogTitle": "Message Scroller — SevenUI",
+        "ogDescription": "Auto-scrolling chat viewport built on the shadcn MessageScroller primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/message-scroller.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/meter",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Meter",
+        "ldName": "Meter",
+        "breadcrumb": null,
+        "title": "Meter - SevenUI",
+        "ogTitle": "Meter - SevenUI",
+        "ogDescription": "Displays a value within a known range, built on the Base UI Meter primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/meter.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Meter",
+        "ldName": "Meter",
+        "breadcrumb": 3,
+        "title": "Meter — SevenUI",
+        "ogTitle": "Meter — SevenUI",
+        "ogDescription": "Displays a value within a known range, built on the Base UI Meter primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/meter.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/native-select",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Native Select",
+        "ldName": "Native Select",
+        "breadcrumb": null,
+        "title": "Native Select - SevenUI",
+        "ogTitle": "Native Select - SevenUI",
+        "ogDescription": "A styled native HTML select element.",
+        "ogImage": "https://sevenui.dev/og/docs/components/native-select.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Native Select",
+        "ldName": "Native Select",
+        "breadcrumb": 3,
+        "title": "Native Select — SevenUI",
+        "ogTitle": "Native Select — SevenUI",
+        "ogDescription": "A styled native HTML select element.",
+        "ogImage": "https://sevenui.dev/og/docs/components/native-select.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/navigation-menu",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Navigation Menu",
+        "ldName": "Navigation Menu",
+        "breadcrumb": null,
+        "title": "Navigation Menu - SevenUI",
+        "ogTitle": "Navigation Menu - SevenUI",
+        "ogDescription": "A collection of links for navigating websites, sharing one animated popup between top-level menu triggers, built on the Base UI Navigation Menu primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/navigation-menu.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Navigation Menu",
+        "ldName": "Navigation Menu",
+        "breadcrumb": 3,
+        "title": "Navigation Menu — SevenUI",
+        "ogTitle": "Navigation Menu — SevenUI",
+        "ogDescription": "A collection of links for navigating websites, sharing one animated popup between top-level menu triggers, built on the Base UI Navigation Menu primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/navigation-menu.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/number-field",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Number Field",
+        "ldName": "Number Field",
+        "breadcrumb": null,
+        "title": "Number Field - SevenUI",
+        "ogTitle": "Number Field - SevenUI",
+        "ogDescription": "Displays a number field built on the Base UI Number Field primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/number-field.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Number Field",
+        "ldName": "Number Field",
+        "breadcrumb": 3,
+        "title": "Number Field — SevenUI",
+        "ogTitle": "Number Field — SevenUI",
+        "ogDescription": "Displays a number field built on the Base UI Number Field primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/number-field.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/pagination",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Pagination",
+        "ldName": "Pagination",
+        "breadcrumb": null,
+        "title": "Pagination - SevenUI",
+        "ogTitle": "Pagination - SevenUI",
+        "ogDescription": "Displays navigation for multi-page content.",
+        "ogImage": "https://sevenui.dev/og/docs/components/pagination.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Pagination",
+        "ldName": "Pagination",
+        "breadcrumb": 3,
+        "title": "Pagination — SevenUI",
+        "ogTitle": "Pagination — SevenUI",
+        "ogDescription": "Displays navigation for multi-page content.",
+        "ogImage": "https://sevenui.dev/og/docs/components/pagination.png",
+        "ariaCurrent": 5,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/popover",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Popover",
+        "ldName": "Popover",
+        "breadcrumb": null,
+        "title": "Popover - SevenUI",
+        "ogTitle": "Popover - SevenUI",
+        "ogDescription": "Displays rich content in a portal, positioned relative to an anchor element, built on the Base UI Popover primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/popover.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Popover",
+        "ldName": "Popover",
+        "breadcrumb": 3,
+        "title": "Popover — SevenUI",
+        "ogTitle": "Popover — SevenUI",
+        "ogDescription": "Displays rich content in a portal, positioned relative to an anchor element, built on the Base UI Popover primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/popover.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/progress",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Progress",
+        "ldName": "Progress",
+        "breadcrumb": null,
+        "title": "Progress - SevenUI",
+        "ogTitle": "Progress - SevenUI",
+        "ogDescription": "Displays an indicator showing the completion progress of a task.",
+        "ogImage": "https://sevenui.dev/og/docs/components/progress.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Progress",
+        "ldName": "Progress",
+        "breadcrumb": 3,
+        "title": "Progress — SevenUI",
+        "ogTitle": "Progress — SevenUI",
+        "ogDescription": "Displays an indicator showing the completion progress of a task.",
+        "ogImage": "https://sevenui.dev/og/docs/components/progress.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/questionnaire",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Questionnaire",
+        "ldName": "Questionnaire",
+        "breadcrumb": null,
+        "title": "Questionnaire - SevenUI",
+        "ogTitle": "Questionnaire - SevenUI",
+        "ogDescription": "Multi-step questionnaire flow built on the shadcn Questionnaire primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/questionnaire.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Questionnaire",
+        "ldName": "Questionnaire",
+        "breadcrumb": 3,
+        "title": "Questionnaire — SevenUI",
+        "ogTitle": "Questionnaire — SevenUI",
+        "ogDescription": "Multi-step questionnaire flow built on the shadcn Questionnaire primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/questionnaire.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/radio-group",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Radio Group",
+        "ldName": "Radio Group",
+        "breadcrumb": null,
+        "title": "Radio Group - SevenUI",
+        "ogTitle": "Radio Group - SevenUI",
+        "ogDescription": "Displays a radio group built on the Base UI Radio primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/radio-group.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Radio Group",
+        "ldName": "Radio Group",
+        "breadcrumb": 3,
+        "title": "Radio Group — SevenUI",
+        "ogTitle": "Radio Group — SevenUI",
+        "ogDescription": "Displays a radio group built on the Base UI Radio primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/radio-group.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/resizable",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Resizable",
+        "ldName": "Resizable",
+        "breadcrumb": null,
+        "title": "Resizable - SevenUI",
+        "ogTitle": "Resizable - SevenUI",
+        "ogDescription": "Accessible resizable panel groups and layouts.",
+        "ogImage": "https://sevenui.dev/og/docs/components/resizable.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Resizable",
+        "ldName": "Resizable",
+        "breadcrumb": 3,
+        "title": "Resizable — SevenUI",
+        "ogTitle": "Resizable — SevenUI",
+        "ogDescription": "Accessible resizable panel groups and layouts.",
+        "ogImage": "https://sevenui.dev/og/docs/components/resizable.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/scroll-area",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Scroll Area",
+        "ldName": "Scroll Area",
+        "breadcrumb": null,
+        "title": "Scroll Area - SevenUI",
+        "ogTitle": "Scroll Area - SevenUI",
+        "ogDescription": "Augments native scroll functionality for custom, cross-browser styling, built on the Base UI Scroll Area primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/scroll-area.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Scroll Area",
+        "ldName": "Scroll Area",
+        "breadcrumb": 3,
+        "title": "Scroll Area — SevenUI",
+        "ogTitle": "Scroll Area — SevenUI",
+        "ogDescription": "Augments native scroll functionality for custom, cross-browser styling, built on the Base UI Scroll Area primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/scroll-area.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/select",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Select",
+        "ldName": "Select",
+        "breadcrumb": null,
+        "title": "Select - SevenUI",
+        "ogTitle": "Select - SevenUI",
+        "ogDescription": "Displays a select menu built on the Base UI Select primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/select.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Select",
+        "ldName": "Select",
+        "breadcrumb": 3,
+        "title": "Select — SevenUI",
+        "ogTitle": "Select — SevenUI",
+        "ogDescription": "Displays a select menu built on the Base UI Select primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/select.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/separator",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Separator",
+        "ldName": "Separator",
+        "breadcrumb": null,
+        "title": "Separator - SevenUI",
+        "ogTitle": "Separator - SevenUI",
+        "ogDescription": "Visually or semantically separates content.",
+        "ogImage": "https://sevenui.dev/og/docs/components/separator.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Separator",
+        "ldName": "Separator",
+        "breadcrumb": 3,
+        "title": "Separator — SevenUI",
+        "ogTitle": "Separator — SevenUI",
+        "ogDescription": "Visually or semantically separates content.",
+        "ogImage": "https://sevenui.dev/og/docs/components/separator.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/sheet",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Sheet",
+        "ldName": "Sheet",
+        "breadcrumb": null,
+        "title": "Sheet - SevenUI",
+        "ogTitle": "Sheet - SevenUI",
+        "ogDescription": "An edge-positioned panel that slides in from the side of the screen, built on the Base UI Dialog primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/sheet.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Sheet",
+        "ldName": "Sheet",
+        "breadcrumb": 3,
+        "title": "Sheet — SevenUI",
+        "ogTitle": "Sheet — SevenUI",
+        "ogDescription": "An edge-positioned panel that slides in from the side of the screen, built on the Base UI Dialog primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/sheet.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/sidebar",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Sidebar",
+        "ldName": "Sidebar",
+        "breadcrumb": null,
+        "title": "Sidebar - SevenUI",
+        "ogTitle": "Sidebar - SevenUI",
+        "ogDescription": "A composable, themeable sidebar with collapsible, mobile, and icon-only modes.",
+        "ogImage": "https://sevenui.dev/og/docs/components/sidebar.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Sidebar",
+        "ldName": "Sidebar",
+        "breadcrumb": 3,
+        "title": "Sidebar — SevenUI",
+        "ogTitle": "Sidebar — SevenUI",
+        "ogDescription": "A composable, themeable sidebar with collapsible, mobile, and icon-only modes.",
+        "ogImage": "https://sevenui.dev/og/docs/components/sidebar.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/skeleton",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Skeleton",
+        "ldName": "Skeleton",
+        "breadcrumb": null,
+        "title": "Skeleton - SevenUI",
+        "ogTitle": "Skeleton - SevenUI",
+        "ogDescription": "Use to show a placeholder while content is loading.",
+        "ogImage": "https://sevenui.dev/og/docs/components/skeleton.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Skeleton",
+        "ldName": "Skeleton",
+        "breadcrumb": 3,
+        "title": "Skeleton — SevenUI",
+        "ogTitle": "Skeleton — SevenUI",
+        "ogDescription": "Use to show a placeholder while content is loading.",
+        "ogImage": "https://sevenui.dev/og/docs/components/skeleton.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/slider",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Slider",
+        "ldName": "Slider",
+        "breadcrumb": null,
+        "title": "Slider - SevenUI",
+        "ogTitle": "Slider - SevenUI",
+        "ogDescription": "Displays a slider built on the Base UI Slider primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/slider.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Slider",
+        "ldName": "Slider",
+        "breadcrumb": 3,
+        "title": "Slider — SevenUI",
+        "ogTitle": "Slider — SevenUI",
+        "ogDescription": "Displays a slider built on the Base UI Slider primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/slider.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/spinner",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Spinner",
+        "ldName": "Spinner",
+        "breadcrumb": null,
+        "title": "Spinner - SevenUI",
+        "ogTitle": "Spinner - SevenUI",
+        "ogDescription": "Displays a loading indicator.",
+        "ogImage": "https://sevenui.dev/og/docs/components/spinner.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Spinner",
+        "ldName": "Spinner",
+        "breadcrumb": 3,
+        "title": "Spinner — SevenUI",
+        "ogTitle": "Spinner — SevenUI",
+        "ogDescription": "Displays a loading indicator.",
+        "ogImage": "https://sevenui.dev/og/docs/components/spinner.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/switch",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Switch",
+        "ldName": "Switch",
+        "breadcrumb": null,
+        "title": "Switch - SevenUI",
+        "ogTitle": "Switch - SevenUI",
+        "ogDescription": "Displays a switch built on the Base UI Switch primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/switch.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Switch",
+        "ldName": "Switch",
+        "breadcrumb": 3,
+        "title": "Switch — SevenUI",
+        "ogTitle": "Switch — SevenUI",
+        "ogDescription": "Displays a switch built on the Base UI Switch primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/switch.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/table",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Table",
+        "ldName": "Table",
+        "breadcrumb": null,
+        "title": "Table - SevenUI",
+        "ogTitle": "Table - SevenUI",
+        "ogDescription": "Displays data in rows and columns with semantic HTML and support for headers, bodies, and footers.",
+        "ogImage": "https://sevenui.dev/og/docs/components/table.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Table",
+        "ldName": "Table",
+        "breadcrumb": 3,
+        "title": "Table — SevenUI",
+        "ogTitle": "Table — SevenUI",
+        "ogDescription": "Displays data in rows and columns with semantic HTML and support for headers, bodies, and footers.",
+        "ogImage": "https://sevenui.dev/og/docs/components/table.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/tabs",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Tabs",
+        "ldName": "Tabs",
+        "breadcrumb": null,
+        "title": "Tabs - SevenUI",
+        "ogTitle": "Tabs - SevenUI",
+        "ogDescription": "A set of layered sections of content — known as tab panels — that display one panel at a time, built on the Base UI Tabs primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/tabs.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Tabs",
+        "ldName": "Tabs",
+        "breadcrumb": 3,
+        "title": "Tabs — SevenUI",
+        "ogTitle": "Tabs — SevenUI",
+        "ogDescription": "A set of layered sections of content — known as tab panels — that display one panel at a time, built on the Base UI Tabs primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/tabs.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/textarea",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Textarea",
+        "ldName": "Textarea",
+        "breadcrumb": null,
+        "title": "Textarea - SevenUI",
+        "ogTitle": "Textarea - SevenUI",
+        "ogDescription": "Displays a multi-line text input field.",
+        "ogImage": "https://sevenui.dev/og/docs/components/textarea.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Textarea",
+        "ldName": "Textarea",
+        "breadcrumb": 3,
+        "title": "Textarea — SevenUI",
+        "ogTitle": "Textarea — SevenUI",
+        "ogDescription": "Displays a multi-line text input field.",
+        "ogImage": "https://sevenui.dev/og/docs/components/textarea.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/toast",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Toast",
+        "ldName": "Toast",
+        "breadcrumb": null,
+        "title": "Toast - SevenUI",
+        "ogTitle": "Toast - SevenUI",
+        "ogDescription": "Stacked, swipe-dismissable notifications driven by the Base UI toast manager.",
+        "ogImage": "https://sevenui.dev/og/docs/components/toast.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Toast",
+        "ldName": "Toast",
+        "breadcrumb": 3,
+        "title": "Toast — SevenUI",
+        "ogTitle": "Toast — SevenUI",
+        "ogDescription": "Stacked, swipe-dismissable notifications driven by the Base UI toast manager.",
+        "ogImage": "https://sevenui.dev/og/docs/components/toast.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/toggle",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Toggle",
+        "ldName": "Toggle",
+        "breadcrumb": null,
+        "title": "Toggle - SevenUI",
+        "ogTitle": "Toggle - SevenUI",
+        "ogDescription": "Displays a toggle built on the Base UI Toggle primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/toggle.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Toggle",
+        "ldName": "Toggle",
+        "breadcrumb": 3,
+        "title": "Toggle — SevenUI",
+        "ogTitle": "Toggle — SevenUI",
+        "ogDescription": "Displays a toggle built on the Base UI Toggle primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/toggle.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/toggle-group",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Toggle Group",
+        "ldName": "Toggle Group",
+        "breadcrumb": null,
+        "title": "Toggle Group - SevenUI",
+        "ogTitle": "Toggle Group - SevenUI",
+        "ogDescription": "Displays a toggle group built on the Base UI Toggle Group primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/toggle-group.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Toggle Group",
+        "ldName": "Toggle Group",
+        "breadcrumb": 3,
+        "title": "Toggle Group — SevenUI",
+        "ogTitle": "Toggle Group — SevenUI",
+        "ogDescription": "Displays a toggle group built on the Base UI Toggle Group primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/toggle-group.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/toolbar",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Toolbar",
+        "ldName": "Toolbar",
+        "breadcrumb": null,
+        "title": "Toolbar - SevenUI",
+        "ogTitle": "Toolbar - SevenUI",
+        "ogDescription": "A container for grouping a set of controls, such as buttons, toggle groups, or links, built on the Base UI Toolbar primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/toolbar.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Toolbar",
+        "ldName": "Toolbar",
+        "breadcrumb": 3,
+        "title": "Toolbar — SevenUI",
+        "ogTitle": "Toolbar — SevenUI",
+        "ogDescription": "A container for grouping a set of controls, such as buttons, toggle groups, or links, built on the Base UI Toolbar primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/toolbar.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/components/tooltip",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Tooltip",
+        "ldName": "Tooltip",
+        "breadcrumb": null,
+        "title": "Tooltip - SevenUI",
+        "ogTitle": "Tooltip - SevenUI",
+        "ogDescription": "A popup that displays information related to an element when hovered or focused, built on the Base UI Tooltip primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/tooltip.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 1,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Tooltip",
+        "ldName": "Tooltip",
+        "breadcrumb": 3,
+        "title": "Tooltip — SevenUI",
+        "ogTitle": "Tooltip — SevenUI",
+        "ogDescription": "A popup that displays information related to an element when hovered or focused, built on the Base UI Tooltip primitive.",
+        "ogImage": "https://sevenui.dev/og/docs/components/tooltip.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/installation",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Installation",
+        "ldName": "Installation",
+        "breadcrumb": null,
+        "title": "Installation - SevenUI",
+        "ogTitle": "Installation - SevenUI",
+        "ogDescription": "Configure the SevenUI registry in your project.",
+        "ogImage": "https://sevenui.dev/og/docs/installation.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Installation",
+        "ldName": "Installation",
+        "breadcrumb": 2,
+        "title": "Installation — SevenUI",
+        "ogTitle": "Installation — SevenUI",
+        "ogDescription": "Configure the SevenUI registry in your project.",
+        "ogImage": "https://sevenui.dev/og/docs/installation.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/docs/theming",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Theming",
+        "ldName": "Theming",
+        "breadcrumb": null,
+        "title": "Theming - SevenUI",
+        "ogTitle": "Theming - SevenUI",
+        "ogDescription": "SevenUI primitives follow your shadcn theme.",
+        "ogImage": "https://sevenui.dev/og/docs/theming.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle",
+          "BreadcrumbList"
+        ],
+        "headline": "Theming",
+        "ldName": "Theming",
+        "breadcrumb": 2,
+        "title": "Theming — SevenUI",
+        "ogTitle": "Theming — SevenUI",
+        "ogDescription": "SevenUI primitives follow your shadcn theme.",
+        "ogImage": "https://sevenui.dev/og/docs/theming.png",
+        "ariaCurrent": 4,
+        "detailsOpen": 0,
+        "detailsTotal": 3
+      }
+    },
+    {
+      "route": "/privacy",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Privacy Policy — SevenUI",
+        "ldName": "Privacy Policy — SevenUI",
+        "breadcrumb": null,
+        "title": "Privacy Policy — SevenUI",
+        "ogTitle": "Privacy Policy — SevenUI",
+        "ogDescription": "What personal data SevenUI collects, who processes it, and how to exercise your rights.",
+        "ogImage": "https://sevenui.dev/og/privacy.png",
+        "ariaCurrent": 0,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Privacy Policy",
+        "ldName": "Privacy Policy",
+        "breadcrumb": null,
+        "title": "Privacy Policy — SevenUI",
+        "ogTitle": "Privacy Policy — SevenUI",
+        "ogDescription": "What personal data SevenUI collects, who processes it, and how to exercise your rights.",
+        "ogImage": "https://sevenui.dev/og/privacy.png",
+        "ariaCurrent": 0,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      }
+    },
+    {
+      "route": "/pro",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Pro — SevenUI",
+        "ldName": "Pro — SevenUI",
+        "breadcrumb": null,
+        "title": "Pro — SevenUI",
+        "ogTitle": "Pro — SevenUI",
+        "ogDescription": "Pre-order SevenUI Pro for $99 lifetime — the price rises to $249 once the Pro blocks catalog launches.",
+        "ogImage": "https://sevenui.dev/og/pro.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Pro",
+        "ldName": "Pro",
+        "breadcrumb": null,
+        "title": "Pro — SevenUI",
+        "ogTitle": "Pro — SevenUI",
+        "ogDescription": "Pre-order SevenUI Pro for $99 lifetime — the price rises to $249 once the Pro blocks catalog launches.",
+        "ogImage": "https://sevenui.dev/og/pro.png",
+        "ariaCurrent": 2,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      }
+    },
+    {
+      "route": "/terms",
+      "prod": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Terms of Service — SevenUI",
+        "ldName": "Terms of Service — SevenUI",
+        "breadcrumb": null,
+        "title": "Terms of Service — SevenUI",
+        "ogTitle": "Terms of Service — SevenUI",
+        "ogDescription": "The terms that govern your use of the SevenUI website, the free component registry, and SevenUI Pro.",
+        "ogImage": "https://sevenui.dev/og/terms.png",
+        "ariaCurrent": 0,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      },
+      "ours": {
+        "ldBlocks": 1,
+        "ldTypes": [
+          "WebSite",
+          "TechArticle"
+        ],
+        "headline": "Terms of Service",
+        "ldName": "Terms of Service",
+        "breadcrumb": null,
+        "title": "Terms of Service — SevenUI",
+        "ogTitle": "Terms of Service — SevenUI",
+        "ogDescription": "The terms that govern your use of the SevenUI website, the free component registry, and SevenUI Pro.",
+        "ogImage": "https://sevenui.dev/og/terms.png",
+        "ariaCurrent": 0,
+        "detailsOpen": 0,
+        "detailsTotal": 0
+      }
+    }
+  ]
+}

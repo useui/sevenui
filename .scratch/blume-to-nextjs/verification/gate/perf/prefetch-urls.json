@@ -1,0 +1,977 @@
+{
+  "geo": {
+    "vh": 900,
+    "total": 77,
+    "cells": 75,
+    "firstCellTop": 15.5,
+    "lastCellTop": 3207.28125
+  },
+  "reqs": [
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/",
+      "t": "document",
+      "b": 20649,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/3a_0i4oq2qoap.css",
+      "t": "stylesheet",
+      "b": 1310,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/media/99e609270109b47d-s.p.1dgcou5jor5q_.woff2",
+      "t": "font",
+      "b": 10304,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/media/83afe278b6a6bb3c-s.p.45535valc9rzk.woff2",
+      "t": "font",
+      "b": 48697,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/2_pgv_q9qwga4.css",
+      "t": "stylesheet",
+      "b": 35830,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/3phyqvq2uv9jm.js",
+      "t": "script",
+      "b": 2703,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/3mw801_d07na_.js",
+      "t": "script",
+      "b": 8700,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/1g82td_lzail5.js",
+      "t": "script",
+      "b": 10073,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/28w5isrdm5eb7.js",
+      "t": "script",
+      "b": 8278,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/20dgmysdhzghr.js",
+      "t": "script",
+      "b": 12305,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/0o5wgr-50do0h.js",
+      "t": "script",
+      "b": 73188,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/2n1dshujrul64.js",
+      "t": "script",
+      "b": 8398,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/0jfaharftgda2.js",
+      "t": "script",
+      "b": 9503,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/2ypxpuvnljhl4.js",
+      "t": "script",
+      "b": 14881,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/2cuz6pv7pfazp.js",
+      "t": "script",
+      "b": 12783,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/3a2syh0r1r_k5.js",
+      "t": "script",
+      "b": 12468,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/0ae0dmfj64g7t.js",
+      "t": "script",
+      "b": 53017,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/0k1okkm49odi_.js",
+      "t": "script",
+      "b": 9420,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/1y8o5wef6opsg.js",
+      "t": "script",
+      "b": 9957,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/0xi6macs-1mx8.js",
+      "t": "script",
+      "b": 10097,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/3r1ldl-oipjeh.js",
+      "t": "script",
+      "b": 16049,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/turbopack-0_px56pqd0ynk.js",
+      "t": "script",
+      "b": 4730,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/1uzkzp8a83fmf.js",
+      "t": "script",
+      "b": 45081,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://www.googletagmanager.com/gtag/js?id=G-8702Z28SMN",
+      "t": "script",
+      "b": 175863,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://vercel.live/_next-live/feedback/feedback.js",
+      "t": "script",
+      "b": 157,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/accordion?_rsc=5CB68i4pnAekjehf",
+      "t": "fetch",
+      "b": 1097,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs?_rsc=5CB68i4pnAekjehf",
+      "t": "fetch",
+      "b": 884,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/?_rsc=5CB68i4pnAekjehf",
+      "t": "fetch",
+      "b": 768,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/components?_rsc=5CB68i4pnAekjehf",
+      "t": "fetch",
+      "b": 783,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/blocks?_rsc=5CB68i4pnAekjehf",
+      "t": "fetch",
+      "b": 785,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/pro?_rsc=5CB68i4pnAekjehf",
+      "t": "fetch",
+      "b": 772,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/account?_rsc=5CB68i4pnAekjehf",
+      "t": "fetch",
+      "b": 781,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/?_rsc=8nTjltbQWvg6NcbE",
+      "t": "fetch",
+      "b": 8015,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://github.com/shadcn.png",
+      "t": "image",
+      "b": 0,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs?_rsc=3eqErdnzE3xIvvRG",
+      "t": "fetch",
+      "b": 9094,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 4379,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/accordion?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 8519,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/components?_rsc=JU1qgMgMd6A65BKe",
+      "t": "fetch",
+      "b": 3256,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/1an3c9j6uf0sa.js",
+      "t": "script",
+      "b": 7180,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/2sdo9ylua70io.js",
+      "t": "script",
+      "b": 714,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/3caepgx6c7v28.js",
+      "t": "script",
+      "b": 8226,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/24tu271g_j9q_.js",
+      "t": "script",
+      "b": 11222,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/055jr93nx-g96.js",
+      "t": "script",
+      "b": 9313,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/3__34c-_gtfuu.js",
+      "t": "script",
+      "b": 15135,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/3gtl9auartzxl.js",
+      "t": "script",
+      "b": 13264,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/156i2a68nlbjp.js",
+      "t": "script",
+      "b": 8628,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/0si_iv8g0p1yn.js",
+      "t": "script",
+      "b": 11823,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/1wj22cocy5o49.js",
+      "t": "script",
+      "b": 9995,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/3zrc0isgj_82h.js",
+      "t": "script",
+      "b": 10025,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/2lmhdpbp1n368.js",
+      "t": "script",
+      "b": 12912,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/3z_mwfvwtwc1i.js",
+      "t": "script",
+      "b": 13522,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/184r9vuumndis.js",
+      "t": "script",
+      "b": 17632,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/2sp_dsth7ck0c.js",
+      "t": "script",
+      "b": 11345,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/12ckpiwa-eaip.js",
+      "t": "script",
+      "b": 112831,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/2t1n9qxlr7qne.js",
+      "t": "script",
+      "b": 114069,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/blocks?_rsc=K9AWk0busDFM7CKT",
+      "t": "fetch",
+      "b": 4895,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/0_36gyhb67w1-.js",
+      "t": "script",
+      "b": 22754,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/blocks?_rsc=zmDxa2ySpjHaSFUa",
+      "t": "fetch",
+      "b": 3757,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/pro?_rsc=556w5mIVdIfZmvAq",
+      "t": "fetch",
+      "b": 6263,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/20835fabat5rc.js",
+      "t": "script",
+      "b": 542,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/2k3st0xhgiw6m.js",
+      "t": "script",
+      "b": 11049,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/0ngvqr_-wfj85.js",
+      "t": "script",
+      "b": 14328,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/43foqg-ssc07h.js",
+      "t": "script",
+      "b": 1107,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/0wrrnjr66057i.js",
+      "t": "script",
+      "b": 10231,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://avatars.githubusercontent.com/u/124599?v=4",
+      "t": "image",
+      "b": 31623,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/account?_rsc=EWRniEF_oF2O1Qut",
+      "t": "fetch",
+      "b": 3874,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/_next/static/immutable/chunks/36s4apjho9rcd.js",
+      "t": "script",
+      "b": 3411,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/badge?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6247,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/label?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 5236,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/button?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6491,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/kbd?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 5736,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/input-group?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7228,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/item?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7325,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/native-select?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6086,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/empty?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6175,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/message?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 5815,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/message-scroller?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7955,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/bubble?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6275,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/attachment?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7214,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/questionnaire?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 8316,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/marker?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 5720,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/direction?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 5597,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/sidebar?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 9825,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/calendar?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6030,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/resizable?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6178,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/carousel?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6178,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/chart?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7076,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/collapsible?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7104,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/button-group?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6296,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/scroll-area?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6824,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/meter?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 5792,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/placeholder.svg",
+      "t": "image",
+      "b": 1135,
+      "pf": false,
+      "rsc": false
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/toolbar?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7592,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/navigation-menu?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6925,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/command?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 9413,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/dropdown-menu?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7735,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/menubar?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7085,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/context-menu?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 8377,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/toast?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6989,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/popover?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6526,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/tabs?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 8165,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/hover-card?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6260,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/dialog?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 8023,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/alert-dialog?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7163,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/sheet?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7332,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/drawer?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7587,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/field?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 9899,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/table?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 5996,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/slider?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6141,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/select?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7066,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/combobox?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7829,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/terms?_rsc=5CB68i4pnAekjehf",
+      "t": "fetch",
+      "b": 785,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/privacy?_rsc=5CB68i4pnAekjehf",
+      "t": "fetch",
+      "b": 780,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/checkbox?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6405,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/switch?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 5327,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/terms?_rsc=u9R9pMrlguO-Ruom",
+      "t": "fetch",
+      "b": 7833,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/privacy?_rsc=HrEtqPkwiCQvqKeY",
+      "t": "fetch",
+      "b": 7702,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/theming?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 4260,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/input?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6125,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/installation?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 5049,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/radio-group?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7273,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/form?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6048,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/toggle?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 5646,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/toggle-group?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6602,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/number-field?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7024,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/tooltip?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6032,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/input-otp?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 7046,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/alert?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 5839,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/avatar?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6063,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/separator?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 4823,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/skeleton?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 4390,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/spinner?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 4841,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/aspect-ratio?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 4850,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/textarea?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 5702,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/breadcrumb?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 5868,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/pagination?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 6693,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/card?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 9423,
+      "pf": true,
+      "rsc": true
+    },
+    {
+      "u": "https://sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app/docs/components/progress?_rsc=4mwbXHZ0ilve9GNe",
+      "t": "fetch",
+      "b": 5305,
+      "pf": true,
+      "rsc": true
+    }
+  ]
+}
