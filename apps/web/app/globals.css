@@ -196,6 +196,89 @@
     }
   }
 
+  /* §8.3 entry 4 — the bare `h1`-`h6` display-font + `-0.05em` rule. It was
+     declared NOT to port (§7.2 d), on the premise that "the chrome's
+     headings carry their own classes". Task 11.1e measured that premise and
+     it is false: 7 authored chrome headings carry no `tracking-*`
+     (`app/page.tsx` ×2, `components/landing-showcase.tsx` ×2,
+     `app/not-found.tsx`, `app/components/page.tsx`,
+     `components/mdx/primitive-index.tsx`), and the `/components` gallery
+     additionally renders REGISTRY components that emit their own headings
+     (`accordion`'s trigger is an `h3`), which no class list in this app can
+     reach. Production applies `-0.05em` to all of them; without this rule
+     every one of them rendered at `normal`. Counted off the built pages
+     rather than transcribed: `/` has 18 headings and all 14 of its `h3`s
+     were affected; `/components` has 11 and all 10 of its `h2`s;
+     `/components/accordion` has 19 (1 `h1` + 4 `h2` + 14 `h3`) and all 14
+     `h3`s — every one of them an accordion trigger inside a preview pane;
+     `/components/button` has 6 and 1; the 404 page has 1 and 1 (159.05px
+     wide live, 175.84px here). And so on for every future heading that
+     forgets the class. Restoring the rule is the only fix that covers
+     the registry-rendered ones. §7.2 (d) and §8.3 are another agent's files;
+     this contradiction is reported in task-11.1e-report.md rather than
+     amended there.
+
+     `@layer base`, exactly as Blume declared it, so any `tracking-*` utility
+     still wins: the hero's `tracking-tight` stays -0.025em on both sides.
+     `:is()` and `:where()` both keep the whole selector at (0,0,1) — the
+     specificity of the bare `h1` it replaces — so `.legal h1`'s own
+     `letter-spacing` and every utility keep winning as they do live.
+
+     The `:not()` is §7.2 (d)'s real content, kept: a demo's own subtree must
+     not be reached by the chrome's element rules.
+
+     ITS REACH IS DOM ANCESTRY, AND PORTALED OVERLAY CONTENT IS OUTSIDE IT.
+     §7.2 itself records that every overlay primitive portals to
+     `document.body` — that is the measured fact containment rests on — so
+     when a demo opens a Dialog/Sheet/Drawer/Popover, the panel is a child of
+     `<body>`, not of the `[data-sevenui-example]` box and not even of the
+     `<article>`. No ancestry selector written here can exclude it, and this
+     one does not: measured on `/docs/components/dialog`, the portaled
+     `<h2>` "Edit profile" (Base UI's own default element for
+     `Dialog.Title`, whose class list — `text-base leading-none font-medium`
+     — carries no `tracking-*`) computes `-0.8px` here against `normal` in
+     production's frame, where the portal landed in the frame's own `<body>`
+     and the frame loaded no stylesheet.
+
+     That is ACCEPTED, not overlooked. It is cosmetic, it is confined to
+     overlay panels opened from a docs demo, and chasing it would mean
+     either a marker class on portaled content or a JS-set attribute — new
+     machinery, which Stage 11 does not build. What this comment must not do
+     is claim a reach the selector does not have: the guarantee is "a demo's
+     in-tree subtree", not "everything a demo renders".
+
+     The selector names `article
+     [data-sevenui-example] *` and not the bare `[data-sevenui-example] *`
+     because the two preview surfaces differ IN PRODUCTION and the parity
+     bar follows production per surface:
+
+       - docs demos are iframes live, and the frame never loads Blume's
+         entry, so `separator`/`scroll-area`/`collapsible`'s `<h4>`s measure
+         `letter-spacing: normal` there (verified inside the live frames).
+         They are the only `[data-sevenui-example]` inside an `<article>`,
+         so this `:not()` is exactly them.
+       - the `/components` gallery renders INLINE live (`data-example-card`,
+         no frame, no `[data-blume-example]`), so its preview content does
+         get the rule: `/components/button`'s "Ready to get started?" `<h3>`
+         measures -0.9px live. It is inside a `[data-sevenui-example]` here
+         only because Task 4.2 converged the two surfaces on one
+         `<PreviewPane>` — a port-side detail that must not change what the
+         page renders.
+
+     `article` is a bare element selector, and this app now has three
+     `<article>`s (docs page, `components/legal-page.tsx`,
+     `components/blocks/block-card.tsx`) rather than the one the
+     `article > :last-child` rule below still claims. Only the docs article
+     ever contains a `[data-sevenui-example]` — legal pages have no demos and
+     a block card's preview is a cross-origin iframe — so the selector picks
+     out the docs demos today. If a demo is ever mounted inside another
+     `<article>`, this comment is the flag that the discriminator has to
+     become an explicit attribute. */
+  :is(h1, h2, h3, h4, h5, h6):not(:where(article [data-sevenui-example] *)) {
+    font-family: var(--font-display);
+    letter-spacing: -0.05em;
+  }
+
   /* §17.6 #14 — declared as var(--foreground), not Blume's own accent
      token, which resolved to oklch(0.145 0 0) light / oklch(0.96 0 0) dark —
      that is --foreground to within 0.025 L; blocks-theme-dock already
@@ -275,8 +358,37 @@ article :where(kbd):not(:where([data-sevenui-example], [data-sevenui-example] *)
    on the `p`/`li`/`td` element overrides only — verified by grepping
    app/docs/[[...slug]]/page.tsx and app/layout.tsx for `text-sm`,
    `leading-`, `text-muted-foreground`: neither the bare `<article>` nor
-   any of its ancestors carries one). */
-[data-sevenui-example] {
+   any of its ancestors carries one).
+
+   SCOPED TO `article` — i.e. to the docs demos only (task 11.1e, F2). This
+   rule exists to replace an iframe `<body>`, so it belongs exactly where
+   there used to be an iframe. The `/components` gallery never had one: live
+   it is plain inline markup inside the same pane (`data-example-card`, an
+   `<astro-island display:contents>`, no `[data-blume-example]` anywhere in
+   its HTML), so its preview content inherits the page's own typographic
+   root — and `line-height: normal` here was overriding production's
+   inherited 24px on 20 headings of `/components/accordion` alone. The other
+   five declarations were inert on that surface (the gallery already
+   inherits 1rem / `--foreground` / `--font-sans` / `normal` tracking from
+   `<body>`, and the pane above already paints `bg-background`), so
+   `line-height` was the only one doing damage — but the whole block moves,
+   because the whole block's justification is the frame that surface never
+   had.
+
+   Rule 1 above deliberately does NOT move with it, and that is measured,
+   not assumed. Scoping rule 1 to `article` as well was built and measured:
+   32 geometry differences appeared against production across the ten
+   gallery pages — `/components/card`'s demos collapsing 320px -> 196.83px
+   and 384px -> 180.13px, with their panes growing 20-37px taller. That is
+   the exact "64 `w-full` demos collapse to content width" failure rule 1
+   was written to prevent. The reason it is needed on BOTH surfaces is
+   structural: production's gallery has `display: contents` between the pane
+   and the demo, so the demo itself is the flex item; this port has a real
+   wrapper div there, and rule 1's `display: grid; width: 100%` is what
+   makes that wrapper transparent to layout the same way. With it in place
+   the two origins agree on all 80 demo roots and all 20 panes at both
+   widths, to the hundredth of a pixel. */
+article [data-sevenui-example] {
   font-size: 1rem;
   line-height: normal;
   color: var(--foreground);

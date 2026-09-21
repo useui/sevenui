@@ -19,7 +19,9 @@ function cx(...values: Array<string | false | null | undefined>): string {
 // muted-foreground) is redistributed onto `p`, `li` and `td` directly
 // instead of a container rule.
 //
-// Absent from all 68 corpus files, and therefore absent from this map on
+// Absent from every corpus file (69 `.mdx`, not §6's 68 — counted, and zero
+// of them contains a `# ` heading or a literal `<h1>`), and therefore absent
+// from this map on
 // purpose: h1, h4-h6, blockquote, hr, ordered lists, images, em,
 // strikethrough, task lists, HTML comments. lib/docs/elements.ts asserts
 // this at build time so a future file introducing one of them is a build
@@ -54,11 +56,46 @@ function withHeadingAnchor(children: React.ReactNode): React.ReactNode {
   });
 }
 
+// The size step at 640px is production's, and it was missing here until task
+// 11.1e measured the whole responsive ladder rather than the one width the
+// review matrix happened to look at. Live, the docs `h2` is
+//
+//   .prose :where(h2)            { margin-top: 3rem; font-size: 1.875rem; line-height: 1.2 }
+//   .prose :where(h2)            { margin-bottom: 1em }   <- Typography's, not Blume's
+//   @media (width <= 640px) { .prose :where(h2) { font-size: 1.625rem } }
+//
+// so at 390 it renders 26px/31.2px with a 26px bottom margin, where a flat
+// `text-3xl` with a hardcoded 30px bottom margin rendered 30px/36px/30px on
+// all 69 routes. Three corrections, one per fact:
+// `text-[1.625rem] sm:text-3xl` is the step;
+// `leading-[1.2]` is production's own declaration, which a flat `text-3xl`
+// only reproduced by the coincidence that Tailwind pairs `text-3xl` with
+// 36/30 = 1.2 (an arbitrary `text-[1.625rem]` has no such pairing, so the
+// leading has to be said out loud); and `mb-[1em]` is why the bottom margin
+// tracked the font size live while a hardcoded 30px could not.
+//
+// `mt-12` does NOT gain a step: production's `margin-top` is `3rem`, a rem,
+// so it stays 48px at both widths — measured, both origins.
+//
+// The 640px boundary carries the same single-width inexactness the docs `h1`
+// does, from the same cause: production's `max-width: 640px` and Tailwind's
+// `sm:`/`min-width: 640px` are both inclusive at 640, so both match there.
+// Measured: 639 agree, 641 agree, and at exactly 640 live gives 26px where
+// this gives 30px. That one viewport width, and nowhere else.
+//
+// `h3` was checked the same way and needs nothing: production gives it no
+// media step at all (`font-size: 1.25rem; line-height: 1.35`, with the
+// plugin's `1.6em`/`0.6em` margins), and because its font-size never
+// changes, `mt-8 mb-3` are exactly those ems at every width — verified equal
+// on both origins at 1440 and 390. `h4`-`h6` are absent from every corpus
+// file (§6, whose count of 68 is one short of the 69 `.mdx` actually on
+// disk — the absence itself was re-verified) and have no override to
+// correct.
 function H2({ className, children, ...props }: React.ComponentPropsWithoutRef<"h2">) {
   return (
     <h2
       className={cx(
-        "mt-12 mb-[30px] font-display text-3xl font-medium tracking-tighter text-foreground break-words first:mt-0",
+        "mt-12 mb-[1em] font-display text-[1.625rem] leading-[1.2] font-medium tracking-tighter text-foreground break-words first:mt-0 sm:text-3xl",
         className,
       )}
       {...props}
@@ -77,7 +114,7 @@ function H2({ className, children, ...props }: React.ComponentPropsWithoutRef<"h
 // reproduces that sibling-combinator rule instead of a flat value, and is
 // deliberately not left to margin collapsing — a collapsed `p`/`mb-4` +
 // `h3`/`mt-8` would land on 32px after an `h2` where live gives 30px
-// (`h2`'s own `mb-[30px]`), since collapsing takes the larger of the two
+// (`h2`'s own 30px bottom margin), since collapsing takes the larger of the two
 // margins rather than the following element's own reset.
 function H3({ className, children, ...props }: React.ComponentPropsWithoutRef<"h3">) {
   return (

@@ -219,7 +219,50 @@ export default async function DocPage({ params }: { params: Promise<Params> }) {
       <link href="/llms.txt" rel="describedby" type="text/plain" />
       <link href={`${route}.md`} rel="alternate" type="text/markdown" />
       <article className="mx-auto max-w-content">
-        <h1>{doc.title}</h1>
+        {/*
+          The docs page title. It carries its own classes because NOTHING
+          else can give it any: it is literal JSX, so `mdx-components.tsx`'s
+          element map never sees it (MDX dispatches `_components` for
+          markdown SYNTAX only), and §6's map correctly declares no `h1`
+          override because no MDX body has one — verified by scanning the
+          corpus rather than by trusting §6's count, which says 68 where
+          `find apps/web/docs -name '*.mdx'` returns 69: zero of the 69
+          contains a `# ` heading or a literal `<h1>`. With
+          `.prose` deleted (§6, §8.3) and Tailwind preflight's
+          `h1-h6 { font-size: inherit; font-weight: inherit }` in force, this
+          element rendered at the body's 16px/400 — smaller than the `<h2>`s
+          beneath it — on all 69 docs routes (task 11.1e, R1).
+
+          Every value below is production's, read off
+          https://sevenui.dev/docs/components/button with getComputedStyle at
+          1440 and 390 (task-11.1e-report.md has the table), not transcribed
+          from Blume's override file:
+
+            48px/500, line-height 1.1, margin 0 0 1rem, letter-spacing
+            -0.05em (-2.4px), overflow-wrap: break-word, display font
+            — and 36px at 390.
+
+          `text-4xl sm:text-5xl` is that responsive pair. Production writes it
+          as a flat `3rem` with `@media (width <= 640px) { 2.25rem }`. THE
+          CAUSE of the one-pixel disagreement is that the two conventions
+          are inclusive at the same number from opposite sides: production's
+          query is `max-width: 640px` and Tailwind's `sm:` is
+          `min-width: 640px`, so both match at exactly 640 and neither
+          matches "just below 641". Measured: 639 agree, 641 agree, and at
+          exactly 640 production gives 36px where this gives 48px (the `h2`
+          does the same thing, 26px vs 30px). Nothing is broken at that
+          width — it is the boundary itself. Recorded rather than papered
+          over with an arbitrary `min-[641px]:` value, which would only move
+          the disagreement to fractional widths between 640 and 641.
+
+          `tracking-tighter` is -0.05em, the same value the restored bare
+          heading rule in `globals.css` supplies — stated here too, so this
+          heading keeps production's tracking on its own, exactly as the `h2`
+          and `h3` overrides in `mdx-components.tsx` do.
+        */}
+        <h1 className="mb-4 font-display text-4xl leading-[1.1] font-medium tracking-tighter text-foreground break-words sm:text-5xl">
+          {doc.title}
+        </h1>
         <p className="my-4 text-lg text-muted-foreground">{doc.description}</p>
         <MDXContent />
       </article>
