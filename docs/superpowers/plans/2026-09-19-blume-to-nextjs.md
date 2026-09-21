@@ -12,6 +12,8 @@
 **ADR:** `docs/adr/0001-nextjs-replaces-astro-blume.md`
 **Decision record:** `.scratch/blume-to-nextjs/issues/` (20 tickets), `.scratch/blume-to-nextjs/map.md`, `.scratch/blume-to-nextjs/route-inventory.md`
 
+> Every `.scratch/` path in this plan is **local to a working checkout**. The directory is git-ignored and deliberately not published; the paths are the record of where the work was done, not links a reader of this repository can follow.
+
 ---
 
 ## Global Constraints

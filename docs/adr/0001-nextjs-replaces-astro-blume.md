@@ -20,4 +20,4 @@ Three are worth stating because a future reader would otherwise read them as mis
 
 **`data-theme` is frozen and the `localStorage` key is a cross-repo contract.** The pro previews are served same-origin through a `vercel.json` rewrite and sync theme over the native `storage` event — there is no postMessage channel. Renaming the key from `blume-theme` to `theme` therefore requires a temporary one-way mirror write until the pro repo is updated.
 
-The full design is `docs/superpowers/specs/2026-09-18-blume-to-nextjs-migration-design.md`; the decision record behind each choice is `.scratch/blume-to-nextjs/`.
+The full design is `docs/superpowers/specs/2026-09-18-blume-to-nextjs-migration-design.md`; the decision record behind each choice is `.scratch/blume-to-nextjs/`, which is kept out of the published tree and exists only in a working checkout.
