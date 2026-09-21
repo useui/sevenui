@@ -846,13 +846,13 @@ The card **stays on Geist** rather than moving to Inter, per §11.2 — when the
 
 ### 16.6 The 17 block routes get cards, and that forces the rest
 
-**Production bug, pre-existing:** the dynamic block pages ship a **404 `og:image`** — Blume's `customOgRoutes` skips any `[param]` pattern so no card is generated, while `PageLayout` emits the tag anyway. Correcting the count: **17** cards are missing, not 16 (§10 measured 3 groups / 14 categories).
+**Production bug, pre-existing:** the dynamic block pages ship a **404 `og:image`** — Blume's `customOgRoutes` skips any `[param]` pattern so no card is generated, while `PageLayout` emits the tag anyway. Correcting the count: **17** cards are missing, not 16 (§10 measured 3 groups / 14 categories) — **23 as of 2026-09-21** (4 groups / 19 categories), because the set is manifest-derived and drifts by design. The rule is what binds; §17.6 #3 carries the dated number.
 
 This is a binding constraint, not an incidental fix. §10 established that `generateStaticParams` does not re-run on revalidation and that new categories render via `dynamicParams`, so an OG route with `dynamicParams = false` would **404 the card for every newly added category — reintroducing this exact bug on a delay.**
 
 ### 16.7 Render strategy
 
-`app/og/[...slug]/route.tsx`. `generateStaticParams` enumerates the ~102 known slugs (85 today + 17 block) from the registry's three sources, reading the manifest off §10's Data Cache entry — same URL, so free. **`dynamicParams: true`** (forced by §16.6) and **`revalidate: 300`**, matching §15.7's site-wide ceiling.
+`app/og/[...slug]/route.tsx`. `generateStaticParams` enumerates the known slugs — ~102 when this was written, **109 as of 2026-09-21** — from the registry's three sources, reading the manifest off §10's Data Cache entry — same URL, so free. Those three sources were assembled once in Stage 8 as `lib/site-index.ts`'s `sitemapRoutes()`, so the route calls that rather than re-deriving them: the card set and the sitemap are the same question asked twice. **`dynamicParams: true`** (forced by §16.6) and **`revalidate: 300`**, matching §15.7's site-wide ceiling.
 
 Blume's `Cache-Control: public, max-age=31536000, immutable` is **dropped**: `immutable` on an ISR-revalidated asset is a lie, and Vercel already owns the CDN tier for the prerendered ones.
 
@@ -930,7 +930,7 @@ Every diff must be empty or appear here. This list is what separates "we fixed a
 |---|---|---|
 | 1 | `<InstallCommand>` stops leaking into per-page `.md` as raw JSX; serializes to all four package-manager commands on 68 pages, in `.md` and `llms-full.txt` | §15.3 |
 | 2 | `sitemap.xml` gains **every** `/blocks` group and category route it never listed — 17 when this row was written, **23 as of 2026-09-21**, taking the file to 109 entries; the count is manifest-derived, so the rule binds and the number is dated. Criterion becomes URL-set equality | §15.7 |
-| 3 | The 17 block pages stop declaring a 404 `og:image` — cards now exist | §16.6 |
+| 3 | Every `/blocks` group and category page stops declaring a 404 `og:image` — cards now exist for them. **17 when this row was written, 23 as of 2026-09-21** (4 group + 19 category, measured against the live manifest); the set is manifest-derived, so the rule binds and the number is dated. The original 17 was wrong in shape as well as size — 3 of them were group-level, not `[group]/[category]`, and production 404s `/og/blocks/marketing.png` exactly as it 404s `/og/blocks/marketing/hero.png` | §16.6 |
 | 4 | Five absolute `https://sevenui.dev` markdown links become root-relative, so their `href` changes. **The edit is in the MDX source, so it reaches three surfaces, not one**: the rendered HTML, `/<route>.md` (`docs.md` ×2, `docs/installation.md` ×3) and `llms-full.txt` | §4.6 |
 | 5 | `blume-heading-anchor` and `blume-table-scroll` are replaced by Tailwind utilities; no `blume-*` names survive and no new bespoke names are coined | §4.7 |
 | 6 | Sidebar **scroll position now persists** across navigations — a free consequence of layout persistence | §5 |
@@ -955,7 +955,7 @@ Every diff must be empty or appear here. This list is what separates "we fixed a
 | 25 | The feedback event's `title` prop becomes the bare page title | §11.3 |
 | 26 | One new route: `/docs/components`. **The page is authored as MDX, so it reaches four surfaces, not one**: the HTML route, its `.md` mirror (§15.1), a 69th `llms-full.txt` section (§15.5), and an `llms.txt` row under `## Primitives` (§15.4) | §11.3 |
 | 27 | `rounded-blume` (12px) becomes `rounded-lg` (10px) on four furniture elements | §8.3 |
-| 28 | The 404 `<title>` gains the suffix: **"Page not found — SevenUI"** | §11.7 |
+| 28 | The 404 `<title>` gains the suffix: **"Page not found — SevenUI"** — and its `og:title` and `twitter:title` move with it, exactly as #17 moves the docs `og:title` with the `<title>`. The rest of that head is reproduced unchanged: production declares a **reduced** set on a missing page — `og:type`, `og:site_name`, `og:title`, `og:description`, `twitter:card` = `summary` (not `summary_large_image`), `twitter:title`, `twitter:description`, with no `og:url`, no `og:image` and no canonical — correctly, since a missing page has no card to point at | §11.7 |
 | 29 | Three demos (`field-validation.tsx`, `chart-demo.tsx`, `chart-line.tsx`) gain a `"use client"` directive; their `/r/demo/*.json` content changes by one line each. **The serializer embeds the same files, so the same line also lands in two `.md` mirrors** (`chart` ×2, `field` ×1) **and in `llms-full.txt`** | §7 |
 | 30 | The site footer renders on docs pages; production has none there | §11.1 |
 | 31 | Inline demos contribute 16 headings to the outline on 5 routes, one of them with a generated id | §7 |
