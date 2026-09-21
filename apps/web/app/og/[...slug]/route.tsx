@@ -2,7 +2,9 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { notFound } from "next/navigation";
 import { ImageResponse } from "next/og";
-import { HEIGHT, OgCard, WIDTH } from "../../../lib/og/card";
+import { OgCard } from "../../../lib/og/card";
+import { HEIGHT, WIDTH } from "../../../lib/og/dimensions";
+import { routeToSlug, slugToRoute } from "../../../lib/og/path";
 import { getPageMeta } from "../../../lib/page-meta";
 import { sitemapRoutes } from "../../../lib/site-index";
 
@@ -71,40 +73,12 @@ type Params = { slug: string[] };
 // The URL contract, both directions (§16, controller addendum A1):
 // `/` -> ["index.png"]; `/docs/components/button" -> ["docs", "components",
 // "button.png"]. The ".png" extension lives on the LAST segment only, never
-// as a separate segment of its own.
-const INDEX_SLUG = "index.png";
-
-/** route -> slug segments, the shape `generateStaticParams` must return. */
-function routeToSlug(route: string): string[] {
-  if (route === "/") {
-    return [INDEX_SLUG];
-  }
-  const segments = route.slice(1).split("/");
-  segments[segments.length - 1] += ".png";
-  return segments;
-}
-
-/**
- * slug segments -> route, the exact inverse of `routeToSlug` above (the same
- * rule, run backwards, per A1). Returns `undefined` for any slug shape
- * `routeToSlug` could never have produced — an empty array, a last segment
- * with no ".png", or a last segment that is ONLY ".png" — rather than
- * guessing at a route for a request nothing enumerated.
- */
-function slugToRoute(slug: string[]): string | undefined {
-  if (slug.length === 1 && slug[0] === INDEX_SLUG) {
-    return "/";
-  }
-  const last = slug.at(-1);
-  if (!last || !last.endsWith(".png")) {
-    return undefined;
-  }
-  const lastSegment = last.slice(0, -".png".length);
-  if (!lastSegment) {
-    return undefined;
-  }
-  return `/${[...slug.slice(0, -1), lastSegment].join("/")}`;
-}
+// as a separate segment of its own. `routeToSlug`/`slugToRoute` themselves
+// now live in `lib/og/path.ts` (task-9.2b) — that module's header explains
+// why: `lib/metadata.tsx` needs the same route -> image-URL mapping this
+// route enumerates slugs with, and a second hand-written copy of it (which
+// is what `app/docs/[[...slug]]/page.tsx` carried before this task) is
+// exactly the kind of duplicate §16.8 exists to rule out.
 
 /**
  * The slug set IS `sitemapRoutes()` (controller addendum A1) — every route
@@ -154,11 +128,12 @@ export async function GET(_request: Request, { params }: { params: Promise<Param
     notFound();
   }
 
-  // `height`/`width` are `card.tsx`'s own exported `HEIGHT`/`WIDTH` — the
-  // same numbers the `OgCard` root div is sized to — rather than a second
-  // pair of literals here; see that file's comment on the two constants for
-  // why a mismatched pair would fail silently (a letterboxed or clipped
-  // render) instead of loudly.
+  // `height`/`width` come from `lib/og/dimensions.ts` — the same numbers the
+  // `OgCard` root div is sized to and `lib/metadata.tsx` declares as
+  // `og:image:width`/`og:image:height` — rather than a third pair of
+  // literals here; see that module's header for why a mismatched pair would
+  // fail silently (a letterboxed or clipped render, or a wrong declared box)
+  // instead of loudly.
   return new ImageResponse(<OgCard description={meta.description} title={meta.title} />, {
     fonts: [
       { data: geistRegular, name: "Geist", style: "normal", weight: 400 },

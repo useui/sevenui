@@ -13,7 +13,7 @@
 // this port's structure, not new work here.
 import type { Metadata } from "next";
 import Link from "next/link";
-import { pageTitle } from "../lib/site";
+import { notFoundMetadata } from "../lib/metadata";
 
 // Blume sets `noindex` on its 404. Next 16 injects the same
 // `<meta name="robots" content="noindex">` on its own for any route resolved
@@ -28,9 +28,12 @@ import { pageTitle } from "../lib/site";
 // suffix is intended diff #28 (§17.6): the 404 sat outside the 85-route
 // audit that set §15.8's "bare landing page only" exception, but a rule with
 // an exceptions list stops being a rule.
-export const metadata: Metadata = {
-  title: pageTitle("Page not found"),
-};
+//
+// `notFoundMetadata()` (task-9.2b) reproduces production's reduced,
+// image-less `og:*`/`twitter:*` set for a missing page — measured on
+// `https://sevenui.dev/not-a-real-page`, see `lib/metadata.tsx` for the exact
+// seven tags and why there are only seven.
+export const metadata: Metadata = notFoundMetadata();
 
 export default function NotFound() {
   return (

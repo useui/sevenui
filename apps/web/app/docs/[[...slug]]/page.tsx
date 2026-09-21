@@ -4,8 +4,8 @@ import { DocsFeedback } from "../../../components/docs/feedback";
 import { DocsPagination } from "../../../components/docs/pagination";
 import { JsonLd } from "../../../components/json-ld";
 import { getDoc, getDocIndex } from "../../../lib/docs";
+import { pageMetadataOrNotFound } from "../../../lib/metadata";
 import { getPageMeta } from "../../../lib/page-meta";
-import { pageTitle } from "../../../lib/site";
 
 type Params = { slug?: string[] };
 
@@ -47,33 +47,29 @@ export async function generateStaticParams() {
 // merely unexercised today. No extra filesystem cost: getPageMeta's docs
 // branch calls the same memoized getDoc() this file also calls below.
 //
-// pageTitle() is the one place the em-dash suffix is applied (§15.8,
-// §17.6 #17): it moves <title>, og:title and og:image:alt together. <h1>
-// in the page body below reads doc.title directly (via getDoc, not
-// getPageMeta) and does NOT go through pageTitle() — verified live, every
+// `pageMetadataOrNotFound` (task-9.2b) resolves through `pageMetadata`,
+// whose call to `pageTitle()` is the one place the em-dash suffix is applied
+// (§15.8, §17.6 #17): it moves <title>, og:title and og:image:alt together.
+// <h1> in the page body below reads doc.title directly (via getDoc, not
+// getPageMeta) and does NOT go through `pageTitle()` — verified live, every
 // docs <h1> is bare.
+//
+// `pageMetadata` is also what retires this file's own
+// `` `/og${route}.png` `` — a second, hand-written spelling of the same
+// route -> image-URL mapping `app/og/[...slug]/route.tsx` already owns (see
+// `lib/og/path.ts`'s header). Before this task the two were kept in sync by
+// coincidence, not by construction; now there is exactly one function that
+// turns a route into its card's URL, and both call it.
+// No page at this route: the component below calls `notFound()` and
+// `app/docs/not-found.tsx` renders. Metadata is resolved BEFORE that
+// happens, so `pageMetadataOrNotFound` (task-9.2b) is the only place the
+// docs 404's `<title>` can be set — and without it the miss would inherit
+// the root layout's bare `SevenUI`, where every 404 on the live site reads
+// `Page not found — SevenUI`. It reproduces that reduced tag set exactly,
+// the same one `app/not-found.tsx` declares.
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const route = routeFrom(await params);
-  const meta = await getPageMeta(route);
-  // No page at this route: the component below calls `notFound()` and
-  // `app/docs/not-found.tsx` renders. Metadata is resolved from THIS function
-  // before that happens, so this branch is the only place the docs 404's
-  // `<title>` can be set — and without it the miss would inherit the root
-  // layout's bare `SevenUI`, where every 404 on the live site reads
-  // `Page not found — SevenUI`. Same string as `app/not-found.tsx`'s, through
-  // the same `pageTitle` (§15.8, intended diff #28). Nothing else is
-  // declared: Next injects the `noindex` itself for a route that resolves
-  // through a `not-found.tsx`.
-  if (!meta) return { title: pageTitle("Page not found") };
-  return {
-    title: pageTitle(meta.title),
-    description: meta.description,
-    openGraph: {
-      title: pageTitle(meta.title),
-      description: meta.description,
-      images: [{ url: `/og${route}.png`, alt: pageTitle(meta.title) }],
-    },
-  };
+  return pageMetadataOrNotFound(route);
 }
 
 export default async function DocPage({ params }: { params: Promise<Params> }) {

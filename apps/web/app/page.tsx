@@ -8,9 +8,9 @@ import LandingShowcase from "../components/landing-showcase";
 import { Logomark } from "../components/logomark";
 import { getNavTree, resolvePrimitivesHref } from "../lib/docs/nav";
 import { PACKAGE_MANAGER_RUNNERS, type PackageManager, packageManagerCommands } from "../lib/package-manager";
-import { getPageMeta } from "../lib/page-meta";
+import { pageMetadata, RootUrlTags } from "../lib/metadata";
+import { requirePageMeta } from "../lib/page-meta";
 import { installCommand } from "../lib/registry";
-import { pageTitle } from "../lib/site";
 import registry from "../../../packages/registry/registry.json";
 
 // Ported from `legacy-pages/index.astro`, class-for-class: `/` is one of the
@@ -88,18 +88,22 @@ const whyColumns = [
   },
 ];
 
-// `/` is the site's one bare `<title>` (§15.8): `getPageMeta("/")` answers
-// `{ title: site.name, … }` and `pageTitle` returns that unchanged, so the tab
-// reads `SevenUI` rather than `SevenUI — SevenUI`. Routed through the same two
-// functions every other page uses rather than hard-coding the string, so the
-// §16.8 single lookup covers this route too. No `openGraph` block: the OG
-// surface is Stage 9's, and `/` has no `/og/<route>.png` path to name today.
+// `/` is the site's one bare `<title>` (§15.8): `requirePageMeta("/", …)`
+// answers `{ title: site.name, … }` and `pageMetadata`'s call to `pageTitle`
+// returns that unchanged, so the tab reads `SevenUI` rather than
+// `SevenUI — SevenUI`. `pageMetadata` also names `/`'s own `/og/index.png`
+// card (task-9.2b) and builds the full `og:*`/`twitter:*` set every other
+// route now gets from the same function (§16.8).
+//
+// This now reads `requirePageMeta`, not a hand-written lookup-then-throw:
+// this route's shape was identical to what `requirePageMeta` already does,
+// and `lib/page-meta.ts`'s own docstring named this file as a non-adopter
+// only because it sat outside Task 4.2's file list — not because its shape
+// differs. See that docstring for the routes that DO still have a
+// principled reason to stay off it.
 export async function generateMetadata(): Promise<Metadata> {
-  const meta = await getPageMeta("/");
-  if (!meta) {
-    throw new Error('app/page.tsx: no page-meta registered for route "/"');
-  }
-  return { title: pageTitle(meta.title), description: meta.description };
+  const meta = await requirePageMeta("/", "app/page.tsx");
+  return pageMetadata("/", meta.title, meta.description);
 }
 
 export default async function Home() {
@@ -218,6 +222,15 @@ export default async function Home() {
           </div>
         </section>
       </div>
+      {/*
+        `/`'s `og:url` and canonical `<link>` — `pageMetadata` omits both
+        fields for this one route, so `RootUrlTags` (exported by
+        `lib/metadata.tsx`, which owns the full explanation of why) renders
+        them here instead. React hoists a `<meta>`/`<link>` into `<head>`
+        from wherever it renders, so its position among these siblings is
+        invisible.
+      */}
+      <RootUrlTags />
       <JsonLd route="/" />
     </>
   );

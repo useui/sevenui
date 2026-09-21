@@ -5,8 +5,7 @@ import { CategoryCard } from "../../../components/blocks/category-card";
 import { Breadcrumb, type Crumb } from "../../../components/breadcrumb";
 import { JsonLd } from "../../../components/json-ld";
 import { loadBlocksTree } from "../../../lib/blocks";
-import { getPageMeta } from "../../../lib/page-meta";
-import { pageTitle } from "../../../lib/site";
+import { pageMetadataOrNotFound } from "../../../lib/metadata";
 
 // Ported from `legacy-pages/blocks/[group]/index.astro`. The shell, the
 // category tree, the theme dock and the page singletons are
@@ -58,20 +57,16 @@ export async function generateStaticParams(): Promise<Params[]> {
 //
 // `generateMetadata` behaves the same way and must not throw: metadata is
 // resolved BEFORE the component runs, so a throw here would be a 500 that the
-// page's own `notFound()` never gets the chance to correct. A miss returns the
-// 404's title instead, the same string `app/not-found.tsx` declares and
-// through the same `pageTitle` (§15.8, intended diff #28) — this is exactly
-// the shape `app/docs/[[...slug]]/page.tsx` uses for its own miss.
+// page's own `notFound()` never gets the chance to correct. `pageMetadataOrNotFound`
+// (task-9.2b) returns the same reduced tag set `app/not-found.tsx` declares
+// on a miss — this is exactly the shape `app/docs/[[...slug]]/page.tsx` and
+// `/blocks`'s other two route files use for their own misses.
 //
 // No `requirePageMeta`: see its docstring's list of deliberate non-adopters,
 // which names these routes and why.
-//
-// No `openGraph` block, following Task 4.1: the OG surface is Stage 9's.
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { group } = await params;
-  const meta = await getPageMeta(`/blocks/${group}`);
-  if (!meta) return { title: pageTitle("Page not found") };
-  return { title: pageTitle(meta.title), description: meta.description };
+  return pageMetadataOrNotFound(`/blocks/${group}`);
 }
 
 export default async function BlocksGroupPage({ params }: { params: Promise<Params> }) {

@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ExampleCard } from "../../../components/gallery/example-card";
 import { JsonLd } from "../../../components/json-ld";
 import { GALLERY_SLUGS, galleryComponent, galleryExamples } from "../../../lib/gallery";
+import { pageMetadata } from "../../../lib/metadata";
 import { requirePageMeta } from "../../../lib/page-meta";
-import { pageTitle } from "../../../lib/site";
 
 // Ported from the ten `legacy-pages/components/<slug>.astro` files, which
 // are byte-identical to one another apart from the slug (verified by
@@ -33,14 +33,17 @@ export function generateStaticParams(): Params[] {
 // production already serves — reproduced, not re-derived. Note the two
 // titles are NOT the same string: the page-meta bare title is the label on
 // its own (`Button`), which is what the `<h1>` and the JSON-LD `headline`
-// use, while the tab appends `Components` before `pageTitle` (§15.8) adds
-// the em-dash suffix.
-//
-// No `openGraph` block, following Task 4.1: the OG surface is Stage 9's.
+// use, while the tab appends `Components` before `pageMetadata` (§15.8)
+// adds the em-dash suffix. That is why `pageMetadata` (task-9.2b) takes the
+// bare title as its own parameter rather than reading `meta.title` off the
+// registry itself: this route's bare title and the registry's bare title
+// are two different strings, and only this file knows which one its own
+// `<title>`/`og:title` needs.
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { name } = await params;
-  const meta = await requirePageMeta(`/components/${name}`, "app/components/[name]/page.tsx");
-  return { title: pageTitle(`${meta.title} Components`), description: meta.description };
+  const route = `/components/${name}`;
+  const meta = await requirePageMeta(route, "app/components/[name]/page.tsx");
+  return pageMetadata(route, `${meta.title} Components`, meta.description);
 }
 
 export default async function GalleryComponentPage({ params }: { params: Promise<Params> }) {

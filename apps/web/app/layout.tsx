@@ -37,9 +37,15 @@ export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: site.name,
   description: site.description,
-  // The favicon/meta/OG/canonical block is Stage 8 and Stage 9's — this is
-  // only the one icon reference Stage 1 needs, and `/icon.svg` exists under
-  // `apps/web/public/`.
+  // The `og:*`/`twitter:*`/canonical block is task-9.2b's, and it does NOT
+  // live here: every route's own `generateMetadata` calls `lib/metadata.tsx`'s
+  // `pageMetadata`/`notFoundMetadata`, because those tags are per-page
+  // (a page's own title, description and `/og/<route>.png` card) and a value
+  // declared on the root layout would be the same wrong string on every
+  // route that does not override it. `title`/`description` here are only
+  // the root layout's OWN fallback (`/`'s values, since `/` is this site's
+  // home), inherited by anything that has not yet set its own — this stays
+  // Stage 1's one icon reference plus that fallback, nothing more.
   icons: { icon: "/icon.svg" },
 };
 
@@ -53,7 +59,10 @@ export const metadata: Metadata = {
  * nothing reads it), `syncDrawerInert()` (React renders `inert` from state),
  * `<Fonts>` (next/font above), `<WebMcp>` (§15.14 — no shipping browser
  * implements `navigator.modelContext`), and the favicon/meta/OG/canonical
- * block (Stage 8, Stage 9).
+ * block — Stage 8 covered the favicon; the `og:*`/`twitter:*`/canonical part
+ * is task-9.2b's, and lives per-page (see the `metadata` object above) rather
+ * than here, because those tags are a page's own title/description/card, not
+ * a site-wide default this file could sensibly own.
  *
  * `DrawerProvider` wraps `SiteHeader`, `main` and `SiteDrawer` (and, since
  * they're not adjacent siblings in a single JSX tree, `SiteFooter` too):

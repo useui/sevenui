@@ -6,9 +6,9 @@ import { CategoryCard } from "../../components/blocks/category-card";
 import { ProOffer } from "../../components/blocks/pro-offer";
 import { JsonLd } from "../../components/json-ld";
 import { loadBlocksTree } from "../../lib/blocks";
+import { pageMetadataOrNotFound } from "../../lib/metadata";
 import { getPageMeta } from "../../lib/page-meta";
 import { lucideIcon } from "../../lib/pro-manifest";
-import { pageTitle } from "../../lib/site";
 
 // Ported from `legacy-pages/blocks/index.astro`. Everything that page took
 // from Blume's `PageLayout` — header, theme, drawer, footer, skip link,
@@ -30,11 +30,14 @@ const ROUTE = "/blocks";
 // entry into the manifest-backed branch does not silently turn a removed
 // registration into a 500. Its two children genuinely need it.
 //
-// No `openGraph` block, following Task 4.1: the OG surface is Stage 9's.
+// `pageMetadataOrNotFound` (task-9.2b) is the shared "may miss" shape every
+// route in this stage that sits under `dynamicParams = true` uses: it
+// reproduces production's reduced 404 tag set on a miss and the full one on
+// a hit, because a lookup miss here is a user's mistyped URL, not a
+// programming error, and must resolve to the 404's metadata rather than a
+// throw.
 export async function generateMetadata(): Promise<Metadata> {
-  const meta = await getPageMeta(ROUTE);
-  if (!meta) return { title: pageTitle("Page not found") };
-  return { title: pageTitle(meta.title), description: meta.description };
+  return pageMetadataOrNotFound(ROUTE);
 }
 
 export default async function BlocksPage() {

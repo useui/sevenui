@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { AccountPanel } from "../../components/account/account-panel";
 import { JsonLd } from "../../components/json-ld";
 import { LandingRuler } from "../../components/landing-ruler";
+import { pageMetadata } from "../../lib/metadata";
 import { requirePageMeta } from "../../lib/page-meta";
-import { pageTitle } from "../../lib/site";
 
 // Ported from `legacy-pages/account.astro`. The header, drawer, footer,
 // theme provider and skip link are `app/layout.tsx`'s job (§11.1) — this
@@ -20,13 +20,12 @@ const ROUTE = "/account";
 // `/account` has been in `lib/page-meta.ts` since Task 1.7, with a recorded
 // reason its description reuses `site.description` rather than a
 // page-specific string — this page reads that entry, it does not add or
-// rewrite it. `pageTitle` applies the em-dash suffix in the one place it is
-// ever applied (§15.8, §16.8).
-//
-// No `openGraph` block, following Task 4.1: the OG surface is Stage 9's.
+// rewrite it. `pageMetadata` applies the em-dash suffix in the one place it
+// is ever applied (§15.8, §16.8) and builds the full `og:*`/`twitter:*` set
+// (task-9.2b).
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await requirePageMeta(ROUTE, "app/account/page.tsx");
-  return { title: pageTitle(meta.title), description: meta.description };
+  return pageMetadata(ROUTE, meta.title, meta.description);
 }
 
 export default function AccountPage() {

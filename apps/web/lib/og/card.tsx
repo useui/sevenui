@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { site } from "../site";
+import { HEIGHT, WIDTH } from "./dimensions";
 
 // The OG card's JSX tree, rendered by Satori inside `app/og/[...slug]/route.tsx`'s
 // `ImageResponse`. Composition, type scale and the five colour literals are
@@ -39,16 +40,11 @@ const FOOTER_FAINT = "#a3a3a3";
 // it only ever painted the fallback drawn when no logo is configured, and
 // this card always configures one. Not ported — see §16.5.
 
-// Exported so `app/og/[...slug]/route.tsx` can pass the identical numbers to
-// `ImageResponse`'s own `width`/`height` options, rather than each side
-// carrying its own copy of 1200/630. Blume kept exactly one `og/dimensions.ts`
-// shared between its card renderer and the endpoints that declared
-// `og:image:width`/`og:image:height`, for the same reason: if the card's own
-// canvas size and the response's declared size ever drifted apart, Satori
-// would silently letterbox or clip the render — no error, no failing check,
-// just a wrong-looking card nothing points at.
-export const WIDTH = 1200;
-export const HEIGHT = 630;
+// `WIDTH`/`HEIGHT` now live in `./dimensions` (task-9.2b fix round 1) — see
+// that module's header for why three consumers (this file,
+// `app/og/[...slug]/route.tsx`'s `ImageResponse`, and `lib/metadata.tsx`'s
+// `og:image:width`/`og:image:height`) import the same two numbers instead of
+// each carrying its own copy.
 const PADDING = 72;
 const MARK_SIZE = 32;
 

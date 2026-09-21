@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { JsonLd } from "../../components/json-ld";
 import { LegalPage } from "../../components/legal-page";
+import { pageMetadata } from "../../lib/metadata";
 import { requirePageMeta } from "../../lib/page-meta";
-import { pageTitle } from "../../lib/site";
 
 // Ported from `legacy-pages/privacy.astro`. Legal copy is not migration
 // territory — not a word changes below, only `class` -> `className`.
@@ -17,13 +17,12 @@ const UPDATED = "September 9, 2026";
 
 // `/privacy` has been in `lib/page-meta.ts` since Task 1.7, with its
 // description probed from the live site — this page does not add or
-// rewrite it, it reads it. `pageTitle` applies the em-dash suffix in the
-// one place it is ever applied (§15.8, §16.8).
-//
-// No `openGraph` block, following Task 4.1: the OG surface is Stage 9's.
+// rewrite it, it reads it. `pageMetadata` applies the em-dash suffix in the
+// one place it is ever applied (§15.8, §16.8) and builds the full
+// `og:*`/`twitter:*` set (task-9.2b).
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await requirePageMeta(ROUTE, "app/privacy/page.tsx");
-  return { title: pageTitle(meta.title), description: meta.description };
+  return pageMetadata(ROUTE, meta.title, meta.description);
 }
 
 export default async function PrivacyPage() {

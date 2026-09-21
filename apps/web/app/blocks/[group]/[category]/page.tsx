@@ -6,8 +6,7 @@ import { ProOffer } from "../../../../components/blocks/pro-offer";
 import { Breadcrumb, type Crumb } from "../../../../components/breadcrumb";
 import { JsonLd } from "../../../../components/json-ld";
 import { loadBlocksTree } from "../../../../lib/blocks";
-import { getPageMeta } from "../../../../lib/page-meta";
-import { pageTitle } from "../../../../lib/site";
+import { pageMetadataOrNotFound } from "../../../../lib/metadata";
 
 // Ported from `legacy-pages/blocks/[group]/[category].astro`. The shell, the
 // category tree, the theme dock, the live region, the preview queue and the
@@ -61,15 +60,13 @@ export async function generateStaticParams(): Promise<Params[]> {
 //
 // `generateMetadata` must not throw for the same reason as its sibling's:
 // metadata resolves before the component runs, so a throw is a 500 the page's
-// `notFound()` never gets to correct. A miss returns the 404 title.
+// `notFound()` never gets to correct. `pageMetadataOrNotFound` (task-9.2b)
+// returns production's reduced 404 tag set on a miss.
 //
 // No `requirePageMeta`: see its docstring's list of deliberate non-adopters.
-// No `openGraph` block, following Task 4.1: the OG surface is Stage 9's.
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { group, category } = await params;
-  const meta = await getPageMeta(`/blocks/${group}/${category}`);
-  if (!meta) return { title: pageTitle("Page not found") };
-  return { title: pageTitle(meta.title), description: meta.description };
+  return pageMetadataOrNotFound(`/blocks/${group}/${category}`);
 }
 
 export default async function BlocksCategoryPage({ params }: { params: Promise<Params> }) {

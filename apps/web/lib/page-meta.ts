@@ -198,8 +198,6 @@ export async function getPageMeta(route: string): Promise<PageMeta | undefined> 
  * Deliberately NOT adopted by these callers, and the list is part of the
  * contract rather than an accident:
  *
- *  - `app/page.tsx` has the identical shape and was simply outside Task 4.2's
- *    file list.
  *  - `app/docs/[[...slug]]/page.tsx` has a different shape on purpose: a miss
  *    there is a real 404 that must render `app/docs/not-found.tsx` with its
  *    own title, not a build failure, and its body reads

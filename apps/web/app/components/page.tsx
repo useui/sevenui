@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { JsonLd } from "../../components/json-ld";
 import { galleryComponents } from "../../lib/gallery";
+import { pageMetadata } from "../../lib/metadata";
 import { requirePageMeta } from "../../lib/page-meta";
-import { pageTitle } from "../../lib/site";
 
 // Ported from `legacy-pages/components/index.astro`. Everything that page
 // took from Blume's `PageLayout` — header, theme, drawer, footer, skip
@@ -15,15 +15,14 @@ const ROUTE = "/components";
 
 // `/components` has been in `lib/page-meta.ts` since Task 1.7, with its
 // description probed from the live site — this page does not add or rewrite
-// it, it reads it. `pageTitle` applies the em-dash suffix in the one place
-// it is ever applied (§15.8, §16.8), and unlike the 10 children below the
-// bare title is NOT suffixed with "Components": production's tab reads
+// it, it reads it. `pageMetadata` applies the em-dash suffix in the one place
+// it is ever applied (§15.8, §16.8) and builds the full `og:*`/`twitter:*`
+// set (task-9.2b) — and unlike the 10 children below the bare title passed in
+// is NOT suffixed with "Components": production's tab reads
 // `Components — SevenUI`, not `Components Components — SevenUI`.
-//
-// No `openGraph` block, following Task 4.1: the OG surface is Stage 9's.
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await requirePageMeta(ROUTE, "app/components/page.tsx");
-  return { title: pageTitle(meta.title), description: meta.description };
+  return pageMetadata(ROUTE, meta.title, meta.description);
 }
 
 export default async function ComponentsPage() {

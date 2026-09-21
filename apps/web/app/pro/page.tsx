@@ -3,8 +3,8 @@ import type { CSSProperties, ReactNode } from "react";
 import { BuyLink } from "../../components/pro/buy-link";
 import { JsonLd } from "../../components/json-ld";
 import { LandingRuler } from "../../components/landing-ruler";
+import { pageMetadata } from "../../lib/metadata";
 import { requirePageMeta } from "../../lib/page-meta";
-import { pageTitle } from "../../lib/site";
 
 // Ported from `legacy-pages/pro.astro`. The header, drawer, footer, theme
 // provider and skip link are `app/layout.tsx`'s job (§11.1) — this page
@@ -51,13 +51,12 @@ const catalog = [
 // copied from the live page's own `<meta name="description">` — this page
 // reads that entry, it does not add or rewrite it. `pro.astro`'s own local
 // `const description` was that same string, made redundant here.
-// `pageTitle` applies the em-dash suffix in the one place it is ever applied
-// (§15.8, §16.8).
-//
-// No `openGraph` block, following Task 4.1: the OG surface is Stage 9's.
+// `pageMetadata` applies the em-dash suffix in the one place it is ever
+// applied (§15.8, §16.8) and builds the full `og:*`/`twitter:*` set
+// (task-9.2b).
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await requirePageMeta(ROUTE, "app/pro/page.tsx");
-  return { title: pageTitle(meta.title), description: meta.description };
+  return pageMetadata(ROUTE, meta.title, meta.description);
 }
 
 export default function ProPage() {
