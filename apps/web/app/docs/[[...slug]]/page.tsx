@@ -61,12 +61,26 @@ export async function generateStaticParams() {
 // coincidence, not by construction; now there is exactly one function that
 // turns a route into its card's URL, and both call it.
 // No page at this route: the component below calls `notFound()` and
-// `app/docs/not-found.tsx` renders. Metadata is resolved BEFORE that
-// happens, so `pageMetadataOrNotFound` (task-9.2b) is the only place the
-// docs 404's `<title>` can be set — and without it the miss would inherit
-// the root layout's bare `SevenUI`, where every 404 on the live site reads
-// `Page not found — SevenUI`. It reproduces that reduced tag set exactly,
-// the same one `app/not-found.tsx` declares.
+// `app/docs/not-found.tsx` renders. This function's return value on that
+// branch — `pageMetadataOrNotFound`'s (task-9.2b) `notFoundMetadata()` call —
+// does NOT reach the document: task-9.4 measured `next build` of this exact
+// branch and found `/docs/not-a-primitive` and
+// `/docs/components/not-a-primitive` shipping `<title>SevenUI</title>` and
+// zero `og:*`/`twitter:*` tags, not this branch's suffixed title and seven
+// tags. Once the page component's `notFound()` fires, Next renders the
+// nearest `not-found.tsx` and reads metadata from THAT boundary (or its
+// parent layout's default, absent one) — never from this route's own
+// `generateMetadata`. The single place the docs 404's `<title>` is actually
+// set is `app/docs/not-found.tsx`'s own `metadata` export.
+//
+// The branch stays anyway, unreachable or not: `pageMetadataOrNotFound` is
+// the one hit-or-miss helper this file shares with all three `/blocks` route
+// files (`lib/metadata.tsx`'s docstring), and carving a miss-free path out
+// for just this route would reintroduce the per-route special-casing §16.8
+// exists to rule out, to save a call that already costs nothing extra (same
+// memoized `getPageMeta` lookup either branch takes). It also keeps this
+// function honestly total over `Metadata` rather than returning a value that
+// happens to never get used for a plausible-sounding reason.
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const route = routeFrom(await params);
   return pageMetadataOrNotFound(route);
