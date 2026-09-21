@@ -11,7 +11,7 @@
 // `.l-row` / `.l-marks` canvas rules live in `app/globals.css`.
 //
 // No interactivity and no hooks, so it stays a server component: the 90
-// tick labels are static markup and never need to reach the client bundle.
+// tick labels are constant markup and never need to reach the client bundle.
 const marks = Array.from({ length: 90 }, (_, i) => i * 100);
 
 export function LandingRuler() {

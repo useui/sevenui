@@ -11,9 +11,10 @@ const workspaceRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: workspaceRoot,
-  // `output: "export"` is OUT (§3): static export cannot do ISR, which is the
-  // entire point of this migration. Everything except the three blocks routes,
-  // sitemap.xml, llms.txt and the OG route is statically generated anyway.
+  // `output: "export"` is OUT (§3): a fully exported site cannot do ISR,
+  // which is the entire point of this migration. Everything except the three
+  // blocks routes, sitemap.xml, llms.txt and the OG route is statically
+  // generated anyway.
   //
   // Rewrites live in vercel.json, which stays their single owner (§3). All
   // five targets are external, so nothing needs to compose with Next routing,

@@ -37,7 +37,7 @@
 // lookup belongs to the route, not to the wall.
 //
 // A server component: `registry.json` is read at build time and the wall is
-// 66 static anchors, none of which needs to reach the client bundle.
+// 66 prerendered anchors, none of which needs to reach the client bundle.
 import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
 import registry from "../../../packages/registry/registry.json";

@@ -16,7 +16,8 @@ import { sitemapRoutes } from "../../../lib/site-index";
 // catch-all route is the only shape that reproduces the frozen pattern,
 // `/og/index.png` included — see §16 and the plan's Task 9.1 Step 1 for the
 // two rejected alternatives (a per-page file convention, and a second
-// dynamic route living beside a static catch-all) and why each was rejected.
+// dynamic route living beside a prerendered catch-all) and why each was
+// rejected.
 //
 // The runtime is Node (the default — `edge` is deprecated in Next 16 and
 // buys nothing here), which is also why the two font files below are read
@@ -111,7 +112,7 @@ export async function generateStaticParams(): Promise<Params[]> {
  * it was handed would turn `/og/<anything>.png` into an image generator
  * hosted on this domain, under this logomark, saying whatever the caller's
  * URL asked it to say — a real abuse surface for a social preview card. It
- * is also parity: a missing file 404s in today's static build.
+ * is also parity: a missing file 404s in today's prerendered build.
  *
  * No `?? site.description` fallback is added here on top of `getPageMeta`'s
  * answer (controller addendum A2): `/account`'s registered description in

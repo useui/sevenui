@@ -114,10 +114,10 @@ const CUSTOM: Record<string, PageMeta> = {
  * know which half to reach for. The one exception is `CUSTOM_ROUTES`
  * below, kept synchronous on purpose — see its own comment.
  *
- * The `import("./docs")` is dynamic, not a static top-level import, to
+ * The `import("./docs")` is dynamic, not a top-level import, to
  * avoid tying module-evaluation order to a real cycle: `./docs` (this
  * directory's `index.ts`) imports `./docs/links`, which imports
- * `CUSTOM_ROUTES` from this very file. A static import here would close
+ * `CUSTOM_ROUTES` from this very file. A top-level import here would close
  * that cycle at module-load time; ES module live bindings would very
  * likely still resolve it correctly (nothing on either side is read at
  * its own module's top level), but a dynamic import deferred until this
@@ -142,11 +142,11 @@ export async function getPageMeta(route: string): Promise<PageMeta | undefined> 
   //
   // `import("./blocks")` is dynamic for the same reason the docs branch's
   // `import("./docs")` is: it keeps a `server-only` module — and, through it,
-  // lucide-react's whole icon record — out of this file's static import graph,
-  // which `lib/docs/links.ts` reaches for its synchronous `CUSTOM_ROUTES`. It
-  // costs no extra network request: `loadProManifest`'s fetch is keyed by URL
-  // in Next's Data Cache, so by the time any page asks for its metadata the
-  // entry the route's own render made is already warm.
+  // lucide-react's whole icon record — out of this file's top-level import
+  // graph, which `lib/docs/links.ts` reaches for its synchronous
+  // `CUSTOM_ROUTES`. It costs no extra network request: `loadProManifest`'s
+  // fetch is keyed by URL in Next's Data Cache, so by the time any page asks
+  // for its metadata the entry the route's own render made is already warm.
   //
   // A miss at either level returns `undefined` rather than throwing, and that
   // is load-bearing under `dynamicParams = true` — see `requirePageMeta`'s

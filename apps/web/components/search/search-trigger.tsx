@@ -89,7 +89,7 @@ export function SearchTrigger() {
   // rewrote the same text with a script for the same reason, but here there
   // is a second one on top: the server has no platform to read, so branching
   // on it during render would be a hydration mismatch — and it would also
-  // put `Ctrl K` into the static HTML of every route, where §17.2's gate
+  // put `Ctrl K` into the prerendered HTML of every route, where §17.2's gate
   // asserts `⌘K`.
   useEffect(() => {
     if (!isApplePlatform()) setShortcut(CONTROL_SHORTCUT);
@@ -123,9 +123,9 @@ export function SearchTrigger() {
         {/*
           `grow shrink-0 basis-0` rather than `flex-1`, which is the same
           computed `flex: 1 0 0%` production ended up with once its global
-          `flex-shrink: 0` rule overrode `flex-1`'s shrink factor. Spelled as
+          rule zeroing the shrink factor overrode `flex-1`'s own. Spelled as
           three longhands so the result does not depend on which order
-          Tailwind happens to emit `flex` and `flex-shrink` in.
+          Tailwind happens to emit the shorthand and longhand utilities in.
         */}
         <span className="grow shrink-0 basis-0 text-start max-lg:hidden">{STRING_SEARCH}</span>
         <kbd className="shrink-0 font-mono text-[0.7rem] max-lg:hidden">{shortcut}</kbd>

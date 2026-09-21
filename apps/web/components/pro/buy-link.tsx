@@ -5,7 +5,7 @@ import { getClerkIfLikelySignedIn } from "../../lib/clerk";
 
 /**
  * `/pro`'s one client island (task 6.3 addendum A). Every other pixel on the
- * page is static server-rendered markup — nothing on `/pro` is gated (§12.5)
+ * page is plain server-rendered markup — nothing on `/pro` is gated (§12.5)
  * — and Clerk touches exactly one thing: it may rewrite this anchor's `href`
  * for a signed-in visitor. That is the whole reason this is a small island
  * around one link rather than the whole page becoming a client component
@@ -40,8 +40,8 @@ import { getClerkIfLikelySignedIn } from "../../lib/clerk";
  */
 export function BuyLink({ checkoutUrl }: { checkoutUrl: string }) {
   // The plain URL is the initial (and prerendered) value, so an anonymous
-  // visitor's static HTML — and a visitor whose enhancement never resolves —
-  // always carries a working, unmodified checkout link.
+  // visitor's prerendered HTML — and a visitor whose enhancement never
+  // resolves — always carries a working, unmodified checkout link.
   const [href, setHref] = useState(checkoutUrl);
 
   // One mount flag, re-armed on setup rather than only ever written by

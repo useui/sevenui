@@ -100,7 +100,7 @@ export default async function DocPage({ params }: { params: Promise<Params> }) {
   if (!doc) notFound();
 
   // Relative, literally-prefixed specifier: Turbopack builds the context
-  // module from the static prefix `../../../docs/` (this file lives at
+  // module from the literal prefix `../../../docs/` (this file lives at
   // apps/web/app/docs/[[...slug]]/page.tsx — three directories up from
   // apps/web/, then into docs/).
   //
@@ -114,7 +114,7 @@ export default async function DocPage({ params }: { params: Promise<Params> }) {
   // segment, and Turbopack's own error message named the doubled path,
   // which is itself proof it built the aliased dynamic-import context
   // fine; a path-corrected alias (`@/demos/${path}.tsx`) compiled and ran
-  // all the way to static generation. The relative form above is kept as
+  // all the way through prerendering. The relative form above is kept as
   // the choice here (consistency with the one other dynamic-import call
   // site, `component.tsx`, which reaches the same conclusion) — not
   // because the aliased form is broken under Turbopack, because it isn't.

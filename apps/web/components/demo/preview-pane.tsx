@@ -80,8 +80,8 @@ import { PRESET_SCOPE_ATTR } from "../preset-scope-attr";
  *
  * Applied as an inline `style`, not a Tailwind utility: `contain: layout
  * paint` is a single two-word value with exactly one call site, and this
- * sidesteps any question of how a `contain-[layout_paint]` arbitrary-value
- * utility tokenizes under Turbopack.
+ * sidesteps any question of how the equivalent arbitrary-value utility, with
+ * its two-word value, would tokenize under Turbopack.
  */
 export function PreviewPane({
   children,

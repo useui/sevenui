@@ -17,7 +17,7 @@ import type { GalleryComponent } from "../../lib/gallery";
  * decision is client-side, because App Router does not re-render a shared
  * layout when navigating between its children, so Astro's per-request
  * `Astro.props.active` has no equivalent. `usePathname()` resolves during
- * prerender, so the active row is in the static HTML too.
+ * prerender, so the active row is in the prerendered HTML too.
  *
  * Only the TYPE is imported from `lib/gallery.ts` — `import type` is erased
  * before any bundler sees it, so the two registry JSON files stay out of the

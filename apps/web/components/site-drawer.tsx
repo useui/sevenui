@@ -63,8 +63,8 @@ export function SiteDrawer({
   // pays for them on docs pages only.
   //
   // `usePathname()` resolves during prerender, so the suppression is
-  // server-side too — the static HTML for a docs route simply has no second
-  // drawer in it, not a hydration-time flip.
+  // server-side too — the prerendered HTML for a docs route simply has no
+  // second drawer in it, not a hydration-time flip.
   const isDocs = pathname === "/docs" || pathname.startsWith("/docs/");
 
   // Task 5.3a (§5). `/blocks` needs a drawer carrying the site tabs AND the

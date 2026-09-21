@@ -7,7 +7,7 @@ import type { Heading } from "../../lib/docs/headings";
 import { useActiveHeading } from "./use-active-heading";
 
 /**
- * The docs table of contents (§11.3), ported from
+ * The docs table-of-contents (§11.3), ported from
  * `blume/components/layout/TableOfContents.astro`. Two renderers over one data
  * source and one scroll-spy: `DocsTocMobile` is the collapsible shown above the
  * content below `xl`, `DocsTocDesktop` is the list in the sticky third grid

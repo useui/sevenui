@@ -13,11 +13,11 @@ import { requirePageMeta } from "../../lib/page-meta";
 //
 // Nothing on this page is gated (task addendum A) — the hero, the catalog
 // grid, the pricing band, the feature list and the checkout link are all
-// static server-rendered markup. Clerk touches exactly one thing, the
+// plain server-rendered markup. Clerk touches exactly one thing, the
 // checkout link's query string, and that lives entirely in
 // `components/pro/buy-link.tsx`, a small `"use client"` island. This file
-// stays a plain server component so `/pro` builds as a static route (`○`):
-// no `cookies()`, no `headers()`, no `dynamic = "force-dynamic"`.
+// stays a plain server component so `/pro` builds as a prerendered route
+// (`○`): no `cookies()`, no `headers()`, no `dynamic = "force-dynamic"`.
 
 const ROUTE = "/pro";
 

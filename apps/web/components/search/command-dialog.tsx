@@ -76,11 +76,11 @@ import {
 // `error` IS here, against the parity reference's list, which files it under
 // "not ported (dead in this deployment)". That classification was right
 // about Blume and wrong about us: Blume's `error` covered a hosted search
-// PROVIDER rejecting a query, and no provider is configured, so in a static
-// build that path could not be reached. Ours is a different path — this
-// palette fetches a static asset over the network on first open, and a
-// network fetch can fail — so the state is live even though the string's
-// old cause is gone.
+// PROVIDER rejecting a query, and no provider is configured, so in a
+// prerendered build that path could not be reached. Ours is a different
+// path — this palette fetches a prebuilt asset over the network on first
+// open, and a network fetch can fail — so the state is live even though
+// the string's old cause is gone.
 //
 // The alternative was to render a failed fetch as `No results found.`,
 // which tells the reader the docs do not contain what they searched for: a
@@ -117,7 +117,7 @@ const PILL_OFF = "border-border text-muted-foreground hover:text-foreground";
 
 const KBD_CLASS = "rounded border border-border bg-muted px-1 py-0.5 font-mono";
 
-// Production's dialog is `w-[min(62.5rem,94vw)]` in Blume's source and then
+// Production's dialog width is `min(62.5rem,94vw)` in Blume's source and then
 // forced to `min(40rem,94vw)` by `theme.css`, which also collapses the
 // two-column grid and hides the result-preview pane — three `!important`
 // rules fighting a component to make it a single-column palette. §9 calls

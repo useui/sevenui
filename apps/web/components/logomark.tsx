@@ -15,7 +15,7 @@ import type { SVGProps } from "react";
  * leaving every social card drawing the previous mark with nothing able to
  * see it (§16.8: one fact, one spelling).
  *
- * TWO static copies remain (a third, `apps/web/assets/logomark.svg`, was
+ * TWO checked-in copies remain (a third, `apps/web/assets/logomark.svg`, was
  * byte-identical to `public/logomark.svg`, had no reader of its own anywhere
  * in the repo, and was deleted along with the rest of the Blume-shaped
  * `assets/` directory in Stage 10's retirement sweep). They are listed in
@@ -36,10 +36,10 @@ import type { SVGProps } from "react";
  * match `LOGOMARK_PATHS` below character-for-character. That sameness, not
  * file-level byte identity, is what this module actually guards: the
  * geometry has exactly one source of truth here (read by this component and
- * by `lib/og/card.tsx`), and each static file carries its own independent
- * copy of it because a static asset cannot import anything. What this module
- * removed is the duplication between the two CODE paths — this component and
- * the OG card — which is the pair that could drift silently.
+ * by `lib/og/card.tsx`), and each checked-in file carries its own independent
+ * copy of it because a plain asset file cannot import anything. What this
+ * module removed is the duplication between the two CODE paths — this
+ * component and the OG card — which is the pair that could drift silently.
  *
  * The viewBox is a 64x64 square. `lib/og/card.tsx` relies on that — it sizes
  * the mark without aspect-ratio arithmetic — so it is exported too rather than

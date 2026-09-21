@@ -86,7 +86,7 @@ export function DocsFeedback({ title }: { title: string }) {
         flex one and letting source order in the generated sheet settle the
         tie. Swapping the whole class string instead of appending removes
         that dependency on utility ordering entirely; the pre-click markup —
-        the only state that reaches the static HTML — is byte-identical
+        the only state that reaches the prerendered HTML — is byte-identical
         either way.
       */}
       <div className={voted ? "hidden" : "flex items-center gap-2"}>

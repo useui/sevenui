@@ -24,8 +24,9 @@ import { useDrawer } from "../drawer-context";
  * This is §5's rule arriving for the third time on this site — the list is
  * built on the SERVER and handed down as plain data, and only the active-row
  * decision is client-side — and `components/gallery/nav.tsx` is the precedent
- * it follows. `usePathname()` resolves during prerender, so the active row and
- * the open disclosure are in the static HTML too, not a hydration-time flip.
+ * it follows. `usePathname()` resolves during prerender, so the active row
+ * and the open disclosure are in the prerendered HTML too, not a
+ * hydration-time flip.
  *
  * WHAT CROSSES THE CLIENT BOUNDARY. Plain data, plus one already-rendered
  * element per group. `lucideIcon()` lives behind `server-only` (it reaches

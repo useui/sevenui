@@ -55,8 +55,8 @@ const ALLOWED_JSX_TAGS = new Set(["Component", "InstallCommand", "PrimitiveIndex
 }
 
 // A JSX/MDX component tag: `<UpperCamelCase`. Plain HTML tags used in MDX
-// bodies (`<pre>`, `<div>`, …) start lowercase and are not matched — this
-// scan only cares about custom components.
+// bodies (`<pre>`, `<div>`, …) start with a lower-case letter and are not
+// matched — this scan only cares about custom components.
 const JSX_TAG = /<([A-Z][A-Za-z0-9]*)\b/gu;
 
 // Inline code spans (`` `text` ``) never span multiple lines in this

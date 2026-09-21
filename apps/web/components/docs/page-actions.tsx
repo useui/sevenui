@@ -166,7 +166,7 @@ export function DocsPageActions({ docRoutes }: { docRoutes: readonly string[] })
   const [flipUp, setFlipUp] = useState(false);
   const [copied, setCopied] = useState(false);
   // Null until mounted, which is what keeps the chat anchors href-less in the
-  // static HTML exactly as they are today — see the anchor below.
+  // prerendered HTML exactly as they are today — see the anchor below.
   const [origin, setOrigin] = useState<string | null>(null);
 
   useEffect(() => {
@@ -334,8 +334,8 @@ export function DocsPageActions({ docRoutes }: { docRoutes: readonly string[] })
                 NO `href` UNTIL MOUNTED, reproducing today's markup exactly:
                 the source ships these anchors bare and its script fills them
                 in, because the prompt depends on `location.origin`. React
-                omits an attribute whose value is `undefined`, so the static
-                HTML carries none either.
+                omits an attribute whose value is `undefined`, so the
+                prerendered HTML carries none either.
               */}
               <a
                 className={menuRowClass}

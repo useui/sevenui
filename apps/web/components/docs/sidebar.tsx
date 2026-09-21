@@ -85,7 +85,7 @@ export function DocsSidebar({ primitivesHref, tree }: { primitivesHref: string; 
   // same query across two places: `Header.astro:150`'s `resize` listener
   // (leaving `lg`+ must not leave the drawer open behind it) and
   // `drawer-inert.ts`'s `desktop.matches` guard (the same element is the
-  // static sidebar from `lg` up, so it must never be `inert` there —
+  // persistent sidebar from `lg` up, so it must never be `inert` there —
   // `site-drawer.tsx` needs no such guard because it is `lg:hidden`).
   useEffect(() => {
     const query = window.matchMedia("(min-width: 64rem)");
@@ -170,7 +170,7 @@ export function DocsSidebar({ primitivesHref, tree }: { primitivesHref: string; 
         Three substitutions against the live class list, all settled before
         this task:
 
-        `--blume-drawer-top` is gone in favour of a static `top-16` /
+        `--blume-drawer-top` is gone in favour of a constant `top-16` /
         `h-[calc(100dvh-4rem)]` — the variable existed only because a
         banner's wrapping text made the header's bottom edge a non-constant,
         measured on open, banner dismiss and resize (Header.astro:143-150).
@@ -193,7 +193,7 @@ export function DocsSidebar({ primitivesHref, tree }: { primitivesHref: string; 
         to reach (removed in Stage 10 along with the directory itself); the
         precaution here stays regardless, because this file is a live
         component still covered by the scan. `lg:translate-x-0!` is kept verbatim, `!` included: from `lg`
-        up this element is the static column and must never be translated,
+        up this element is the persistent column and must never be translated,
         whichever way the mobile state happens to be pointing.
 
         Blume's `lg:`-scoped border-cancel utility is DROPPED, which

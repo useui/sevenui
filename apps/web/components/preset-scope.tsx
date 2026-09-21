@@ -17,7 +17,7 @@ import { PRESET_SCOPE_ATTR } from "./preset-scope-attr";
  * either.
  *
  * ## Why every `@sevenui/presets` import here is a dynamic `import()`,
- * not a static one (fix round 2, IMPORTANT 1)
+ * not a top-level one (fix round 2, IMPORTANT 1)
  *
  * `schema.ts`'s first line is `import { z } from "zod"`, executed
  * unconditionally at module load — zod is not behind any lazy branch
@@ -28,7 +28,7 @@ import { PRESET_SCOPE_ATTR } from "./preset-scope-attr";
  * `resolvePreset` is not optional — reimplementing it in `apps/web` would
  * mean duplicating the ~30 KB of base-color/theme token tables `presets.ts`
  * owns, which is a far worse duplication than anything this file could
- * introduce. So ANY static import of `@sevenui/presets/presets` OR
+ * introduce. So ANY top-level import of `@sevenui/presets/presets` OR
  * `@sevenui/presets/schema` — regardless of which named export is actually
  * used — pulls the zod runtime into whatever bundle imports this file.
  *

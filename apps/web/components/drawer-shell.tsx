@@ -34,7 +34,7 @@ import { useDrawer } from "./drawer-context";
  * an outside click on the backdrop, or a tab link itself is the whole
  * interaction; nothing traps focus inside it.
  *
- * The static `top-16` below replaced `--blume-drawer-top`, which existed only
+ * The constant `top-16` below replaced `--blume-drawer-top`, which existed only
  * because a banner's wrapping text made the header's bottom edge a
  * non-constant, measured via `getBoundingClientRect()` on open, banner
  * dismiss, and resize (Header.astro:143-150). No banner is configured, so the

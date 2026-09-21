@@ -3,7 +3,7 @@ import Link from "next/link";
 /**
  * The one commercial band on the /blocks section, rendered by all three pages
  * (directory, group, category) directly below their header. Ported verbatim
- * from `legacy-components/pro-offer.astro` — static markup, no props.
+ * from `legacy-components/pro-offer.astro` — constant markup, no props.
  *
  * It used to be a "Get Pro" outline pill inside the category header's prose
  * wrapper, which pinned it to the 672px measure rather than the content
