@@ -12,74 +12,20 @@ import { currentTabForRoute, getSiteTabs } from "../lib/site-tabs";
 import { site } from "../lib/site";
 import { ThemeToggle } from "./theme-toggle";
 
-// Every item in the header cluster is intrinsically sized, so leaving them
-// shrinkable only squashes the icon buttons into ovals and wraps the tab
-// labels inside the 4rem row. Ported verbatim from
-// legacy-components/blume/Header.astro:131-132; shared with
-// `components/theme-toggle.tsx`, which keeps its own copy since it has no
-// header module to import it from.
 const iconButton =
   "inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground";
 
-/**
- * The one persistent site header, one client component because
- * `aria-current` on the tab bar needs `usePathname()`: App Router does not
- * re-render a shared layout when navigating between its children, so the
- * active tab cannot be server-computed the way Blume computed it per-request
- * from `Astro.props.route`. A server header hosting client islands for the
- * handful of interactive pieces would buy nothing when the whole serialized
- * payload is five tabs.
- *
- * Ported from `legacy-components/blume/Header.astro`, stripped to what's
- * actually configured: no `Ask` (no `ai.ask`), no `LanguageSwitcher` /
- * locale switch (no locales), no `NavSelector` / version selector (none
- * configured), no banner. The auth pill (Stage 6, §12) is implemented below;
- * the search trigger (Stage 7, §9.5) is `components/search/search-trigger.tsx`,
- * which is a separate client component for a reason that outranks tidiness:
- * the palette it opens must not be in this component's chunk, and the `⌘K`
- * listener that opens the palette must be, since the chord has to work before
- * the palette has ever been loaded.
- *
- * The logo and the tab bar use `next/link`, not a plain `<a>`: App Router
- * owns soft navigation now that Astro's `<ClientRouter>` is gone (spec
- * §11.1), and this header persists across route changes, so a plain `<a>`
- * here would trade the live site's soft navigation for a full reload on
- * every internal click. Only the external GitHub link stays a plain `<a>`.
- *
- * `primitivesHref` comes from `app/layout.tsx`: the Primitives tab's link
- * target is the nav's first primitive child, and the nav tree is read
- * through `lib/docs`, which is `server-only` — this client component can't
- * import it itself, so the root layout resolves it once and passes it down
- * (`lib/site-tabs.ts`'s `getSiteTabs` doc comment has the full reasoning).
- */
 export function SiteHeader({ primitivesHref }: { primitivesHref: string }) {
   const pathname = usePathname();
   const tabs = getSiteTabs(primitivesHref);
   const activeTabHref = currentTabForRoute(pathname, tabs);
   const { setOpen } = useDrawer();
   const repoUrl = `https://github.com/${site.github.owner}/${site.github.repo}`;
-  // Signed-in display name, or `null` while signed out (the default) and
-  // while the signed-in check hasn't resolved yet. Ported from
-  // `Header.astro`'s `syncAuthControl`, but as derived render state instead
-  // of hand-written `querySelector`/`setAttribute` calls: this component is
-  // already a client component, so React owns the DOM here, not a script.
   const [signedInName, setSignedInName] = useState<string | null>(null);
 
-  // Production re-ran this sync on Astro's `astro:page-load` event because
-  // `<ClientRouter>` replaced the DOM on every navigation. There's no
-  // equivalent here, and there shouldn't be one: this header lives in
-  // `app/layout.tsx` and never unmounts across route changes, so a single
-  // mount effect already covers every navigation — an empty dependency
-  // array is correct, not an oversight.
   useEffect(() => {
     let cancelled = false;
     async function syncAuthControl() {
-      // No session hint at all means signed out. `getClerkIfLikelySignedIn`
-      // itself returns synchronously, before awaiting anything, when the
-      // hint is absent (Controller Ruling 34, `lib/clerk.ts`), so its
-      // dynamic `import()` is never reached for the common case — an
-      // anonymous visitor pays nothing — even though this call site still
-      // `await`s the result on the next line.
       try {
         const clerk = await getClerkIfLikelySignedIn();
         if (!clerk || cancelled) return;
@@ -87,10 +33,6 @@ export function SiteHeader({ primitivesHref }: { primitivesHref: string }) {
         if (!name || cancelled) return; // signed out after all — leave "Sign in"
         setSignedInName(name);
       } catch (e) {
-        // A Clerk boot failure here (network hiccup, blocked cookie, a
-        // preview origin Clerk's production instance rejects with 400
-        // origin_invalid, etc.) must never surface as an uncaught rejection
-        // on every single page — the pill just stays "Sign in".
         console.error("header:", e);
       }
     }
@@ -110,12 +52,6 @@ export function SiteHeader({ primitivesHref }: { primitivesHref: string }) {
       >
         <Menu aria-hidden="true" size={20} />
       </button>
-      {/*
-        The logo is the one deliberate exception to `shrink-0` in this
-        header: it carries `min-w-0`/`truncate` instead, so it absorbs any
-        row deficit by itself (Header.astro:127-130). Classes ported from
-        Blume's default `Logo.astro` slot's anchor and wordmark span.
-      */}
       <Link
         className="inline-flex min-w-0 items-center gap-2 font-semibold text-base text-foreground"
         href="/"
@@ -123,12 +59,6 @@ export function SiteHeader({ primitivesHref }: { primitivesHref: string }) {
         <Logomark className="h-5 w-auto shrink-0" />
         <span className="truncate">{site.name}</span>
       </Link>
-      {/*
-        Inline tabs wait until `lg` on every page, not `md` for docs the way
-        Blume's `tabsNavClass` did (Header.astro:119-125). The recorded
-        reason still holds: a hamburger plus a 294px tab bar in the same
-        768px row overflowed as soon as anything else in it widened.
-      */}
       <nav aria-label="Sections" className="hidden gap-1 lg:flex">
         {tabs.map((tab) => (
           <Link
@@ -154,18 +84,6 @@ export function SiteHeader({ primitivesHref }: { primitivesHref: string }) {
           <GithubMark />
         </a>
         <ThemeToggle />
-        {/*
-          Signed out this is a "Sign in" pill. Signed in, `data-signed-in`
-          switches it to icon mode below `sm`, showing just the initial: a
-          first name is unbounded text in the one header cluster that cannot
-          be hidden, and at 375px its ~128px was the difference between the
-          row fitting and the logo and search trigger being squeezed to make
-          room. `id="auth-control"` and the two `data-auth-*` spans are kept
-          even though no script queries them anymore: `data-auth-label` and
-          `data-auth-initial` are the readable record of which span the
-          `group-data-[signed-in]:max-sm:*` classes below target, and
-          `id="auth-control"` is the stable handle the site has shipped.
-        */}
         <Link
           aria-label={signedInName ?? undefined}
           className="group inline-flex max-w-32 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-3 py-1.5 font-medium text-muted-foreground text-sm uppercase transition-colors hover:bg-muted hover:text-foreground data-[signed-in]:max-sm:size-9 data-[signed-in]:max-sm:bg-muted data-[signed-in]:max-sm:px-0 data-[signed-in]:max-sm:text-foreground"
@@ -188,15 +106,6 @@ export function SiteHeader({ primitivesHref }: { primitivesHref: string }) {
   );
 }
 
-// The official GitHub mark on a 16×16 viewBox, ported from Blume's own
-// `GITHUB_MARK` path data (blume/components/github-mark.ts) rather than a
-// `lucide-react` icon: this project's `lucide-react` (1.41.0) ships no brand
-// icons at all (verified against its full export list) — the library
-// dropped Simple Icons upstream — so a "GitHub" icon does not exist there to
-// consume. Substituting a generic glyph would be an unlisted visual
-// regression under this migration's rule that every difference from the old
-// site must be a named, intended one; inlining the same path data keeps the
-// mark byte-identical instead.
 function GithubMark() {
   return (
     <svg aria-hidden="true" fill="currentColor" height="18" viewBox="0 0 16 16" width="18" xmlns="http://www.w3.org/2000/svg">

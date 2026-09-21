@@ -9,46 +9,13 @@ function cx(...values: Array<string | false | null | undefined>): string {
   return values.filter(Boolean).join(" ");
 }
 
-// -----------------------------------------------------------------------
-// The nine element overrides (task-2.4 brief step 1), values read from
-// getComputedStyle on a live docs page (step 2), not from Blume's override
-// file — Blume only overrides SOME properties on each of these and the rest
-// fall through to the Typography plugin's defaults, so the rendered value
-// is a merge. There is no `.prose` class anywhere in this port (load-bearing
-// for Task 2.6's isolation rules): body typography (0.875rem/1.7,
-// muted-foreground) is redistributed onto `p`, `li` and `td` directly
-// instead of a container rule.
-//
-// Absent from every corpus file (69 `.mdx`, not §6's 68 — counted, and zero
-// of them contains a `# ` heading or a literal `<h1>`), and therefore absent
-// from this map on
-// purpose: h1, h4-h6, blockquote, hr, ordered lists, images, em,
-// strikethrough, task lists, HTML comments. lib/docs/elements.ts asserts
-// this at build time so a future file introducing one of them is a build
-// failure, not a silently unstyled page.
-// -----------------------------------------------------------------------
-
 function P({ className, ...props }: React.ComponentPropsWithoutRef<"p">) {
   return <p className={cx("my-4 text-[0.875rem] text-muted-foreground leading-[1.7]", className)} {...props} />;
 }
 
-// Heading anchor utility list, copied verbatim from the brief (§4.7,
-// §17.6 #5) — expressed as plain Tailwind utilities, not a bespoke
-// `.blume-heading-anchor` class, so it survives the Turbopack
-// plain-data constraint the same way the table-scroll wrapper below does.
 const HEADING_ANCHOR_CLASSES =
   "text-inherit font-inherit no-underline after:content-['#'] after:ms-[0.35em] after:text-muted-foreground after:opacity-0 after:transition-opacity after:duration-150 hover:after:opacity-100 focus-visible:after:opacity-100";
 
-// `rehype-slug` -> `rehype-autolink-headings({behavior: "wrap"})` (Task 2.3,
-// locked) wraps a heading's entire content in a self-linking `<a href="#id">`
-// with no distinguishing className of its own. That wrapped anchor is still
-// dispatched through this file's own `a` override below (MDX applies `a`
-// uniformly to every anchor in the tree), so `A` must let an explicit
-// `className` win over its own default prose-link styling — this function
-// clones that single child and REPLACES its className with the heading-
-// anchor utilities, and `A`'s `className ?? DEFAULT` fallback is what makes
-// the replacement actually take effect instead of being clobbered back to
-// the dotted-underline prose style.
 function withHeadingAnchor(children: React.ReactNode): React.ReactNode {
   if (!React.isValidElement(children)) return children;
   return React.cloneElement(children as React.ReactElement<{ className?: string }>, {
@@ -56,41 +23,6 @@ function withHeadingAnchor(children: React.ReactNode): React.ReactNode {
   });
 }
 
-// The size step at 640px is production's, and it was missing here until task
-// 11.1e measured the whole responsive ladder rather than the one width the
-// review matrix happened to look at. Live, the docs `h2` is
-//
-//   .prose :where(h2)            { margin-top: 3rem; font-size: 1.875rem; line-height: 1.2 }
-//   .prose :where(h2)            { margin-bottom: 1em }   <- Typography's, not Blume's
-//   @media (width <= 640px) { .prose :where(h2) { font-size: 1.625rem } }
-//
-// so at 390 it renders 26px/31.2px with a 26px bottom margin, where a flat
-// `text-3xl` with a hardcoded 30px bottom margin rendered 30px/36px/30px on
-// all 69 routes. Three corrections, one per fact:
-// `text-[1.625rem] sm:text-3xl` is the step;
-// `leading-[1.2]` is production's own declaration, which a flat `text-3xl`
-// only reproduced by the coincidence that Tailwind pairs `text-3xl` with
-// 36/30 = 1.2 (an arbitrary `text-[1.625rem]` has no such pairing, so the
-// leading has to be said out loud); and `mb-[1em]` is why the bottom margin
-// tracked the font size live while a hardcoded 30px could not.
-//
-// `mt-12` does NOT gain a step: production's `margin-top` is `3rem`, a rem,
-// so it stays 48px at both widths — measured, both origins.
-//
-// The 640px boundary carries the same single-width inexactness the docs `h1`
-// does, from the same cause: production's `max-width: 640px` and Tailwind's
-// `sm:`/`min-width: 640px` are both inclusive at 640, so both match there.
-// Measured: 639 agree, 641 agree, and at exactly 640 live gives 26px where
-// this gives 30px. That one viewport width, and nowhere else.
-//
-// `h3` was checked the same way and needs nothing: production gives it no
-// media step at all (`font-size: 1.25rem; line-height: 1.35`, with the
-// plugin's `1.6em`/`0.6em` margins), and because its font-size never
-// changes, `mt-8 mb-3` are exactly those ems at every width — verified equal
-// on both origins at 1440 and 390. `h4`-`h6` are absent from every corpus
-// file (§6, whose count of 68 is one short of the 69 `.mdx` actually on
-// disk — the absence itself was re-verified) and have no override to
-// correct.
 function H2({ className, children, ...props }: React.ComponentPropsWithoutRef<"h2">) {
   return (
     <h2
@@ -105,18 +37,6 @@ function H2({ className, children, ...props }: React.ComponentPropsWithoutRef<"h
   );
 }
 
-// `margin-top` is NOT a flat `mt-0`: Typography's `h2 + * { margin-top: 0 }`
-// only zeroes an `h3` that directly follows an `h2` (96 of 260 corpus
-// headings) — the other 163 (after a paragraph, a table, a `<Component>`,
-// or another `h3`) measure 32px (measured-docs-computed-styles.json:
-// `button.h3.marginTop` is 0px directly after `## Examples`,
-// `sidebar.h3.marginTop` is 32px after a paragraph). `[h2+&]:mt-0`
-// reproduces that sibling-combinator rule instead of a flat value, and is
-// deliberately not left to margin collapsing — a collapsed `p`/`mb-4` +
-// `h3`/`mt-8` would land on 32px after an `h2` where live gives 30px
-// (`h2`'s own bottom margin, which is `1em` and so is 30px at >=641px and
-// 26px at <=640px — see the `h2` note above), since collapsing takes the
-// larger of the two margins rather than the following element's own reset.
 function H3({ className, children, ...props }: React.ComponentPropsWithoutRef<"h3">) {
   return (
     <h3
@@ -138,23 +58,10 @@ function A({ className, ...props }: React.ComponentPropsWithoutRef<"a">) {
   return <a className={className ?? DEFAULT_A_CLASSES} {...props} />;
 }
 
-// `text-foreground` is required, not decorative: `strong`'s parent (`p`) is
-// muted-foreground, and without an explicit color override `<strong>` would
-// inherit that muted tone instead of standing out (measured: `strong.color`
-// is foreground while its parent `p` is muted-foreground — Typography's
-// `--tw-prose-bold`). 90 uses across 17 files.
 function Strong({ className, ...props }: React.ComponentPropsWithoutRef<"strong">) {
   return <strong className={cx("font-semibold text-foreground", className)} {...props} />;
 }
 
-// Inline code (`` `x` ``) and the block code shiki produces inside a <pre>
-// both compile through this same `code` override — MDX dispatches `code`
-// uniformly regardless of nesting. CommonMark inline code spans never carry
-// nested markup, so their children is always a bare string; the shiki
-// fragment's <code> always carries a non-string children (an array of
-// `<span class="line">` elements). That is the distinguishing test.
-// Forwards its ref so CodeBlock (the `pre` override, below) can attach a
-// ref to the real DOM node for the copy button's `.textContent` read.
 const INLINE_CODE_CLASSES =
   "rounded-[0.3rem] bg-[oklch(0.99_0_0)] px-[0.35em] py-[0.15em] font-mono text-[0.875em] font-medium text-foreground dark:bg-[oklch(0.12_0_0)]";
 
@@ -170,24 +77,9 @@ const Code = React.forwardRef<HTMLElement, React.ComponentPropsWithoutRef<"code"
   );
 });
 
-// Table scroll wrapper, produced by THIS element override (not a rehype
-// plugin), utilities copied verbatim from the brief (§4.7, §17.6 #5) with
-// one correction: the brief's string uses `rounded-lg`, but this port's
-// `--radius` is 0.625rem, so `--radius-lg` resolves to 10px while BOTH
-// measured artifacts (`tableWrapper` and the visible `pre`) report an
-// 8px border-radius — that is `--radius-md` in this theme, not
-// `--radius-lg`. Matching the measured 8px over the brief's literal string
-// per this task's own instruction to report (not silently pick) a
-// disagreement between the two.
 const TABLE_WRAPPER_CLASSES =
   "my-6 overflow-x-auto rounded-md border border-border [&>table]:m-0 [&_th]:whitespace-nowrap [&_th]:px-3 [&_th]:py-2 [&_td]:px-3 [&_td]:py-2";
 
-// `table` itself carries only structural styling (width, border-collapse,
-// font-size/line-height) — the binding-constraint trio (font-size,
-// color, line-height as body typography) lands on `Td`, not here, and not
-// on `TABLE_WRAPPER_CLASSES`'s div either. Nothing inheritable sits on an
-// ancestor of a demo (Task 2.6 Step 3(a)'s premise) even though no
-// `<Component>`/`<InstallCommand>` is nested in a table cell today.
 function Table({ className, ...props }: React.ComponentPropsWithoutRef<"table">) {
   return (
     <div className={TABLE_WRAPPER_CLASSES}>
@@ -200,25 +92,14 @@ function Th({ className, ...props }: React.ComponentPropsWithoutRef<"th">) {
   return <th className={cx("text-start font-semibold text-foreground", className)} {...props} />;
 }
 
-// Body typography (0.875rem/1.7, muted-foreground) lands here — same rule
-// as `p`/`li`, never on `table`/`Table`'s wrapper div (Task 2.6 Step 3(a)).
-// font-size/line-height on `td` here are the table's own measured values
-// (0.8125rem/22.2858px), distinct from `p`'s 0.875rem/1.7 — `table`'s own
-// scale, not the body scale, which is why this isn't merged with `P`.
 function Td({ className, ...props }: React.ComponentPropsWithoutRef<"td">) {
   return <td className={cx("text-[0.8125rem] text-muted-foreground leading-[22.2858px]", className)} {...props} />;
 }
 
-// Structural only (margin, marker indent) — body typography (font-size,
-// color, line-height) lands on `Li`, not here, so nothing inheritable sits
-// on an ancestor of a demo (Task 2.6 Step 3(a)'s premise) even though no
-// `<Component>`/`<InstallCommand>` is nested in a list today.
 function Ul({ className, ...props }: React.ComponentPropsWithoutRef<"ul">) {
   return <ul className={cx("my-4 list-disc ps-[1.625em]", className)} {...props} />;
 }
 
-// Body typography (0.875rem/1.7, muted-foreground) lands here — same rule
-// as `p`/`td`, never on `ul`/`Ul` (Task 2.6 Step 3(a)).
 function Li({ className, ...props }: React.ComponentPropsWithoutRef<"li">) {
   return (
     <li
@@ -246,10 +127,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     InstallCommand,
     Component,
 
-    // Task 3.3 closes the seam this map left open: `PrimitiveIndex` is the
-    // 65-card index on `/docs/components`, and it is the third and last of
-    // the JSX components `lib/docs/elements.ts`'s assertion allow-lists. All
-    // three are now wired, so nothing here is a forward reference any more.
     PrimitiveIndex,
   };
 }

@@ -4,22 +4,9 @@ import { LegalPage } from "../../components/legal-page";
 import { pageMetadata } from "../../lib/metadata";
 import { requirePageMeta } from "../../lib/page-meta";
 
-// Ported from `legacy-pages/privacy.astro`. Legal copy is not migration
-// territory — not a word changes below, only `class` -> `className`.
-//
-// This page carries the site's one non-footer external anchor (the Google
-// Analytics opt-out add-on, §4.6): `target`/`rel` are written literally in
-// JSX because the Astro build's post-build regex pass that used to add them
-// to every external anchor has no Next equivalent.
-
 const ROUTE = "/privacy";
 const UPDATED = "September 9, 2026";
 
-// `/privacy` has been in `lib/page-meta.ts` since Task 1.7, with its
-// description probed from the live site — this page does not add or
-// rewrite it, it reads it. `pageMetadata` applies the em-dash suffix in the
-// one place it is ever applied (§15.8, §16.8) and builds the full
-// `og:*`/`twitter:*` set (task-9.2b).
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await requirePageMeta(ROUTE, "app/privacy/page.tsx");
   return pageMetadata(ROUTE, meta.title, meta.description);

@@ -3,13 +3,6 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
-/**
- * Two-state theme toggle (light <-> dark), ported from
- * legacy-components/blume/Header.astro:247-255. The icon swap is CSS, not a
- * JS-read theme: `dark:hidden` on the sun and `dark:inline-flex` on the moon
- * key off the `data-theme` attribute next-themes sets on `<html>` before
- * paint, so this is SSR-safe with no hydration mismatch and no flash.
- */
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
 

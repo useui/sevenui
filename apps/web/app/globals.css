@@ -1,25 +1,10 @@
 @import "tailwindcss";
 
-/* Tailwind v4's automatic scan does not reach outside the app, and the
-   registry sources the site imports live in packages/registry. These paths
-   are relative to this file (apps/web/app/globals.css) — they were fragile
-   only while they resolved against Blume's generated entry (§8.2). */
 @source "../../../packages/registry/registry";
 @source "../../../packages/registry/components";
 
-/* Dark mode is driven by data-theme on the <html> element, not by OS
-   preference. Without this, Tailwind v4's built-in `dark:` variant falls
-   back to an OS-level color-scheme media query, which both desyncs from
-   the theme toggle and reintroduces the media-query rule §4.4 requires
-   this sheet stay free of. Ported from Blume's generated entry (was never
-   in theme.css, so a theme.css-only sweep never sees it). */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* enableColorScheme is off in the next-themes config (§8.1) so these rules
-   stay the single owner of color-scheme — the only thing keeping
-   UA-rendered surfaces (scrollbars, native selects, form-control fallbacks,
-   autofill) dark in dark mode. Ported verbatim from Blume's generated
-   entry for the same reason as the custom variant above. */
 :root {
   color-scheme: light;
 }
@@ -144,43 +129,19 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  /* Blume-only until now, ported from its generated Tailwind entry (§8.3):
-     all five are used by demos. */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-border: var(--border);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
 
-  /* font-mono has 15 authored call sites plus 3 in the registry; font-sans is
-     the body font; display is Inter too.
-
-     `--font-display` is read in two different ways, and naming them beats
-     counting them — this comment already went stale once by asserting that
-     the utility had no call sites (task 11.1e, 2026-09-21, corrected with
-     §8.3's row):
-       - as the `font-display` UTILITY, by each of §6's heading overrides:
-         `mdx-components.tsx`'s `h2` and `h3`, and the docs page title in
-         `app/docs/[[...slug]]/page.tsx` (literal JSX, so it is not on the
-         element map but it is the same override);
-       - as `var(--font-display)` in HAND-WRITTEN CSS, by the bare heading
-         rule further down this file.
-     The second read is why Tailwind emits `--font-display` on `:root` instead
-     of inlining it at each utility, which is a real (inert) line in the
-     shipped stylesheet. Whoever adds or removes a heading here should re-grep
-     rather than adjust a number. */
   --font-sans: var(--font-inter);
   --font-mono: var(--font-ibm-plex-mono);
   --font-display: var(--font-sans);
 
-  /* The 42rem docs measure. Killed on a "zero consumers" premise that §11's
-     furniture falsifies — five max-w-content call sites on one live page. */
   --container-content: 42rem;
 }
 
-/* Tailwind v4 preflight leaves border-color at currentColor; no framework
-   ships a default border color, which is MORE necessary under Next.js, not
-   less. Bare `border` utilities in SevenUI components need one. */
 @layer base {
   * {
     border-color: var(--border);
@@ -196,8 +157,6 @@
     cursor: pointer;
   }
 
-  /* scroll-padding-top is load-bearing for §9's anchored search results,
-     which would otherwise land under the sticky header. */
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 4.5rem;
@@ -210,93 +169,11 @@
     }
   }
 
-  /* §8.3 entry 4 — the bare `h1`-`h6` display-font + `-0.05em` rule. It was
-     declared NOT to port (§7.2 d), on the premise that "the chrome's
-     headings carry their own classes". Task 11.1e measured that premise and
-     it is false: 7 authored chrome headings carry no `tracking-*`
-     (`app/page.tsx` ×2, `components/landing-showcase.tsx` ×2,
-     `app/not-found.tsx`, `app/components/page.tsx`,
-     `components/mdx/primitive-index.tsx`), and the `/components` gallery
-     additionally renders REGISTRY components that emit their own headings
-     (`accordion`'s trigger is an `h3`), which no class list in this app can
-     reach. Production applies `-0.05em` to all of them; without this rule
-     every one of them rendered at `normal`. Counted off the built pages
-     rather than transcribed: `/` has 18 headings and all 14 of its `h3`s
-     were affected; `/components` has 11 and all 10 of its `h2`s;
-     `/components/accordion` has 19 (1 `h1` + 4 `h2` + 14 `h3`) and all 14
-     `h3`s — every one of them an accordion trigger inside a preview pane;
-     `/components/button` has 6 and 1; the 404 page has 1 and 1 (159.05px
-     wide live, 175.84px here). And so on for every future heading that
-     forgets the class. Restoring the rule is the only fix that covers
-     the registry-rendered ones. §7.2 (d) and §8.3 are another agent's files;
-     this contradiction is reported in task-11.1e-report.md rather than
-     amended there.
-
-     `@layer base`, exactly as Blume declared it, so any `tracking-*` utility
-     still wins: the hero's `tracking-tight` stays -0.025em on both sides.
-     `:is()` and `:where()` both keep the whole selector at (0,0,1) — the
-     specificity of the bare `h1` it replaces — so `.legal h1`'s own
-     `letter-spacing` and every utility keep winning as they do live.
-
-     The `:not()` is §7.2 (d)'s real content, kept: a demo's own subtree must
-     not be reached by the chrome's element rules.
-
-     ITS REACH IS DOM ANCESTRY, AND PORTALED OVERLAY CONTENT IS OUTSIDE IT.
-     §7.2 itself records that every overlay primitive portals to
-     `document.body` — that is the measured fact containment rests on — so
-     when a demo opens a Dialog/Sheet/Drawer/Popover, the panel is a child of
-     `<body>`, not of the `[data-sevenui-example]` box and not even of the
-     `<article>`. No ancestry selector written here can exclude it, and this
-     one does not: measured on `/docs/components/dialog`, the portaled
-     `<h2>` "Edit profile" (Base UI's own default element for
-     `Dialog.Title`, whose class list — `text-base leading-none font-medium`
-     — carries no `tracking-*`) computes `-0.8px` here against `normal` in
-     production's frame, where the portal landed in the frame's own `<body>`
-     and the frame loaded no stylesheet.
-
-     That is ACCEPTED, not overlooked. It is cosmetic, it is confined to
-     overlay panels opened from a docs demo, and chasing it would mean
-     either a marker class on portaled content or a JS-set attribute — new
-     machinery, which Stage 11 does not build. What this comment must not do
-     is claim a reach the selector does not have: the guarantee is "a demo's
-     in-tree subtree", not "everything a demo renders".
-
-     The selector names `article
-     [data-sevenui-example] *` and not the bare `[data-sevenui-example] *`
-     because the two preview surfaces differ IN PRODUCTION and the parity
-     bar follows production per surface:
-
-       - docs demos are iframes live, and the frame never loads Blume's
-         entry, so `separator`/`scroll-area`/`collapsible`'s `<h4>`s measure
-         `letter-spacing: normal` there (verified inside the live frames).
-         They are the only `[data-sevenui-example]` inside an `<article>`,
-         so this `:not()` is exactly them.
-       - the `/components` gallery renders INLINE live (`data-example-card`,
-         no frame, no `[data-blume-example]`), so its preview content does
-         get the rule: `/components/button`'s "Ready to get started?" `<h3>`
-         measures -0.9px live. It is inside a `[data-sevenui-example]` here
-         only because Task 4.2 converged the two surfaces on one
-         `<PreviewPane>` — a port-side detail that must not change what the
-         page renders.
-
-     `article` is a bare element selector, and this app now has three
-     `<article>`s (docs page, `components/legal-page.tsx`,
-     `components/blocks/block-card.tsx`) rather than the one the
-     `article > :last-child` rule below still claims. Only the docs article
-     ever contains a `[data-sevenui-example]` — legal pages have no demos and
-     a block card's preview is a cross-origin iframe — so the selector picks
-     out the docs demos today. If a demo is ever mounted inside another
-     `<article>`, this comment is the flag that the discriminator has to
-     become an explicit attribute. */
   :is(h1, h2, h3, h4, h5, h6):not(:where(article [data-sevenui-example] *)) {
     font-family: var(--font-display);
     letter-spacing: -0.05em;
   }
 
-  /* §17.6 #14 — declared as var(--foreground), not Blume's own accent
-     token, which resolved to oklch(0.145 0 0) light / oklch(0.96 0 0) dark —
-     that is --foreground to within 0.025 L; blocks-theme-dock already
-     hardcodes outline-foreground, so this makes the site consistent. */
   :focus-visible {
     outline: 2px solid var(--foreground);
     outline-offset: 2px;
@@ -304,51 +181,12 @@
   }
 }
 
-/* Task 2.6, §7.2/§7.3: the 137 docs demos render inline now (no iframe), so
-   an overlay opened inside one (Dialog/Sheet/Drawer/Command) covers the
-   viewport instead of being clipped to a frame. `[data-sevenui-example]`
-   is the renamed `[data-blume-example]` hook (`packages/registry/demos/
-   theme.css:153`, untouched by this task — scope wall); the wrapper that
-   carries it is `components/demo/preview-pane.tsx`.
-
-   Rule 1 (display/sizing) is `demos/theme.css`'s own
-   `[data-blume-example]` rule, carried over verbatim under the renamed
-   hook: the hard-won fix without which the 64 `w-full` demos collapse to
-   content width. Load-bearing regardless of anything below. */
 [data-sevenui-example] {
   display: grid;
   width: 100%;
   justify-items: center;
 }
 
-/* Finding F3 — the two keycaps in `number-field.mdx` and `toast.mdx`.
-   Production styled them through Tailwind Typography's
-   `.prose :where(kbd)`; this port deleted `.prose` (§8.3), and the element
-   map in `mdx-components.tsx` provably cannot reach them: MDX flags a tag
-   the author types literally as `_mdxExplicitJsx` and
-   `recma-jsx-rewrite` deliberately does NOT route it through
-   `_components` ("a given `h1` component is used for `# heading` ... but
-   not for `<h1>heading</h1>`"). The 12 overrides all work because they
-   come from markdown SYNTAX; `<kbd>` is the first literal HTML tag this
-   map has ever needed, so a 13th override would have been dead code. The
-   rule therefore lives here, as an element rule rather than a bespoke
-   class name (§4.7).
-
-   Colour is `var(--foreground)` — the same substitution §17.6 #14 made
-   for the focus ring. Production's `--tw-prose-kbd` is
-   `oklch(21% .034 264.665)` light and `--tw-prose-invert-kbd` is `#fff`
-   dark, with each shadow at 10% alpha, i.e. the foreground in both
-   themes; using our token reproduces the light/dark flip for free.
-   `font-family: inherit` is load-bearing: Tailwind's preflight sets
-   `kbd,samp,pre` to the mono stack, so omitting it renders the keycap in
-   monospace.
-
-   Demo subtrees are excluded exactly as production excluded `not-prose`.
-   Inline demos now live INSIDE the article (§7), so an unscoped rule
-   would restyle the Kbd primitive's own demo and override the registry's
-   styling — the one page where that would obviously be wrong. `:where()`
-   keeps the whole selector at specificity (0,0,1) so any registry class
-   wins regardless. */
 article :where(kbd):not(:where([data-sevenui-example], [data-sevenui-example] *)) {
   color: var(--foreground);
   box-shadow:
@@ -362,46 +200,6 @@ article :where(kbd):not(:where([data-sevenui-example], [data-sevenui-example] *)
   font-weight: 500;
 }
 
-/* Rule 2 (typographic root) is `demos/theme.css`'s `body { background-
-   color; color }` rule, ported to this selector with the other properties
-   an iframe's `<body>` used to establish for free — `font-family`,
-   `font-size`, `line-height`, `letter-spacing` — now that removing the
-   frame leaves nothing to supply them. This is parity work, not a guard:
-   it closes the gap left if a future layout class violates the "nothing
-   inheritable on a demo ancestor" rule (Task 2.4's body typography lives
-   on the `p`/`li`/`td` element overrides only — verified by grepping
-   app/docs/[[...slug]]/page.tsx and app/layout.tsx for `text-sm`,
-   `leading-`, `text-muted-foreground`: neither the bare `<article>` nor
-   any of its ancestors carries one).
-
-   SCOPED TO `article` — i.e. to the docs demos only (task 11.1e, F2). This
-   rule exists to replace an iframe `<body>`, so it belongs exactly where
-   there used to be an iframe. The `/components` gallery never had one: live
-   it is plain inline markup inside the same pane (`data-example-card`, an
-   `<astro-island display:contents>`, no `[data-blume-example]` anywhere in
-   its HTML), so its preview content inherits the page's own typographic
-   root — and `line-height: normal` here was overriding production's
-   inherited 24px on 20 headings of `/components/accordion` alone. The other
-   five declarations were inert on that surface (the gallery already
-   inherits 1rem / `--foreground` / `--font-sans` / `normal` tracking from
-   `<body>`, and the pane above already paints `bg-background`), so
-   `line-height` was the only one doing damage — but the whole block moves,
-   because the whole block's justification is the frame that surface never
-   had.
-
-   Rule 1 above deliberately does NOT move with it, and that is measured,
-   not assumed. Scoping rule 1 to `article` as well was built and measured:
-   32 geometry differences appeared against production across the ten
-   gallery pages — `/components/card`'s demos collapsing 320px -> 196.83px
-   and 384px -> 180.13px, with their panes growing 20-37px taller. That is
-   the exact "64 `w-full` demos collapse to content width" failure rule 1
-   was written to prevent. The reason it is needed on BOTH surfaces is
-   structural: production's gallery has `display: contents` between the pane
-   and the demo, so the demo itself is the flex item; this port has a real
-   wrapper div there, and rule 1's `display: grid; width: 100%` is what
-   makes that wrapper transparent to layout the same way. With it in place
-   the two origins agree on all 80 demo roots and all 20 panes at both
-   widths, to the hundredth of a pixel. */
 article [data-sevenui-example] {
   font-size: 1rem;
   line-height: normal;
@@ -411,68 +209,10 @@ article [data-sevenui-example] {
   letter-spacing: normal;
 }
 
-/* Deferred from Task 2.4: the Typography plugin's `.prose > :last-child {
-   margin-bottom: 0 }` has no owner in this port (there is no `.prose`
-   class anywhere — Task 2.4/2.6). The docs route's `<article>`
-   (`app/docs/[[...slug]]/page.tsx`) is this rule's intended target, so
-   this reproduces the same trim at the container Task 2.6 owns, rather
-   than leaving every docs page with one extra trailing margin (a `<p>`'s
-   `my-4`, a fenced block's `my-6`, or a `<Component>`'s `my-6`) that live
-   trims and this port otherwise would not. A `<Component>`'s own `my-6`
-   wrapper is a legitimate target when it's the last element on a page —
-   the trim is meant to apply to whatever the last element is, the same
-   way `.prose > :last-child` never cared about the child's type.
-   CORRECTION (task 11.1e, 2026-09-21): this comment used to call that
-   article "the sole consumer in this app", and that was already wrong when
-   written — `components/legal-page.tsx` and `components/blocks/block-card.tsx`
-   both render an `<article>` too, so this bare `article >` selector trims the
-   last child's bottom margin on `/terms`, `/privacy` and every block card as
-   well. Left as-is behaviourally (changing it is not this task's, and the
-   trim is harmless on those three), but the inventory matters now that TWO
-   other rules in this file use `article` as a discriminator — the restored
-   heading rule and §7.2c — and a reader checking whether that is safe must
-   not be handed a one-article inventory. The three are: the docs page, the
-   legal page, and the block card; only the docs one ever contains a
-   `[data-sevenui-example]`.
-
-   Stated, per fix round 1's review, rather than left implicit: this is a
-   BARE element selector (`article`, no scoping class), reaching every
-   `<article>` in the whole document, not only the docs route's — the same
-   category of risk rule (d) above calls out for `h1`-`h6`. Verified
-   harmless today the same way: grepped every demo and every registry
-   component for `<article` — zero hits, so no demo's own internal markup
-   can be reached by this rule. `page.tsx`'s `<article>` cannot be given a
-   scoping class from this task (out of its authorised file list), so the
-   selector stays bare; if a future demo or component ever renders its own
-   `<article>`, this comment is the flag that the rule needs to move to a
-   scoped selector at that point, exactly as rule (d)'s own comment would
-   for a future bare heading. */
 article > :last-child {
   margin-bottom: 0;
 }
 
-/* Shiki (Task 2.3, §4.3/§4.4): `@shikijs/rehype` runs with
-   `defaultColor: false`, which makes it emit `--shiki-light`/`--shiki-dark`
-   (and, on `span`s, the matching `-font-style`/`-font-weight`/
-   `-text-decoration`) custom properties instead of baking one theme's
-   colors into `style` attributes. These rules pick a side with
-   `:root[data-theme="dark"]` — never an OS-level color-scheme media
-   query, which this sheet stays free of (the custom-variant above already
-   keys `dark:` off the same attribute) — and the fallback keeps a block readable
-   pre-hydration or if Shiki fails to highlight it.
-   Deliberately unlayered, like `.pm-only` below: the `!important` pairs
-   here need to win outright, not just on specificity within a layer, and
-   an unlayered rule already beats anything Tailwind puts in `@layer
-   utilities` regardless of order.
-   Measured verbatim off production's served stylesheet
-   (.superpowers/sdd/2026-09-19-blume-to-nextjs/measured-shiki-rules.css)
-   and re-based here: `pre.astro-code` -> `.shiki` (class name
-   `@shikijs/rehype` actually emits), the `.prose` scope dropped (this port
-   has no `.prose` class — Task 2.4, Task 2.6), and the color fallback's
-   `--blume-foreground` -> `--foreground` (Blume's tokens were retired in
-   Task 1.3). The live rules paint no background at all (`background: 0 0
-   !important` / no dark background rule), which this reproduces rather
-   than the flat panel a naive port would add. */
 .shiki {
   color: var(--shiki-light, var(--foreground)) !important;
   background: 0 0 !important;
@@ -503,31 +243,15 @@ article > :last-child {
   animation: none;
 }
 
-/* Text selection follows the palette instead of the browser default; the
-   inverted pair stays legible in both themes. */
 ::selection {
   background: var(--foreground);
   color: var(--background);
 }
 
-/* Reserve the scrollbar gutter so demos that grow/shrink the page
-   (accordion, collapsible) don't shift the layout horizontally. */
 html {
   scrollbar-gutter: stable;
 }
 
-/* All four commands ship in the HTML and CSS picks one, off `[data-pm]` on
-   <html> (set by <PackageManagerScript />, before first paint). The
-   React-shaped alternative — read localStorage in an effect and re-render —
-   reintroduces exactly the post-hydration repaint the inline script was
-   written to avoid, and would do it once per card (§13.2). Ported verbatim
-   from legacy-components/blocks-prefs.astro (deleted in Stage 10; /blocks
-   owned it through Stage 5): one shared `.pm-only` class carries `display:
-   none`, and each element also carries a `.pm-only-{pm}` class that the
-   matching `[data-pm]` selector reveals. `:root:not([data-pm]) .pm-only-pnpm`
-   is the pre-script
-   default — it must name DEFAULT_PACKAGE_MANAGER (pnpm), since the inline
-   script only ever narrows from it. */
 .pm-only {
   display: none;
 }
@@ -539,34 +263,6 @@ html {
   display: inline;
 }
 
-/* Task 2.7's <InstallCommand>: the revealed `.pm-only-<pm>` element above is
-   forced `display: inline` (unlayered — beats any Tailwind utility in
-   `@layer utilities` regardless of specificity, same fact the Shiki rules
-   above already rely on). <InstallCommand>'s four variants are also `.shiki`
-   (each is CodeBlock's cloned, individually-scrollable code box:
-   `max-h-96 overflow-auto`), and `overflow`/`max-height` do nothing on a
-   plain inline box — a non-replaced inline element ignores `overflow`
-   other than `visible` and has no box to clip.
-   This repeats the base rule's own selectors verbatim with `.shiki`
-   appended to each compound selector — same unlayered tier, but strictly
-   HIGHER specificity for every one of the five pairs, so it wins
-   regardless of source order rather than relying on a same-specificity,
-   declared-later tie-break. Fix round 1 (task-2.7 review MINOR 4): the
-   five pairs are not all the same arithmetic — `:root` and the attribute
-   selector inside `:not()` both count, so
-   `:root:not([data-pm]) .pm-only-pnpm.shiki` is (0,4,0) against the base
-   rule's own `:root:not([data-pm]) .pm-only-pnpm` at (0,3,0); the other
-   four pairs (`[data-pm="…"] .pm-only-<pm>.shiki` vs.
-   `[data-pm="…"] .pm-only-<pm>`) are (0,3,0) against (0,2,0). Each pair is
-   still compared only against its own counterpart, so the conclusion
-   (every new selector strictly outranks its base-rule counterpart) holds
-   either way — this note exists so the arithmetic is right as written, not
-   because the outcome changes. The revealed install-command variant ends up
-   `display: block` instead of `inline`, and CodeBlock's own `max-h-96
-   overflow-auto` utilities can actually take effect. Every other `.pm-only`
-   consumer (a bare word/icon, e.g. /blocks' trigger label —
-   components/blocks/install-control.tsx) is untouched: it has no `.shiki`
-   class, so only the base `display: inline` rule above ever matches it. */
 :root:not([data-pm]) .pm-only-pnpm.shiki,
 [data-pm="pnpm"] .pm-only-pnpm.shiki,
 [data-pm="npm"] .pm-only-npm.shiki,
@@ -575,28 +271,6 @@ html {
   display: block;
 }
 
-/* ---------------------------------------------------------------------------
-   /blocks preview frame (Task 5.3b)
-   ---------------------------------------------------------------------------
-   The scoped `<style>` block of legacy-components/block-frame.astro, which
-   Astro scoped with a generated `data-astro-cid-*` attribute stamped onto
-   every element of the component. Nothing generates such an attribute here,
-   so every selector below is narrowed BY HAND to `[data-block-preview]` — the
-   single attribute components/blocks/block-preview.tsx puts on the track
-   wrapper, and this section's stand-in for that scope. No rule here can match
-   anything outside a /blocks preview card.
-
-   Unlayered, like the `.pm-only` rules above: `opacity: 1` below has to beat
-   the readout's own opacity-0 utility, and an unlayered rule outranks
-   anything Tailwind puts in `@layer utilities` regardless of specificity or
-   source order. */
-
-/* Drag-in-progress suppression: while `data-dragging` is set on the iframe's
-   wrapper (block-preview.tsx sets it for exactly the duration of a drag), the
-   iframe itself stops receiving pointer events, so a fast drag cannot be
-   swallowed by the now-interactive cross-document iframe — restored the
-   instant the drag ends. The width readout stays on screen for the same
-   duration even if the pointer strays off the handle mid-drag. */
 [data-block-preview] [data-preview-wrap][data-dragging="true"] iframe {
   pointer-events: none;
 }
@@ -604,31 +278,11 @@ html {
   opacity: 1;
 }
 
-/* The handle is a SIBLING of the box (outside it, in the track's own area),
-   not a descendant, so it cannot reach the readout through a plain peer
-   variant — the readout is nested two levels down inside a DIFFERENT sibling.
-   `:has()` on their shared ancestor (`[data-resize-frame]`) bridges that gap
-   regardless of DOM order. */
 [data-block-preview] [data-resize-frame]:has([data-resize-handle]:hover) [data-width-readout],
 [data-block-preview] [data-resize-frame]:has([data-resize-handle]:focus-visible) [data-width-readout] {
   opacity: 1;
 }
 
-/* Full screen, in two flavours that must look identical: `:fullscreen` when
-   the Fullscreen API is available, and `[data-fs]` — a plain overlay — when
-   it is not. iPhone has no Fullscreen API and will not get one (WebKit
-   #212934 is WONTFIX; iOS supports it on iPad only), so the fallback is not
-   an edge case, it is every iPhone.
-
-   The wrapper's own `max-width` has to go, or the promoted element would sit
-   in a 1442px column in the middle of the screen. The BOX's width is
-   deliberately NOT forced here: the UA's `!important` rules apply only to the
-   fullscreen element itself, so a box still pinned to the 384px mobile preset
-   would letterbox — but pinning it back with another `!important` would make
-   the width presets silently inert in full screen, since `applyWidth` writes
-   an ordinary style value. block-preview.tsx clears the pinned width on the
-   way in and restores it on the way out instead, which keeps every control
-   live at the larger size. */
 [data-block-preview]:fullscreen,
 [data-block-preview][data-fs] {
   display: flex;
@@ -662,18 +316,6 @@ html {
   background: var(--background);
 }
 
-/* The exposed-grid canvas. Ported from legacy-pages/index.astro's `<style>`
-   block, but it lives here rather than beside the landing page because it is
-   not the landing page's alone: legacy-components/legal-page.astro draws the
-   same rails and crop marks, so Task 4.3's `/terms` and `/privacy` are the
-   second consumer. Astro's `:global()` is scoping syntax with no runtime
-   meaning — `.l-row :global(.hero-rise)` below is written as the plain
-   descendant selector it always compiled to.
-
-   One row of the exposed grid: the shared content column plus the two
-   vertical rails. Rows stack, so per-row borders read as continuous lines.
-   Rails and marks disappear below sm where they would hug the viewport
-   edge. */
 .l-row {
   position: relative;
   margin-inline: auto;
@@ -708,15 +350,6 @@ html {
   }
 }
 
-/* Task 4.3: the `/terms` and `/privacy` prose scale, ported from
-   `legacy-components/legal-page.astro`'s own `<style>` block. Astro's
-   `:global()` there is scoping syntax with no runtime meaning —
-   `.legal :global(h1)` compiled to the plain descendant selector
-   `.legal h1`, written that way here. Element selectors (rather than a
-   utility class on every node) keep the two long documents' own markup
-   readable as plain prose; every declaration and selector is unchanged
-   from the source, including `li`'s hairline marker and the mono-stack
-   fallback on `code`/`th`. */
 .legal h1 {
   font-size: 1.875rem;
   font-weight: 600;
@@ -806,9 +439,6 @@ html {
   color: var(--foreground);
 }
 
-/* The page's one authored motion moment: the hero settles into place on
-   load. Content is visible by default; the animation only runs when motion
-   is welcome. */
 @media (prefers-reduced-motion: no-preference) {
   .l-row .hero-rise {
     animation: hero-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -839,11 +469,6 @@ html {
   }
 }
 
-/* Animation utilities — self-contained enter/exit animations for
-   the overlay components (no external animation package). Compose like:
-   data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95
-   Speed and easing come from Tailwind core's duration-* and ease-*
-   utilities via --tw-duration / --tw-ease. */
 @utility animate-in {
   animation: enter var(--tw-duration, 0.15s) var(--tw-ease, ease) both;
 }
@@ -932,10 +557,6 @@ html {
   }
 }
 
-/* Animation utilities (animate-in/out, fade, zoom, slide) used by the
-   overlay components are defined above. The
-   accordion's open/close keyframes are defined here, driven by the
-   --accordion-panel-height variable Base UI sets on the panel. */
 @theme inline {
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
@@ -983,18 +604,8 @@ html {
 }
 
 /* --- /account --- */
-/* Task 6.2: ported from `legacy-pages/account.astro`'s own `<style>` block.
-   Astro's `:global()` there is scoping syntax with no runtime meaning —
-   `#account-root :global(.draw)` compiled to the plain descendant selector
-   written below. Scoped under `#account-root` (the id `components/account/
-   account-panel.tsx` puts on its own root element) so these rules reach
-   only that page: a bare `.draw`/`.ink` rule here would also catch `/pro`'s
-   catalog sketches, a different animation with a different delay
-   variable. */
 
 @media (prefers-reduced-motion: no-preference) {
-  /* The page's one authored motion moment: the license sketch draws itself
-     in when the signed-out state appears. */
   #account-root .draw {
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
@@ -1007,8 +618,6 @@ html {
   }
 }
 
-/* The license card carries the site's crop-mark signature: a measured
-   artifact on the design canvas, same device as the `.l-marks` rows. */
 #account-root .license-card::before,
 #account-root .license-card::after {
   content: "";
@@ -1045,18 +654,8 @@ html {
 }
 
 /* --- /pro --- */
-/* Task 6.3: ported from `legacy-pages/pro.astro`'s own `<style>` block.
-   Astro's `:global()` there is scoping syntax with no runtime meaning —
-   `.catalog-cell :global(.draw)` compiled to the plain descendant selector
-   written below. Scoped under `.catalog-cell` (the class on each catalog
-   grid cell in `app/pro/page.tsx`), the way the source scoped it, so these
-   rules reach only this page's drawings — a bare `.draw`/`.ink` rule here
-   would also catch `/account`'s license sketch, added just above under its
-   own `#account-root` scope. */
 
 @media (prefers-reduced-motion: no-preference) {
-  /* The page's one authored moment: the catalog draws itself onto the
-     canvas — stroke outlines first, content ink settling in after. */
   .catalog-cell .draw {
     stroke-dasharray: 1;
     stroke-dashoffset: 1;

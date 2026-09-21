@@ -13,41 +13,11 @@ import { requirePageMeta } from "../lib/page-meta";
 import { installCommand } from "../lib/registry";
 import registry from "../../../packages/registry/registry.json";
 
-// Ported from `legacy-pages/index.astro`, class-for-class: `/` is one of the
-// two surfaces §17 holds near pixel parity (both were hand-tuned in dedicated
-// efforts), so nothing here is simplified, re-ordered, or swapped for a
-// registry primitive.
-//
-// The page is drawn as an exposed design canvas: a 72rem column framed by
-// continuous 1px rails, full-width section separators, crop marks at the rail
-// intersections, and a decorative ruler outside the left rail. The rails come
-// from each row's sm-only inline borders (rows stack, so the lines read as
-// continuous); crop marks are the ::before/::after of `.l-marks` rows. Those
-// rules live in `app/globals.css` rather than here — Task 4.3's legal pages
-// draw the same canvas.
-//
-// Everything the Astro page took from Blume's `PageLayout` — header, theme,
-// drawer, footer, skip link, fonts, analytics — now comes from
-// `app/layout.tsx` instead, so this file is the page body and nothing else.
-// The one piece of that chrome this page still shapes is the FOOTER: `/` has
-// its own framed variant, which `components/site-footer.tsx` draws off the
-// pathname.
-
 const uiCount = registry.items.filter((item) => item.type === "registry:ui").length;
 
-// Step 1's command has no registry item to name — it is the bare `shadcn
-// init` invocation — so its four dialects are built from the runner prefixes
-// directly. Steps 2 and the hero go through `installCommand(item, pm)`, the
-// single source of truth for registry install commands.
 const initCommands = packageManagerCommands((pm) => `${PACKAGE_MANAGER_RUNNERS[pm]} shadcn@latest init`);
 const buttonCommands = packageManagerCommands((pm) => installCommand("button", pm));
 
-// One shape for all three steps, because they are not all the same: steps 1
-// and 2 render a `<CopyCommand>` and carry the four dialects of a CLI call;
-// step 3 renders a plain `<code>` with an import statement, which no package
-// manager varies. The source draws exactly this distinction with its
-// `step.command ? … : …` branch — this type is what lets the same branch
-// typecheck over one array.
 type InstallStep = {
   title: string;
   body: string;
@@ -88,39 +58,12 @@ const whyColumns = [
   },
 ];
 
-// `/` is the site's one bare `<title>` (§15.8): `requirePageMeta("/", …)`
-// answers `{ title: site.name, … }` and `pageMetadata`'s call to `pageTitle`
-// returns that unchanged, so the tab reads `SevenUI` rather than
-// `SevenUI — SevenUI`. `pageMetadata` also names `/`'s own `/og/index.png`
-// card (task-9.2b) and builds the full `og:*`/`twitter:*` set every other
-// route now gets from the same function (§16.8).
-//
-// This now reads `requirePageMeta`, not a hand-written lookup-then-throw:
-// this route's shape was identical to what `requirePageMeta` already does,
-// and `lib/page-meta.ts`'s own docstring named this file as a non-adopter
-// only because it sat outside Task 4.2's file list — not because its shape
-// differs. See that docstring for the routes that DO still have a
-// principled reason to stay off it.
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await requirePageMeta("/", "app/page.tsx");
   return pageMetadata("/", meta.title, meta.description);
 }
 
 export default async function Home() {
-  // The same resolution `app/layout.tsx` does for the header, drawer and
-  // footer, done again here because a page cannot read a layout's locals.
-  // `<ComponentWall>` stays presentational and takes the answer as a prop:
-  // `lib/docs` is `server-only`, and keeping the lookup in the one Server
-  // Component that owns this route means the wall never has to care where
-  // "the primitives index" is.
-  //
-  // This is Ruling 8 extended to the wall (task-4.1 review, Minor). Both the
-  // wall's trailing cell and the footer's "All primitives" link name the same
-  // semantic target; before Task 4.1 both were literals, so resolving only
-  // one of them created a new inconsistency 60 lines apart. It is
-  // href-neutral today — `resolvePrimitivesHref` returns
-  // `/docs/components/accordion`, the value both used to hard-code — and the
-  // built HTML is asserted against that in task-4.1-report.md.
   const primitivesHref = resolvePrimitivesHref(await getNavTree());
   if (!primitivesHref) {
     throw new Error("app/page.tsx: nav tree has no Primitives group with a resolvable href");
@@ -222,14 +165,6 @@ export default async function Home() {
           </div>
         </section>
       </div>
-      {/*
-        `/`'s `og:url` and canonical `<link>` — `pageMetadata` omits both
-        fields for this one route, so `RootUrlTags` (exported by
-        `lib/metadata.tsx`, which owns the full explanation of why) renders
-        them here instead. React hoists a `<meta>`/`<link>` into `<head>`
-        from wherever it renders, so its position among these siblings is
-        invisible.
-      */}
       <RootUrlTags />
       <JsonLd route="/" />
     </>

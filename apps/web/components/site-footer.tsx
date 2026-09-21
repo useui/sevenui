@@ -1,78 +1,12 @@
 "use client";
 
-// The site footer, in its two live variants.
-//
-// Production has TWO footers with byte-identical content and different
-// framing, and the port has to keep both or `/` regresses:
-//
-//   - `legacy-pages/index.astro:227-327` renders the landing's own footer
-//     inside the exposed-grid canvas — each band wrapped in `.l-row`
-//     (`.l-marks` on the link grid), the grid itself full-width, and NO top
-//     border on the outer element, because the canvas's own section rules
-//     already close the page.
-//   - `legacy-components/site-footer.astro` is the plain footer every other
-//     page renders: `border-t border-border` on the outer element and a
-//     centred `max-w-6xl` column instead of the rails and crop marks. Its
-//     own header comment says in as many words that it duplicates the
-//     landing footer's link lists "without the landing's decorative
-//     `.l-row`/`.l-marks` rail-and-crop-mark treatment", and leaves "a
-//     shared extraction for both ... for a future landing refactor".
-//
-// This IS that extraction. The two variants were compared line by line
-// before folding: same links, same hrefs, same link text, same `aria-label`s,
-// same copy, same per-element classes, same order. The ONLY differences are
-// the three wrapper class strings and the outer border — so the content
-// below is written once and the variant supplies the frame.
-//
-// It is `"use client"` for one reason: which variant to draw depends on the
-// route, and `<SiteFooter />` is mounted in the ROOT layout (app/layout.tsx),
-// which App Router does not re-render on navigation and does not hand a
-// pathname. `usePathname()` is the same mechanism `SiteHeader`, `SiteDrawer`
-// and the docs sidebar already use for route-dependent chrome. The rejected
-// alternatives: a route-group layout (the footer would land inside `<main>`),
-// a `@footer` parallel route (a whole routing slot for one class swap), and a
-// `body:has(…)` CSS switch (three wrapper class sets encoded in a selector no
-// reader would find from here).
-//
-// Rendered as a `<footer>` rather than either source's bare `<div>`: on the
-// live site the landing wraps its markup in `<footer slot="footer">` and
-// every one of the plain footer's 18 callers does the same, so the
-// `contentinfo` landmark was never either component's own job there.
-// `SiteFooter` is now the whole footer, so the landmark has to move inside it
-// or every page loses it silently.
-//
-// Its four external anchors (GitHub, Base UI, the shadcn registry, Tailwind
-// CSS) carry `target="_blank" rel="noopener noreferrer"` literally in JSX:
-// the Astro build's post-build regex pass that used to add this to every
-// external anchor (blume.config.ts's `sevenui-external-links` integration)
-// has no equivalent in a Next.js build. §4.6 counts those four and the
-// landing's four separately (9 non-MDX anchors in all); folding the two
-// footers together makes them the SAME four, so the site-wide total is 5
-// (these four plus `/privacy`'s one, Task 4.3) and `/` carries exactly 4.
-//
-// Internal links use `next/link` so navigation stays a soft, client-side
-// transition instead of a full document reload — the whole reason App Router
-// replaces Astro's `<ClientRouter>` (spec §11.1).
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logomark } from "./logomark";
 
 const footerPrimitives = ["button", "input", "select", "combobox", "checkbox", "switch", "slider", "table"];
 
-/**
- * `primitivesHref` comes from `app/layout.tsx`, which resolves it once with
- * `resolvePrimitivesHref(await getNavTree())` and already hands the same
- * string to `SiteHeader` and `SiteDrawer`. Before Task 4.1 the "All
- * primitives" link below hard-coded `/docs/components/accordion` — the nav
- * tree's first primitive, and therefore the right answer only by
- * coincidence. It resolves to that same route today, so the rendered `href`
- * does not change; what changes is that it can no longer drift from the two
- * other places on the page that link to "the primitives index".
- */
 export function SiteFooter({ primitivesHref }: { primitivesHref: string }) {
-  // The landing page is the only route drawn on the exposed-grid canvas
-  // today; Task 4.3's legal pages use `.l-row` for their own content but
-  // keep the plain footer, exactly as production does.
   const framed = usePathname() === "/";
 
   const columns = (

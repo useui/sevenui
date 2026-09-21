@@ -19,23 +19,9 @@ export type DocPage = {
   raw: string;
 };
 
-// Directory walking, route derivation, frontmatter blanking and frontmatter
-// parsing all moved to ./corpus (fix round 1, Important 1) — this module
-// and scripts/build-md-mirrors.ts both need the exact same answers to
-// "which files, what route, what's blanked," and a review proved the two
-// prior copies were byte-identical, which makes one shared copy strictly
-// better than two checked-equal copies. What genuinely cannot move stays
-// here: the `server-only` marker itself, `scanHeadings` (only this
-// module's DocPage carries `headings`), the per-build assertion seam below,
-// and the production cache.
-
 async function readPage(fullPath: string): Promise<DocPage> {
   const content = await readFile(fullPath, "utf8");
 
-  // Missing or malformed frontmatter throws here and fails the build (see
-  // ./corpus's parseFrontmatter — no `strip: true`: stripping deletes the
-  // frontmatter lines and shifts every line number after it; `raw` is
-  // blanked instead, below).
   const frontmatter = parseFrontmatter(fullPath, content);
 
   const { blanked: raw } = blankFrontmatter(content);
@@ -56,17 +42,6 @@ async function readAll(): Promise<DocPage[]> {
   const files = await collectMdxFiles(DOCS_DIR);
   const pages = await Promise.all(files.map((fullPath) => readPage(fullPath)));
 
-  // --- Per-build assertions seam -------------------------------------
-  // Later tasks in this stage validate the fully assembled index here,
-  // before it is handed to any consumer. Each should throw to fail the
-  // build on violation:
-  //   - Task 2.2: assertNavCoversIndex(pages, buildNavTree(pages)) — every
-  //     page has a nav entry, exactly once (done — see below)
-  //   - Task 2.4: forbidden-construct + JSX-tag scan over each page's
-  //     `raw`, asserting the nine-element map is actually closed
-  //     (done — see below)
-  //   - Task 2.9: link validator over each page's `raw` (done — see below)
-  // ---------------------------------------------------------------------
   validateLinks(pages);
   assertNavCoversIndex(pages, buildNavTree(pages));
   assertElementsAllowed(pages);

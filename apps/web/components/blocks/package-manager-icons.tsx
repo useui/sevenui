@@ -1,34 +1,5 @@
-/**
- * Brand marks for the package-manager switcher, as ONE sprite rendered once per
- * page (by the /blocks layout — Task 5.2) and referenced with
- * `<use href="#pm-icon-*">` from every install control
- * (`components/blocks/install-control.tsx`).
- *
- * A sprite rather than inlined copies for two reasons. Size: bun's mark alone is
- * 3.2KB, and a category page renders it twice per card (menu option + trigger),
- * so six cards would ship ~40KB of duplicated path data. Correctness: the pnpm
- * mark ships as `<defs>` + `<use href="#id">`, and repeating those ids per card
- * would put a dozen colliding ids in one document.
- *
- * Artwork from TheSVG's `thesvg-color` set (https://github.com/glincker/thesvg),
- * vendored rather than installed: four icons do not justify a dependency, and
- * nothing here should need a network request at runtime. Each mark is the
- * respective project's own trademark, used only to identify that project.
- *
- * pnpm's neutral squares are `currentColor`, not the set's baked #4e4e4e /
- * #fff. The upstream set solves light-vs-dark by shipping `pnpm-light` and
- * `pnpm-dark` as separate icons; currentColor collapses that into one mark that
- * tracks whatever text colour the control is painted in, so it stays legible in
- * both themes and in every base colour the theme dock offers.
- *
- * A Server Component: pure markup, no state, no handlers. Ported from
- * `legacy-components/package-manager-icons.astro`; the artwork below is
- * byte-for-byte that file's, with only `fill-rule` respelled for JSX.
- */
 export function PackageManagerIcons() {
   return (
-    // Deliberately NOT `display: none`: an absolutely positioned zero-box
-    // sprite is the shape with no history of `<use>` resolution quirks.
     <svg
       aria-hidden="true"
       style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }}

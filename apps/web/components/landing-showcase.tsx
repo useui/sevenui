@@ -102,11 +102,6 @@ const invoices = [
   { invoice: "INV-003", status: "Unpaid", amount: "$350.00" },
 ];
 
-/**
- * One tile of the showcase mosaic. Tiles draw their own end + bottom
- * borders; the wrapper in LandingShowcase pulls the grid 1px past its
- * clipping box so the outermost borders vanish against the page rails.
- */
 function Tile({
   title,
   items,

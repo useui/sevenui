@@ -19,90 +19,6 @@ import { useAnnounce } from "./blocks-announcer";
 import { useBlockLoadGate } from "./blocks-load-gate";
 import { InstallControl } from "./install-control";
 
-/**
- * The live half of one gallery card: a re-sizable preview frame with a
- * visible "track" showing the frame's original extent as it is narrowed — a
- * plain bg-muted/30 tint, no outline of its own. (An earlier version traced
- * the track's edge with a broken/segmented border, but with the toolbar now a
- * full-track bar and the handle sitting outside the box, that outline just
- * collided with those corners and no longer carried its own meaning; the bar
- * + framed box + external handle already make the track's extent obvious
- * geometrically, so the tint alone is enough.) The toolbar (width presets,
- * the frame actions, and the install control) is attached to the top of the
- * track and spans its FULL width — it does not re-size with the frame, only
- * the framed box below it does. The drag handle sits OUTSIDE that box, in the
- * track's own vacated area to its right, tracking the box's live edge.
- *
- * Ported from `legacy-components/block-frame.astro`, whose ~828-line
- * document-level delegated script this replaces. That script was delegated
- * for one reason its own comments state: the alternative in Astro was a React
- * island per control, which on a six-card category page is 54 of them. React
- * has no such cost, so the per-card half of that script is simply per-card
- * state here. The two genuinely page-wide halves did NOT come along: the
- * loading queue is `blocks-load-gate.tsx` and the live region is
- * `blocks-announcer.tsx`, both mounted once by the /blocks layout.
- *
- * The iframe is INTERACTIVE by deliberate product decision (it reverses an
- * earlier a11y-motivated "inert" choice, since accepted by the owner): click
- * inputs, toggle pricing tabs, type into OTP slots, right in the gallery.
- * Because a cross-document iframe can swallow pointermove during a drag
- * (setPointerCapture does not reliably retarget across that boundary in every
- * engine), `app/globals.css`'s /blocks section suppresses the iframe's
- * pointer-events for exactly the duration of a drag, driven by the same
- * `data-dragging` flag this component toggles on the iframe's wrapper.
- *
- * The handle is authored BEFORE the box in source order even though it renders
- * to the box's right. Tab order follows the DOM, and the iframe is a full
- * application — with the handle last, reaching the control that re-sizes a
- * preview meant tabbing through the entire preview first, six times over on a
- * category page. Its position is set entirely from `left`, so moving it in
- * source changes nothing visually.
- *
- * SOURCE OF TRUTH FOR EVERY WIDTH MEASUREMENT (readout, aria-value*, preset
- * bucketing, the min/max clamp) is the IFRAME's own content width, not the
- * box's border-box width — the box is border-box with a border on every side,
- * so its rendered width is always a couple of pixels wider than what actually
- * renders inside it. Measuring that delta once at runtime (rather than
- * hardcoding "2") is what makes "1024px" in the badge mean the block genuinely
- * renders at 1024.
- *
- * WHY THE WIDTH ITSELF IS NOT REACT STATE. `applyWidth` writes
- * `box.style.width` directly, exactly as the Astro script did, and a
- * ResizeObserver on the IFRAME reconciles the readout, the separator's
- * aria-value*, the handle's position and the presets' pressed state
- * afterwards. That observer is also why a state-driven width would be the
- * wrong shape: it has to fire for triggers React never sees — a browser or
- * viewport resizing event, and a shrinking track clamping the box through its
- * own max-width — and it fires once on initial observe, covering the
- * first-paint reading for free. Only the observer writes state, so a drag
- * costs one style write per pointermove and at most one render per observed
- * change. React's own DOM diffing supplies what the source's `setAttr` helper
- * supplied by hand: an aria-value* attribute is only written when its value
- * actually changed, which is what keeps a screen reader from re-announcing
- * the separator on every observer tick.
- *
- * Every sr-only name below is ONE template literal rather than text with
- * `{title}` spliced into the middle of it. The rendered characters are
- * identical; the difference is that React's SSR writer separates two adjacent
- * text children with an empty HTML comment, and a single expression is a
- * single text node with no separator. `components/blocks/category-card.tsx`
- * set the precedent for exactly this, for exactly this reason: production
- * emits the bare text, and a comment marker in six accessible names per card
- * is an undeclared difference for nothing.
- */
-
-// Single source of truth for the re-sizing bounds, expressed in IFRAME width
-// (not box width). The client converts them to the equivalent box width using
-// the runtime-measured border delta below; the exact box-to-iframe offset
-// cannot be known at build time. MIN_WIDTH is a FLOOR THIS COMPONENT ENFORCES,
-// deliberately not a CSS `min-width` on the box: `min-width` beats `max-width`
-// in the cascade, so below a ~408px viewport the box rendered 360px inside a
-// ~312px track — clipping the preview's right edge and flinging the handle
-// past the card, which gave every phone a horizontal scrollbar. The clamp in
-// `applyWidth` already computes the correct bound against the live track.
-// The same three numbers define the preset/active-range boundaries: mobile
-// <= 384, tablet 385-1023, desktop >= 1024 (up to the 1440 cap) — all
-// iframe-width ranges.
 const MIN_WIDTH = 360;
 const MAX_WIDTH = 1440;
 
@@ -111,26 +27,11 @@ const HANDLE_HALF = 8;
 const KEY_STEP = 24;
 const COPIED_MS = 1600;
 
-// Shared geometry for every icon control in the toolbar. Selected state is
-// styled off `aria-pressed` alone — matching the theme dock — rather than a
-// mirrored `data-active` attribute. Two sources of truth for one state is how
-// the visible half stays working while the ARIA half silently rots.
-//
-// Deliberately carries NO display utility: the tiered controls below compose
-// `hidden @sm/card:inline-flex` onto it, and a baked-in `inline-flex` would
-// sit in the same cascade layer as `hidden` — where source order in the class
-// attribute counts for nothing and the generated stylesheet's order decides.
-// `inline-flex` won that race, so every tiered control rendered at every width.
 const ICON =
   "size-8 shrink-0 cursor-pointer items-center justify-center rounded-md border border-border text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 const ALWAYS = `${ICON} inline-flex`;
 const PRESET = `${ALWAYS} aria-pressed:bg-muted aria-pressed:text-foreground`;
 
-/**
- * Which preset's range contains this width: mobile <= 384, tablet 385-1023,
- * desktop >= 1024. Matches each button's own preset value so the caller can
- * compare directly.
- */
 function presetBucket(width: number): "384" | "768" | "max" {
   if (width <= 384) return "384";
   if (width <= 1023) return "768";
@@ -182,13 +83,6 @@ export function BlockPreview({
   const [fsFallback, setFsFallback] = useState(false);
   const [flash, setFlash] = useState<"prompt" | "permalink" | null>(null);
 
-  // The box is border-box with a border on every side, so its own rendered
-  // width is always a set few px wider than the iframe's real content width
-  // inside it. Measured once per card (rather than hardcoding "2") so every
-  // width computation is exact regardless of the box's actual border-width,
-  // and cached so a hot drag loop does not re-read layout on every pointermove.
-  // Not cached while the iframe has no layout yet — a zero clientWidth would
-  // freeze a nonsense delta for the life of the card.
   function borderDelta(): number {
     if (deltaRef.current !== null) return deltaRef.current;
     const box = boxRef.current;
@@ -198,20 +92,12 @@ export function BlockPreview({
     return deltaRef.current;
   }
 
-  // The widest iframe this track can currently show, honouring both the item's
-  // own cap and what the track physically offers. Shared by the clamp and the
-  // observer so `aria-valuemax` can never disagree with the enforced bound.
   function trackMax(): number {
     const wrapper = wrapperRef.current;
     if (!wrapper) return MAX_WIDTH;
     return Math.min(wrapper.getBoundingClientRect().width - borderDelta(), MAX_WIDTH);
   }
 
-  // Re-size the box so the IFRAME lands at exactly targetIframePx, clamped to
-  // [MIN_WIDTH, MAX_WIDTH] (iframe-width bounds) and to whatever width the
-  // track can actually offer the iframe once the border delta is subtracted.
-  // When the track is narrower than the floor, the track wins — the box must
-  // never render wider than the space it has.
   function applyWidth(targetIframePx: number) {
     const box = boxRef.current;
     if (!box) return;
@@ -220,19 +106,10 @@ export function BlockPreview({
     const floor = Math.min(MIN_WIDTH, maxIframePx);
     const clampedIframePx = Math.min(Math.max(targetIframePx, floor), maxIframePx);
     box.style.width = `${clampedIframePx + delta}px`;
-    // Keep the straddling handle glued to the box edge synchronously — the
-    // ResizeObserver reconciles a tick later, but during a fast drag this is
-    // what keeps the handle from visibly trailing the edge.
     const handle = handleRef.current;
     if (handle) handle.style.left = `${clampedIframePx + delta - HANDLE_HALF}px`;
   }
 
-  // ---------------------------------------------------------------------------
-  // Preview loading
-  // ---------------------------------------------------------------------------
-  // No `src` until the shared queue says so, and no `loading="lazy"` either —
-  // the gate's IntersectionObserver decides, and lazy would additionally
-  // re-arm itself on any later attribute write.
   useEffect(() => {
     const iframe = iframeRef.current;
     if (!iframe) return;
@@ -244,9 +121,6 @@ export function BlockPreview({
     if (iframe) gate.release(iframe);
   };
 
-  // ---------------------------------------------------------------------------
-  // Measurement
-  // ---------------------------------------------------------------------------
   useEffect(() => {
     const iframe = iframeRef.current;
     if (!iframe) return;
@@ -259,9 +133,6 @@ export function BlockPreview({
             ? previous
             : { width, available },
         );
-        // Keep the external handle straddling the box's live right edge (half
-        // over the border, half over the track) — it is a sibling positioned
-        // in the frame region, so nothing moves it automatically.
         const box = boxRef.current;
         const handle = handleRef.current;
         if (box && handle) {
@@ -270,48 +141,18 @@ export function BlockPreview({
       }
     });
     observer.observe(iframe);
-    // Disconnecting on unmount is what the Astro script needed an
-    // `astro:before-swap` listener for: a ResizeObserver holds STRONG
-    // references to its targets, so without it every gallery navigation pinned
-    // another page's worth of detached iframes in memory.
     return () => observer.disconnect();
-    // Mount-only: every value this effect reads is a ref, and one observer
-    // per card for that card's whole lifetime is the intent.
   }, []);
 
-  // ---------------------------------------------------------------------------
-  // Drag
-  // ---------------------------------------------------------------------------
-  // Listeners go on `document`, not on the handle itself. Pointer capture
-  // retargets the events to the handle, but the capture is exactly what a
-  // cross-document iframe can break; a document listener still sees the event
-  // either way.
-  //
-  // They are bound SYNCHRONOUSLY, inside the pointerdown handler, rather than
-  // from an effect keyed on `dragging`. An effect runs one scheduler task
-  // later, and the pointer has usually already moved by then, so the first
-  // pointermove of every drag was being dropped — the Astro source bound these
-  // at document scope once and permanently, and never had the gap. Binding
-  // here also closes a leak the effect shape had: `userSelect` is set on the
-  // same line that starts the drag, so the thing that clears it must be
-  // reachable from an unmount that happens before any pointerup, which
-  // `dragCleanup` below is and an effect cleanup keyed on state was not.
   function onHandlePointerDown(event: ReactPointerEvent<HTMLDivElement>) {
     const handle = handleRef.current;
     const box = boxRef.current;
     if (!handle || !box) return;
     handle.setPointerCapture(event.pointerId);
-    // Remember where on the handle the user grabbed relative to the box's
-    // right edge, so the edge follows the pointer without the initial jump a
-    // raw clientX mapping would cause on a straddling handle.
     dragRef.current = {
       pointerId: event.pointerId,
       grabOffset: box.getBoundingClientRect().right - event.clientX,
     };
-    // State only drives `data-dragging`, which the stylesheet reads to
-    // suppress the iframe's pointer-events. pointerdown is a discrete event,
-    // so this flushes synchronously and the suppression lands before the next
-    // pointermove — which is the whole point of the flag.
     setDragging(true);
     document.body.style.userSelect = "none";
 
@@ -320,9 +161,6 @@ export function BlockPreview({
       const wrapper = wrapperRef.current;
       if (!drag || !wrapper || moveEvent.pointerId !== drag.pointerId) return;
       const rect = wrapper.getBoundingClientRect();
-      // The pointer drives the box's right edge, preserving the grab point on
-      // the straddling handle; convert to the equivalent iframe target by
-      // removing the border delta.
       const targetBoxPx = moveEvent.clientX + drag.grabOffset - rect.left;
       applyWidth(targetBoxPx - borderDelta());
     }
@@ -350,13 +188,8 @@ export function BlockPreview({
     document.addEventListener("pointermove", onMove);
     document.addEventListener("pointerup", end);
     document.addEventListener("pointercancel", end);
-    // A drag that is still live when this card unmounts has to be able to undo
-    // both halves of what pointerdown did.
     dragCleanup.current = stop;
 
-    // preventDefault suppresses text selection, but it also suppresses the
-    // focus the press would otherwise give the handle — which is why the arrow
-    // keys did nothing after a mouse drag. Focus it explicitly.
     event.preventDefault();
     handle.focus();
   }
@@ -379,26 +212,6 @@ export function BlockPreview({
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Full screen, in two flavours
-  // ---------------------------------------------------------------------------
-  // requestFullscreen goes on the WRAPPER, not the iframe: only the fullscreen
-  // element and its descendants render, so promoting the iframe alone would
-  // take the toolbar with it. The iframe node is never moved either —
-  // inserting an <iframe> elsewhere creates a new nested navigable, throwing
-  // away the preview's state and paying a fresh load.
-  //
-  // `allowfullscreen` is deliberately absent from the iframe: the spec checks
-  // the node document of the element being promoted, which is this document.
-  // Only a call from INSIDE the frame would need the permissions-policy grant.
-
-  // Releasing the pinned box width is what stops a card that was left on the
-  // 384px preset from opening as a letterboxed strip. Stashing it first is
-  // what lets the card come back exactly as the reader left it. The CSS
-  // deliberately does NOT force the box's width instead: the UA's `!important`
-  // rules apply only to the fullscreen element itself, and pinning the box
-  // back with another `!important` would make the width presets silently inert
-  // in full screen, since `applyWidth` writes an ordinary style value.
   function setFullscreenLayout(on: boolean) {
     const box = boxRef.current;
     if (box) {
@@ -414,11 +227,6 @@ export function BlockPreview({
     setFullscreen(on);
   }
 
-  // iPhone has no Fullscreen API (WebKit #212934, WONTFIX; iOS supports it on
-  // iPad only), so this plain overlay is not a rare fallback — it is every
-  // iPhone. It does not make the rest of the page inert, so background content
-  // stays reachable by screen reader; Escape and the toolbar's own button are
-  // the ways out.
   function applyFallback(on: boolean) {
     setFsFallback(on);
     setFullscreenLayout(on);
@@ -428,8 +236,6 @@ export function BlockPreview({
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
     if (document.fullscreenEnabled) {
-      // Must stay synchronous with the click — awaiting anything first spends
-      // the transient activation.
       wrapper.requestFullscreen().catch(() => applyFallback(true));
       return;
     }
@@ -446,8 +252,6 @@ export function BlockPreview({
     }
   }
 
-  // Fires for the button, for Escape, and for the browser's own full-screen UI
-  // alike — the one place that reconciles layout with the actual state.
   useEffect(() => {
     const onChange = () => {
       const wrapper = wrapperRef.current;
@@ -460,10 +264,6 @@ export function BlockPreview({
     // Mount-only: refs and state setters, both stable.
   }, []);
 
-  // The overlay flavour locks page scrolling and answers Escape itself; the
-  // Fullscreen API flavour gets both from the UA. Unmounting while the overlay
-  // is up restores scrolling, which the Astro version needed an explicit
-  // `astro:before-swap` reset for.
   useEffect(() => {
     if (!fsFallback) return;
     document.documentElement.style.overflow = "hidden";
@@ -480,19 +280,10 @@ export function BlockPreview({
     // `fsFallback` alone: `applyFallback` reads refs and state setters only.
   }, [fsFallback]);
 
-  // ---------------------------------------------------------------------------
-  // Toolbar actions
-  // ---------------------------------------------------------------------------
   useEffect(() => () => {
     if (flashTimer.current) clearTimeout(flashTimer.current);
   }, []);
 
-  // Visible confirmation for a copy control: swap its idle icon for the check
-  // and flash "Copied" in place of the tooltip's hint. Both revert together.
-  // `announce()` covers the non-visual half; this covers the half a sighted
-  // user actually watches for. The accessible name never changes, because
-  // swapping it to "Copied" destroys the button's name for anyone who tabs
-  // back to it later.
   async function copy(text: string, message: string, which: "prompt" | "permalink") {
     try {
       await navigator.clipboard.writeText(text);
@@ -503,23 +294,13 @@ export function BlockPreview({
       return;
     }
     setFlash(which);
-    // Re-copying before the flash ends restarts it rather than letting the
-    // first timer cut the second confirmation short.
     if (flashTimer.current) clearTimeout(flashTimer.current);
     flashTimer.current = setTimeout(() => setFlash(null), COPIED_MS);
   }
 
-  // The prompt is assembled client-side so the preview link is absolute
-  // against whatever origin the page is actually served from, and so the
-  // command matches the reader's own package manager. No block source is
-  // included — the point is to tell an agent how to install the block
-  // correctly, not to hand it the paid files.
   function buildPrompt(): string {
     const pm = currentPackageManager();
     const preview = new URL(previewUrl, location.href).href;
-    // `null` marks a line that may not exist; "" is a blank line the prompt
-    // wants. Filtering on `!== ""` collapsed every paragraph break into one
-    // wall of text.
     const lines: (string | null)[] = [
       `Add the SevenUI block "${title}" to this project.`,
       "",
@@ -547,11 +328,6 @@ export function BlockPreview({
   function refresh() {
     const iframe = iframeRef.current;
     if (!iframe?.src) return;
-    // reload() is initiated from INSIDE the frame, so it never re-runs the
-    // "process the iframe attributes" steps — which is what makes the two
-    // obvious alternatives wrong. Re-assigning `src` re-arms loading and can
-    // silently skip an offscreen frame, and appending a cache-buster produces
-    // a NEW url, which pushes an entry onto the PARENT's history.
     try {
       const view = iframe.contentWindow!;
       const y = view.scrollY;
@@ -573,19 +349,9 @@ export function BlockPreview({
     announce("Preview reloaded.");
   }
 
-  // ---------------------------------------------------------------------------
-  // Render
-  // ---------------------------------------------------------------------------
   const width = metrics?.width;
   const available = metrics?.available;
-  // The presets live in the TOOLBAR, a sibling of the frame. Before the first
-  // observer tick there is nothing to bucket, and "max" is what the frame is
-  // actually at — which is also what the server renders.
   const bucket = width === undefined ? "max" : presetBucket(width);
-  // Dragging cannot do anything when the track has nothing to give back. An
-  // explicit `display` rather than the `hidden` attribute, because the handle
-  // carries a flexbox display utility, which outranks the UA's
-  // `[hidden] { display: none }`.
   const resizable = available === undefined || available > MIN_WIDTH;
 
   const presets = [
@@ -595,17 +361,6 @@ export function BlockPreview({
   ] as const;
 
   return (
-    // `@container/card` (not a viewport breakpoint) drives the toolbar's tiers
-    // below: this track is ~684px at a 1024px viewport but ~312px at 360px, so
-    // a `lg:`-style rule would describe the wrong box entirely. Keep the
-    // containment declaration HERE and leave [data-resize-frame]'s own
-    // `relative` alone — Chrome 129 removed the implicit containing block
-    // `container-type` used to create, and the handle is absolutely positioned
-    // against the frame.
-    //
-    // `data-block-preview` is this component's CSS scope, standing in for the
-    // `data-astro-cid-*` attribute Astro generated; every rule in the /blocks
-    // section of `app/globals.css` is written under it.
     <div
       className="@container/card relative w-full rounded-xl bg-muted/30"
       data-block-preview=""
@@ -613,44 +368,8 @@ export function BlockPreview({
       ref={wrapperRef}
       style={{ maxWidth: `calc(${MAX_WIDTH}px + 2px)` }}
     >
-      {/* A set h-11 rather than padding + wrapping: the previous wrapping bar
-          meant that once the control set outgrew the track, `justify-between`
-          applied PER LINE — a lone trailing control slammed to one edge — and
-          the bar's height, and so every card's height, changed with the
-          breakpoint. Controls now drop out at containment tiers instead, in
-          reverse order of how often they are needed. `display: none` takes
-          them out of the accessibility tree and the tab order for free, with
-          none of the focus-loss window an overflow menu opens up.
-
-          The tier thresholds are budgeted against the INSTALL CONTROL, not
-          just against the icons. It is the only shrinkable item in the bar
-          (everything else is shrink-0), so it absorbs any deficit alone, and
-          its natural width is ~355px. Tiering on the icons alone put `@lg` at
-          512 and `@xl` at 576 — widths where that 355px had not been earned
-          yet — so each tier boundary made the bar TIGHTER as the window got
-          WIDER: the command field dropped 377->266px at `@lg` and 329->258px
-          at `@xl`, its global minimum. `@2xl` (672) and `@3xl` (768) clear
-          355px on the far side of every boundary, so each tier is now a net
-          gain. A 1024px viewport is the case to keep in mind: the 260px
-          sidebar appears there and the track falls to 684px, which must still
-          land in a tier the install control fits in. */}
       <div className="flex h-11 items-center gap-2 rounded-t-xl border border-border bg-muted/30 px-3">
         <div aria-label="Preview width" className="hidden shrink-0 items-center gap-1 @2xl/card:flex" role="group">
-          {/* The labels carry the RANGE each preset is pressed for, not the
-              single width it snaps to — the button stays pressed anywhere in
-              its bucket, so "768px" was describing a state the control never
-              has on its own. The hints are drawn by the registry's own
-              Tooltip, one Provider in the /blocks layout. They were `title`
-              before, which the UA draws for free but only after its own
-              ~500ms-1s delay that no author can shorten; then a bespoke
-              page-level tip node, which existed only to avoid one island per
-              button. Both reasons that beat the original tooltip spans still
-              hold and are still met: the tip is portalled, so no ancestor can
-              clip it, and it is purely decorative — the accessible name is the
-              sr-only span on each control, unchanged, and Base UI's tooltip
-              adds neither `role="tooltip"` nor `aria-describedby`. WCAG 1.4.13
-              is satisfied rather than side-stepped: Escape dismisses it, and
-              it is not hoverable away. */}
           {presets.map(({ value, tip, name: label, Icon }) => (
             <Tooltip key={value}>
               <TooltipTrigger
@@ -674,25 +393,6 @@ export function BlockPreview({
         </div>
 
         <div className="ml-auto flex min-w-0 items-center gap-1">
-          {/* The icon pair is the install control's confirmation pattern,
-              reused: the display utility swaps between the two icons and the
-              accessible name never changes, so the result is announced through
-              the live region rather than by mutating the button's name under
-              anyone tabbed to it. These two copied silently before — only the
-              install command confirmed, which made the other two feel broken.
-
-              `closeOnClick={false}` on both copy triggers is load-bearing, not
-              tidying. Base UI's TooltipTrigger defaults it to `true` and wires
-              it to `useDismiss({ referencePress })`, so pressing the button
-              dismisses its own tooltip — and the "Copied" text below would
-              then be swapped into a popup that is already closing, i.e. never
-              seen. The Astro source hit the same wall from the other side: it
-              dismissed the tip in a capture-phase click listener and then had
-              to re-open it (`showTipIfActive`) on the flash text. Keeping the
-              popup open is the same outcome without the round trip. Only the
-              two COPY controls opt out; every other toolbar control still
-              dismisses on click, which is what should happen when a click
-              navigates or promotes the frame out from under the tip. */}
           <Tooltip>
             <TooltipTrigger
               closeOnClick={false}
@@ -765,8 +465,6 @@ export function BlockPreview({
             <TooltipContent>Reload preview</TooltipContent>
           </Tooltip>
 
-          {/* A toggle, so it reports pressed state rather than changing its
-              name: the same control is how you leave full screen again. */}
           <Tooltip>
             <TooltipTrigger
               render={
@@ -785,10 +483,6 @@ export function BlockPreview({
             <TooltipContent>Full screen</TooltipContent>
           </Tooltip>
 
-          {/* Renamed from "Open full-screen preview": with a real full-screen
-              control one row over, two differently-behaving buttons shared a
-              name — and screen-reader users only ever got this one's, since
-              the old tooltip was aria-hidden. */}
           <Tooltip>
             <TooltipTrigger
               render={
@@ -826,18 +520,6 @@ export function BlockPreview({
       </div>
 
       <div className="relative" data-resize-frame="">
-        {/* Authored before the box so keyboard users reach it without first
-            traversing the whole preview application; `left` alone decides
-            where it renders, so moving it in source changes nothing visually.
-            It lives OUTSIDE the clip layer below so its straddling half is
-            never shaved.
-
-            The resting `left` is an ordinary style prop even though `applyWidth`
-            writes `style.left` on this same element imperatively. React writes
-            only the style properties whose VALUE changed between renders, and
-            this string never changes, so no re-render can undo the position a
-            drag just wrote — the same arrangement the box below already relies
-            on for its own `width`. */}
         <div
           aria-label="Resize preview"
           aria-orientation="vertical"
@@ -859,21 +541,7 @@ export function BlockPreview({
             className="h-12 w-1.5 rounded-full bg-border transition-colors group-hover:bg-foreground/30 group-focus-visible:bg-foreground/50"
           />
         </div>
-        {/* Clip layer: rounds and clips the track area's outer bottom corners.
-            The box inside keeps SQUARE corners, so when it is narrowed its
-            inner bottom-right corner meets the track with a flat edge (no
-            orphaned rounding mid-track); at the track's own edges this layer
-            clips both the box and the underlay ring to the shared rounded
-            silhouette. */}
         <div className="overflow-hidden rounded-b-xl">
-          {/* Track outline: a decorative OVERLAY ring framing the full track
-              area, painted ABOVE the box (z-10, no pointer events). At full
-              width it traces the exact same 1px perimeter as the box's own
-              border — including the rounded bottom corners the square-cornered
-              box cannot draw once the clip layer shaves them — so the eye reads
-              one continuous edge. Narrowed, the ring frames the vacated area
-              while the box's own border draws the inner edge. Never affects the
-              box's geometry or the width math. */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 z-10 rounded-b-xl border border-t-0 border-border"

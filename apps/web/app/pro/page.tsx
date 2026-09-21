@@ -6,28 +6,10 @@ import { LandingRuler } from "../../components/landing-ruler";
 import { pageMetadata } from "../../lib/metadata";
 import { requirePageMeta } from "../../lib/page-meta";
 
-// Ported from `legacy-pages/pro.astro`. The header, drawer, footer, theme
-// provider and skip link are `app/layout.tsx`'s job (§11.1) — this page
-// renders only its own section content, the same shape `app/privacy/page.tsx`
-// and `app/account/page.tsx` use.
-//
-// Nothing on this page is gated (task addendum A) — the hero, the catalog
-// grid, the pricing band, the feature list and the checkout link are all
-// plain server-rendered markup. Clerk touches exactly one thing, the
-// checkout link's query string, and that lives entirely in
-// `components/pro/buy-link.tsx`, a small `"use client"` island. This file
-// stays a plain server component so `/pro` builds as a prerendered route
-// (`○`): no `cookies()`, no `headers()`, no `dynamic = "force-dynamic"`.
-
 const ROUTE = "/pro";
 
-// Sandbox link until production cutover — the ONLY place the checkout URL
-// lives (task addendum C). `<BuyLink>` receives it as a prop and enhances
-// the URL it is given; it does not know or store which URL that is.
 const CHECKOUT_URL = "https://buy.polar.sh/polar_cl_EFc9Cc5sEoAjEz4MBrNwWu5UWgdnAMC0cRwyT2n1aZF";
 
-// Copy is not migration territory (spec addendum D) — every string below is
-// reproduced verbatim from `legacy-pages/pro.astro`.
 const features = [
   "Every Pro block, delivered to your license as the catalog rolls out",
   "Lifetime access — pay once, keep forever",
@@ -35,9 +17,6 @@ const features = [
   "License key issued immediately — view it anytime in your account",
 ];
 
-// The upcoming catalog, drawn in the same wireframe idiom as the blocks
-// gallery's category illustrations. Names are the promise; the drawings are
-// deliberately unfinished — the catalog is in production.
 const catalog = [
   { id: "dashboards", label: "Dashboards" },
   { id: "app-shells", label: "App shells" },
@@ -47,13 +26,6 @@ const catalog = [
   { id: "billing", label: "Billing" },
 ];
 
-// `/pro` has been in `lib/page-meta.ts` since Task 1.7, with its description
-// copied from the live page's own `<meta name="description">` — this page
-// reads that entry, it does not add or rewrite it. `pro.astro`'s own local
-// `const description` was that same string, made redundant here.
-// `pageMetadata` applies the em-dash suffix in the one place it is ever
-// applied (§15.8, §16.8) and builds the full `og:*`/`twitter:*` set
-// (task-9.2b).
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await requirePageMeta(ROUTE, "app/pro/page.tsx");
   return pageMetadata(ROUTE, meta.title, meta.description);
@@ -186,11 +158,6 @@ export default function ProPage() {
   );
 }
 
-// The six catalog SVGs are art assets, not logic (task addendum D): ported
-// faithfully, attribute for attribute, from `legacy-pages/pro.astro`'s
-// `entry.id === "dashboards" ? … : …` chain — a five-deep nested ternary
-// that existed only because Astro had no better tool. Keyed off the entry id
-// through this plain lookup instead of reproducing that chain.
 const catalogArt: Record<string, ReactNode> = {
   dashboards: <DashboardsArt />,
   "app-shells": <AppShellsArt />,

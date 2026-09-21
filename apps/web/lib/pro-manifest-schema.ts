@@ -1,14 +1,3 @@
-// Pure manifest schema + validation — deliberately zero imports (no
-// lucide-react, no node:fs, no server-only). That is what keeps this module
-// importable from plain Node: `apps/web/lib/pro-manifest.ts` carries
-// `import "server-only"`, a marker that throws at import time outside
-// React's react-server export condition, and `node --conditions=react-server`
-// is not an escape either (React then resolves to its react-server build,
-// which has no `createContext`, and `lucide-react` calls it at module
-// scope). The scheduled manifest canary — a plain-Node CI script that runs
-// `parseManifest` against the live manifest — depends on this file staying
-// import-free. Do not add an import here without moving the canary off it.
-
 export interface ManifestAsset {
   type: "image" | "svg";
   src: string;
@@ -67,13 +56,6 @@ function uniqueIds(list: { id?: string; name?: string }[], what: string) {
   return seen;
 }
 
-/**
- * Validate a raw manifest payload. `iconExists` is injected rather than
- * imported so this module can stay import-free (see file header) — the
- * loader passes `(key) => key in icons` from lucide-react; the canary can
- * pass any equivalent check, including a stub, without pulling lucide-react
- * into a plain-Node script.
- */
 export function parseManifest(raw: unknown, iconExists: (pascalKey: string) => boolean): ProManifest {
   const manifest = raw as ProManifest;
   if (!Array.isArray(manifest?.groups) || !Array.isArray(manifest?.categories) || !Array.isArray(manifest?.items)) {
@@ -87,8 +69,6 @@ export function parseManifest(raw: unknown, iconExists: (pascalKey: string) => b
   uniqueIds(manifest.items, "item name");
 
   for (const group of manifest.groups) {
-    // "preview" is reserved for a future /blocks/preview route, keeping
-    // that historical URL space clean.
     if (group.id === "preview") {
       throw new Error(`pro manifest: group id "preview" is reserved — rename this group.`);
     }

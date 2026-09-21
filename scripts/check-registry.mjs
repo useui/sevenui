@@ -16,9 +16,6 @@ const demoNames = new Set(demos.items.map((i) => i.name));
 // registryDependencies always point at ui primitives in the root namespace.
 const OWN_URL = /^https:\/\/sevenui\.dev\/r\/([a-z0-9-]+)\.json$/;
 
-// Every npm dependency must pin the version range the workspace develops
-// against — a bare name makes consumers install latest, so a breaking
-// release of a primitive would reach them silently.
 const registryPkg = loadJson(join(UI_ROOT, "package.json"));
 const EXPECTED_RANGES = {
   ...registryPkg.devDependencies,
@@ -65,9 +62,6 @@ function checkDepRanges(item, where) {
   }
 }
 
-// Shared per-registry checks: unique names, files exist, deps pinned,
-// lucide declared, registryDependencies are root /r/ URLs naming ui items,
-// house-alias imports declared as registryDependencies.
 function checkRegistry(registry, root, label, { fileType } = {}) {
   const seen = new Set();
   for (const item of registry.items) {
@@ -95,8 +89,6 @@ function checkRegistry(registry, root, label, { fileType } = {}) {
       }
     }
 
-    // Every house-alias import must be declared as a registryDependency
-    // (ui items import siblings relatively, so this only bites derived registries).
     if (root !== UI_ROOT) {
       const deps = new Set(item.registryDependencies ?? []);
       for (const file of item.files ?? []) {
@@ -119,8 +111,6 @@ function checkRegistry(registry, root, label, { fileType } = {}) {
   }
 }
 
-// Every .tsx under a registry's content folders must be registered — an
-// unregistered file silently ships nowhere.
 function checkAllFilesRegistered(registry, root, label, { skip = [] } = {}) {
   const registered = new Set(
     registry.items.flatMap((i) => (i.files ?? []).map((f) => f.path)),
@@ -155,15 +145,6 @@ for (const item of ui.items) {
 checkRegistry(demos, DEMOS_ROOT, "demos");
 checkAllFilesRegistered(demos, DEMOS_ROOT, "demos", { skip: ["theme.css", "registry.json", "package.json"] });
 
-// Theme parity: every cssVars token appears, with the same value, in both
-// demos/theme.css AND apps/web/app/globals.css.
-//
-// demos/theme.css stays on disk but the site no longer loads it: its only
-// site consumer was blume.config.ts's examples.css, and demos now render
-// inline (§7). It is not inert — this check still reads it to verify the
-// published `theme` registry item. Registry changes are out of scope, so the
-// file is not deleted and carries no comment of its own (that would be a
-// registry edit).
 const themeItem = ui.items.find((i) => i.name === "theme");
 const THEME_CONSUMER_FILES = [join(DEMOS_ROOT, "theme.css"), "apps/web/app/globals.css"];
 for (const themeFile of THEME_CONSUMER_FILES) {
@@ -182,8 +163,6 @@ const COMPONENTS_ROOT = "packages/registry/components";
 const components = loadJson(join(COMPONENTS_ROOT, "registry.json"));
 checkRegistry(components, COMPONENTS_ROOT, "components", { fileType: "registry:component" });
 checkAllFilesRegistered(components, COMPONENTS_ROOT, "components", { skip: ["registry.json"] });
-// Gallery folders must be named after a ui component (the page derives its
-// title and docs link from the ui item).
 for (const item of components.items) {
   const folder = (item.files ?? [])[0]?.path.split("/")[0];
   if (folder && !uiNames.has(folder)) {

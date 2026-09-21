@@ -5,68 +5,9 @@ import { usePathname } from "next/navigation";
 import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { site } from "../../lib/site";
 
-/**
- * The page-actions rail (§15.10), ported from
- * `blume/components/layout/PageActions.astro` and mounted by
- * `app/docs/layout.tsx` inside the sticky "On this page" aside, directly
- * below the desktop TOC — `RootLayout.astro:713-733`'s position. Docs-only,
- * as today: that aside exists nowhere else on the site.
- *
- * FOUR ITEMS, NOT SIX. The source file also builds an Export menu (PDF via
- * `window.print()`, EPUB via a lazy `epub-gen-memory` import) and an MCP
- * menu. Neither is configured on this site and neither is ported: verified
- * against the shipped Astro output, where the export and MCP hooks appear
- * zero times while the four ported ones appear once each (and the chat
- * anchors six times). §15.14 retires WebMCP outright. So of the source's
- * three floating panels exactly one survives, and the ~250 lines of EPUB
- * assembly and MCP deep-link building go with the other two.
- *
- * WHY IT IS A CLIENT COMPONENT AND WHY IT LIVES IN THE LAYOUT. It has to sit
- * in the third grid track, which only `app/docs/layout.tsx` renders — and
- * that layout is above the `[[...slug]]` segment, so it is handed no params
- * and cannot know which route it is wrapping (the same constraint
- * `toc.tsx` and `breadcrumb.tsx` document). The route therefore comes from
- * `usePathname()`, and the three interactive behaviours below need a client
- * boundary anyway.
- *
- * `docRoutes` is the one thing `usePathname()` cannot answer: whether the
- * current path is a real docs page. It matters because `app/docs/not-found.tsx`
- * renders inside this same layout, and a rail on a 404 would offer an "edit"
- * link to an `.mdx` file that does not exist, a Markdown copy that 404s, and
- * a chat prompt pointing an assistant at a missing URL. Blume never had this
- * problem — its 404 was a standalone page outside the docs shell. The cost is
- * one array of 69 route strings in the flight payload: 2,032 B escaped, 415 B
- * gzipped on its own, and less in place, since `DocsTocProvider`'s keys put
- * the same strings in the same payload a few kilobytes earlier.
- *
- * EVERY `data-blume-*` / `data-i18n-*` HOOK IS GONE (§13.3). They existed so
- * a separately-bundled script could find these elements and read its
- * localized strings back out of the DOM; refs and literals do both jobs here.
- */
-
-// The one place the docs corpus' location in the repo is written down.
-// Stage 10's deletions, or any future move of `apps/web/docs`, touch this
-// line and nothing else.
-//
-// IT IS NOT THE PATH THE SPEC ASKS FOR, and that is deliberate. §15.10 and
-// the plan both specify `.../edit/main/docs/<slug>.mdx` — which is what
-// production emits today, and which 404s on all 68 pages: there is no
-// `docs/` directory at the repo root (confirmed against `main`), because the
-// monorepo migration moved the corpus to `apps/web/docs/` and Blume's
-// edit-URL base was never updated. Reproducing a link whose only purpose is
-// to open a file for editing, while the path resolves to nothing, is not
-// parity in any useful sense. This emits the working path. It is a
-// declared-diff-shaped change — §17.2's extractor reads link targets, so it
-// shows up on 68 routes — and the stage record names it.
 const DOCS_SOURCE_PATH = "apps/web/docs";
 const EDIT_BASE = `https://github.com/${site.github.owner}/${site.github.repo}/edit/main/${DOCS_SOURCE_PATH}`;
 
-// Blume's three shared class strings, verbatim apart from the panel's radius
-// (the 12px Blume token becomes the 8px utility, §17.6 #27 — this panel is
-// NOT one of §8.3's four elements, which are the two pagination anchors, the
-// mobile TOC and the feedback buttons). Top-level rows match the TOC links:
-// flat, no background or padding, colour shift on hover only. Rows inside the
-// panel keep menu affordances.
 const rowClass =
   "flex w-full items-center gap-2.5 py-1.5 text-start text-muted-foreground text-sm transition-colors hover:text-foreground";
 const menuRowClass =
@@ -82,14 +23,6 @@ const COPIED_LABEL = "Copied!";
 
 type ProviderKey = "chatgpt" | "claude" | "cursor" | "scira" | "t3" | "v0";
 
-/**
- * The "Open in chat" providers, in `blume/core/open-in-chat.ts`'s display
- * order and with that file's brand names and the script's URL builders
- * folded into one row each — three parallel lookups in the source (list,
- * names, URLs) that had to be kept in sync by hand.
- *
- * Brand names stay verbatim; only the surrounding phrase was ever localized.
- */
 const PROVIDERS: ReadonlyArray<{ key: ProviderKey; name: string; url: (query: string) => string }> = [
   { key: "v0", name: "v0", url: (q) => `https://v0.app?q=${q}` },
   { key: "chatgpt", name: "ChatGPT", url: (q) => `https://chatgpt.com/?hints=search&prompt=${q}` },
@@ -99,13 +32,6 @@ const PROVIDERS: ReadonlyArray<{ key: ProviderKey; name: string; url: (query: st
   { key: "cursor", name: "Cursor", url: (q) => `https://cursor.com/link/prompt?text=${q}` },
 ];
 
-/**
- * Brand marks, monochrome and inheriting `currentColor`, transcribed from the
- * source's `LOGOS` map. Codex's is not here: it belonged to the MCP menu,
- * which is not ported. `aria-hidden` is added to each (Blume injected these
- * through raw HTML and set no ARIA on them) — they sit beside their own text
- * label, so they are decorative by definition.
- */
 const LOGOS: Record<ProviderKey, ReactNode> = {
   chatgpt: (
     <svg aria-hidden="true" className="size-4 shrink-0" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg>
@@ -127,16 +53,6 @@ const LOGOS: Record<ProviderKey, ReactNode> = {
   ),
 };
 
-/**
- * The official GitHub mark, from Blume's own `GITHUB_MARK` path data.
- *
- * Duplicated from `components/site-header.tsx`, which inlines the same path
- * for the same reason (this project's `lucide-react` ships no brand icons at
- * all, so there is nothing to import). The two differ in size and ARIA, so
- * they are not literally the same element; hoisting the path into a shared
- * module is the obvious de-duplication and is deliberately NOT done here,
- * because `site-header.tsx` is outside this task's file list.
- */
 function GithubMark() {
   return (
     <svg
@@ -165,8 +81,6 @@ export function DocsPageActions({ docRoutes }: { docRoutes: readonly string[] })
 
   const [flipUp, setFlipUp] = useState(false);
   const [copied, setCopied] = useState(false);
-  // Null until mounted, which is what keeps the chat anchors href-less in the
-  // prerendered HTML exactly as they are today — see the anchor below.
   const [origin, setOrigin] = useState<string | null>(null);
 
   useEffect(() => {
@@ -180,17 +94,6 @@ export function DocsPageActions({ docRoutes }: { docRoutes: readonly string[] })
     [],
   );
 
-  // `placeMenu`, ported from the source's script: when opening downward would
-  // run the panel past the bottom of the viewport AND there is room above,
-  // flip it above the trigger. Real behaviour, not decoration — the rail sits
-  // at the bottom of a sticky column, which is exactly where a downward panel
-  // runs out of room. Measuring `offsetHeight` is only meaningful while the
-  // disclosure is open, which is why every caller is gated on that.
-  //
-  // The source's OTHER init job — closing every sibling disclosure when one
-  // opens — is not ported: it exists to make several dropdowns behave like
-  // one menu, and with the export and MCP menus gone there is exactly one
-  // dropdown here, so the loop can never do anything.
   const placeMenu = useCallback(() => {
     const details = detailsRef.current;
     const menu = menuRef.current;
@@ -204,10 +107,6 @@ export function DocsPageActions({ docRoutes }: { docRoutes: readonly string[] })
     );
   }, []);
 
-  // Coalesced into one call per animation frame, so a live resize drag
-  // re-reads layout once per frame instead of once per event. Blume imported
-  // its shared `rafThrottle` for this; four lines inline is cheaper than
-  // reaching for a helper module this file would be the only user of.
   useEffect(() => {
     let pending = false;
     const onResize = () => {
@@ -222,21 +121,8 @@ export function DocsPageActions({ docRoutes }: { docRoutes: readonly string[] })
     return () => window.removeEventListener("resize", onResize);
   }, [placeMenu]);
 
-  // `/docs` -> `index.mdx`, `/docs/components/button` -> `components/button.mdx`.
-  // Safe without a guard: the early return below has already established that
-  // `pathname` is one of the content index's own route strings, and those are
-  // built to the same leading-slash / no-trailing-slash contract
-  // `lib/page-meta.ts` documents.
   const slug = pathname === "/docs" ? "index" : pathname.slice("/docs/".length);
-  // The raw-Markdown endpoint. STAGE 8 CREATES IT — until then this URL 404s
-  // and "Copy as Markdown" logs its failure instead of flashing a
-  // confirmation it cannot honour. The action is implemented in full; the
-  // endpoint's absence is the only thing missing, and Stage 8 re-verifies it.
   const mdPath = `${pathname}.md`;
-  // The chat prompt, byte-for-byte the source's. Built from `location.origin`
-  // (hence client-side only, hence after mount) rather than from `site.url`,
-  // so a preview deployment hands the assistant its own absolute URL instead
-  // of pointing it at production.
   const prompt = origin
     ? encodeURIComponent(`Read ${new URL(mdPath, origin).href} so I can ask you questions about this page.`)
     : null;
@@ -247,20 +133,14 @@ export function DocsPageActions({ docRoutes }: { docRoutes: readonly string[] })
       if (!response.ok) throw new Error(`Fetching ${mdPath} failed (${response.status})`);
       await navigator.clipboard.writeText(await response.text());
     } catch (error) {
-      // Fetch or clipboard unavailable: never flash a confirmation that
-      // isn't true.
       console.error("[docs] Copy as Markdown failed", error);
       return;
     }
-    // Restart the hold on a repeat click rather than letting an earlier
-    // timeout revert the label mid-flash.
     if (copyTimer.current) clearTimeout(copyTimer.current);
     setCopied(true);
     copyTimer.current = setTimeout(() => setCopied(false), HOLD_MS);
   };
 
-  // Hooks first, then the guard — see the header for why a 404 inside this
-  // layout must not get a rail.
   if (!docRoutes.includes(pathname)) return null;
 
   return (
@@ -284,14 +164,6 @@ export function DocsPageActions({ docRoutes }: { docRoutes: readonly string[] })
       <button className={rowClass} onClick={copyMarkdown} type="button">
         <Copy aria-hidden="true" size={16} />
         <span>{copied ? COPIED_LABEL : COPY_LABEL}</span>
-        {/*
-          Blume announced the confirmation through a shared visually-hidden
-          live region it created in `<body>` on first use; the visible label
-          swap above was never itself a live region. Reproduced with a region
-          of this component's own so the announcement stays scoped to the
-          element that caused it — and, unlike marking the label live, it
-          does not announce the silent revert 1.5s later.
-        */}
         <span className="sr-only" role="status">
           {copied ? COPIED_LABEL : ""}
         </span>
@@ -307,12 +179,6 @@ export function DocsPageActions({ docRoutes }: { docRoutes: readonly string[] })
             size={14}
           />
         </summary>
-        {/*
-          The flip state is interleaved into the class string at the exact
-          positions the two paired utilities occupy in the source, so the
-          at-rest attribute is character-identical to production's apart from
-          the radius.
-        */}
         <div
           className={`absolute ${flipUp ? "bottom-full" : "top-full"} right-2 z-50 ${
             flipUp ? "mb-1" : "mt-1"
@@ -321,22 +187,7 @@ export function DocsPageActions({ docRoutes }: { docRoutes: readonly string[] })
         >
           {PROVIDERS.map((provider, index) => (
             <Fragment key={provider.key}>
-              {/*
-                The rule after the first entry separates v0 — a generator —
-                from the five chat assistants. Blume computed whether to draw
-                it (`providers.length > 1 && providers[0].key === "v0"`)
-                because its list was configurable; this list is fixed in
-                source, so the condition is constantly true and only the
-                position survives.
-              */}
               {index === 1 && <hr className="my-1 border-border border-t" />}
-              {/*
-                NO `href` UNTIL MOUNTED, reproducing today's markup exactly:
-                the source ships these anchors bare and its script fills them
-                in, because the prompt depends on `location.origin`. React
-                omits an attribute whose value is `undefined`, so the
-                prerendered HTML carries none either.
-              */}
               <a
                 className={menuRowClass}
                 href={prompt ? provider.url(prompt) : undefined}

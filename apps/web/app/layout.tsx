@@ -12,14 +12,6 @@ import { getNavTree, resolvePrimitivesHref } from "../lib/docs/nav";
 import { galleryComponents } from "../lib/gallery";
 import { site } from "../lib/site";
 
-// §11.2: nobody owned this resolved config today — it's Blume's *defaults*,
-// not anything written in `blume.config.ts` — Inter for body and display,
-// IBM Plex Mono for mono. Geist is deliberately not used: it was deferred,
-// not rejected. `/` and `/blocks` are held near pixel parity, and moving
-// typography and framework in one deploy gives every drift the sampled
-// review finds two suspects. Next's own preload handling stands in for
-// Astro's per-weight preload list; reproducing that list is not parity work
-// under §17's bar.
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
@@ -37,71 +29,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: site.name,
   description: site.description,
-  // The `og:*`/`twitter:*`/canonical block is task-9.2b's, and it does NOT
-  // live here: every route's own `generateMetadata` calls `lib/metadata.tsx`'s
-  // `pageMetadata`/`notFoundMetadata`, because those tags are per-page
-  // (a page's own title, description and `/og/<route>.png` card) and a value
-  // declared on the root layout would be the same wrong string on every
-  // route that does not override it. `title`/`description` here are only
-  // the root layout's OWN fallback (`/`'s values, since `/` is this site's
-  // home), inherited by anything that has not yet set its own — this stays
-  // Stage 1's one icon reference plus that fallback, nothing more.
   icons: { icon: "/icon.svg" },
 };
 
-/**
- * The root layout (§11.1). Ten of Blume's fifteen shell pieces do not come
- * along, and none of them is a loss: `<ClientRouter>` and
- * `SWAP_STYLESHEET_INIT_SCRIPT` (App Router owns soft navigation; the
- * body-stylesheet race cannot occur), `<Banner>` and `BANNER_INIT_SCRIPT`
- * (dead code — no `banner` is configured, so the dismiss branch has never run
- * in production), the `blume-client-data` JSON island (emitted on docs pages;
- * nothing reads it), `syncDrawerInert()` (React renders `inert` from state),
- * `<Fonts>` (next/font above), `<WebMcp>` (§15.14 — no shipping browser
- * implements `navigator.modelContext`), and the favicon/meta/OG/canonical
- * block — Stage 8 covered the favicon; the `og:*`/`twitter:*`/canonical part
- * is task-9.2b's, and lives per-page (see the `metadata` object above) rather
- * than here, because those tags are a page's own title/description/card, not
- * a site-wide default this file could sensibly own.
- *
- * `DrawerProvider` wraps `SiteHeader`, `main` and `SiteDrawer` (and, since
- * they're not adjacent siblings in a single JSX tree, `SiteFooter` too):
- * `SiteHeader`'s hamburger and `SiteDrawer` itself both call `useDrawer()`,
- * which throws outside a provider by design.
- *
- * `primitivesHref` is resolved here, not in `SiteHeader`/`SiteDrawer`/
- * `SiteFooter` themselves: all three are `"use client"` components (§5,
- * `lib/site-tabs.ts`), and the nav tree comes from `lib/docs`, which is
- * `server-only` — a client component importing it fails the build. This
- * server component is the one place in the tree that can read the nav tree
- * and hand its resolved value down as a plain string prop, so it does, via
- * `getSiteTabs(primitivesHref)` in the header and drawer and directly on the
- * footer's "All primitives" link (Task 4.1, which retired that link's
- * hard-coded `/docs/components/accordion`).
- *
- * `<SiteDrawer />` sits as a top-level sibling after `<main>` and before
- * `<SiteFooter>` — outside `<main>` entirely. That is a deliberate departure
- * from the legacy DOM, not a reproduction of it: `slot="footer"` is a named
- * Astro slot, so `PageLayout.astro:353-354` (`<main id="blume-content">
- * <slot /></main><slot name="footer" />`) actually renders the drawer's
- * default-slot content *inside* `<main>`, immediately before `</main>`, at
- * every one of its 18 legacy call sites — source order in each page's own
- * `.astro` file never controlled this, since slot content is hoisted to
- * where the layout places the named/default slots regardless of where it's
- * written in the caller. Moving the drawer to a `<main>` sibling here is
- * safe for three reasons: `inert` is applied to the drawer itself
- * (`site-drawer.tsx:73`), exactly as `drawer-inert.ts:12-27` did, so nothing
- * sibling-scoped depends on its position; it's `position: fixed`, so the move
- * has no visual effect; and the drawer was the last child of `<main>` and is
- * now the first element after it, so the linear text/link sequence is
- * unchanged.
- */
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // `resolvePrimitivesHref` (in `lib/docs/nav.ts`) owns finding "the"
-  // Primitives group and its link target — it built the tree, so it knows
-  // which group that is without this file guessing by position ("the
-  // first node with children", true only while this stage's tree has
-  // exactly one group) or by re-deriving a label match of its own.
   const primitivesHref = resolvePrimitivesHref(await getNavTree());
   if (!primitivesHref) {
     throw new Error("app/layout.tsx: nav tree has no Primitives group with a resolvable href");
@@ -112,22 +43,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head>
         <PackageManagerScript />
       </head>
-      {/*
-        Ported verbatim from `PageLayout.astro:332`
-        (`class="bg-background font-sans text-foreground antialiased"`):
-        nothing in the compiled sheet substitutes for this, so dropping it
-        would leave the page canvas, default text colour and macOS font
-        smoothing all unset site-wide.
-      */}
       <body className="bg-background font-sans text-foreground antialiased">
         <ThemeProvider>
-          {/*
-            The skip target is `#content`, not `#blume-content` (§13.3).
-            `focus:text-accent-foreground` is ported from the legacy skip
-            link's own class list (`PageLayout.astro:333-336`): once `<body>`
-            supplies `text-foreground` again, the focused link needs its own
-            text colour over `bg-accent`, or it inherits the wrong one.
-          */}
           <a
             className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-lg focus:bg-accent focus:px-3 focus:py-2 focus:text-accent-foreground"
             href="#content"
@@ -137,15 +54,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <DrawerProvider>
             <SiteHeader primitivesHref={primitivesHref} />
             <main id="content">{children}</main>
-            {/*
-              The gallery list is resolved here, in a server component, and
-              handed to the drawer as plain data — the same reason
-              `primitivesHref` is (Task 4.2, §5). Production's 11
-              `/components` routes each passed their own copy of this tree
-              into the drawer's slot; App Router has no upward slot, and
-              `SiteDrawer` renders it only when `usePathname()` is in the
-              gallery, so no other route's HTML carries those links.
-            */}
             <SiteDrawer galleryComponents={galleryComponents} primitivesHref={primitivesHref} />
             <SiteFooter primitivesHref={primitivesHref} />
           </DrawerProvider>

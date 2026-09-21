@@ -1,17 +1,3 @@
-// Decorative vertical ruler drawn outside the left grid rail, numbering the
-// page in 100px increments like a design-canvas measure. Purely visual:
-// hidden from assistive tech and from any viewport too narrow to fit it
-// beside the 72rem canvas (hence the xl-only display).
-//
-// Ported class-for-class from `legacy-components/landing-ruler.astro`
-// (`class` -> `className`, `style` string -> React style object). It sits at
-// the top of `components/` rather than under a landing-only folder because
-// `legacy-components/legal-page.astro` imports the same ruler, so Task 4.3's
-// `/terms` and `/privacy` are its second consumer — the same reason the
-// `.l-row` / `.l-marks` canvas rules live in `app/globals.css`.
-//
-// No interactivity and no hooks, so it stays a server component: the 90
-// tick labels are constant markup and never need to reach the client bundle.
 const marks = Array.from({ length: 90 }, (_, i) => i * 100);
 
 export function LandingRuler() {

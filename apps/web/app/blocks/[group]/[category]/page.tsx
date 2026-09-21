@@ -8,32 +8,7 @@ import { JsonLd } from "../../../../components/json-ld";
 import { loadBlocksTree } from "../../../../lib/blocks";
 import { pageMetadataOrNotFound } from "../../../../lib/metadata";
 
-// Ported from `legacy-pages/blocks/[group]/[category].astro`. The shell, the
-// category tree, the theme dock, the live region, the preview queue and the
-// tooltip context are `app/blocks/layout.tsx`'s; this file is the category's
-// own content, plus the one page singleton that belongs to it alone (the
-// package-manager sprite, below).
-//
-// This is the only one of the three pages that renders live previews: a
-// vertically divided stack of `<BlockCard>`s, each one an iframe under the
-// layout's concurrency cap.
-//
-// HOW A CATEGORY ADDED IN THE PRO REPO REACHES THIS SITE WITHOUT A REBUILD —
-// the mechanism the whole stage exists for, and not the obvious one:
-//
-//   1. `generateStaticParams` runs at BUILD TIME ONLY; it does not re-run on
-//      revalidation, so a category created after the last deploy never enters
-//      the enumerated set however long the site runs.
-//   2. `/blocks` and `/blocks/[group]` revalidate on their 300-second window
-//      and re-render from the FRESH manifest, so their listings — and the
-//      category tree in both of its mounts — already carry the new entry.
-//   3. Those listings link to a path that was never enumerated.
-//      `dynamicParams` renders it on demand and caches the result.
-//
-// Step 3 is what turns step 2's link from a dead end into a page.
-export const dynamicParams = true; // not optional: with it off, a new category
-//                                    404s until someone rebuilds — the exact
-//                                    manual step this migration removes.
+export const dynamicParams = true; 
 
 type Params = { group: string; category: string };
 
@@ -44,26 +19,6 @@ export async function generateStaticParams(): Promise<Params[]> {
   );
 }
 
-// THE CONSEQUENCE OF `dynamicParams`. The Astro source's two `find(...)!`
-// assertions were safe only because every path it rendered came from
-// `getStaticPaths`; here an arbitrary path reaches the component, so each one
-// becomes a `find` plus `notFound()` — otherwise a mistyped URL is a 500 where
-// a 404 is correct. The same `notFound()` covers removal: a deleted category's
-// cached route keeps serving until its window elapses, then misses and 404s.
-//
-// THE CASE THAT MATTERS MOST is neither of the obvious two. A category id that
-// really exists, but under a DIFFERENT group, produces a path where the first
-// lookup succeeds and the second must fail — `group.categories` is the joined
-// tree's own array, so a category is only ever found under its real parent.
-// Looking the category up in the flat manifest instead would have rendered
-// that path happily under the wrong breadcrumb.
-//
-// `generateMetadata` must not throw for the same reason as its sibling's:
-// metadata resolves before the component runs, so a throw is a 500 the page's
-// `notFound()` never gets to correct. `pageMetadataOrNotFound` (task-9.2b)
-// returns production's reduced 404 tag set on a miss.
-//
-// No `requirePageMeta`: see its docstring's list of deliberate non-adopters.
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { group, category } = await params;
   return pageMetadataOrNotFound(`/blocks/${group}/${category}`);
@@ -79,9 +34,6 @@ export default async function BlocksCategoryPage({ params }: { params: Promise<P
   const category = group.categories.find((entry) => entry.id === categoryId);
   if (!category) notFound();
 
-  // ONE array, two consumers — the rendered trail and the `BreadcrumbList`
-  // node — which is what keeps the markup and the structured data from ever
-  // describing two different hierarchies.
   const crumbs: Crumb[] = [
     { label: "Blocks", href: "/blocks" },
     { label: group.label, href: `/blocks/${group.id}` },
@@ -94,13 +46,6 @@ export default async function BlocksCategoryPage({ params }: { params: Promise<P
 
   return (
     <>
-      {/*
-        The one page singleton that is NOT in the layout: ~10 KB of brand path
-        data referenced only by each install control's `<use href="#pm-icon-*">`,
-        which exists on this page and nowhere else in the section. Its position
-        in the document does not affect `<use>` resolution; it is first here
-        because that is where `blocks-prefs.astro` sat in the content column.
-      */}
       <PackageManagerIcons />
       <header className="border-b border-border px-6 py-12 lg:px-10">
         <div className="max-w-2xl">

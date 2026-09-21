@@ -5,21 +5,8 @@ import { galleryComponents } from "../../lib/gallery";
 import { pageMetadata } from "../../lib/metadata";
 import { requirePageMeta } from "../../lib/page-meta";
 
-// Ported from `legacy-pages/components/index.astro`. Everything that page
-// took from Blume's `PageLayout` — header, theme, drawer, footer, skip
-// link, fonts, analytics — comes from `app/layout.tsx` now, and the
-// two-column shell comes from `app/components/layout.tsx`, so this file is
-// the index's own content and nothing else.
-
 const ROUTE = "/components";
 
-// `/components` has been in `lib/page-meta.ts` since Task 1.7, with its
-// description probed from the live site — this page does not add or rewrite
-// it, it reads it. `pageMetadata` applies the em-dash suffix in the one place
-// it is ever applied (§15.8, §16.8) and builds the full `og:*`/`twitter:*`
-// set (task-9.2b) — and unlike the 10 children below the bare title passed in
-// is NOT suffixed with "Components": production's tab reads
-// `Components — SevenUI`, not `Components Components — SevenUI`.
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await requirePageMeta(ROUTE, "app/components/page.tsx");
   return pageMetadata(ROUTE, meta.title, meta.description);
@@ -30,10 +17,6 @@ export default async function ComponentsPage() {
 
   const totalExamples = galleryComponents.reduce((sum, component) => sum + component.count, 0);
 
-  // One template literal rather than the source's four adjacent JSX
-  // expressions: the rendered text is the same run of characters either
-  // way, and interleaving expressions with literal spaces is the shape that
-  // silently loses a space the first time someone reformats the line.
   const summary =
     `${meta.description} ${totalExamples} ${totalExamples === 1 ? "component" : "components"} ` +
     `across ${galleryComponents.length} ${galleryComponents.length === 1 ? "primitive" : "primitives"}.`;

@@ -3,24 +3,6 @@ import "server-only";
 import componentsRegistry from "../../../packages/registry/components/registry.json";
 import mainRegistry from "../../../packages/registry/registry.json";
 
-/**
- * The `/components` gallery's data, ported from
- * `legacy-pages/components/_data.ts`. Two registries answer three questions:
- * `packages/registry/components/registry.json` supplies the examples (which
- * folder, which item, what it is called), and the ROOT
- * `packages/registry/registry.json` supplies the human-readable label of the
- * `registry:ui` primitive each folder is named after.
- *
- * `import "server-only"` (line 1) is the enforcement, not the docstring:
- * this module is imported for its VALUES by `app/layout.tsx`, both gallery
- * route files, the gallery layout and `lib/page-meta.ts`, all server
- * components, and a client component importing any of those values would
- * otherwise pull both registry JSON files into the client bundle silently.
- * Now it is a build error instead. The two client components that need this
- * module (`components/gallery/nav.tsx`, `components/site-drawer.tsx`) use
- * `import type` for the interfaces below, which is erased before any
- * bundler sees it and is unaffected by the guard.
- */
 export interface GalleryComponent {
   slug: string;
   label: string;
@@ -33,19 +15,6 @@ export interface GalleryExample {
   title: string;
 }
 
-/**
- * The page set, pinned. Adding a registry item does NOT add a route — that
- * is reproduced behaviour, not an oversight: the 10 pages were hand-written
- * `.astro` files, so a new content folder could ship without one and
- * `_data.ts` threw at build time when it did.
- *
- * `app/components/[name]/page.tsx` returns exactly this list from
- * `generateStaticParams` and sets `dynamicParams = false`, so the route set
- * is this constant and nothing else. The assertion below is the other half
- * of what `_data.ts` did with `import.meta.glob("./*.astro")`: it fails the
- * build when this list and the registry's own folder set disagree, in
- * EITHER direction.
- */
 export const GALLERY_SLUGS = [
   "accordion",
   "badge",
@@ -65,11 +34,6 @@ const uiTitles = new Map(
   mainRegistry.items.filter((item) => item.type === "registry:ui").map((item) => [item.name, item.title]),
 );
 
-// Grouped by the first path segment of each item's first file, exactly as
-// `_data.ts` derived it. Insertion order follows the registry file, which is
-// also the order the 10 `.astro` pages listed their examples in — verified
-// item-for-item (id, title AND position) against all 40 `<ExampleCard>` tags
-// before this module replaced them.
 const examplesBySlug = new Map<string, GalleryExample[]>();
 for (const item of componentsRegistry.items) {
   const slug = item.files[0].path.split("/")[0];
@@ -91,11 +55,6 @@ export const galleryComponents: GalleryComponent[] = [...examplesBySlug.entries(
   })
   .sort((a, b) => a.slug.localeCompare(b.slug));
 
-// The build-time pairing check, run on module evaluation. `_data.ts` threw
-// when a content folder had no `<slug>.astro`; a dynamic segment inverts the
-// failure mode (an unlisted folder would silently have no page, a listed slug
-// with no folder would 404 at request time), so both directions are checked
-// against the pinned list here.
 {
   const derived = galleryComponents.map((component) => component.slug);
   const pinned = [...GALLERY_SLUGS].sort((a, b) => a.localeCompare(b));
