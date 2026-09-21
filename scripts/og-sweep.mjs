@@ -181,6 +181,12 @@ const MISSING_PAGES = [
   "/blocks/marketing/not-a-category", // §10's category `notFound()`
 ];
 
+// The site-wide description, measured on production. It is the registered
+// description of both `/` and `/account` (§16.4's fallback for a page with no
+// description of its own) and the description the 404 declares, so it is one
+// literal here rather than three.
+const SITE_DESCRIPTION = "Base UI powered primitives, distributed through the shadcn registry.";
+
 // THE INDEPENDENT RESTATEMENT. `/llms.txt` is the registry side of the input
 // diff, and it does not list every route — it lists the docs pages, the
 // gallery catalog and the blocks catalog, and nothing else. The routes below
@@ -201,7 +207,7 @@ const MISSING_PAGES = [
 const UNLISTED_PAGE_META = {
   "/": {
     title: "SevenUI",
-    description: "Base UI powered primitives, distributed through the shadcn registry.",
+    description: SITE_DESCRIPTION,
   },
   "/pro": {
     title: "Pro",
@@ -210,7 +216,7 @@ const UNLISTED_PAGE_META = {
   },
   "/account": {
     title: "Account",
-    description: "Base UI powered primitives, distributed through the shadcn registry.",
+    description: SITE_DESCRIPTION,
   },
   "/terms": {
     title: "Terms of Service",
@@ -463,39 +469,149 @@ const CHECK = {
   cardFloor: `cards: every card is larger than the ${BYTE_FLOOR} B floor`,
   cardSignature: "cards: every card body opens with the PNG signature",
   cardDimensions: `cards: every card's IHDR reports ${CARD_WIDTH}×${CARD_HEIGHT}`,
-  drawCap: "cards: no registry title or description reaches the renderer's truncation cap",
+  cardWitnessTitle: "cards: the law has at least one witness that would catch a card ignoring the TITLE",
+  cardWitnessDescription: "cards: the law has at least one witness that would catch a card ignoring the DESCRIPTION",
   cardWords: "cards: card bodies agree exactly where the page's words agree, and differ everywhere else",
   pageStatus: "pages: every route answers 200",
   tagSet: `pages: the declared tag set is exactly the ${OG_TAGS.length} og:*, the ${TWITTER_TAGS.length} twitter:* and the canonical link, each once`,
   tagPlacement: "pages: no og:*, twitter:* or canonical tag is emitted outside <head>",
-  relations: "pages: every self-consistency relation holds",
-  ownCard: "pages: og:image is the absolute form of the route's own card, and that card is one layer 1 proved",
+  ownCard: "pages: og:image is the absolute form of the route's own card",
+  cardProven: "pages: every route's og:image names a card layer 1 proved",
   pageUrl: "pages: og:url is the route's own absolute URL, with the trailing slash on / and on no other route",
-  registry: "/llms.txt: served, parsed, and no route listed twice",
+  registryServed: "/llms.txt: answers 200",
+  registryParsed: "/llms.txt: parses to at least one registry row",
+  registryUnique: "/llms.txt: no route listed twice",
   coverage: "input diff: every route has a registry side — /llms.txt's row, or the literal restatement",
+  coverageSingleSource: "input diff: no route is answered by both /llms.txt and the restatement",
+  coverageNoStray: "input diff: every restated route is still in the inventory",
   descriptionDiff: "input diff: og:description is the registry's description for that route, byte for byte",
   titleDiff: "input diff: og:title is the registry's title under the route's own title rule (three rules, not one)",
   inventory: "inventory: the swept route lists and route-inventory.mjs's own total reconcile",
   ogMisses: `negative: all ${OG_MISSES.length} unknown card slugs answer 404, not a generated image`,
-  missingPages: `negative: every §17.4 missing page 404s and declares the reduced ${NOT_FOUND_TAG_SET.length}-tag set`,
+  notFoundStatus: "negative: every §17.4 missing page answers 404",
+  notFoundComplete: `negative: every missing page declares all ${NOT_FOUND_TAG_SET.length} reduced tags`,
+  notFoundNoExtras: "negative: no missing page declares a tag outside the reduced set",
+  notFoundCard: "negative: every missing page's twitter:card is summary",
+  notFoundPlacement: "negative: no missing page emits a tag outside <head>",
+  notFoundOgTitle: "negative: every missing page's og:title is the suffixed 404 title (§17.6 #28)",
+  notFoundTwitterTitle: "negative: every missing page's twitter:title is the suffixed 404 title (§17.6 #28)",
+  notFoundOgDescription: "negative: every missing page's og:description is the site description",
+  notFoundTwitterDescription: "negative: every missing page's twitter:description is the site description",
 };
 
-// Self-consistency relations. Each is named so a failure says which one broke
-// rather than "the page is inconsistent".
+// Self-consistency relations, each an ASSERTION IN ITS OWN RIGHT.
+//
+// They used to be one compound check with a single control (`consistency`,
+// which breaks `og:title === twitter:title`). A reviewer deleted eleven of the
+// twelve and the gate still printed "20/20, 28/28, every one of the 20 checks
+// is named as some control's target" — including the loss of
+// `og:image:width === 1200` / `og:image:height === 630`, the exact pair
+// `lib/og/dimensions.ts` was created to protect. A guarantee that stops at the
+// check boundary says nothing about the assertions inside it.
+//
+// So each relation now records its own result and carries `breaks`: the tag to
+// overwrite, and a value that falsifies THIS relation. `PERTURB` is generated
+// from that field, so a relation added here without one is a build-time error
+// rather than an assertion nobody guards.
 const RELATIONS = [
-  ["og:title === og:image:alt", (v) => v("og:title") === v("og:image:alt")],
-  ["og:title === twitter:title", (v) => v("og:title") === v("twitter:title")],
-  ["og:image:alt === twitter:image:alt", (v) => v("og:image:alt") === v("twitter:image:alt")],
-  ["og:description === twitter:description", (v) => v("og:description") === v("twitter:description")],
-  ["og:image === twitter:image", (v) => v("og:image") === v("twitter:image")],
-  ["og:url === canonical", (v) => v("og:url") === v(CANONICAL)],
-  ["og:type === website", (v) => v("og:type") === "website"],
-  ["og:site_name === SevenUI", (v) => v("og:site_name") === "SevenUI"],
-  ["og:image:type === image/png", (v) => v("og:image:type") === "image/png"],
-  [`og:image:width === ${CARD_WIDTH}`, (v) => v("og:image:width") === String(CARD_WIDTH)],
-  [`og:image:height === ${CARD_HEIGHT}`, (v) => v("og:image:height") === String(CARD_HEIGHT)],
-  ["twitter:card === summary_large_image", (v) => v("twitter:card") === "summary_large_image"],
+  { name: "og:title === og:image:alt", holds: (v) => v("og:title") === v("og:image:alt"), breaks: { key: "og:image:alt", value: "Not the title" } },
+  { name: "og:title === twitter:title", holds: (v) => v("og:title") === v("twitter:title"), breaks: { key: "twitter:title", value: "Not the title" } },
+  { name: "og:image:alt === twitter:image:alt", holds: (v) => v("og:image:alt") === v("twitter:image:alt"), breaks: { key: "twitter:image:alt", value: "Not the alt" } },
+  { name: "og:description === twitter:description", holds: (v) => v("og:description") === v("twitter:description"), breaks: { key: "twitter:description", value: "Not the description" } },
+  { name: "og:image === twitter:image", holds: (v) => v("og:image") === v("twitter:image"), breaks: { key: "twitter:image", value: `${SITE}/og/privacy.png` } },
+  { name: "og:url === canonical", holds: (v) => v("og:url") === v(CANONICAL), breaks: { key: "og:url", value: `${SITE}/elsewhere` } },
+  { name: "og:type === website", holds: (v) => v("og:type") === "website", breaks: { key: "og:type", value: "article" } },
+  { name: "og:site_name === SevenUI", holds: (v) => v("og:site_name") === "SevenUI", breaks: { key: "og:site_name", value: "Seven UI" } },
+  { name: "og:image:type === image/png", holds: (v) => v("og:image:type") === "image/png", breaks: { key: "og:image:type", value: "image/jpeg" } },
+  { name: `og:image:width === ${CARD_WIDTH}`, holds: (v) => v("og:image:width") === String(CARD_WIDTH), breaks: { key: "og:image:width", value: "600" } },
+  { name: `og:image:height === ${CARD_HEIGHT}`, holds: (v) => v("og:image:height") === String(CARD_HEIGHT), breaks: { key: "og:image:height", value: "315" } },
+  { name: "twitter:card === summary_large_image", holds: (v) => v("twitter:card") === "summary_large_image", breaks: { key: "twitter:card", value: "summary" } },
 ];
+
+// THE DECLARED INVENTORY, written independently of the machinery above — and
+// the reason it exists is a hole the generated controls did not close.
+//
+// Splitting the relations into twelve assertions and generating one control
+// per relation made the reviewer's first experiment (delete eleven relations)
+// report "27/27 assertions, 34/34 controls, every one of the 27 ASSERTIONS is
+// named as some control's target". Truthfully, too: deleting a relation
+// deletes its assertion AND its generated control together, so a derived
+// inventory shrinks to fit whatever survives and the claim stays technically
+// true while meaning less. A coverage claim computed from the code it audits
+// can always be satisfied by deleting the code.
+//
+// So the inventory is DATA, written out here, and the lists below are checked
+// against it at load. Removing a relation now fails before a single URL is
+// fetched, which is the only place that failure can be made loud: it is a
+// claim about the gate's own shape, not about the deployment, so no capture
+// could carry a positive control for it.
+const DECLARED_RELATIONS = [
+  "og:title === og:image:alt",
+  "og:title === twitter:title",
+  "og:image:alt === twitter:image:alt",
+  "og:description === twitter:description",
+  "og:image === twitter:image",
+  "og:url === canonical",
+  "og:type === website",
+  "og:site_name === SevenUI",
+  "og:image:type === image/png",
+  `og:image:width === ${CARD_WIDTH}`,
+  `og:image:height === ${CARD_HEIGHT}`,
+  "twitter:card === summary_large_image",
+];
+
+// The named assertions this gate must record, likewise written out rather than
+// read off `CHECK`. Same argument: deleting a `CHECK` entry and its control
+// together would otherwise be invisible.
+const DECLARED_CHECKS = [
+  "cardStatus", "cardType", "cardFloor", "cardSignature", "cardDimensions",
+  "cardWitnessTitle", "cardWitnessDescription", "cardWords",
+  "pageStatus", "tagSet", "tagPlacement", "ownCard", "cardProven", "pageUrl",
+  "registryServed", "registryParsed", "registryUnique",
+  "coverage", "coverageSingleSource", "coverageNoStray",
+  "descriptionDiff", "titleDiff", "inventory",
+  "ogMisses",
+  "notFoundStatus", "notFoundComplete", "notFoundNoExtras", "notFoundCard",
+  "notFoundPlacement",
+  "notFoundOgTitle", "notFoundTwitterTitle",
+  "notFoundOgDescription", "notFoundTwitterDescription",
+];
+
+function requireSameSet(what, actual, declared) {
+  const missing = declared.filter((name) => !actual.includes(name));
+  const extra = actual.filter((name) => !declared.includes(name));
+  if (missing.length || extra.length) {
+    throw new Error(
+      `${what} no longer matches the declared inventory in this file — refusing to run.\n` +
+        (missing.length ? `  declared but absent: ${missing.join(" | ")}\n` : "") +
+        (extra.length ? `  present but undeclared: ${extra.join(" | ")}\n` : "") +
+        "  An assertion removed together with its control is invisible to a coverage claim computed\n" +
+        "  from the code; this inventory is the independent copy that makes it visible. If the change\n" +
+        "  is intended, edit the inventory deliberately and say why.",
+    );
+  }
+}
+
+requireSameSet("RELATIONS", RELATIONS.map((relation) => relation.name), DECLARED_RELATIONS);
+requireSameSet("CHECK", Object.keys(CHECK), DECLARED_CHECKS);
+
+// One assertion name per relation, so a control can name exactly one of them.
+const relationCheck = (name) => `pages: self-consistency — ${name}`;
+
+// The 404's own VALUES, not just its key set (§17.6 #28, widened by Ruling 79
+// to move `og:title`/`twitter:title` with the `<title>`). The reviewer rewrote
+// every `Page not found — SevenUI` to `SevenUI` across all six captured 404s —
+// a total regression of the row this stage widened — and the gate printed
+// 20/20, because `checkMissingPages` read keys and never values. Nothing else
+// in the repo reads a page title at all: `scripts/extract-page-features.mjs`
+// contains no `title` token, and this sweep is the only script in `scripts/`
+// that touches one. So these two literals are the only assertion of §17.6 #28
+// anywhere.
+//
+// The SUFFIXED form is correct for this branch and differs from production's
+// bare `Page not found` by design — #28 says the 404 `<title>` gains the
+// suffix, and Ruling 79 widens that to its `og:title` and `twitter:title`.
+const NOT_FOUND_TITLE = `Page not found${SUFFIX}`;
 
 // --- the checks -------------------------------------------------------------
 
@@ -573,11 +689,20 @@ function runChecks(cap, { verbose }) {
 
   // --- the registry side, read before the card-content law needs it ----------
   const registry = parseRegistry(cap.llms.text);
+  // THREE FACTS, THREE RECORDS. They were one `record` conjoining served,
+  // parsed and unique; `llmsstatus` and `llmsdupe` reached two of the three,
+  // so deleting `registry.byRoute.size > 0` passed silently. See the header
+  // note on conjunction for why the unit has to be one fact wide.
+  record(CHECK.registryServed, cap.llms.status === 200, `status ${cap.llms.status}`);
   record(
-    CHECK.registry,
-    cap.llms.status === 200 && registry.byRoute.size > 0 && registry.duplicates.length === 0,
-    `status ${cap.llms.status}, ${registry.byRoute.size} rows parsed` +
-      (registry.duplicates.length ? `, duplicates: ${sample(registry.duplicates)}` : ""),
+    CHECK.registryParsed,
+    registry.byRoute.size > 0,
+    registry.byRoute.size > 0 ? `${registry.byRoute.size} rows parsed` : "0 rows parsed — nothing to diff against",
+  );
+  record(
+    CHECK.registryUnique,
+    registry.duplicates.length === 0,
+    registry.duplicates.length ? sample(registry.duplicates) : "no route listed twice",
   );
 
   const metaFor = (route) => registry.byRoute.get(route) ?? UNLISTED_PAGE_META[route];
@@ -612,12 +737,41 @@ function runChecks(cap, { verbose }) {
   // Stated that way it constrains the RENDERER, not the copy. Two pages that
   // genuinely declare the same words land in the same group and pass — so a
   // legitimate duplicate never becomes unexpressible, which a blanket
-  // "all hashes must be distinct" rule would have made it. A lost `title` prop
-  // collapses every group onto one hash and fails on every cross-group pair.
+  // "all hashes must be distinct" rule would have made it.
+  //
+  // WHAT CATCHES WHAT, precisely — the earlier wording here ("a lost `title`
+  // prop collapses every group onto one hash and fails on every cross-group
+  // pair") is true of a TOTAL collapse and false of a title-only drop, which
+  // is the likelier bug. A card that stops drawing the title still varies with
+  // the description, so it is caught only by a pair of routes that share a
+  // DESCRIPTION and differ in title. A card that stops drawing the description
+  // is caught only by a pair sharing a TITLE. Those two witness classes are
+  // what give the law its power in each direction, and each is asserted
+  // non-empty below — because measured on today's content the title direction
+  // rests on exactly ONE witness pair (`/` vs `/account`, which collide only
+  // because `/account` has no description of its own and falls back to the
+  // site description). One content edit removes it, after which a card drawing
+  // descriptions only would pass silently. An assertion is the difference
+  // between that being a regression and being invisible.
   //
   // The precondition is the renderer's truncation: past the draw caps, two
   // different pairs could legitimately draw the same card. It gets its own
   // check rather than a silent allowance, so a lapse is visible.
+  // THE DRAW CAPS ARE A NOTE, NOT AN ASSERTION — and that is the correction
+  // this round made. `lib/og/card.tsx` truncates the drawn title at 64 code
+  // points and the description at 160, and past a cap the drawn text stops
+  // being the registry text, so the law below cannot speak for that route.
+  // The previous revision FAILED on an over-cap route. With the longest live
+  // description at 154 against a cap of 160, that is six code points of
+  // headroom: one slightly longer sentence from a docs author produces a card
+  // that renders exactly as §16.4 intends — truncated with an ellipsis, the
+  // cap being "a safety net, not a typographic limit" — and a red gate. That
+  // is precisely the "correct output made unexpressible" pattern this file's
+  // own header lists among the mistakes it exists to avoid.
+  //
+  // So an over-cap route is DROPPED from the law and NAMED AND COUNTED in the
+  // law's own detail line and in a note. Dropped-and-named is not the same as
+  // silently skipped: the count is printed on every run, pass or fail.
   const overCap = [];
   let longestTitle = 0;
   let longestDescription = 0;
@@ -628,23 +782,25 @@ function runChecks(cap, { verbose }) {
     const descriptionLength = [...meta.description].length;
     longestTitle = Math.max(longestTitle, titleLength);
     longestDescription = Math.max(longestDescription, descriptionLength);
-    if (titleLength > TITLE_DRAW_CAP) overCap.push(`${route}: title ${titleLength} > ${TITLE_DRAW_CAP}`);
-    if (descriptionLength > DESCRIPTION_DRAW_CAP) {
-      overCap.push(`${route}: description ${descriptionLength} > ${DESCRIPTION_DRAW_CAP}`);
+    if (titleLength > TITLE_DRAW_CAP) overCap.push({ route, why: `title ${titleLength}>${TITLE_DRAW_CAP}` });
+    else if (descriptionLength > DESCRIPTION_DRAW_CAP) {
+      overCap.push({ route, why: `description ${descriptionLength}>${DESCRIPTION_DRAW_CAP}` });
     }
   }
-  record(
-    CHECK.drawCap,
-    overCap.length === 0,
-    overCap.length
-      ? `${sample(overCap)} — past the cap the drawn text is not the registry text, so the card-content law below no longer follows`
-      : `longest title ${longestTitle}/${TITLE_DRAW_CAP}, longest description ${longestDescription}/${DESCRIPTION_DRAW_CAP} code points`,
+  const excluded = new Set(overCap.map((entry) => entry.route));
+  notes.push(
+    `NOTE  cards: draw-cap headroom — longest title ${longestTitle}/${TITLE_DRAW_CAP}, ` +
+      `longest description ${longestDescription}/${DESCRIPTION_DRAW_CAP} code points. ` +
+      (overCap.length
+        ? `${overCap.length} route(s) EXCLUDED from the card-content law (the drawn text is truncated, ` +
+          `so it is no longer the registry text): ${overCap.map((e) => `${e.route} (${e.why})`).join(" ;; ")}`
+        : "0 routes excluded from the card-content law."),
   );
 
+  const inLaw = routes.filter((route) => metaFor(route) && !excluded.has(route));
   const groups = new Map();
-  for (const route of routes) {
+  for (const route of inLaw) {
     const meta = metaFor(route);
-    if (!meta) continue;
     // A JSON-encoded PAIR, not the two strings run together. The separator
     // here used to be a raw NUL byte: unambiguous at runtime, but an invisible
     // control character sitting in source — which is also why `grep` called
@@ -694,8 +850,50 @@ function runChecks(cap, { verbose }) {
     wordProblems.length === 0,
     wordProblems.length
       ? sample(wordProblems, 3)
-      : `${groups.size} distinct {title, description} groups over ${routes.length - uncovered.length} routes, ` +
-        `${byHash.size} distinct card bodies${skipNote}`,
+      : `${groups.size} distinct {title, description} groups over ${inLaw.length} routes, ` +
+        `${byHash.size} distinct card bodies${skipNote}` +
+        (excluded.size
+          ? `, ${excluded.size} excluded for reaching a draw cap: ${[...excluded].join(" ")}`
+          : ", 0 excluded for a draw cap"),
+  );
+
+  // The two witness classes, asserted rather than assumed. A witness is a PAIR
+  // of routes inside the law's population that agree on one field and differ on
+  // the other; if a class is empty, the law is blind in that direction and says
+  // so here instead of reporting a clean run it has not earned.
+  const witnessPairs = (same, other) => {
+    const buckets = new Map();
+    for (const route of inLaw) {
+      const meta = metaFor(route);
+      const key = meta[same];
+      if (!buckets.has(key)) buckets.set(key, []);
+      buckets.get(key).push(route);
+    }
+    const found = [];
+    for (const [key, members] of buckets) {
+      if (members.length < 2) continue;
+      const distinct = new Set(members.map((route) => metaFor(route)[other]));
+      if (distinct.size > 1) found.push({ key, members });
+    }
+    return found;
+  };
+  // Share a DESCRIPTION, differ in title -> catches a card ignoring the title.
+  const titleWitnesses = witnessPairs("description", "title");
+  record(
+    CHECK.cardWitnessTitle,
+    titleWitnesses.length > 0,
+    titleWitnesses.length
+      ? `${titleWitnesses.length} witness group(s), e.g. ${titleWitnesses[0].members.join(" vs ")}`
+      : "NONE — no two routes share a description, so a card that never drew the title would pass this law",
+  );
+  // Share a TITLE, differ in description -> catches a card ignoring the description.
+  const descriptionWitnesses = witnessPairs("title", "description");
+  record(
+    CHECK.cardWitnessDescription,
+    descriptionWitnesses.length > 0,
+    descriptionWitnesses.length
+      ? `${descriptionWitnesses.length} witness group(s), e.g. ${descriptionWitnesses[0].members.join(" vs ")}`
+      : "NONE — no two routes share a title, so a card that never drew the description would pass this law",
   );
 
   // --- Layer 2: the tag set -------------------------------------------------
@@ -735,33 +933,44 @@ function runChecks(cap, { verbose }) {
       : "0 leaks",
   );
 
-  const inconsistent = [];
-  for (const route of routes) {
-    const v = (key) => valueOf(route, key);
-    const broken = RELATIONS.filter(([, holds]) => !holds(v)).map(([name]) => name);
-    if (broken.length) inconsistent.push(`${route}: ${broken.join(", ")}`);
+  // ONE RESULT PER RELATION. Twelve assertions reported as one line is twelve
+  // assertions guarded by whichever control happens to break the first of them.
+  for (const relation of RELATIONS) {
+    const broken = routes.filter((route) => !relation.holds((key) => valueOf(route, key)));
+    record(
+      relationCheck(relation.name),
+      broken.length === 0,
+      broken.length
+        ? sample(broken.map((r) => `${r}: ${JSON.stringify(valueOf(r, relation.breaks.key))}`))
+        : `holds on ${routes.length} routes`,
+    );
   }
-  record(
-    CHECK.relations,
-    inconsistent.length === 0,
-    inconsistent.length ? sample(inconsistent) : `${RELATIONS.length} relations × ${routes.length} routes`,
-  );
 
   // `og:image` must be the absolute form of the route's OWN card path, and
   // that card must be one layer 1 just proved — the two layers are joined
   // here, so "the cards are fine" and "the pages point at cards" cannot both
   // be true of two different sets.
   const wrongImage = [];
+  const unproven = [];
   for (const route of routes) {
     const want = `${SITE}${ogImagePath(route)}`;
     const got = valueOf(route, "og:image");
-    const proven = cap.cards[ogImagePath(route)]?.status === 200;
-    if (got !== want || !proven) wrongImage.push(`${route}: want ${want} got ${got}${proven ? "" : " (card not proven)"}`);
+    if (got !== want) wrongImage.push(`${route}: want ${want} got ${got}`);
+    if (cap.cards[ogImagePath(route)]?.status !== 200) unproven.push(`${route} -> ${ogImagePath(route)}`);
   }
   record(
     CHECK.ownCard,
     wrongImage.length === 0,
     wrongImage.length ? sample(wrongImage) : `${routes.length} routes point at their own card`,
+  );
+  // The layer-1 <-> layer-2 join, recorded separately from the value above so
+  // that "the pages name the right URL" and "those URLs are cards this run
+  // actually proved" cannot both be claimed by one control touching one of
+  // them. It overlaps `cardStatus` by design — that is the join.
+  record(
+    CHECK.cardProven,
+    unproven.length === 0,
+    unproven.length ? sample(unproven) : `every route's og:image is a card layer 1 proved`,
   );
 
   const wrongUrl = routes.filter((route) => valueOf(route, "og:url") !== expectedPageUrl(route));
@@ -785,12 +994,24 @@ function runChecks(cap, { verbose }) {
   const strayLiterals = Object.keys(UNLISTED_PAGE_META).filter((route) => !routes.includes(route));
   record(
     CHECK.coverage,
-    uncovered.length === 0 && doubleSourced.length === 0 && strayLiterals.length === 0,
-    `${fromRegistry.length} routes from /llms.txt, ${fromLiterals.length} from the restatement ` +
-      `(${fromLiterals.join(" ")})` +
-      (uncovered.length ? ` | UNCOVERED: ${sample(uncovered)}` : "") +
-      (doubleSourced.length ? ` | double-sourced: ${sample(doubleSourced)}` : "") +
-      (strayLiterals.length ? ` | restated but not a route: ${sample(strayLiterals)}` : ""),
+    uncovered.length === 0,
+    uncovered.length
+      ? `UNCOVERED: ${sample(uncovered)}`
+      : `${fromRegistry.length} routes from /llms.txt, ${fromLiterals.length} from the restatement (${fromLiterals.join(" ")})`,
+  );
+  // A route answered by BOTH sources is a second place for the registry to
+  // disagree with itself; a literal for a route the inventory no longer has is
+  // a restatement rotting into a list of pages that stopped existing. Separate
+  // records because `llmsdrop` only ever produces the first of the three.
+  record(
+    CHECK.coverageSingleSource,
+    doubleSourced.length === 0,
+    doubleSourced.length ? `double-sourced: ${sample(doubleSourced)}` : "no route answered by both sides",
+  );
+  record(
+    CHECK.coverageNoStray,
+    strayLiterals.length === 0,
+    strayLiterals.length ? `restated but not a route: ${sample(strayLiterals)}` : "every restated route is in the inventory",
   );
 
   // §17.5's own words: this is the only automated check that proves §16.4 held
@@ -869,34 +1090,86 @@ function runChecks(cap, { verbose }) {
       : OG_MISSES.map((p) => `${p} 404`).join(" ;; "),
   );
 
-  const wrongNotFound = [];
-  for (const pathname of MISSING_PAGES) {
+  // ONE RESULT PER ASSERTION, for the same reason the relations above are split.
+  // This check used to record a single line covering status, the key set, the
+  // `twitter:card` value and placement. A reviewer replaced
+  // `const missing = NOT_FOUND_TAG_SET.filter(...)` with `const missing = []`
+  // — deleting the branch that detects a 404 shipping ZERO og/twitter tags,
+  // which is the exact defect this gate found on its first run — and the gate
+  // reported 20/20 with every control LIVE, because neither `notfoundfull`
+  // (which ADDS a tag) nor `fieldlives` (which flips a status) ever produces a
+  // non-empty `missing` list. Each branch below is now its own assertion with
+  // its own control.
+  const captured = MISSING_PAGES.map((pathname) => {
     const page = cap.missingPages[pathname];
-    if (!page) {
-      wrongNotFound.push(`${pathname}: not captured`);
-      continue;
-    }
-    const { head, tail } = splitHead(page.html);
-    const keys = readTags(head).map((tag) => tag.key);
-    const missing = NOT_FOUND_TAG_SET.filter((key) => !keys.includes(key));
-    const extra = keys.filter((key) => !NOT_FOUND_TAG_SET.includes(key));
-    const card = readTags(head).find((tag) => tag.key === "twitter:card")?.value;
-    const outside = readTags(tail).length;
-    const problems = [];
-    if (page.status !== 404) problems.push(`status ${page.status}`);
-    if (missing.length) problems.push(`missing=[${missing}]`);
-    if (extra.length) problems.push(`extra=[${extra}]`);
-    if (card !== "summary") problems.push(`twitter:card="${card}"`);
-    if (outside > 0) problems.push(`${outside} tags outside <head>`);
-    if (problems.length) wrongNotFound.push(`${pathname}: ${problems.join(", ")}`);
-  }
-  record(
-    CHECK.missingPages,
-    wrongNotFound.length === 0,
-    wrongNotFound.length
-      ? sample(wrongNotFound)
-      : MISSING_PAGES.map((p) => `${p} 404`).join(" ;; "),
+    const { head, tail } = splitHead(page?.html ?? "");
+    const tags = readTags(head);
+    return {
+      pathname,
+      page,
+      keys: tags.map((tag) => tag.key),
+      value: (key) => tags.find((tag) => tag.key === key)?.value,
+      outside: readTags(tail).length,
+    };
+  });
+  const notFoundAssert = (name, predicate, describe, okDetail) => {
+    const bad = captured.filter((entry) => !entry.page || !predicate(entry));
+    record(
+      name,
+      bad.length === 0,
+      bad.length ? sample(bad.map((entry) => (entry.page ? describe(entry) : `${entry.pathname}: not captured`))) : okDetail,
+    );
+  };
+
+  notFoundAssert(
+    CHECK.notFoundStatus,
+    (e) => e.page.status === 404,
+    (e) => `${e.pathname}: status ${e.page.status}`,
+    MISSING_PAGES.map((p) => `${p} 404`).join(" ;; "),
   );
+  notFoundAssert(
+    CHECK.notFoundComplete,
+    (e) => NOT_FOUND_TAG_SET.every((key) => e.keys.includes(key)),
+    (e) => `${e.pathname}: missing=[${NOT_FOUND_TAG_SET.filter((key) => !e.keys.includes(key))}]`,
+    `all ${NOT_FOUND_TAG_SET.length} reduced tags present on every missing page`,
+  );
+  notFoundAssert(
+    CHECK.notFoundNoExtras,
+    (e) => e.keys.every((key) => NOT_FOUND_TAG_SET.includes(key)),
+    (e) => `${e.pathname}: extra=[${e.keys.filter((key) => !NOT_FOUND_TAG_SET.includes(key))}]`,
+    "no og:url, no og:image, no canonical on any missing page",
+  );
+  notFoundAssert(
+    CHECK.notFoundCard,
+    (e) => e.value("twitter:card") === "summary",
+    (e) => `${e.pathname}: twitter:card=${JSON.stringify(e.value("twitter:card"))}`,
+    'twitter:card="summary" everywhere',
+  );
+  notFoundAssert(
+    CHECK.notFoundPlacement,
+    (e) => e.outside === 0,
+    (e) => `${e.pathname}: ${e.outside} tags outside <head>`,
+    "0 leaks",
+  );
+  // §17.6 #28's only assertion anywhere in this repo — ONE TAG PER RECORD.
+  // These two were one record each, conjoining the `og:` and `twitter:` halves
+  // while their single control touched only the `og:` one, so deleting the
+  // `twitter:` conjunct passed silently. Nothing else in the repo asserts a
+  // 404's `twitter:title`: the twelve relations run over the 109 LIVE routes
+  // only, and a missing page is not one of them.
+  for (const [check, key, want, label] of [
+    [CHECK.notFoundOgTitle, "og:title", NOT_FOUND_TITLE, JSON.stringify(NOT_FOUND_TITLE)],
+    [CHECK.notFoundTwitterTitle, "twitter:title", NOT_FOUND_TITLE, JSON.stringify(NOT_FOUND_TITLE)],
+    [CHECK.notFoundOgDescription, "og:description", SITE_DESCRIPTION, "the site description"],
+    [CHECK.notFoundTwitterDescription, "twitter:description", SITE_DESCRIPTION, "the site description"],
+  ]) {
+    notFoundAssert(
+      check,
+      (e) => e.value(key) === want,
+      (e) => `${e.pathname}: ${key}=${JSON.stringify(e.value(key))}`,
+      `${key} = ${label}`,
+    );
+  }
 
   if (verbose) {
     for (const route of routes) {
@@ -1003,25 +1276,6 @@ const PERTURB = {
       return `${cardPath} IHDR width -> 1201`;
     },
   },
-  drawcap: {
-    target: CHECK.drawCap,
-    // A registry description long enough to reach the renderer's truncation,
-    // which is the precondition the card-content law rests on. The row edited
-    // has to be one `/llms.txt` actually carries: the first draft of this mode
-    // padded `/terms`, which is one of the five restatement routes and has no
-    // row, so it matched nothing and the check went unguarded. Caught only
-    // because a mode that applies to nothing is reported DEAD rather than
-    // quietly passing — which is the whole reason that guard exists.
-    apply: (cap) => {
-      const before = cap.llms.text;
-      cap.llms.text = before.replace(
-        "](https://sevenui.dev/docs/components/button): ",
-        `](https://sevenui.dev/docs/components/button): ${"x".repeat(DESCRIPTION_DRAW_CAP + 1)} `,
-      );
-      if (cap.llms.text === before) return undefined;
-      return `/llms.txt: /docs/components/button description pushed past the ${DESCRIPTION_DRAW_CAP}-code-point draw cap`;
-    },
-  },
   cardwordscollapse: {
     target: CHECK.cardWords,
     // THE REGRESSION THIS CHECK EXISTS FOR: `OgCard` loses its `title` prop, or
@@ -1104,11 +1358,6 @@ const PERTURB = {
       return `${route}: a canonical link moved after </head>`;
     },
   },
-  consistency: {
-    target: CHECK.relations,
-    apply: (cap) =>
-      editHead(cap, "/terms", (head) => setTag(head, "twitter:title", "Terms of Service"), "twitter:title de-suffixed"),
-  },
   imagepath: {
     target: CHECK.ownCard,
     // A page pointing at another page's card — the failure mode a per-route
@@ -1121,14 +1370,17 @@ const PERTURB = {
     apply: (cap) => editHead(cap, "/", (head) => setTag(head, "og:url", SITE), "root og:url loses its trailing slash"),
   },
   llmsstatus: {
-    target: CHECK.registry,
+    target: CHECK.registryServed,
+    // STATUS ONLY. It used to blank the text too, which also emptied the parse
+    // — fine while those were one assertion, but now it would reach two
+    // targets and leave `registryParsed` without a corruption of its own.
     apply: (cap) => {
-      cap.llms = { status: 500, text: "" };
-      return "/llms.txt -> 500 with an empty body";
+      cap.llms.status = 500;
+      return "/llms.txt -> 500";
     },
   },
   llmsdupe: {
-    target: CHECK.registry,
+    target: CHECK.registryUnique,
     // One row emitted twice. `parseRegistry` builds a Map, so a duplicate is
     // silently the last one and every downstream diff still passes; only a
     // cardinality test sees it.
@@ -1227,22 +1479,55 @@ const PERTURB = {
     },
   },
   notfoundfull: {
-    target: CHECK.missingPages,
-    // A 404 that grew the full set — §16.6's bug pointing the other way, a card
-    // URL advertised for a page that does not exist.
+    target: CHECK.notFoundNoExtras,
+    // A 404 that grew a tag it must not have — §16.6's bug pointing the other
+    // way, a card URL advertised for a page that does not exist.
+    apply: (cap) => editMissing(cap, MISSING_PAGES[0], (head) => `${head}<meta property="og:image" content="${SITE}/og/index.png"/>`, "og:image added"),
+  },
+  notfoundbare: {
+    target: CHECK.notFoundComplete,
+    // A 404 shipping ZERO og/twitter tags — the exact defect this gate found on
+    // its first run, and the branch that had no control until this round: every
+    // other 404 mode either adds a tag or flips a status, so none of them ever
+    // produced a non-empty `missing` list.
+    apply: (cap) =>
+      editMissing(
+        cap,
+        MISSING_PAGES[0],
+        (head) => head.replace(/<meta\b[^>]*\b(?:property|name)="(?:og|twitter):[^"]*"[^>]*>/gu, ""),
+        "every og:/twitter: tag stripped",
+      ),
+  },
+  notfoundcard: {
+    target: CHECK.notFoundCard,
+    apply: (cap) =>
+      editMissing(cap, MISSING_PAGES[0], (head) => setTag(head, "twitter:card", "summary_large_image"), "twitter:card -> summary_large_image"),
+  },
+  notfoundleak: {
+    target: CHECK.notFoundPlacement,
     apply: (cap) => {
       const page = cap.missingPages[MISSING_PAGES[0]];
       if (!page) return undefined;
       const before = page.html;
-      page.html = before
-        .replace(/(<meta\b[^>]*\btwitter:card[^>]*>)/u, '<meta content="summary_large_image" name="twitter:card"/>')
-        .replace("</head>", `<meta property="og:image" content="${SITE}/og/index.png"/></head>`);
+      page.html = before.replace("</head>", `</head><meta property="og:type" content="website"/>`);
       if (page.html === before) return undefined;
-      return `${MISSING_PAGES[0]}: twitter:card -> summary_large_image, og:image added`;
+      return `${MISSING_PAGES[0]}: an og:type moved after </head>`;
     },
   },
+  notfoundtitle: {
+    target: CHECK.notFoundOgTitle,
+    // §17.6 #28 de-applied: the 404 title loses its suffix. Until this round
+    // nothing in the repo asserted that string, so this regression was free.
+    apply: (cap) =>
+      editMissing(cap, MISSING_PAGES[0], (head) => setTag(head, "og:title", "Page not found"), "og:title de-suffixed"),
+  },
+  notfounddesc: {
+    target: CHECK.notFoundOgDescription,
+    apply: (cap) =>
+      editMissing(cap, MISSING_PAGES[0], (head) => setTag(head, "og:description", "Something else entirely"), "og:description replaced"),
+  },
   fieldlives: {
-    target: CHECK.missingPages,
+    target: CHECK.notFoundStatus,
     // §17.4 singles `/components/field` out: §11.7's old target must still 404
     // rather than "quietly becoming something". This is that quiet becoming.
     apply: (cap) => {
@@ -1252,13 +1537,142 @@ const PERTURB = {
       return "/components/field -> 200";
     },
   },
+  registryparsed: {
+    target: CHECK.registryParsed,
+    // A `/llms.txt` that still answers 200 but yields no rows — a generator
+    // whose line shape changed, say. `llmsstatus` cannot reach this: it moves
+    // the status and nothing else.
+    apply: (cap) => {
+      const before = cap.llms.text;
+      cap.llms.text = before.replace(/^- \[/gmu, "* [");
+      if (cap.llms.text === before) return undefined;
+      return "/llms.txt: every row's bullet changed, so nothing parses";
+    },
+  },
+  coveragedouble: {
+    target: CHECK.coverageSingleSource,
+    // A route answered by BOTH sides. `/terms` is a restatement route, so
+    // giving it a `/llms.txt` row makes the registry and the literal table
+    // both claim it.
+    apply: (cap) => {
+      const before = cap.llms.text;
+      cap.llms.text = `${before.trimEnd()}\n- [Terms of Service](${SITE}/terms): A second, competing answer.\n`;
+      if (cap.llms.text === before) return undefined;
+      return "/llms.txt: /terms given a row, so both sides now answer for it";
+    },
+  },
+  coveragestray: {
+    target: CHECK.coverageNoStray,
+    // A restated route the inventory no longer carries — the shape a page
+    // being deleted takes, leaving the table asserting a page that is gone.
+    apply: (cap) => {
+      const before = cap.routes.length;
+      cap.routes = cap.routes.filter((route) => route !== "/terms");
+      if (cap.routes.length === before) return undefined;
+      return "/terms dropped from the swept inventory while the restatement still names it";
+    },
+  },
+  cardunproven: {
+    target: CHECK.cardProven,
+    // A page naming the right card URL for a card this run did NOT prove.
+    // Overlaps `cardStatus` by design: that overlap IS the layer-1/layer-2
+    // join, and it now has a control of its own rather than riding on one.
+    apply: (cap) => {
+      const card = cap.cards[ogImagePath("/terms")];
+      if (!card) return undefined;
+      card.status = 503;
+      return "/og/terms.png -> 503 while /terms still names it";
+    },
+  },
+  notfoundtwittertitle: {
+    target: CHECK.notFoundTwitterTitle,
+    // §17.6 #28 de-applied on the `twitter:` half only — the exact deletion
+    // that used to pass silently, because the one control moved `og:title`.
+    apply: (cap) =>
+      editMissing(cap, MISSING_PAGES[0], (head) => setTag(head, "twitter:title", "Page not found"), "twitter:title de-suffixed"),
+  },
+  notfoundtwitterdesc: {
+    target: CHECK.notFoundTwitterDescription,
+    apply: (cap) =>
+      editMissing(cap, MISSING_PAGES[0], (head) => setTag(head, "twitter:description", "Something else entirely"), "twitter:description replaced"),
+  },
+  witnesstitle: {
+    target: CHECK.cardWitnessTitle,
+    // Empties the title-witness class, which is what the law needs in order to
+    // catch a card that stops drawing the TITLE. Measured on the preview, that
+    // class is a SINGLE group: `/` (SevenUI), `/account` (Account) and `/docs`
+    // (Introduction) all carry the site description — the first two by §16.4's
+    // fallback, the third because the docs index genuinely has that sentence.
+    // So the control makes every registry description unique and gives
+    // `/account` a row of its own, leaving `/` the only holder of the site
+    // description and no two routes sharing one. That is a registry state
+    // nothing forbids, and it would silently blind the law in this direction.
+    apply: (cap) => {
+      const before = cap.llms.text;
+      let n = 0;
+      const unique = before.replace(/^(- \[[^\]]+\]\(https:\/\/sevenui\.dev[^)]*\): )(.*)$/gmu, (whole, head, description) => {
+        n += 1;
+        return `${head}${description} [${n}]`;
+      });
+      cap.llms.text = `${unique.trimEnd()}\n- [Account](${SITE}/account): An account description of its very own.\n`;
+      if (cap.llms.text === before) return undefined;
+      return "/llms.txt: every description made unique and /account given its own row — no two routes share a description";
+    },
+  },
+  witnessdesc: {
+    target: CHECK.cardWitnessDescription,
+    // Empties the description-witness class. Those witnesses are the ten
+    // `/components/<slug>` rows, each sharing its bare title with the matching
+    // `/docs/components/<slug>` primitive; renaming the gallery rows' titles
+    // leaves no two routes sharing a title.
+    apply: (cap) => {
+      const before = cap.llms.text;
+      cap.llms.text = before.replace(
+        /^- \[([^\]]+)\]\((https:\/\/sevenui\.dev\/components\/[^)]+)\): /gmu,
+        (whole, title, url) => `- [${title} Gallery](${url}): `,
+      );
+      if (cap.llms.text === before) return undefined;
+      return "/llms.txt: every /components/<slug> title made unique, dissolving the description witnesses";
+    },
+  },
+
 };
+
+// ONE GENERATED CONTROL PER RELATION. Written as a loop rather than twelve
+// hand-copied blocks so a relation cannot be added without one: `breaks` is a
+// required field of every RELATIONS entry, and this loop turns each into a
+// mode. The corruption is applied to `/terms`, which carries the full tag set.
+for (const relation of RELATIONS) {
+  const mode = `relation:${relation.breaks.key}=${relation.breaks.value}`;
+  PERTURB[mode] = {
+    target: relationCheck(relation.name),
+    apply: (cap) =>
+      editHead(
+        cap,
+        "/terms",
+        (head) => setTag(head, relation.breaks.key, relation.breaks.value),
+        `${relation.breaks.key} -> ${JSON.stringify(relation.breaks.value)}`,
+      ),
+  };
+}
 
 // The perturbation helpers below all report whether they applied. A control
 // that matched nothing must be loud: a silent no-op is a control reporting PASS
 // about a check it never exercised.
 const firstRoute = (cap) => [...cap.routes].sort()[0];
 const firstCard = (cap) => ogImagePath(firstRoute(cap));
+
+// The 404 equivalent of `editHead`: same contract, same honesty about whether
+// the edit landed, against `cap.missingPages` instead of `cap.pages`.
+function editMissing(cap, pathname, edit, what) {
+  const page = cap.missingPages[pathname];
+  if (!page) return undefined;
+  const { head, tail } = splitHead(page.html);
+  const edited = edit(head);
+  if (edited === head) return undefined;
+  page.html = edited + tail;
+  return `${pathname}: ${what}`;
+}
 
 function editHead(cap, route, edit, what) {
   const page = cap.pages[route];
@@ -1377,7 +1791,7 @@ for (const result of results) {
 }
 for (const note of notes) console.log(note);
 const failed = results.filter((r) => !r.ok);
-console.log(`\n${results.length - failed.length}/${results.length} checks passed`);
+console.log(`\n${results.length - failed.length}/${results.length} assertions passed`);
 
 let controlsFailed = 0;
 // A control proves its check only if that check was GREEN before the
@@ -1417,7 +1831,7 @@ if (controlMode) {
 }
 
 if (args.controls) {
-  console.log("\n--- positive controls: each corrupts the real capture; its TARGET check must go green -> red ---");
+  console.log("\n--- positive controls: each corrupts the real capture; its TARGET assertion must go green -> red ---");
   for (const [mode, { target, apply }] of Object.entries(PERTURB)) {
     if (!baselineOk.has(target)) {
       console.log(
@@ -1453,15 +1867,37 @@ if (args.controls) {
   const total = Object.keys(PERTURB).length;
   console.log(`\n${total - controlsFailed}/${total} positive controls went red on their own target`);
 
-  // Every check must be SOMETHING's target, or it is unguarded — which is the
-  // condition the target scheme exists to make visible rather than assumable.
+  // EVERY ASSERTION must be something's target — not every CHECK. The
+  // distinction is this round's second finding: the old claim was true of
+  // checks and a reviewer proved it meant nothing, deleting eleven of twelve
+  // self-consistency relations and the branch that detects a 404 with no tags
+  // at all, in both cases keeping a full set of LIVE controls and a clean run.
+  // The list below is therefore the ASSERTION list — `CHECK`'s named entries
+  // plus the twelve generated relation names — and it is cross-checked in both
+  // directions: an assertion nothing targets is unguarded, and a target no
+  // assertion produces is a control aimed at a check that no longer exists.
+  const assertionNames = [...DECLARED_CHECKS.map((key) => CHECK[key]), ...DECLARED_RELATIONS.map(relationCheck)];
+  const produced = new Set(results.map((r) => r.name));
   const targeted = new Set(Object.values(PERTURB).map((mode) => mode.target));
-  const unguarded = Object.values(CHECK).filter((name) => !targeted.has(name));
-  if (unguarded.length) {
-    console.log(`\nUNGUARDED CHECKS (no control names them as its target):\n  ${unguarded.join("\n  ")}`);
-    controlsFailed += unguarded.length;
+  const unguarded = assertionNames.filter((name) => !targeted.has(name));
+  const orphanTargets = [...targeted].filter((name) => !produced.has(name));
+  const unrecorded = assertionNames.filter((name) => !produced.has(name));
+  if (unguarded.length || orphanTargets.length || unrecorded.length) {
+    if (unguarded.length) {
+      console.log(`\nUNGUARDED ASSERTIONS (no control names them as its target):\n  ${unguarded.join("\n  ")}`);
+    }
+    if (orphanTargets.length) {
+      console.log(`\nORPHAN TARGETS (a control names them, but no assertion is recorded under that name):\n  ${orphanTargets.join("\n  ")}`);
+    }
+    if (unrecorded.length) {
+      console.log(`\nDECLARED BUT NEVER RECORDED:\n  ${unrecorded.join("\n  ")}`);
+    }
+    controlsFailed += unguarded.length + orphanTargets.length + unrecorded.length;
   } else {
-    console.log(`every one of the ${Object.keys(CHECK).length} checks is named as some control's target`);
+    console.log(
+      `every one of the ${assertionNames.length} ASSERTIONS is recorded and is named as some control's target ` +
+        `(${DECLARED_CHECKS.length} named + ${DECLARED_RELATIONS.length} generated relations, both declared)`,
+    );
   }
 }
 
