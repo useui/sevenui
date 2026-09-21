@@ -14,9 +14,11 @@ import { site } from "../../lib/site";
 //    universal claim that was ALREADY a lie: `/components/button.md`,
 //    `/components.md`, `/blocks.md`, `/pro.md` and `/terms.md` all 404, because
 //    `.md` mirrors exist only for the docs corpus plus `/`. Nothing noticed
-//    because `llms.txt` never listed those routes; §15.4 now lists 35 of them,
-//    so an agent following this pattern would start hitting those 404s. The
-//    narrowed pattern says what is true.
+//    because `llms.txt` never listed those routes; §15.4 now lists them —
+//    a manifest-derived count that drifts with the pro catalog (Ruling 58;
+//    `lib/site-index.ts`'s own header: NOTHING HERE IS A COUNT), so no
+//    specific number is repeated here — so an agent following this pattern
+//    would start hitting those 404s. The narrowed pattern says what is true.
 //
 // The mirrors are NOT widened to match the old pattern instead (§15.12).
 // Synthesising Markdown for a gallery page — a live component grid, not prose —

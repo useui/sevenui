@@ -672,15 +672,16 @@ Things that stop being read, are deleted, or become dead — recorded so none is
 | `/<route>.md` | 69 | Reproduced |
 | `/<route>.mdx` | 69 | **Dropped** |
 | `/llms.txt` | 1 | Reproduced, scope widened (§15.4) |
-| `/llms-full.txt` | 1 | Reproduced unchanged (§15.5) |
-| `/sitemap.xml` | 1 | Reproduced, 17 routes added (§15.7) |
+| `/index.md` | 1 | Reproduced — shares `/llms.txt`'s body, its own URL (§15.2) |
+| `/llms-full.txt` | 1 | Reproduced, gains one section (§15.5, §17.6 #26) |
+| `/sitemap.xml` | 1 | Reproduced, every `/blocks` group/category route added (§15.7) |
 | `/robots.txt` | 1 | Reproduced verbatim (§15.6) |
 | `/agent-readability.json` | 1 | Reproduced, two fields corrected (§15.11) |
 | `/rss.xml`, MCP routes | 0 | Already 404; nothing to do |
 
 **The `.mdx` mirrors are dropped because nothing reaches them.** No page links one, no `<link>` declares one, `agent-readability.json` advertises only the `.md` pattern, and the `.md` variant is a superset — same body, with `<Component>` downleveled to source. They exist because Blume emits them by default, not because the site chose them. 69 URLs leave the frozen contract; that is **one** line on the intended-diff list, not 69.
 
-The reproduced set is therefore **74 text/JSON endpoints** — which is exactly the number §17 recorded, *by coincidence*, since the live total is 143 (§17's inventory missed the 69 `.mdx` routes and `/agent-readability.json`). **Re-run the inventory generator after the drop; do not rely on the coincidence.**
+The reproduced set is therefore **75 text/JSON endpoints** — 69 `.md` mirrors, `/llms.txt`, `/index.md`, `/llms-full.txt`, `/sitemap.xml`, `/robots.txt`, `/agent-readability.json` — one more than the **74** §17 recorded, by coincidence, since the live total is 143 (§17's inventory missed the 69 `.mdx` routes, `/agent-readability.json`, and `/index.md`). **Re-run the inventory generator after the drop; do not rely on the coincidence.**
 
 ### 15.2 The `.md` slug rule is not a quirk, and `/index.md` is `llms.txt`
 
@@ -699,19 +700,19 @@ The port emits one fenced `bash` block holding all four commands (npx / pnpm dlx
 
 Per §6 the authored surface was exactly two components when this was written, so the serializer registry was closed at two; §11.3 then added a third. **It is closed at three** — `Component`, `InstallCommand`, `PrimitiveIndex` — which is what `lib/docs/elements.ts` asserts on every build. Blume's other five have zero uses and are not ported. `<PrimitiveIndex />` serializes to the same link list it renders (one row per primitive, filtered and sorted on `route`, root-relative hrefs): `docs/components.mdx` is six lines whose whole body is that tag, so leaving it unrecognised would ship `/docs/components.md` as front matter plus raw JSX — the defect this section exists to repair, newly created on a page this migration adds (Stage 8, Ruling 61).
 
-**`/<route>.md` keeps its front matter; `llms-full.txt` keeps stripping it.** Today `.md` emits the verbatim YAML block while `llms-full.txt` strips it and writes `# <title>` + `Source: <url>`. The split is kept: YAML front matter is the standard metadata carrier for a standalone Markdown document and flattening it loses `description` as structured data, while inside `llms-full.txt` the same block would be noise — 68 documents are concatenated there and the `# <title>` / `Source:` pair is what separates them.
+**`/<route>.md` keeps its front matter; `llms-full.txt` keeps stripping it.** Today `.md` emits the verbatim YAML block while `llms-full.txt` strips it and writes `# <title>` + `Source: <url>`. The split is kept: YAML front matter is the standard metadata carrier for a standalone Markdown document and flattening it loses `description` as structured data, while inside `llms-full.txt` the same block would be noise — 69 documents are concatenated there (68 in the pre-cutover fixture; §15.5 adds a 69th) and the `# <title>` / `Source:` pair is what separates them.
 
-### 15.4 `/llms.txt` gains `/components` and all 18 `/blocks` routes
+### 15.4 `/llms.txt` gains `/components` and every `/blocks` route
 
 Today it mirrors the docs nav tree only (`## Docs`, `## Primitives`), because `buildLlmsIndex` walks Blume's navigation and the gallery and blocks surfaces are not Blume page records. The index gains both in full: `/components` plus its 10 component pages, and **every** blocks route — a count that is manifest-derived and drifts (18 when this was written, **24 as of 2026-09-21**), so the rule is what binds and not the number. It also gains `/docs/components`, §11.3's new page, without which the index would cover 68 of the 69 documents `llms-full.txt` carries (Stage 8, Ruling 69). And it gains **two sections**, `## Components` and `## Blocks`: listing `/blocks/marketing/hero` under `## Primitives` would misdescribe it, since that heading names the 65 Base UI components. **42 new lines as measured on 2026-09-21** (36 links, 2 headings, 4 blanks), and `/index.md` grows with it (§15.2).
 
-The blocks half is only affordable because of §15.7: `sitemap.xml` is already fed from §10's manifest `fetch`, whose Data Cache entry is URL-keyed, so `llms.txt` reads the same entry for **no additional fetch and no additional ISR surface** — one more `revalidate: 300`. Listing 18 routes in the sitemap and not in `llms.txt`, from the same data, would have been arbitrary.
+The blocks half is only affordable because of §15.7: `sitemap.xml` is already fed from §10's manifest `fetch`, whose Data Cache entry is URL-keyed, so `llms.txt` reads the same entry for **no additional fetch and no additional ISR surface** — one more `revalidate: 300`. Listing those routes in the sitemap and not in `llms.txt`, from the same data, would have been arbitrary.
 
 The `## Docs` heading must be **synthesized literally** — it is Blume's hard-coded string for loose root pages, not a configured label, so §5's nav tree keeps loose pages distinguishable from grouped ones for the emitter's benefit.
 
-### 15.5 `/llms-full.txt` is reproduced unchanged
+### 15.5 `/llms-full.txt` gains a 69th section, `/docs/components` (§17.6 #26)
 
-296,471 bytes, 68 sections, **59% fenced code** (175,231 bytes across 214 fences) — measured, confirming that demo sources dominate. It stays whole. The file's purpose is the entire corpus in one fetch; dropping the demo sources (~120 KB remaining) would reduce it to a longer `llms.txt`, and a consumer who asks for this file is asking for everything.
+The fixture — the pre-cutover baseline this file is diffed against — is 297,404 bytes, 68 sections, **59% fenced code** (175,231 bytes across 214 fences) — measured, confirming that demo sources dominate. §11.3's `/docs/components` is authored as MDX like every other docs page, so it is concatenated in here the same way as the other 68: the shipped file gains a 69th section, taking it to 315,554 bytes (measured on 2026-09-21) — one new intended diff, not an unchanged reproduction. Otherwise it stays whole: the file's purpose is the entire corpus in one fetch; dropping the demo sources (~120 KB remaining) would reduce it to a longer `llms.txt`, and a consumer who asks for this file is asking for everything.
 
 ### 15.6 `robots.txt` is reproduced verbatim, permanently
 
@@ -725,13 +726,13 @@ Sitemap: https://sevenui.dev/sitemap.xml
 
 Four lines, byte-identical. The `Content-Signal` stance is a policy statement, not a technical detail, and revisiting it during a framework cutover would add a diff the gate has to be told to expect for no migration reason. **No post-cutover follow-up is opened either** — the stance is settled, not deferred.
 
-### 15.7 `sitemap.xml` gains 17 routes and is ISR'd
+### 15.7 `sitemap.xml` gains every `/blocks` route and is ISR'd
 
 Live today: 85 `<loc>` entries, bare — no `<lastmod>`, `<changefreq>` or `<priority>`. It carries `/blocks` but **none of its group or category routes**, so every one of them is in no sitemap at all — 17 pages when this was written, **23 as of 2026-09-21**; the figure is manifest-derived and `scripts/route-inventory.mjs` is the only place it is ever computed. Next's `sitemap.ts` reads §10's manifest through the shared Data Cache entry and declares `revalidate: 300`, taking the count to **109 as measured on 2026-09-21**, including §11.3's new `/docs/components`, which arrives automatically because it is authored as MDX.
 
 **A site-wide rule is attached: no `revalidate` anywhere exceeds 300 seconds.** That matches §10's figure rather than introducing a second number, and it binds any future ISR surface.
 
-**Entry order is not a contract.** Blume's current collation is visibly odd (`alert-dialog` before `alert`; `/components/tabs` before `/components`); the port sorts with a plain `localeCompare`. §17's criterion for this file is **URL-set equality, not byte identity** — which is the right criterion regardless, since the 17 additions change that set on purpose.
+**Entry order is not a contract.** Blume's current collation is visibly odd (`alert-dialog` before `alert`; `/components/tabs` before `/components`); the port sorts with a plain `localeCompare`. §17's criterion for this file is **URL-set equality, not byte identity** — which is the right criterion regardless, since every `/blocks` route addition changes that set on purpose — 17 when this was written, **23 as of 2026-09-21**.
 
 ### 15.8 Titles change site-wide; JSON-LD goes bare
 
@@ -769,11 +770,11 @@ The rail stays **docs-only**, as today.
 Live, 565 B, pointed at from every docs page by `<link rel="describedby">`. Reproduced, with two fields corrected:
 
 - `"generator": "blume@1.5.3"` → `"sevenui-web"`. Post-cutover the current value is simply false.
-- `"artifacts.markdown.pattern": "https://sevenui.dev/{route}.md"` → `"https://sevenui.dev/docs/{route}.md"`. The universal pattern is **already a lie** — verified: `/components/button.md`, `/components.md`, `/blocks.md`, `/pro.md` and `/terms.md` all 404, because `.md` mirrors exist only for the 68 docs routes plus `/`. Nothing noticed because `llms.txt` never listed those routes; §15.4 makes it list 29 of them, so the field has to become true.
+- `"artifacts.markdown.pattern": "https://sevenui.dev/{route}.md"` → `"https://sevenui.dev/docs/{route}.md"`. The universal pattern is **already a lie** — verified: `/components/button.md`, `/components.md`, `/blocks.md`, `/pro.md` and `/terms.md` all 404, because `.md` mirrors exist only for the 68 docs routes plus `/`. Nothing noticed because `llms.txt` never listed those routes; §15.4 makes it list them — 29 when this was written, **35 as of 2026-09-21** (manifest-derived; the rule binds, the number is dated), so the field has to become true.
 
 Everything else — `contentUsage` (which mirrors §15.6's `Content-Signal`), `site`, `repository`, `name`, `description` — is reproduced as-is from `lib/site.ts`. The three per-docs-page `<link>` tags (`describedby` ×2, `alternate type="text/markdown"`) are reproduced unchanged and stay **docs-only**, verified absent on `/`, `/components/button` and `/blocks` today.
 
-### 15.12 The 29 newly-listed routes do **not** gain `.md` mirrors
+### 15.12 The newly-listed routes do **not** gain `.md` mirrors
 
 `llms.txt` lists them as URLs; an agent that wants their content reads the HTML. Synthesizing Markdown for a gallery page is its own design problem — the page is a live component grid, not prose, so the output would be either empty or newly invented content to maintain. For `/blocks` it is worse: the previews are license-gated iframes served from another origin. §15.11's narrowed `pattern` makes the declaration match the reality.
 
@@ -873,7 +874,7 @@ The bar is **behaviour + layout parity**. Information architecture, routes, inte
 
 ### 17.1 The surface
 
-**101 HTML routes, 74 text endpoints (after §15.1), ~102 OG images, 247 registry JSON files.** Derived from production, not from memory; the working inventory is `.scratch/blume-to-nextjs/route-inventory.md`.
+**101 HTML routes, 75 text endpoints (after §15.1), ~102 OG images, 247 registry JSON files.** Derived from production, not from memory; the working inventory is `.scratch/blume-to-nextjs/route-inventory.md`.
 
 **`sitemap.xml` is not a sufficient inventory** and that is the headline finding: it lists 85 URLs and omits the live `/blocks` group and category routes, every agent-facing endpoint and every OG image. A gate built on the sitemap would have declared parity with 17 published pages missing.
 
@@ -952,7 +953,7 @@ Every diff must be empty or appear here. This list is what separates "we fixed a
 | 23 | `BreadcrumbList` JSON-LD is added on docs and `/blocks` | §11.3 |
 | 24 | `/blocks`'s breadcrumb gains `nav > ol > li` + `aria-current` — **accessibility tree only, pixel-identical** under `list-none` | §11.3 |
 | 25 | The feedback event's `title` prop becomes the bare page title | §11.3 |
-| 26 | One new route: `/docs/components` | §11.3 |
+| 26 | One new route: `/docs/components`. **The page is authored as MDX, so it reaches four surfaces, not one**: the HTML route, its `.md` mirror (§15.1), a 69th `llms-full.txt` section (§15.5), and an `llms.txt` row under `## Primitives` (§15.4) | §11.3 |
 | 27 | `rounded-blume` (12px) becomes `rounded-lg` (10px) on four furniture elements | §8.3 |
 | 28 | The 404 `<title>` gains the suffix: **"Page not found — SevenUI"** | §11.7 |
 | 29 | Three demos (`field-validation.tsx`, `chart-demo.tsx`, `chart-line.tsx`) gain a `"use client"` directive; their `/r/demo/*.json` content changes by one line each. **The serializer embeds the same files, so the same line also lands in two `.md` mirrors** (`chart` ×2, `field` ×1) **and in `llms-full.txt`** | §7 |
@@ -976,7 +977,7 @@ Every diff must be empty or appear here. This list is what separates "we fixed a
 
 | 44 | **The search palette's markup is absent from the static HTML, and `⌘J` is bound nowhere.** `Search.astro` server-renders its *whole closed* `<dialog>` into every page — the `Esc` kbd beside the input and the `↑↓ navigate` / `↵ open` / `⌘J preview` footer — so production's extracted text carries the contiguous run `Esc↑↓navigate↵open⌘Jpreview` on all 109 inventoried routes, inert but extractable. §11.4 puts the port's dialog behind a **dynamic import** so the palette and its matcher stay out of the header chunk, and §9.5 drops `⌘J` outright because the result-preview pane it toggles is already hidden with `!important` (§14.7). The port's static HTML can therefore only ever carry the trigger's own `Search⌘K`. **This retires half of the owned text run Stage 5 opened and Stage 6 halved**: `Search⌘K` is now asserted *positively on both sides* of all 109 routes, the way #13's stage asserted the auth pill, and only the closed dialog's chrome is subtracted from production's side. The remainder is permanent rather than debt, which is why it is declared here instead of living on as a gate constant. Measured: production `/docs/components/button` carries `…BlocksProSearch⌘KEsc↑↓navigate↵open⌘JpreviewSignin…`; ours carries the same string with the 27-character dialog run removed. The four `theme.css` `!important` rules that fought the two-column dialog are deleted in the same stage — the geometry they produced (`min(40rem, 94vw)`, single column, no preview pane) moves into the replacement's own class list | §9.5, §11.4, §14.7 |
 
-Rows #30–#40 were added after Stage 3, each a consequence of a decision taken earlier in this document rather than a new choice. #34 and #43 are the only rows that *repair* something, and #36 the only one that costs the reader anything. #41 and #42 were added during Stage 5 and are the first rows whose differences **no gate in this plan can observe**: they are here because a reviewer asked where else they would be written down. #12 was rewritten in the same stage — it had promised only "delay and portal", and adopting a published component changes more than its timing. #43 was added during Stage 6 and joins #41 and #42 as unobservable to every gate here — a reviewer found it by reading the retry path, not by running it. #44 was added during Stage 7 and runs the other way: it is the only row a gate *measures on every route*, because retiring half of its own owned token is what made the measurement stronger than the stage before it. **Stage 8 added no rows and corrected four.** #2 and #19 stated counts the pro manifest had already moved past — 18 blocks routes are 24 — so both now name the rule and date the number, and §15.4 and §15.7 do the same; #4 and #29 each named one surface where the change reaches three, which is how a stage one removed calls a declared diff a regression, and it did. Nothing about the site changed for any of the four: the rows were behind the repository, not ahead of it.
+Rows #30–#40 were added after Stage 3, each a consequence of a decision taken earlier in this document rather than a new choice. #34 and #43 are the only rows that *repair* something, and #36 the only one that costs the reader anything. #41 and #42 were added during Stage 5 and are the first rows whose differences **no gate in this plan can observe**: they are here because a reviewer asked where else they would be written down. #12 was rewritten in the same stage — it had promised only "delay and portal", and adopting a published component changes more than its timing. #43 was added during Stage 6 and joins #41 and #42 as unobservable to every gate here — a reviewer found it by reading the retry path, not by running it. #44 was added during Stage 7 and runs the other way: it is the only row a gate *measures on every route*, because retiring half of its own owned token is what made the measurement stronger than the stage before it. **Stage 8 added no rows and corrected five.** #2 and #19 stated counts the pro manifest had already moved past — 18 blocks routes are 24 — so both now name the rule and date the number, and §15.4 and §15.7 do the same; #4, #26 and #29 each named one surface fewer than the change actually reaches, which is how a stage one removed calls a declared diff a regression, and it did. Nothing about the site changed for any of the five: the rows were behind the repository, not ahead of it.
 
 **Two inventory observations that are expected and are not diffs:** `/blume-assets/*` is absent (it 404s today), and the 9 chrome anchors gain `target`/`rel` — which the post-build pass already added, so the built HTML is unchanged.
 
@@ -1053,7 +1054,7 @@ Measure the current `blume build` once before cutover and record it. The Next bu
 - **Moving the theme customizer dock onto `/components` and the docs pages.** A pre-existing product gap, not migration parity: it changes the layout of 11 gallery pages during a cutover whose whole point is attributable regressions, and the dock's behaviour there (rail vs. the gallery sidebar, the mobile drawer) is its own design work. The migration ships the scoped applier — forced by the iframe removal — and the control stays on `/blocks` (§8.4).
 - **Teaching the pro repo to read the renamed `theme` storage key**, and **giving pro blocks a `registryDependencies` entry on `/r/theme.json`** so `text-success` / `bg-warning` resolve for consumers (§8.6). Both are pro-repo changes; the web side covers the first with a temporary mirror write (§20.1).
 - **Switching the site to Geist / Geist Mono.** ~3 lines against the single seam §11.2 creates, so cost is not the reason — attributability is. A follow-up effort after the cutover, and §16.3 is told not to "fix" the card/site font mismatch by pulling the OG card onto Inter.
-- **Agent-surface additions that are not live today:** the `x-markdown-tokens` header (§15.13), `Accept: text/markdown` content negotiation, and `.md` mirrors for the 29 newly-listed routes (§15.12). Each is a post-cutover choice, not parity.
+- **Agent-surface additions that are not live today:** the `x-markdown-tokens` header (§15.13), `Accept: text/markdown` content negotiation, and `.md` mirrors for the newly-listed routes (§15.12). Each is a post-cutover choice, not parity.
 - **Post-cutover 404 niceties:** `not-found` boundaries for the gallery and `/blocks`, and redirects for the base-less legacy shapes `/installation` and `/theming` (§11.7).
 - **A runtime test harness for `apps/web`** — see §21.
 - **Writing the implementation plan.** A separate effort, after this spec is locked.
@@ -1107,7 +1108,7 @@ Because the investigation ran before the scope call, its result is stated here r
 **§17's gate is *differential* (old build vs. new build, over an inventory of live routes), and that shape has three remaining blind spots.** §17.4's negative-path list already closed two others.
 
 1. **Nothing anywhere executes §10.2's stale-serve path.** CI is hermetic on the fixture and the live signal is a scheduled canary that watches the manifest, not the behaviour. Note that stale-serve is **Next's Data Cache semantics, not our code** (§10.2 says so: no code is needed), so it is not unit-testable in any case. What *would* be testable is what it depends on — `parseManifest` is a pure function with 11 distinct throw sites, and its real failure mode is a validation that *silently passes* a malformed manifest, after which stale-serve never triggers and a wrong `/blocks` publishes.
-2. **§9.3's matcher and index are invisible by construction.** The inventory is 101 HTML + 74 text + ~102 OG + 247 registry JSON; the 113 KiB search index is none of those, the palette renders on no route, and Blume's Orama dialog is gone so there is no old side to diff against. §9 deliberately rejected Base UI's filter to own the ranking ladder, and nothing verifies it.
+2. **§9.3's matcher and index are invisible by construction.** The inventory is 101 HTML + 75 text + ~102 OG + 247 registry JSON; the 113 KiB search index is none of those, the palette renders on no route, and Blume's Orama dialog is gone so there is no old side to diff against. §9 deliberately rejected Base UI's filter to own the ranking ladder, and nothing verifies it.
 3. **§17's own extractors are new untested code** whose worst failure is a **vacuous pass** — an extractor returning nothing diffs clean against an extractor returning nothing, which would invalidate every other gate at once.
 
 Anyone picking this up later starts from `.scratch/blume-to-nextjs/issues/20-runtime-test-harness.md`, which carries the measurements and the questions left open.

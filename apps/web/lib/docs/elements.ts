@@ -1,5 +1,6 @@
 import type { DocPage } from "./index";
 import { stripFences } from "./headings";
+import { SERIALIZABLE_TAG_NAMES } from "./serialize-md";
 
 // If any MDX file introduces an element with no override, the build fails.
 // Cost is zero, and it converts "the corpus is narrow" from a lucky fact into
@@ -23,6 +24,35 @@ const FORBIDDEN: Array<[RegExp, string]> = [
 // here does not import them, so this file does not violate the
 // nothing-imported-before-it-exists rule mdx-components.tsx documents.
 const ALLOWED_JSX_TAGS = new Set(["Component", "InstallCommand", "PrimitiveIndex"]);
+
+// The tie this list was missing (fix-wave item 1). Ruling 61 happened because
+// this Set and `lib/docs/serialize-md.ts`'s own tag registry each spelled out
+// the same three names independently and nothing forced them to agree: this
+// file had three names, the serializer had two, and a human reading the spec
+// was what caught it, not the build. Asserted at MODULE LOAD, not inside
+// `assertElementsAllowed` below — this file is imported unconditionally by
+// `lib/docs/index.ts`, so loading it is itself "every build," and a
+// module-scope throw fires even if the corpus happens to contain zero pages
+// using the drifted tag, which a per-page scan below could not. Every entry
+// in one Set must be in the other; `elements.ts` may import
+// `serialize-md.ts` (both live inside the Next module graph), but not the
+// reverse — `serialize-md.ts`'s own header explains why it must stay
+// loadable under bare `node`.
+{
+  const serializable = new Set<string>(SERIALIZABLE_TAG_NAMES);
+  const onlyInElements = [...ALLOWED_JSX_TAGS].filter((tag) => !serializable.has(tag));
+  const onlyInSerializer = [...serializable].filter((tag) => !ALLOWED_JSX_TAGS.has(tag));
+  if (onlyInElements.length > 0 || onlyInSerializer.length > 0) {
+    throw new Error(
+      "lib/docs/elements.ts: ALLOWED_JSX_TAGS and lib/docs/serialize-md.ts's SERIALIZABLE_TAG_NAMES have " +
+        `drifted apart. Only in lib/docs/elements.ts: [${onlyInElements.join(", ") || "none"}]. Only in ` +
+        `lib/docs/serialize-md.ts: [${onlyInSerializer.join(", ") || "none"}]. A tag either file allows but ` +
+        "the other does not either ships as raw JSX to agents (Ruling 61's defect, reopened) or is rejected " +
+        "by this file's own build-time scan for no reason a reader can see. Add the tag to both lists, in " +
+        "the same edit.",
+    );
+  }
+}
 
 // A JSX/MDX component tag: `<UpperCamelCase`. Plain HTML tags used in MDX
 // bodies (`<pre>`, `<div>`, …) start lowercase and are not matched — this

@@ -7,7 +7,7 @@
 // only, with no front matter and no title line of its own.
 //
 // This module must load OUTSIDE the Next.js module graph: Task 8.2's script
-// runs as `node apps/web/scripts/build-md-mirrors.mjs`, before `next build`
+// runs as `node apps/web/scripts/build-md-mirrors.ts`, before `next build`
 // even starts, so nothing here may transitively reach `server-only` (its
 // non-`react-server` export is a bare `throw`). Two rules follow from that,
 // and both are load-bearing, not style:
@@ -55,8 +55,57 @@ const REGISTRY_DIR = path.join(process.cwd(), "../../packages/registry");
 // contain />`, whose `contain` is presentational only (§15.3 note) and
 // never affects the serialized output — still matches instead of silently
 // falling through unrendered.
-const SERIALIZABLE_TAG =
-  /<(Component|InstallCommand|PrimitiveIndex)\b((?:\s+[A-Za-z][\w-]*(?:="[^"]*")?)*)\s*\/>/g;
+//
+// The three tag names below are the single spelling: `SERIALIZABLE_TAG` and
+// `TAG_NAME_OPEN` are both BUILT FROM `SERIALIZABLE_TAG_NAMES`, not
+// hand-typed alternations of their own. That is a fix-round-3 change, not
+// style — fix-round-2 tied `SERIALIZABLE_TAG_NAMES` to `lib/docs/elements.ts`'s
+// `ALLOWED_JSX_TAGS` (see the export below) but left the two regexes as
+// their own independent spellings, so a name could still be dropped from
+// just the regexes while the array, the type, the assertion and the
+// `switch` all stayed in sync — exactly reproducing Ruling 61 (the regex
+// lacked `PrimitiveIndex` while the allow-list had it) with the new guard
+// sitting right next to it, silent. Deriving the regex source strings from
+// the array makes that drift impossible to write, not merely checked for.
+//
+// Kept as its own type (rather than inlining `string` at each call site) so
+// the `switch` in `renderTag` below can be exhaustive: adding a fourth name
+// to `SERIALIZABLE_TAG_NAMES` without updating this type is a compile error
+// at that `switch`'s `never` check, and if the regex's capture ever produces
+// a name outside this type at runtime (a `RegExp` built from a `string[]`
+// still isn't type-checked against a union), `assertSerializableTagName`
+// below throws instead of silently falling through to `PrimitiveIndex` — the
+// exact "fourth name, wrong answer" failure this pair exists to rule out.
+type SerializableTagName = "Component" | "InstallCommand" | "PrimitiveIndex";
+
+// The same three names, as a runtime value, exported so `lib/docs/elements.ts`
+// can assert equality against its own `ALLOWED_JSX_TAGS` at build time
+// (fix-round-2 item 1). Before that export existed, the two files each
+// spelled out "Component, InstallCommand, PrimitiveIndex" independently —
+// Ruling 61 happened because they drifted (this file had two names, that one
+// three) and nothing but a human reading the spec noticed. A plain array
+// literal adds no import and no runtime cost, so it does not touch this
+// file's bare-`node` constraint above; `elements.ts` is the one importing
+// this, never the other way — this file may not import `elements.ts` or
+// anything reaching `server-only`. This array is now ALSO the only spelling
+// the two regexes below read from — see the comment above this type.
+export const SERIALIZABLE_TAG_NAMES: readonly SerializableTagName[] = [
+  "Component",
+  "InstallCommand",
+  "PrimitiveIndex",
+];
+
+// `SERIALIZABLE_TAG_NAMES.join("|")` — a regex-safe alternation because
+// every name is an `[A-Za-z]+` identifier with no character `RegExp` source
+// syntax could misparse (no `.`, `(`, `|`, `\`, …); a future name that
+// wasn't a plain identifier would need this to escape it, but the type
+// above only ever admits identifiers like these three.
+const TAG_NAME_ALTERNATION = SERIALIZABLE_TAG_NAMES.join("|");
+
+const SERIALIZABLE_TAG = new RegExp(
+  `<(${TAG_NAME_ALTERNATION})\\b((?:\\s+[A-Za-z][\\w-]*(?:="[^"]*")?)*)\\s*/>`,
+  "g",
+);
 const ATTR = /([A-Za-z][\w-]*)(?:="([^"]*)")?/g;
 
 // Any occurrence of an allow-listed tag NAME, whether or not it parses as a
@@ -66,7 +115,7 @@ const ATTR = /([A-Za-z][\w-]*)(?:="([^"]*)")?/g;
 // fail `SERIALIZABLE_TAG`'s `="[^"]*"` grammar, and both were, before that
 // assertion existed, silently left as raw JSX in the output — the exact bug
 // this module exists to fix, reopened by a shape its author didn't type.
-const TAG_NAME_OPEN = /<(Component|InstallCommand|PrimitiveIndex)\b/g;
+const TAG_NAME_OPEN = new RegExp(`<(${TAG_NAME_ALTERNATION})\\b`, "g");
 
 type Range = readonly [start: number, end: number];
 
@@ -385,16 +434,10 @@ function renderPrimitiveIndex(pages: readonly DocPageSummary[], sourcePath: stri
   return primitives.map((page) => `- [${page.title}](${page.route}): ${page.description}`).join("\n");
 }
 
-// The three tag names `SERIALIZABLE_TAG` can capture. Kept as its own type
-// (rather than inlining `string` at each call site) so the `switch` below
-// can be exhaustive: adding a fourth alternative to the regex without
-// updating this type is a compile error at the `never` check, and if the
-// regex's capture ever produces a name outside this type at runtime (the
-// two can drift; a regex literal isn't type-checked against a union),
-// `assertSerializableTagName` below throws instead of silently falling
-// through to `PrimitiveIndex` — the exact "fourth name, wrong answer"
-// failure this pair exists to rule out.
-type SerializableTagName = "Component" | "InstallCommand" | "PrimitiveIndex";
+// `SerializableTagName` and `SERIALIZABLE_TAG_NAMES` — the single spelling
+// both regexes above are built from — are declared near the top of this
+// file, immediately before `SERIALIZABLE_TAG`, so that regex's construction
+// can reference the array. See the comment there.
 
 function assertSerializableTagName(name: string): asserts name is SerializableTagName {
   if (name !== "Component" && name !== "InstallCommand" && name !== "PrimitiveIndex") {

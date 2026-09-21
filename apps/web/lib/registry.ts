@@ -8,7 +8,7 @@
 // resolve it through Next's/tsc's own extensionless module resolution. Leave
 // it: `lib/docs/serialize-md.ts` imports `installCommand` from this file with
 // its own explicit ".ts" specifier so it can be loaded by plain Node with no
-// build step (Task 8.2's `apps/web/scripts/build-md-mirrors.mjs` does exactly
+// build step (Task 8.2's `apps/web/scripts/build-md-mirrors.ts` does exactly
 // that, before `next build` even runs), and that Node runtime is only
 // resolving relative specifiers as written on disk — it has no bundler to
 // paper over an extensionless "./package-manager" one level down.
