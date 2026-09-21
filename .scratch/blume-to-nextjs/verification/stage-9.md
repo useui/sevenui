@@ -1,7 +1,8 @@
 # Stage 9 — OG cards. Verification record
 
-Branch `feat/blume-to-nextjs`, commits `621af2c..9ef497a`. `main` untouched, no PR.
-Preview: `sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app`.
+Branch `feat/blume-to-nextjs`, commits `621af2c..30fddbd`. `main` untouched, no PR.
+Preview: `sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app`, Vercel reporting `success`
+for `30fddbd`.
 
 ```
 21d2b13 feat(web): render OG cards from a catch-all route, drawn from each page's own words   (9.1 + 9.2)
@@ -9,7 +10,14 @@ Preview: `sevenui-git-feat-blume-to-nextjs-oguzhan-yilmaz.vercel.app`.
 3f6c62b feat(web): declare the full og/twitter/canonical set on every route, from one builder (9.2b)
 3d214de fix(web): give the docs 404 boundary its own metadata                                  (9.4)
 9ef497a test(repo): sweep every OG card and diff the card's input                              (9.3)
+27e25a3 refactor(web): give the logomark's geometry one spelling                               (final review)
+e5b8ef8 docs(spec): widen §17.6 #17 and §15.9 to the five fields the suffix reaches            (final review)
+5296179 test(repo): make the sweep's unit an assertion, and declare its inventory as data      (final review)
+30fddbd test(web): record the Stage 9 verification
 ```
+
+Final run, against the deployment of `30fddbd`: **45/45 assertions, 51/51 controls**, and
+`0 routes excluded from the card-content law`.
 
 ## The gate — `node scripts/og-sweep.mjs --inventory <route-inventory.json> --base $PREVIEW`
 
