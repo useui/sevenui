@@ -752,7 +752,7 @@ The title builder lives in `lib/site.ts` and is applied in **one** place (§16.8
 
 ### 15.9 Page titles stay bare in every agent artefact
 
-The suffix rule governs `<title>`, `og:title` and `og:image:alt` only. The three places a page title appears in agent output keep the **bare** form: `llms.txt` link text, `llms-full.txt` section headings, and the `.md` front-matter `title:`. `llms.txt` already names the site once in its own `# SevenUI` header; repeating it on 85 lines is pure token cost.
+The suffix rule governs `<title>`, `og:title`, `og:image:alt`, `twitter:title` and `twitter:image:alt` — the five fields that name the page to a human or a crawler, and no more. (This sentence read "`<title>`, `og:title` and `og:image:alt` only" until 2026-09-21: the two `twitter` fields were always suffixed, first as Next's implicit fallback from `openGraph` and then explicitly, and the sentence had simply never been checked against the emitted head.) The three places a page title appears in agent output keep the **bare** form: `llms.txt` link text, `llms-full.txt` section headings, and the `.md` front-matter `title:`. `llms.txt` already names the site once in its own `# SevenUI` header; repeating it on 85 lines is pure token cost.
 
 ### 15.10 The docs page-actions rail is ported whole
 
@@ -944,7 +944,7 @@ Every diff must be empty or appear here. This list is what separates "we fixed a
 | 14 | The global focus ring is declared as `var(--foreground)` instead of `var(--blume-accent)` — a ≤0.025 L difference, dark mode only | §8.3 |
 | 15 | `copy-command.tsx` on the landing page and the `/components` cards now follows the package-manager preference | §13.2 |
 | 16 | 69 `/<route>.mdx` URLs are dropped | §15.1 |
-| 17 | 68 docs `<title>`s are re-separated from hyphen to em dash, with their `og:title` and `og:image:alt` | §15.8 |
+| 17 | 68 docs `<title>`s are re-separated from hyphen to em dash, with their `og:title`, `og:image:alt`, **`twitter:title` and `twitter:image:alt`**. Five surfaces, not three: when this row was written the `twitter` block was Next's implicit fallback from `openGraph`; §16.8's builder declares it outright, so the suffix reaches it by the same route as the rest. Measured production against the port on 2026-09-21, all 109 routes × 17 head fields: **340 differing lines, 68 routes × 5 fields**, and one more line for #26's new page — every other declared value byte-identical | §15.8 |
 | 18 | JSON-LD `headline` goes bare on 16 pages | §15.8 |
 | 19 | `llms.txt` gains `/components`, its 10 gallery pages, **every** blocks route, `/docs/components`, and a `## Components` and `## Blocks` section — 29 lines when this row was written, **42 as of 2026-09-21**. Manifest-derived; the rule binds, the number is dated | §15.4 |
 | 20 | `<blume-webmcp>` and its module are gone | §15.14 |
