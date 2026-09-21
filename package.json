@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "pnpm --filter @sevenui/web dev",
     "build": "pnpm --filter @sevenui/web build",
+    "start": "pnpm --filter @sevenui/web start",
     "build:registry": "pnpm --filter @sevenui/web build:registry",
     "preview": "pnpm --filter @sevenui/web start",
     "typecheck": "pnpm -r typecheck",
