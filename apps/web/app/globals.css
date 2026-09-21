@@ -92,6 +92,22 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+:root[data-theme="dark"] {
+  --background: oklch(0.085 0 0);
+  --foreground: oklch(0.96 0 0);
+  --border: oklch(0.24 0 0 / 0.8);
+  --muted: oklch(0.16 0 0);
+  --muted-foreground: oklch(0.68 0 0);
+}
+
+[data-theme="dark"] [data-sevenui-example] {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+}
+
 @theme inline {
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
