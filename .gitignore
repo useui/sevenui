@@ -13,3 +13,4 @@ apps/web/public/*.md
 !.env.example
 .next/
 *.tsbuildinfo
+.scratch/
