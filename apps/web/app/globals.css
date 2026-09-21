@@ -153,8 +153,22 @@
   --color-muted-foreground: var(--muted-foreground);
 
   /* font-mono has 15 authored call sites plus 3 in the registry; font-sans is
-     the body font; font-display has no utility but §6's heading override reads
-     it, and display is Inter too. */
+     the body font; display is Inter too.
+
+     `--font-display` is read in two different ways, and naming them beats
+     counting them — this comment already went stale once by asserting that
+     the utility had no call sites (task 11.1e, 2026-09-21, corrected with
+     §8.3's row):
+       - as the `font-display` UTILITY, by each of §6's heading overrides:
+         `mdx-components.tsx`'s `h2` and `h3`, and the docs page title in
+         `app/docs/[[...slug]]/page.tsx` (literal JSX, so it is not on the
+         element map but it is the same override);
+       - as `var(--font-display)` in HAND-WRITTEN CSS, by the bare heading
+         rule further down this file.
+     The second read is why Tailwind emits `--font-display` on `:root` instead
+     of inlining it at each utility, which is a real (inert) line in the
+     shipped stylesheet. Whoever adds or removes a heading here should re-grep
+     rather than adjust a number. */
   --font-sans: var(--font-inter);
   --font-mono: var(--font-ibm-plex-mono);
   --font-display: var(--font-sans);
@@ -399,8 +413,8 @@ article [data-sevenui-example] {
 
 /* Deferred from Task 2.4: the Typography plugin's `.prose > :last-child {
    margin-bottom: 0 }` has no owner in this port (there is no `.prose`
-   class anywhere — Task 2.4/2.6). The docs route's only `<article>`
-   (`app/docs/[[...slug]]/page.tsx`) is the sole consumer in this app, so
+   class anywhere — Task 2.4/2.6). The docs route's `<article>`
+   (`app/docs/[[...slug]]/page.tsx`) is this rule's intended target, so
    this reproduces the same trim at the container Task 2.6 owns, rather
    than leaving every docs page with one extra trailing margin (a `<p>`'s
    `my-4`, a fenced block's `my-6`, or a `<Component>`'s `my-6`) that live
@@ -408,6 +422,19 @@ article [data-sevenui-example] {
    wrapper is a legitimate target when it's the last element on a page —
    the trim is meant to apply to whatever the last element is, the same
    way `.prose > :last-child` never cared about the child's type.
+   CORRECTION (task 11.1e, 2026-09-21): this comment used to call that
+   article "the sole consumer in this app", and that was already wrong when
+   written — `components/legal-page.tsx` and `components/blocks/block-card.tsx`
+   both render an `<article>` too, so this bare `article >` selector trims the
+   last child's bottom margin on `/terms`, `/privacy` and every block card as
+   well. Left as-is behaviourally (changing it is not this task's, and the
+   trim is harmless on those three), but the inventory matters now that TWO
+   other rules in this file use `article` as a discriminator — the restored
+   heading rule and §7.2c — and a reader checking whether that is safe must
+   not be handed a one-article inventory. The three are: the docs page, the
+   legal page, and the block card; only the docs one ever contains a
+   `[data-sevenui-example]`.
+
    Stated, per fix round 1's review, rather than left implicit: this is a
    BARE element selector (`article`, no scoping class), reaching every
    `<article>` in the whole document, not only the docs route's — the same

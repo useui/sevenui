@@ -64,11 +64,22 @@ export function CategoryCard({ group, category }: { group: string; category: Cat
       <div className="mt-3 flex items-baseline justify-between gap-4">
         {/*
           The legacy Astro site set tight letter-spacing on every bare
-          `h1`-`h6` globally; this port declares no such bare-selector rule,
-          on the assumption that the chrome's headings all carry their own
-          spacing class. This label is one of the two chrome headings that
-          assumption missed, so the class below restores production's
-          measured spacing by hand.
+          `h1`-`h6` globally. This port dropped that rule and then, in task
+          11.1e (2026-09-21), RESTORED it — the assumption it was dropped on,
+          that the chrome's headings all carry their own spacing class, was
+          measured and found false for seven authored headings plus every
+          heading the registry renders on `/components`. See `globals.css`'s
+          `:is(h1,…,h6)` rule and §8.3 entry 4.
+
+          So the `tracking-tighter` below is now REDUNDANT rather than
+          load-bearing: the global rule supplies the same -0.05em. It is kept
+          deliberately, for the same reason the docs `h2`/`h3`/`h1` overrides
+          state theirs — the heading says what it is without depending on a
+          rule in another file — and it is verified inert: `/blocks` headings
+          computed identically before and after the rule was restored.
+          (The old wording here called this label one of "the two chrome headings"
+          that assumption missed. That count was wrong — it is part of why
+          the rule came back. Prefer the rule to a census.)
         */}
         <h3 className="text-sm font-medium tracking-tighter">{category.label}</h3>
         {/*

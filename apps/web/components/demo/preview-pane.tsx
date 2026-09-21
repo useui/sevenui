@@ -114,10 +114,19 @@ export function PreviewPane({
     // (the pane's own canvas, padding included), so scoping here and
     // letting the CSS custom properties inherit down to the inner box
     // reproduces "the whole document was themed" instead of leaving a
-    // ring of unthemed padding around a themed inner box. The inner box's
-    // own `background: var(--background)` rule (globals.css §7.2c) then
-    // reads whatever this outer box's scoped token resolves to, since the
-    // custom property inherits downward.
+    // ring of unthemed padding around a themed inner box. Inside the docs
+    // article the inner box also paints its own `background:
+    // var(--background)` (globals.css §7.2c), which then reads whatever this
+    // outer box's scoped token resolves to, since the custom property
+    // inherits downward.
+    //
+    // Task 11.1e (2026-09-21) narrowed §7.2c to `article
+    // [data-sevenui-example]`, so on the `/components` gallery — this
+    // component's second consumer — the inner box paints nothing and
+    // inherits instead, which is what production does there (it has no
+    // frame and no wrapper rule at all). Nothing above depends on that: the
+    // scope lands on the OUTER box either way, and the outer box's
+    // `bg-background` is what covers the padding on both surfaces.
     //
     // `PRESET_SCOPE_ATTR` comes from `../preset-scope-attr`, a plain module
     // with no `"use client"`, imported here rather than re-declared: this

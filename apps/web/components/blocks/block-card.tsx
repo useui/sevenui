@@ -75,12 +75,25 @@ export function BlockCard({
       <div>
         {/*
           The legacy Astro site set tight letter-spacing on every bare
-          `h1`-`h6` globally; this port declares no such bare-selector rule,
-          on the assumption that the chrome's headings all carry their own
-          spacing class. This title is one of the two chrome headings that
-          assumption missed, so the class below restores production's
-          measured spacing by hand. The "Pro" badge span inherits it and
-          needs no class of its own.
+          `h1`-`h6` globally. This port dropped that rule and then, in task
+          11.1e (2026-09-21), RESTORED it — the assumption it was dropped on,
+          that the chrome's headings all carry their own spacing class, was
+          measured and found false for seven authored headings plus every
+          heading the registry renders on `/components`. See `globals.css`'s
+          `:is(h1,…,h6)` rule and §8.3 entry 4.
+
+          So the `tracking-tighter` below is now REDUNDANT rather than
+          load-bearing: the global rule supplies the same -0.05em. It is kept
+          deliberately, for the same reason the docs `h2`/`h3`/`h1` overrides
+          state theirs — the heading says what it is without depending on a
+          rule in another file — and it is verified inert: `/blocks` headings
+          computed identically before and after the rule was restored.
+          (The old wording here called this title one of "the two chrome headings"
+          that assumption missed. That count was wrong — it is part of why
+          the rule came back. Prefer the rule to a census.)
+
+          The "Pro" badge span inherits the spacing and needs no class of its
+          own.
         */}
         <h2 className="flex items-center gap-2 text-sm font-medium tracking-tighter">
           {title}

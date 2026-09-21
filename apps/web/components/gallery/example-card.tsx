@@ -20,9 +20,14 @@ import { installCommand } from "../../lib/registry";
  * difference rather than standing up a second toggle. The preview box is
  * `<PreviewPane>`, whose own class list was likewise copied from this file
  * and which names the gallery as its intended second consumer; adopting it
- * brings the `[data-sevenui-example]` isolation rules (§7.2) and the
+ * brings the `[data-sevenui-example]` layout box (§7.2b) and the
  * `[data-preset-scope]` applier (Task 2.8) along with it, which is brief
- * step 4. The code pane is `sourcePane()`, extracted from
+ * step 4. NOT §7.2c's typographic-root rule: task 11.1e (2026-09-21) scoped
+ * that one to `article [data-sevenui-example]`, i.e. to the docs demos,
+ * because it stands in for an iframe `<body>` and this surface never had a
+ * frame — unscoped, its `line-height: normal` overrode the 24px the gallery
+ * inherits live. §7.2b does apply here and has to: measured, scoping it the
+ * same way collapses this page's `w-full` demos to content width. The code pane is `sourcePane()`, extracted from
  * `components/mdx/component.tsx` for this task.
  *
  * The one piece of the Astro original that does NOT come along is its

@@ -114,8 +114,9 @@ function H2({ className, children, ...props }: React.ComponentPropsWithoutRef<"h
 // reproduces that sibling-combinator rule instead of a flat value, and is
 // deliberately not left to margin collapsing — a collapsed `p`/`mb-4` +
 // `h3`/`mt-8` would land on 32px after an `h2` where live gives 30px
-// (`h2`'s own 30px bottom margin), since collapsing takes the larger of the two
-// margins rather than the following element's own reset.
+// (`h2`'s own bottom margin, which is `1em` and so is 30px at >=641px and
+// 26px at <=640px — see the `h2` note above), since collapsing takes the
+// larger of the two margins rather than the following element's own reset.
 function H3({ className, children, ...props }: React.ComponentPropsWithoutRef<"h3">) {
   return (
     <h3
