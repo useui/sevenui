@@ -1,0 +1,237 @@
+{
+  "rows": [
+    {
+      "path": "/docs/components/definitely-not-a-primitive",
+      "why": "a docs miss (§4.1's catch-all)",
+      "expectedClass": "SHELL_46",
+      "status": 404,
+      "statusOk": true,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 77658,
+      "extracted": {
+        "textChars": 0,
+        "headings": 0,
+        "links": 0,
+        "textHead": ""
+      },
+      "vacuous": true,
+      "observedClass": "SHELL_46",
+      "bodyOk": true,
+      "row": "§17.6 #46"
+    },
+    {
+      "path": "/components/definitely-not-a-component",
+      "why": "a gallery miss",
+      "expectedClass": "REAL_BODY",
+      "status": 404,
+      "statusOk": true,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 25440,
+      "extracted": {
+        "textChars": 475,
+        "headings": 1,
+        "links": 33,
+        "textHead": "Skip to content SevenUI DocsPrimitivesComponentsBlocksPro Search⌘K Sign in 404 Page not found We couldn't find the page "
+      },
+      "vacuous": false,
+      "observedClass": "REAL_BODY",
+      "bodyOk": true,
+      "fourOhFourWordsPresent": [
+        [
+          "404",
+          true
+        ],
+        [
+          "Page not found",
+          true
+        ],
+        [
+          "We couldn't find the page you're looking for",
+          true
+        ]
+      ]
+    },
+    {
+      "path": "/blocks/marketing/definitely-not-a-category",
+      "why": "a blocks category miss (§10's notFound())",
+      "expectedClass": "SHELL_46",
+      "status": 404,
+      "statusOk": true,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 22853,
+      "extracted": {
+        "textChars": 0,
+        "headings": 0,
+        "links": 0,
+        "textHead": ""
+      },
+      "vacuous": true,
+      "observedClass": "SHELL_46",
+      "bodyOk": true,
+      "row": "§17.6 #46"
+    },
+    {
+      "path": "/og/definitely-not-a-route.png",
+      "why": "an OG miss (§16.7's registry lookup)",
+      "expectedClass": "IMAGE",
+      "status": 404,
+      "statusOk": true,
+      "contentType": null,
+      "bytes": 0,
+      "bodyAssertion": "exempt: an image endpoint has no HTML document to extract; a 0-byte 404 is the correct answer",
+      "bodyOk": true,
+      "observedClass": "IMAGE"
+    },
+    {
+      "path": "/definitely-not-a-page",
+      "why": "a root miss",
+      "expectedClass": "REAL_BODY",
+      "status": 404,
+      "statusOk": true,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 25440,
+      "extracted": {
+        "textChars": 475,
+        "headings": 1,
+        "links": 33,
+        "textHead": "Skip to content SevenUI DocsPrimitivesComponentsBlocksPro Search⌘K Sign in 404 Page not found We couldn't find the page "
+      },
+      "vacuous": false,
+      "observedClass": "REAL_BODY",
+      "bodyOk": true,
+      "fourOhFourWordsPresent": [
+        [
+          "404",
+          true
+        ],
+        [
+          "Page not found",
+          true
+        ],
+        [
+          "We couldn't find the page you're looking for",
+          true
+        ]
+      ]
+    },
+    {
+      "path": "/components/field",
+      "why": "§11.7's old target, proving it still 404s",
+      "expectedClass": "REAL_BODY",
+      "status": 404,
+      "statusOk": true,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 25440,
+      "extracted": {
+        "textChars": 475,
+        "headings": 1,
+        "links": 33,
+        "textHead": "Skip to content SevenUI DocsPrimitivesComponentsBlocksPro Search⌘K Sign in 404 Page not found We couldn't find the page "
+      },
+      "vacuous": false,
+      "observedClass": "REAL_BODY",
+      "bodyOk": true,
+      "fourOhFourWordsPresent": [
+        [
+          "404",
+          true
+        ],
+        [
+          "Page not found",
+          true
+        ],
+        [
+          "We couldn't find the page you're looking for",
+          true
+        ]
+      ]
+    }
+  ],
+  "controls": [
+    {
+      "path": "/docs/components/button",
+      "status": 200,
+      "statusOk": true,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 325663,
+      "extracted": {
+        "textChars": 4846,
+        "headings": 10,
+        "links": 135
+      },
+      "bodyOk": true
+    },
+    {
+      "path": "/components/button",
+      "status": 200,
+      "statusOk": true,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 145184,
+      "extracted": {
+        "textChars": 3751,
+        "headings": 6,
+        "links": 57
+      },
+      "bodyOk": true
+    },
+    {
+      "path": "/blocks/marketing/hero",
+      "status": 200,
+      "statusOk": true,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 257607,
+      "extracted": {
+        "textChars": 6826,
+        "headings": 11,
+        "links": 82
+      },
+      "bodyOk": true
+    },
+    {
+      "path": "/og/docs/components/button.png",
+      "status": 200,
+      "statusOk": true,
+      "contentType": "image/png",
+      "bytes": 31694,
+      "bodyOk": true,
+      "note": "image sibling: type and a byte floor, not an extraction"
+    },
+    {
+      "path": "/",
+      "status": 200,
+      "statusOk": true,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 212619,
+      "extracted": {
+        "textChars": 3873,
+        "headings": 18,
+        "links": 99
+      },
+      "bodyOk": true
+    },
+    {
+      "path": "/pro",
+      "status": 200,
+      "statusOk": true,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 104670,
+      "extracted": {
+        "textChars": 1963,
+        "headings": 1,
+        "links": 36
+      },
+      "bodyOk": true
+    }
+  ],
+  "crossCheck": {
+    "realPredicateOnShell": false,
+    "shellPredicateOnRealBody": false,
+    "realPredicateOnRealBody": true,
+    "shellPredicateOnShell": true,
+    "realPredicateOnWrongPage": false,
+    "pass": true
+  },
+  "allSix404": true,
+  "allSixBodyAsDeclared": true,
+  "allControls200": true
+}

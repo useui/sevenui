@@ -1,0 +1,14 @@
+{
+  "docsRoutesCompared": 68,
+  "anchorIdsCompared": 509,
+  "generatedIdsExcluded": 1,
+  "diffs": [],
+  "empty": true,
+  "positiveControl": {
+    "method": "our IDs re-slugged with '_' for '-', then the same comparison",
+    "routesDetected": 68,
+    "routesImmovableByThisSwap": [],
+    "routesWhereTheSwapChangedIdsAndWasStillNotSeen": [],
+    "detectedEveryMovableRoute": true
+  }
+}
