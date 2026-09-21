@@ -1,6 +1,5 @@
 node_modules/
 dist/
-.blume/
 apps/web/public/r/
 # Task 8.2: the 69 per-page `.md` mirrors, emitted into public/ by
 # `apps/web/scripts/build-md-mirrors.ts` before `next build` — build
@@ -9,7 +8,6 @@ apps/web/public/docs/
 apps/web/public/*.md
 *.log
 .DS_Store
-.blume-verify/
 .env
 .env.*
 !.env.example
