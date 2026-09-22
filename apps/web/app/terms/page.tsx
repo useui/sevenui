@@ -16,7 +16,7 @@ export default async function TermsPage() {
   const meta = await requirePageMeta(ROUTE, "app/terms/page.tsx");
 
   return (
-    <>
+    <main id="content">
       <LegalPage title={meta.title} updated={UPDATED}>
         <p>
           These terms are an agreement between you and <strong>SevenUI</strong> ("we",
@@ -236,6 +236,6 @@ export default async function TermsPage() {
         </p>
       </LegalPage>
       <JsonLd route={ROUTE} />
-    </>
+    </main>
   );
 }

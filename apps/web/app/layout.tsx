@@ -45,6 +45,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body className="bg-background font-sans text-foreground antialiased">
         <ThemeProvider>
+          {/*
+            `#content` is supplied by each section's own layout or page, not
+            here, so that a section's navigation aside can sit OUTSIDE <main>
+            and the skip link actually skips it (§17.6 #36).
+          */}
           <a
             className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-lg focus:bg-accent focus:px-3 focus:py-2 focus:text-accent-foreground"
             href="#content"
@@ -53,7 +58,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </a>
           <DrawerProvider>
             <SiteHeader primitivesHref={primitivesHref} />
-            <main id="content">{children}</main>
+            {children}
             <SiteDrawer galleryComponents={galleryComponents} primitivesHref={primitivesHref} />
             <SiteFooter primitivesHref={primitivesHref} />
           </DrawerProvider>

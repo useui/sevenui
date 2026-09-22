@@ -16,7 +16,7 @@ export default async function PrivacyPage() {
   const meta = await requirePageMeta(ROUTE, "app/privacy/page.tsx");
 
   return (
-    <>
+    <main id="content">
       <LegalPage title={meta.title} updated={UPDATED}>
         <p>
           This policy explains what personal data <strong>SevenUI</strong> collects
@@ -274,6 +274,6 @@ export default async function PrivacyPage() {
         </p>
       </LegalPage>
       <JsonLd route={ROUTE} />
-    </>
+    </main>
   );
 }

@@ -45,10 +45,10 @@ export default async function BlocksLayout({ children }: { children: ReactNode }
         <BlocksLoadGate>
           <div className="lg:grid lg:grid-cols-[260px_minmax(0,1fr)]">
             <BlocksSidebar groups={navGroups} />
-            <div className="min-w-0">
+            <main className="min-w-0" id="content">
               {children}
               <ThemeDock />
-            </div>
+            </main>
           </div>
           <BlocksDrawer groups={navGroups} primitivesHref={primitivesHref} />
         </BlocksLoadGate>

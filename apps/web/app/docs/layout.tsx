@@ -24,11 +24,11 @@ export default async function DocsLayout({ children }: { children: React.ReactNo
     <DocsTocProvider headingsByRoute={headingsByRoute}>
       <div className="mx-auto grid grid-cols-1 items-start lg:grid-cols-[17.5rem_minmax(0,1fr)] xl:grid-cols-[17.5rem_minmax(0,1fr)_17.5rem]">
         <DocsSidebar primitivesHref={primitivesHref} tree={tree} />
-        <div className="px-6 pt-6 pb-10 lg:px-8 xl:px-10">
+        <main className="px-6 pt-6 pb-10 lg:px-8 xl:px-10" id="content">
           <DocsBreadcrumb crumbsByRoute={crumbsByRoute} />
           <DocsTocMobile />
           {children}
-        </div>
+        </main>
         <aside
           aria-label="On this page"
           className="sticky top-16 hidden h-[calc(100dvh-4rem)] scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent overflow-y-auto px-4 pt-6 pb-10 text-sm xl:block"

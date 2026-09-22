@@ -33,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function ProPage() {
   return (
-    <>
+    <main id="content">
       <div className="relative">
         <LandingRuler />
 
@@ -154,7 +154,7 @@ export default function ProPage() {
         </section>
       </div>
       <JsonLd route={ROUTE} />
-    </>
+    </main>
   );
 }
 

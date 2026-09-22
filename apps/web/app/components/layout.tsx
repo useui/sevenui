@@ -7,7 +7,9 @@ export default function GalleryLayout({ children }: { children: React.ReactNode 
       <aside className="hidden lg:sticky lg:top-16 lg:block lg:h-[calc(100dvh-4rem)] lg:overflow-y-auto lg:border-r lg:border-border lg:px-5 lg:py-8">
         <GalleryNav components={galleryComponents} />
       </aside>
-      <div className="min-w-0">{children}</div>
+      <main className="min-w-0" id="content">
+        {children}
+      </main>
     </div>
   );
 }

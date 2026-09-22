@@ -70,7 +70,7 @@ export default async function Home() {
   }
 
   return (
-    <>
+    <main id="content">
       <div className="relative">
         <LandingRuler />
 
@@ -167,6 +167,6 @@ export default async function Home() {
       </div>
       <RootUrlTags />
       <JsonLd route="/" />
-    </>
+    </main>
   );
 }

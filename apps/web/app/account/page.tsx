@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function AccountPage() {
   return (
-    <>
+    <main id="content">
       <div className="relative">
         <LandingRuler />
 
@@ -27,6 +27,6 @@ export default function AccountPage() {
         </section>
       </div>
       <JsonLd route={ROUTE} />
-    </>
+    </main>
   );
 }
