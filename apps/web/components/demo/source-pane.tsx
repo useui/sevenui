@@ -2,6 +2,7 @@ import "server-only";
 
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
+import { rewriteRegistryImports } from "../../lib/registry-imports";
 import { highlight } from "../../lib/shiki";
 import { CodeBlock } from "../mdx/code-block";
 
@@ -35,7 +36,10 @@ async function highlightSource(code: string): Promise<string> {
 }
 
 export async function sourcePane(relPath: string): Promise<React.ReactElement> {
-  const highlighted = await highlightSource(await readRegistrySource(relPath));
+  // Rewritten before highlighting so the tokens shiki colours are the ones the
+  // reader will have on disk after `shadcn add`, not the registry's own spelling.
+  const source = rewriteRegistryImports(await readRegistrySource(relPath));
+  const highlighted = await highlightSource(source);
 
   return (
     <CodeBlock className="my-0! rounded-none! border-0!" language="tsx">

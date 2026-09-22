@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { DocPage } from "./index.ts";
+import { rewriteRegistryImports } from "../registry-imports.ts";
 import { installCommand } from "../registry.ts";
 import { PACKAGE_MANAGERS } from "../package-manager.ts";
 
@@ -173,7 +174,11 @@ async function renderComponent(attrs: Record<string, string | true>, sourcePath:
         "Run the build/script with cwd = apps/web.",
     );
   }
-  return fence("tsx", source);
+  // The Usage block these mirrors carry is hand-written against
+  // `@/components/ui/*`; printing the registry's own spelling here made the
+  // same file disagree with itself, and llms.txt hands agents a path that
+  // exists in no installed project.
+  return fence("tsx", rewriteRegistryImports(source));
 }
 
 function renderInstallCommand(attrs: Record<string, string | true>, sourcePath: string): string {

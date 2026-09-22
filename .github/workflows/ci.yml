@@ -46,5 +46,11 @@ jobs:
       # manifest-canary.yml's scheduled job — which fires only from the
       # default branch, i.e. only after a breaking change has already
       # merged. This step catches it on the pull request instead.
+      # Must run after pnpm build, not next to check:registry: the .md mirrors
+      # this asserts over live in apps/web/public/docs, which is git-ignored and
+      # only exists once build-md-mirrors.ts has run. The gate fails loudly
+      # rather than skipping when they are absent, so ordering it earlier would
+      # turn it red on every run instead of catching the regression it is for.
+      - run: pnpm check:docs-imports
       - run: node scripts/check-pro-manifest.mjs apps/web/lib/pro-manifest.fixture.json
       - run: pnpm test:smoke

@@ -14,6 +14,7 @@
     "preview": "pnpm --filter @sevenui/web start",
     "typecheck": "pnpm -r typecheck",
     "check:registry": "node scripts/check-registry.mjs",
+    "check:docs-imports": "node scripts/check-docs-imports.mjs",
     "test": "pnpm --filter @sevenui/registry test && pnpm --filter @sevenui/presets test",
     "test:smoke": "bash scripts/smoke-test.sh",
     "inventory": "node scripts/route-inventory.mjs",
