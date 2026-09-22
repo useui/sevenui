@@ -2,6 +2,7 @@
 
 @source "../../../packages/registry/registry";
 @source "../../../packages/registry/components";
+@source "../../../packages/registry/demos";
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
