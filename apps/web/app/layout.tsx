@@ -39,7 +39,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <html className={`${inter.variable} ${ibmPlexMono.variable}`} lang="en" suppressHydrationWarning>
+    <html
+      className={`${inter.variable} ${ibmPlexMono.variable}`}
+      data-scroll-behavior="smooth"
+      lang="en"
+      suppressHydrationWarning
+    >
       <head>
         <PackageManagerScript />
       </head>

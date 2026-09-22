@@ -174,8 +174,11 @@
   }
 
   html {
+    /* Next disables this per route transition only via the data attribute in app/layout.tsx. */
     scroll-behavior: smooth;
-    scroll-padding-top: 4.5rem;
+    /* The sticky header height. Anything taller pushes every anchor and every
+       route transition into Next's "scroll the segment into view" branch. */
+    scroll-padding-top: 4rem;
     text-rendering: optimizeLegibility;
   }
 
