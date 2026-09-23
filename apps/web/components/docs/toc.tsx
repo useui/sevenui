@@ -1,7 +1,6 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { usePathname } from "next/navigation";
 import { createContext, useContext, type ReactNode } from "react";
 import type { Heading } from "../../lib/docs/headings";
 import { useActiveHeading } from "./use-active-heading";
@@ -21,15 +20,7 @@ function useToc(): TocContextValue {
   return context;
 }
 
-export function DocsTocProvider({
-  children,
-  headingsByRoute,
-}: {
-  children: ReactNode;
-  headingsByRoute: Record<string, Heading[]>;
-}) {
-  const pathname = usePathname();
-  const headings = headingsByRoute[pathname] ?? [];
+export function DocsTocProvider({ children, headings }: { children: ReactNode; headings: Heading[] }) {
   const activeId = useActiveHeading(headings.map((heading) => heading.id));
   return <TocContext.Provider value={{ activeId, headings }}>{children}</TocContext.Provider>;
 }

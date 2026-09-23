@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowUp, ChevronDown, Copy, ExternalLink } from "lucide-react";
-import { usePathname } from "next/navigation";
 import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { site } from "../../lib/site";
 
@@ -71,8 +70,7 @@ function GithubMark() {
   );
 }
 
-export function DocsPageActions({ docRoutes }: { docRoutes: readonly string[] }) {
-  const pathname = usePathname();
+export function DocsPageActions({ route }: { route: string }) {
 
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const summaryRef = useRef<HTMLElement>(null);
@@ -121,8 +119,8 @@ export function DocsPageActions({ docRoutes }: { docRoutes: readonly string[] })
     return () => window.removeEventListener("resize", onResize);
   }, [placeMenu]);
 
-  const slug = pathname === "/docs" ? "index" : pathname.slice("/docs/".length);
-  const mdPath = `${pathname}.md`;
+  const slug = route === "/docs" ? "index" : route.slice("/docs/".length);
+  const mdPath = `${route}.md`;
   const prompt = origin
     ? encodeURIComponent(`Read ${new URL(mdPath, origin).href} so I can ask you questions about this page.`)
     : null;
@@ -140,8 +138,6 @@ export function DocsPageActions({ docRoutes }: { docRoutes: readonly string[] })
     setCopied(true);
     copyTimer.current = setTimeout(() => setCopied(false), HOLD_MS);
   };
-
-  if (!docRoutes.includes(pathname)) return null;
 
   return (
     <div className="mt-8 space-y-0.5 border-border border-t pt-4">
