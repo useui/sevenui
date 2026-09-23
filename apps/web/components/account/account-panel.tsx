@@ -192,6 +192,7 @@ function SignedOutHero({ onSignIn }: { onSignIn: () => void }) {
         aria-hidden="true"
         className="flex items-center justify-center border-t border-border bg-muted/40 px-10 py-14 lg:border-t-0 lg:border-l lg:py-20"
       >
+        {/* biome-ignore lint/a11y/noSvgWithoutTitle: decorative; its wrapper is aria-hidden */}
         <svg className="h-auto w-full max-w-[340px] text-muted-foreground" viewBox="0 0 300 170">
           <rect
             className="draw opacity-40"

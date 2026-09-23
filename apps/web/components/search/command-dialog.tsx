@@ -346,8 +346,10 @@ function Segments({ segments }: { segments: readonly HighlightSegment[] }) {
     <>
       {segments.map((segment, index) =>
         segment.match ? (
+          // biome-ignore lint/suspicious/noArrayIndexKey: segments are recomputed whole and never reorder
           <mark key={index}>{segment.text}</mark>
         ) : (
+          // biome-ignore lint/suspicious/noArrayIndexKey: segments are recomputed whole and never reorder
           <Fragment key={index}>{segment.text}</Fragment>
         ),
       )}

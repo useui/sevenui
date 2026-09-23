@@ -344,6 +344,7 @@ export function BlockPreview({
       );
       view.location.reload();
     } catch {
+      // biome-ignore lint/correctness/noSelfAssign: reassigning src reloads a cross-origin iframe
       iframe.src = iframe.src;
     }
     announce("Preview reloaded.");
@@ -369,6 +370,7 @@ export function BlockPreview({
       style={{ maxWidth: `calc(${MAX_WIDTH}px + 2px)` }}
     >
       <div className="flex h-11 items-center gap-2 rounded-t-xl border border-border bg-muted/30 px-3">
+        {/* biome-ignore lint/a11y/useSemanticElements: a <fieldset> brings its own border and min-width into a toolbar row */}
         <div aria-label="Preview width" className="hidden shrink-0 items-center gap-1 @2xl/card:flex" role="group">
           {presets.map(({ value, tip, name: label, Icon }) => (
             <Tooltip key={value}>
@@ -520,6 +522,7 @@ export function BlockPreview({
       </div>
 
       <div className="relative" data-resize-frame="">
+        {/* biome-ignore lint/a11y/useSemanticElements: a draggable, focusable splitter cannot be an <hr> */}
         <div
           aria-label="Resize preview"
           aria-orientation="vertical"

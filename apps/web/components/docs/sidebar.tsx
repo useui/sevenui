@@ -184,6 +184,7 @@ function NavGroupRow({
         onToggle={(event) => setOpen(event.currentTarget.open)}
         open={open}
       >
+        {/* biome-ignore lint/a11y/noStaticElementInteractions: <summary> is natively interactive */}
         <summary
           className="flex cursor-pointer list-none items-center gap-1.5 rounded-[0.65rem] px-2.5 py-1.5 text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground [&::-webkit-details-marker]:hidden"
           onClick={(event) => {

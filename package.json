@@ -12,6 +12,7 @@
     "start": "pnpm --filter @sevenui/web start",
     "build:registry": "pnpm --filter @sevenui/web build:registry",
     "preview": "pnpm --filter @sevenui/web start",
+    "lint": "biome lint",
     "typecheck": "pnpm -r typecheck",
     "check:registry": "node scripts/check-registry.mjs",
     "check:docs-imports": "node scripts/check-docs-imports.mjs",
@@ -21,6 +22,7 @@
     "extract": "node scripts/extract-page-features.mjs"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.5.14",
     "linkedom": "^0.18.13",
     "lucide-react": "^1.41.0"
   }

@@ -42,5 +42,6 @@ export async function JsonLd({ route, crumbs }: { route: string; crumbs?: Crumb[
 
   const json = JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replace(/</g, "\\u003c");
 
+  // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD from our own metadata, with < escaped
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: json }} />;
 }

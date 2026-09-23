@@ -46,7 +46,9 @@ export async function sourcePane(relPath: string): Promise<React.ReactElement> {
     <CodeBlock className="my-0! rounded-none! border-0!" language="tsx">
       <code
         className={cx(CODE_CLASS, "language-tsx shiki")}
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: build-time Shiki output from our own sources
         dangerouslySetInnerHTML={{ __html: highlighted }}
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable code region must be keyboard-focusable
         tabIndex={0}
       />
     </CodeBlock>

@@ -1,3 +1,4 @@
+import type { Dirent } from "node:fs";
 import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -73,7 +74,7 @@ export async function collectEmittedMdFiles(publicDir: string): Promise<string[]
     if (!isEnoent(error)) throw error;
   }
   async function walk(dir: string): Promise<void> {
-    let entries;
+    let entries: Dirent[];
     try {
       entries = await readdir(dir, { withFileTypes: true });
     } catch (error) {

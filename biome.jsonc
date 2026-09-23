@@ -1,0 +1,57 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "files": {
+    "includes": [
+      "**",
+      "!**/public",
+      "!**/*.generated.ts",
+      "!docs",
+      // Migration verification tools, retired once the cutover is verified.
+      "!scripts/og-sweep.mjs",
+      "!scripts/route-inventory.mjs",
+      "!scripts/extract-page-features.mjs"
+    ]
+  },
+  // Lint first; the formatter is switched on in its own "format all" commit.
+  "formatter": { "enabled": false },
+  "assist": { "enabled": false },
+  "css": { "parser": { "tailwindDirectives": true } },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        // Effects here deliberately list trigger values (pathname, a tick) and
+        // omit local callbacks that would re-run them every render.
+        "useExhaustiveDependencies": "warn"
+      }
+    }
+  },
+  "overrides": [
+    {
+      // Published registry sources: `shadcn add` copies them byte for byte
+      // into users' projects and /r/*.json must stay byte-identical, so
+      // findings here are fixed in a dedicated registry change, not by lint.
+      "includes": [
+        "packages/registry/registry/**",
+        "packages/registry/demos/**",
+        "packages/registry/components/**"
+      ],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "useSemanticElements": "warn",
+            "useFocusableInteractive": "warn",
+            "useKeyWithClickEvents": "warn",
+            "noLabelWithoutControl": "warn",
+            "noRedundantRoles": "warn",
+            "useValidAnchor": "warn"
+          },
+          "suspicious": { "noArrayIndexKey": "warn" },
+          "security": { "noDangerouslySetInnerHtml": "warn" }
+        }
+      }
+    }
+  ]
+}

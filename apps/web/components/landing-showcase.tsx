@@ -348,6 +348,7 @@ export default function LandingShowcase() {
             <InputOTPGroup>
               {Array.from({ length: 3 }).map((_, index) => (
                 <InputOTPSlot
+                  // biome-ignore lint/suspicious/noArrayIndexKey: a fixed-length list that never reorders
                   key={index}
                   aria-label={index === 0 ? undefined : `Digit ${index + 1} of 6`}
                 />
@@ -357,6 +358,7 @@ export default function LandingShowcase() {
             <InputOTPGroup>
               {Array.from({ length: 3 }).map((_, index) => (
                 <InputOTPSlot
+                  // biome-ignore lint/suspicious/noArrayIndexKey: a fixed-length list that never reorders
                   key={index}
                   aria-label={`Digit ${index + 4} of 6`}
                 />

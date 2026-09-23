@@ -94,7 +94,9 @@ export async function buildLlmsIndex(): Promise<string> {
     const metas = sections[i];
     const routes = catalogs.get(tab.path) ?? [];
     lines.push("", `## ${metas[0].title}`, "");
-    routes.forEach((route, j) => lines.push(entry(metas[j].title, route, metas[j].description)));
+    routes.forEach((route, j) => {
+      lines.push(entry(metas[j].title, route, metas[j].description));
+    });
   });
 
   return `${lines.join("\n")}\n`;

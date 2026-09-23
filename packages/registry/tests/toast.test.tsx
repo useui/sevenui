@@ -97,6 +97,7 @@ describe("Toaster", () => {
       const toastManager = useToastManager();
       return (
         <button
+          type="button"
           onClick={() => toastManager.add({ title: "Hook toast", description: "From the hook" })}
         >
           Notify

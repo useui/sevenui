@@ -136,6 +136,7 @@ export function ThemeDockControls({ baseOptions, defaults, radiusOptions, storag
           <p className="ml-auto text-xs text-muted-foreground">Preview every block in your theme.</p>
         </div>
 
+        {/* biome-ignore lint/a11y/useSemanticElements: a <fieldset> brings its own border and min-width into the dock */}
         <div aria-labelledby="blocks-theme-legend" className="mt-3.5" role="group">
           <div className="mb-1.5 flex items-baseline gap-2" id="blocks-theme-legend">
             <span className="text-xs font-medium text-muted-foreground">Theme</span>
@@ -157,6 +158,7 @@ export function ThemeDockControls({ baseOptions, defaults, radiusOptions, storag
           </div>
         </div>
 
+        {/* biome-ignore lint/a11y/useSemanticElements: a <fieldset> brings its own border and min-width into the dock */}
         <div aria-labelledby="blocks-base-legend" className="mt-3.5" role="group">
           <div className="mb-1.5 flex items-baseline gap-2" id="blocks-base-legend">
             <span className="text-xs font-medium text-muted-foreground">Base color</span>
@@ -178,6 +180,7 @@ export function ThemeDockControls({ baseOptions, defaults, radiusOptions, storag
           </div>
         </div>
 
+        {/* biome-ignore lint/a11y/useSemanticElements: a <fieldset> brings its own border and min-width into the dock */}
         <div aria-labelledby="blocks-radius-legend" className="mt-3.5" role="group">
           <div className="mb-1.5 flex items-baseline gap-2" id="blocks-radius-legend">
             <span className="text-xs font-medium text-muted-foreground">Radius</span>
