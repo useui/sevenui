@@ -6,6 +6,9 @@ apps/web/public/r/
 # output, never committed, same treatment as public/r/ above.
 apps/web/public/docs/
 apps/web/public/*.md
+# Generated from packages/registry/demos/registry.json by
+# apps/web/scripts/build-demo-map.ts before dev, build and typecheck.
+apps/web/components/mdx/demo-map.generated.ts
 *.log
 .DS_Store
 .env

@@ -3,11 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node scripts/build-md-mirrors.ts && next dev",
-    "build": "pnpm build:registry && node scripts/build-md-mirrors.ts && next build",
+    "dev": "node scripts/build-demo-map.ts && node scripts/build-md-mirrors.ts && next dev",
+    "build": "pnpm build:registry && node scripts/build-demo-map.ts && node scripts/build-md-mirrors.ts && next build",
     "build:registry": "shadcn build -c ../../packages/registry -o ../../apps/web/public/r && shadcn build -c ../../packages/registry/demos -o ../../../apps/web/public/r/demo && shadcn build -c ../../packages/registry/components -o ../../../apps/web/public/r/component",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node scripts/build-demo-map.ts && tsc --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
