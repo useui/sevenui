@@ -1,0 +1,43 @@
+name: manifest-canary
+# Replaces the signal Task 5.1 gave up: web CI (ci.yml) now builds against a
+# local fixture instead of pro.sevenui.dev, so a bad live manifest no longer
+# turns pull requests red. Under ISR that's the right trade — the last good
+# page keeps serving — but a bad manifest can land at any time, not just on
+# a PR, and stale-serve means nothing else would ever notice. This job
+# fetches the live manifest on a schedule and runs the loader's real
+# parseManifest against it, so a shape violation reaches this repo's Actions
+# tab (and the dev who reads it) instead of vanishing.
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+jobs:
+  parse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          # This job's script imports a .ts file
+          # (apps/web/lib/pro-manifest-schema.ts) directly with plain
+          # `node`, no build step. Node only strips TypeScript types
+          # from a .ts file's import without a flag from 22.18.0 — measured
+          # empirically against this exact import on 22.12.0, 22.17.1, and
+          # 22.18.0:
+          #   - 22.12.0, no flag: ERR_UNKNOWN_FILE_EXTENSION on the .ts import.
+          #   - 22.12.0 / 22.17.1 with --experimental-strip-types: works,
+          #     but prints an "experimental feature" warning every run.
+          #   - 22.18.0, no flag: works, no warning — type stripping is the
+          #     default from this version.
+          # 22.18 was originally the smallest version bump off ci.yml's old
+          # 22.12 pin that avoided ERR_UNKNOWN_FILE_EXTENSION without also
+          # needing an experimental flag in the run command below. ci.yml
+          # has since moved to 22.18 too (lib/docs/serialize-md.ts's own
+          # off-graph .ts import needs the same floor), so this is no longer
+          # a deliberate divergence between the two workflows — just the
+          # version both now happen to share.
+          node-version: 22.18
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: node scripts/check-pro-manifest.mjs

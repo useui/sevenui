@@ -20,7 +20,7 @@ export default function NavigationMenuDemo() {
           <NavigationMenuContent>
             <ul className="grid w-72 gap-1">
               <li>
-                <NavigationMenuLink href="#">
+                <NavigationMenuLink href="#" className="flex-col items-start gap-1">
                   <div className="font-medium">Introduction</div>
                   <div className="text-muted-foreground">
                     Base UI powered components, distributed through the
@@ -29,7 +29,7 @@ export default function NavigationMenuDemo() {
                 </NavigationMenuLink>
               </li>
               <li>
-                <NavigationMenuLink href="#">
+                <NavigationMenuLink href="#" className="flex-col items-start gap-1">
                   <div className="font-medium">Installation</div>
                   <div className="text-muted-foreground">
                     Configure the SevenUI registry in your project.
@@ -37,7 +37,7 @@ export default function NavigationMenuDemo() {
                 </NavigationMenuLink>
               </li>
               <li>
-                <NavigationMenuLink href="#">
+                <NavigationMenuLink href="#" className="flex-col items-start gap-1">
                   <div className="font-medium">Theming</div>
                   <div className="text-muted-foreground">
                     SevenUI components follow your shadcn theme.
@@ -52,7 +52,7 @@ export default function NavigationMenuDemo() {
           <NavigationMenuContent>
             <ul className="grid w-96 grid-cols-2 gap-1">
               <li>
-                <NavigationMenuLink href="#">
+                <NavigationMenuLink href="#" className="flex-col items-start gap-1">
                   <div className="font-medium">Button</div>
                   <div className="text-muted-foreground">
                     Displays a button.
@@ -60,7 +60,7 @@ export default function NavigationMenuDemo() {
                 </NavigationMenuLink>
               </li>
               <li>
-                <NavigationMenuLink href="#">
+                <NavigationMenuLink href="#" className="flex-col items-start gap-1">
                   <div className="font-medium">Dialog</div>
                   <div className="text-muted-foreground">
                     A window overlaid on the primary window, rendering
@@ -69,7 +69,7 @@ export default function NavigationMenuDemo() {
                 </NavigationMenuLink>
               </li>
               <li>
-                <NavigationMenuLink href="#">
+                <NavigationMenuLink href="#" className="flex-col items-start gap-1">
                   <div className="font-medium">Tabs</div>
                   <div className="text-muted-foreground">
                     A set of layered sections that display one panel at a
@@ -78,7 +78,7 @@ export default function NavigationMenuDemo() {
                 </NavigationMenuLink>
               </li>
               <li>
-                <NavigationMenuLink href="#">
+                <NavigationMenuLink href="#" className="flex-col items-start gap-1">
                   <div className="font-medium">Toast</div>
                   <div className="text-muted-foreground">
                     A module-level API for brief, non-blocking

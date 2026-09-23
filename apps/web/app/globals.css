@@ -1,0 +1,703 @@
+@import "tailwindcss";
+
+@source "../../../packages/registry/registry";
+@source "../../../packages/registry/components";
+@source "../../../packages/registry/demos";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --success: oklch(0.627 0.194 149.214);
+  --success-foreground: oklch(0.985 0 0);
+  --warning: oklch(0.769 0.188 70.08);
+  --warning-foreground: oklch(0.279 0.077 45.635);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.625rem;
+}
+
+[data-theme="dark"] {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0 0);
+  --success: oklch(0.723 0.219 149.579);
+  --success-foreground: oklch(0.985 0 0);
+  --warning: oklch(0.828 0.189 84.429);
+  --warning-foreground: oklch(0.279 0.077 45.635);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+:root[data-theme="dark"] {
+  --background: oklch(0.085 0 0);
+  --foreground: oklch(0.96 0 0);
+  --border: oklch(0.24 0 0 / 0.8);
+  --muted: oklch(0.16 0 0);
+  --muted-foreground: oklch(0.68 0 0);
+}
+
+[data-theme="dark"] [data-sevenui-example] {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+}
+
+@theme inline {
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-ibm-plex-mono);
+  --font-display: var(--font-sans);
+
+  --container-content: 42rem;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  /* The global flex/grid overflow defuse. Silent and site-wide. */
+  * {
+    min-width: 0;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  html {
+    /* Next disables this per route transition only via the data attribute in app/layout.tsx. */
+    scroll-behavior: smooth;
+    /* The sticky header height. Anything taller pushes every anchor and every
+       route transition into Next's "scroll the segment into view" branch. */
+    scroll-padding-top: 4rem;
+    text-rendering: optimizeLegibility;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  :is(h1, h2, h3, h4, h5, h6):not(:where(article [data-sevenui-example] *)) {
+    font-family: var(--font-display);
+    letter-spacing: -0.05em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--foreground);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+[data-sevenui-example] {
+  display: grid;
+  width: 100%;
+  justify-items: center;
+}
+
+article :where(kbd):not(:where([data-sevenui-example], [data-sevenui-example] *)) {
+  color: var(--foreground);
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--foreground) 10%, transparent),
+    0 3px 0 color-mix(in oklch, var(--foreground) 10%, transparent);
+  padding-block: 0.1875em;
+  padding-inline: 0.375em;
+  border-radius: 0.3125rem;
+  font-family: inherit;
+  font-size: 0.875em;
+  font-weight: 500;
+}
+
+article [data-sevenui-example] {
+  font-size: 1rem;
+  line-height: normal;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-sans);
+  letter-spacing: normal;
+}
+
+article > :last-child {
+  margin-bottom: 0;
+}
+
+.shiki {
+  color: var(--shiki-light, var(--foreground)) !important;
+  background: 0 0 !important;
+}
+
+:root[data-theme="dark"] .shiki {
+  color: var(--shiki-dark, var(--foreground)) !important;
+}
+
+.shiki span {
+  color: var(--shiki-light, inherit);
+  font-style: var(--shiki-light-font-style, inherit);
+  font-weight: var(--shiki-light-font-weight, inherit);
+  text-decoration: var(--shiki-light-text-decoration, inherit);
+  background: 0 0 !important;
+}
+
+:root[data-theme="dark"] .shiki span {
+  color: var(--shiki-dark, inherit);
+  font-style: var(--shiki-dark-font-style, inherit);
+  font-weight: var(--shiki-dark-font-weight, inherit);
+  text-decoration: var(--shiki-dark-text-decoration, inherit);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation: none;
+}
+
+::selection {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+.pm-only {
+  display: none;
+}
+:root:not([data-pm]) .pm-only-pnpm,
+[data-pm="pnpm"] .pm-only-pnpm,
+[data-pm="npm"] .pm-only-npm,
+[data-pm="yarn"] .pm-only-yarn,
+[data-pm="bun"] .pm-only-bun {
+  display: inline;
+}
+
+:root:not([data-pm]) .pm-only-pnpm.shiki,
+[data-pm="pnpm"] .pm-only-pnpm.shiki,
+[data-pm="npm"] .pm-only-npm.shiki,
+[data-pm="yarn"] .pm-only-yarn.shiki,
+[data-pm="bun"] .pm-only-bun.shiki {
+  display: block;
+}
+
+[data-block-preview] [data-preview-wrap][data-dragging="true"] iframe {
+  pointer-events: none;
+}
+[data-block-preview] [data-preview-wrap][data-dragging="true"] [data-width-readout] {
+  opacity: 1;
+}
+
+[data-block-preview] [data-resize-frame]:has([data-resize-handle]:hover) [data-width-readout],
+[data-block-preview] [data-resize-frame]:has([data-resize-handle]:focus-visible) [data-width-readout] {
+  opacity: 1;
+}
+
+[data-block-preview]:fullscreen,
+[data-block-preview][data-fs] {
+  display: flex;
+  flex-direction: column;
+  max-width: none !important;
+  background: var(--background);
+}
+[data-block-preview][data-fs] {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+[data-block-preview]:fullscreen [data-resize-frame],
+[data-block-preview][data-fs] [data-resize-frame] {
+  flex: 1;
+  min-height: 0;
+}
+[data-block-preview]:fullscreen [data-resize-frame] > div,
+[data-block-preview][data-fs] [data-resize-frame] > div,
+[data-block-preview]:fullscreen [data-preview-wrap],
+[data-block-preview][data-fs] [data-preview-wrap],
+[data-block-preview]:fullscreen [data-resize-box],
+[data-block-preview][data-fs] [data-resize-box] {
+  height: 100%;
+}
+[data-block-preview]:fullscreen iframe,
+[data-block-preview][data-fs] iframe {
+  height: 100% !important;
+}
+[data-block-preview]:fullscreen::backdrop {
+  background: var(--background);
+}
+
+.l-row {
+  position: relative;
+  margin-inline: auto;
+  width: 100%;
+  max-width: 72rem; /* the same 72rem measure the docs pages' column uses */
+}
+
+@media (min-width: 640px) {
+  .l-row {
+    border-inline: 1px solid var(--border);
+  }
+
+  .l-marks::before,
+  .l-marks::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--border);
+    background: var(--background);
+    transform: translate(-50%, -50%);
+  }
+
+  .l-marks::before {
+    left: 0;
+  }
+
+  .l-marks::after {
+    left: 100%;
+  }
+}
+
+.legal h1 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.legal h2 {
+  margin-top: 2.75rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.legal h2 + p,
+.legal h2 + ul {
+  margin-top: 0.75rem;
+}
+
+.legal p,
+.legal ul,
+.legal dl {
+  margin-top: 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--muted-foreground);
+}
+
+.legal ul {
+  list-style: none;
+  padding-left: 1.125rem;
+}
+
+.legal li {
+  position: relative;
+  margin-top: 0.5rem;
+}
+
+.legal li::before {
+  content: "";
+  position: absolute;
+  top: 0.6875rem;
+  left: -1.125rem;
+  width: 5px;
+  height: 1px;
+  background: var(--border);
+}
+
+.legal strong {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.legal code {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.8125rem;
+  color: var(--foreground);
+}
+
+.legal a {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Cookie/processor tables: the same hairline grid as the rest of the canvas. */
+.legal table {
+  margin-top: 1.25rem;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  text-align: start;
+}
+
+.legal th,
+.legal td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  vertical-align: top;
+  color: var(--muted-foreground);
+}
+
+.legal th {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .l-row .hero-rise {
+    animation: hero-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .l-row .hero-rise-2 {
+    animation-delay: 0.07s;
+  }
+
+  .l-row .hero-rise-3 {
+    animation-delay: 0.14s;
+  }
+
+  .l-row .hero-rise-4 {
+    animation-delay: 0.21s;
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility animate-in {
+  animation: enter var(--tw-duration, 0.15s) var(--tw-ease, ease) both;
+}
+
+@utility animate-out {
+  animation: exit var(--tw-duration, 0.15s) var(--tw-ease, ease) both;
+}
+
+@utility fade-in-* {
+  --enter-opacity: calc(--value(number) / 100);
+}
+
+@utility fade-out-* {
+  --exit-opacity: calc(--value(number) / 100);
+}
+
+@utility zoom-in-* {
+  --enter-scale: calc(--value(number) / 100);
+}
+
+@utility zoom-out-* {
+  --exit-scale: calc(--value(number) / 100);
+}
+
+@utility slide-in-from-top-* {
+  --enter-translate-y: calc(var(--spacing) * --value(number) * -1);
+}
+
+@utility slide-in-from-bottom-* {
+  --enter-translate-y: calc(var(--spacing) * --value(number));
+}
+
+@utility slide-in-from-left-* {
+  --enter-translate-x: calc(var(--spacing) * --value(number) * -1);
+}
+
+@utility slide-in-from-right-* {
+  --enter-translate-x: calc(var(--spacing) * --value(number));
+}
+
+@utility slide-out-to-top-* {
+  --exit-translate-y: calc(var(--spacing) * --value(number) * -1);
+}
+
+@utility slide-out-to-bottom-* {
+  --exit-translate-y: calc(var(--spacing) * --value(number));
+}
+
+@utility slide-out-to-left-* {
+  --exit-translate-x: calc(var(--spacing) * --value(number) * -1);
+}
+
+@utility slide-out-to-right-* {
+  --exit-translate-x: calc(var(--spacing) * --value(number));
+}
+
+@keyframes enter {
+  from {
+    opacity: var(--enter-opacity, 1);
+    transform: translate3d(
+        var(--enter-translate-x, 0),
+        var(--enter-translate-y, 0),
+        0
+      )
+      scale3d(
+        var(--enter-scale, 1),
+        var(--enter-scale, 1),
+        1
+      );
+  }
+}
+
+@keyframes exit {
+  to {
+    opacity: var(--exit-opacity, 1);
+    transform: translate3d(
+        var(--exit-translate-x, 0),
+        var(--exit-translate-y, 0),
+        0
+      )
+      scale3d(
+        var(--exit-scale, 1),
+        var(--exit-scale, 1),
+        1
+      );
+  }
+}
+
+@theme inline {
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--accordion-panel-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--accordion-panel-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@theme inline {
+  --animate-collapsible-down: collapsible-down 0.2s ease-out;
+  --animate-collapsible-up: collapsible-up 0.2s ease-out;
+}
+
+@keyframes collapsible-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--collapsible-panel-height);
+  }
+}
+
+@keyframes collapsible-up {
+  from {
+    height: var(--collapsible-panel-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+/* --- /account --- */
+
+@media (prefers-reduced-motion: no-preference) {
+  #account-root .draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: account-draw 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  #account-root .ink {
+    opacity: 0;
+    animation: account-ink 0.5s ease-out 0.55s both;
+  }
+}
+
+#account-root .license-card::before,
+#account-root .license-card::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--border);
+  background: var(--background);
+}
+
+#account-root .license-card::before {
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+
+#account-root .license-card::after {
+  bottom: 0;
+  right: 0;
+  transform: translate(50%, 50%);
+}
+
+@keyframes account-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes account-ink {
+  to {
+    opacity: 1;
+  }
+}
+
+/* --- /pro --- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .catalog-cell .draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: catalog-draw 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--draw-delay, 0s);
+  }
+
+  .catalog-cell .ink {
+    opacity: 0;
+    animation: catalog-ink 0.5s ease-out both;
+    animation-delay: calc(var(--draw-delay, 0s) + 0.55s);
+  }
+}
+
+@keyframes catalog-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes catalog-ink {
+  to {
+    opacity: 1;
+  }
+}

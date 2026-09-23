@@ -46,8 +46,9 @@ describe("buildPresetCss", () => {
     expect(buildPresetCss(config({ radius: "none" }))).toContain("--radius: 0;");
   });
 
-  // The semantic status tokens are theme.css constants on purpose (see
-  // BASE_TOKEN_KEYS). A partial :root rule leaves them alone, so every preset
+  // The semantic status tokens are site theme constants on purpose (see
+  // BASE_TOKEN_KEYS in presets.ts for where they live). A partial :root rule
+  // leaves them alone, so every preset
   // inherits the same green and amber — but only as long as no preset ever
   // names them.
   it("never emits the semantic status tokens", () => {

@@ -102,11 +102,6 @@ const invoices = [
   { invoice: "INV-003", status: "Unpaid", amount: "$350.00" },
 ];
 
-/**
- * One tile of the showcase mosaic. Tiles draw their own end + bottom
- * borders; the wrapper in LandingShowcase pulls the grid 1px past its
- * clipping box so the outermost borders vanish against the page rails.
- */
 function Tile({
   title,
   items,
@@ -298,7 +293,8 @@ export default function LandingShowcase() {
             <Button
               variant="outline"
               onClick={() =>
-                toast("Component added", {
+                toast.add({
+                  title: "Component added",
                   description: "button.tsx landed in your repo.",
                 })
               }
@@ -307,7 +303,9 @@ export default function LandingShowcase() {
             </Button>
             <Button
               variant="outline"
-              onClick={() => toast.success("Changes saved")}
+              onClick={() =>
+                toast.add({ title: "Changes saved", type: "success" })
+              }
             >
               Success
             </Button>
@@ -350,6 +348,7 @@ export default function LandingShowcase() {
             <InputOTPGroup>
               {Array.from({ length: 3 }).map((_, index) => (
                 <InputOTPSlot
+                  // biome-ignore lint/suspicious/noArrayIndexKey: a fixed-length list that never reorders
                   key={index}
                   aria-label={index === 0 ? undefined : `Digit ${index + 1} of 6`}
                 />
@@ -359,6 +358,7 @@ export default function LandingShowcase() {
             <InputOTPGroup>
               {Array.from({ length: 3 }).map((_, index) => (
                 <InputOTPSlot
+                  // biome-ignore lint/suspicious/noArrayIndexKey: a fixed-length list that never reorders
                   key={index}
                   aria-label={`Digit ${index + 4} of 6`}
                 />

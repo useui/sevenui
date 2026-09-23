@@ -125,7 +125,7 @@ describe("Select", () => {
       const [value, setValue] = React.useState<string | null>("apple");
       return (
         <div>
-          <button onClick={() => setValue("cherry")}>Set cherry</button>
+          <button type="button" onClick={() => setValue("cherry")}>Set cherry</button>
           <Select items={fruits} value={value} onValueChange={setValue}>
             <SelectTrigger>
               <SelectValue placeholder="Pick a fruit" />

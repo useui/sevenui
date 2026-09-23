@@ -39,9 +39,9 @@ describe("AspectRatio", () => {
   it("renders children inside the ratio container", () => {
     render(
       <AspectRatio ratio={16 / 9}>
-        <img src="/placeholder.svg" alt="Landscape photo" />
+        <img src="/placeholder.svg" alt="Mountain landscape" />
       </AspectRatio>,
     );
-    expect(screen.getByAltText("Landscape photo")).not.toBeNull();
+    expect(screen.getByAltText("Mountain landscape")).not.toBeNull();
   });
 });

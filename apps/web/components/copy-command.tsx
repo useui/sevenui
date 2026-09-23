@@ -2,14 +2,14 @@
 
 import * as React from "react";
 import { CheckIcon, CopyIcon } from "lucide-react";
+import { PACKAGE_MANAGERS, type PackageManager, currentPackageManager } from "../lib/package-manager";
 
-/** A one-line shell command with a copy button and brief "copied" feedback. */
-export default function CopyCommand({ command }: { command: string }) {
+export default function CopyCommand({ commands }: { commands: Record<PackageManager, string> }) {
   const [copied, setCopied] = React.useState(false);
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(command);
+      await navigator.clipboard.writeText(commands[currentPackageManager()]);
       setCopied(true);
       setTimeout(() => setCopied(false), 1600);
     } catch {
@@ -22,18 +22,18 @@ export default function CopyCommand({ command }: { command: string }) {
       <span aria-hidden="true" className="text-muted-foreground select-none">
         $
       </span>
-      <code className="flex-1 truncate text-left">{command}</code>
+      {PACKAGE_MANAGERS.map((pm) => (
+        <code className={`pm-only pm-only-${pm} flex-1 truncate text-left`} key={pm}>
+          {commands[pm]}
+        </code>
+      ))}
       <button
         type="button"
         onClick={copy}
         aria-label={copied ? "Copied" : "Copy command"}
         className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
       >
-        {copied ? (
-          <CheckIcon className="size-4" />
-        ) : (
-          <CopyIcon className="size-4" />
-        )}
+        {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
       </button>
     </div>
   );

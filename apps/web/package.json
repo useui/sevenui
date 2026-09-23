@@ -3,23 +3,48 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "blume dev",
-    "build": "pnpm build:registry && blume build",
+    "dev": "node scripts/build-demo-map.ts && node scripts/build-md-mirrors.ts && next dev",
+    "build": "pnpm build:registry && node scripts/build-demo-map.ts && node scripts/build-md-mirrors.ts && next build",
     "build:registry": "shadcn build -c ../../packages/registry -o ../../apps/web/public/r && shadcn build -c ../../packages/registry/demos -o ../../../apps/web/public/r/demo && shadcn build -c ../../packages/registry/components -o ../../../apps/web/public/r/component",
-    "preview": "blume preview",
-    "typecheck": "tsc --noEmit"
+    "start": "next start",
+    "typecheck": "node scripts/build-demo-map.ts && tsc --noEmit"
   },
   "dependencies": {
+    "@base-ui/react": "^1.7.0",
     "@clerk/clerk-js": "^6.31.0",
+    "@mdx-js/loader": "^3.1.1",
+    "@mdx-js/react": "^3.1.1",
+    "@next/mdx": "16.3.5",
     "@sevenui/presets": "workspace:*",
-    "@lucide/astro": "^1.41.0",
+    "@shikijs/langs": "4.4.3",
+    "@shikijs/rehype": "4.4.3",
+    "@shikijs/themes": "4.4.3",
+    "github-slugger": "^2.0.0",
     "lucide-react": "^1.41.0",
+    "next": "16.3.5",
+    "next-themes": "^0.4.6",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "rehype-autolink-headings": "^7.1.0",
+    "rehype-external-links": "^3.0.0",
+    "rehype-slug": "^6.0.0",
+    "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-smartypants": "^3.0.3",
+    "server-only": "^0.0.1",
+    "shiki": "4.4.3",
+    "vfile": "^6.0.3",
+    "vfile-matter": "^5.0.1",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
-    "blume": "^1.5.3",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/mdx": "^2.0.14",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
     "shadcn": "^4.19.1",
+    "tailwindcss": "4.3.3",
     "typescript": "^7.0.2"
   }
 }

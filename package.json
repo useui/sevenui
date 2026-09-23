@@ -4,16 +4,26 @@
   "type": "module",
   "packageManager": "pnpm@12.0.0",
   "engines": {
-    "node": ">=22.12"
+    "node": ">=22.18"
   },
   "scripts": {
     "dev": "pnpm --filter @sevenui/web dev",
     "build": "pnpm --filter @sevenui/web build",
+    "start": "pnpm --filter @sevenui/web start",
     "build:registry": "pnpm --filter @sevenui/web build:registry",
-    "preview": "pnpm --filter @sevenui/web preview",
+    "preview": "pnpm --filter @sevenui/web start",
+    "lint": "biome lint",
     "typecheck": "pnpm -r typecheck",
     "check:registry": "node scripts/check-registry.mjs",
+    "check:docs-imports": "node scripts/check-docs-imports.mjs",
     "test": "pnpm --filter @sevenui/registry test && pnpm --filter @sevenui/presets test",
-    "test:smoke": "bash scripts/smoke-test.sh"
+    "test:smoke": "bash scripts/smoke-test.sh",
+    "inventory": "node scripts/route-inventory.mjs",
+    "extract": "node scripts/extract-page-features.mjs"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.14",
+    "linkedom": "^0.18.13",
+    "lucide-react": "^1.41.0"
   }
 }
