@@ -9,6 +9,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  commit-messages:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # AGENTS.md forbids attribution trailers in commit messages.
+      - run: bash scripts/check-commit-messages.sh "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}"
+
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
