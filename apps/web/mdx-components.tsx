@@ -1,6 +1,7 @@
 import * as React from "react";
 import type { MDXComponents } from "mdx/types";
 import { CodeBlock } from "./components/mdx/code-block";
+import { prepareCodeChild } from "./components/mdx/code-element";
 import { Component } from "./components/mdx/component";
 import { InstallCommand } from "./components/mdx/install-command";
 import { PrimitiveIndex } from "./components/mdx/primitive-index";
@@ -109,6 +110,15 @@ function Li({ className, ...props }: React.ComponentPropsWithoutRef<"li">) {
   );
 }
 
+function Pre({ children, ...props }: React.ComponentPropsWithoutRef<"pre">) {
+  const { language, code } = prepareCodeChild(children);
+  return (
+    <CodeBlock {...props} language={language}>
+      {code}
+    </CodeBlock>
+  );
+}
+
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     ...components,
@@ -118,7 +128,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     a: A,
     strong: Strong,
     code: Code,
-    pre: (props: React.ComponentPropsWithoutRef<"pre">) => <CodeBlock {...props} />,
+    pre: Pre,
     table: Table,
     th: Th,
     td: Td,

@@ -3,6 +3,7 @@ import { installCommand } from "../../lib/registry";
 import { highlight } from "../../lib/shiki";
 import { PackageManagerMenu } from "../package-manager-menu";
 import { CodeBlock } from "./code-block";
+import { CODE_CLASS, cx } from "./code-element";
 
 export async function InstallCommand({ item }: { item: string }) {
   const variants = await Promise.all(
@@ -21,7 +22,12 @@ export async function InstallCommand({ item }: { item: string }) {
   return (
     <CodeBlock language="bash" headerRight={<PackageManagerMenu />} installCommands={commands}>
       {variants.map(({ pm, html }) => (
-        <code key={pm} className={`pm-only pm-only-${pm} shiki`} dangerouslySetInnerHTML={{ __html: html }} />
+        <code
+          key={pm}
+          className={cx(CODE_CLASS, `pm-only pm-only-${pm} shiki`)}
+          dangerouslySetInnerHTML={{ __html: html }}
+          tabIndex={0}
+        />
       ))}
     </CodeBlock>
   );

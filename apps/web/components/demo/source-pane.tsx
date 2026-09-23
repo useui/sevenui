@@ -5,6 +5,7 @@ import path from "node:path";
 import { rewriteRegistryImports } from "../../lib/registry-imports";
 import { highlight } from "../../lib/shiki";
 import { CodeBlock } from "../mdx/code-block";
+import { CODE_CLASS, cx } from "../mdx/code-element";
 
 const REGISTRY_DIR = path.join(process.cwd(), "../../packages/registry");
 
@@ -43,7 +44,11 @@ export async function sourcePane(relPath: string): Promise<React.ReactElement> {
 
   return (
     <CodeBlock className="my-0! rounded-none! border-0!" language="tsx">
-      <code className="language-tsx shiki" dangerouslySetInnerHTML={{ __html: highlighted }} />
+      <code
+        className={cx(CODE_CLASS, "language-tsx shiki")}
+        dangerouslySetInnerHTML={{ __html: highlighted }}
+        tabIndex={0}
+      />
     </CodeBlock>
   );
 }

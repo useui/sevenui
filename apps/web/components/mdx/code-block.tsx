@@ -38,50 +38,31 @@ export type CodeBlockProps = React.ComponentPropsWithoutRef<"pre"> & {
   installCommands?: Record<PackageManager, string>;
 };
 
-type ClonableCodeProps = { className?: string; tabIndex?: number } & React.RefAttributes<HTMLElement>;
-
+// Its children arrive from Server Components and can be lazy references during
+// SSR, so this component never inspects or clones them: producers pass
+// `language` and style their own <code> with CODE_CLASS (see code-element.ts).
 export function CodeBlock({
   children,
   className,
-  language: languageProp,
+  language,
   headerRight,
   installCommands,
   tabIndex: _tabIndex,
   ...rest
 }: CodeBlockProps) {
-  const codeRef = React.useRef<HTMLElement>(null);
+  const preRef = React.useRef<HTMLPreElement>(null);
 
-  const codeElement =
-    !installCommands && React.isValidElement<ClonableCodeProps>(children) ? children : undefined;
-  const languageMatch = /(?:^|\s)language-(\w+)/.exec(codeElement?.props.className ?? "");
-  const language = languageProp ?? languageMatch?.[1];
   const label = language ? (LANGUAGE_LABELS[language] ?? language.toUpperCase()) : undefined;
   const hasIcon = language !== undefined && language in LANGUAGE_ICON_PATHS;
 
-  const codeChild = installCommands
-    ? React.Children.map(children, (child) =>
-        React.isValidElement<ClonableCodeProps>(child)
-          ? React.cloneElement(child, {
-              tabIndex: 0,
-              className: cx("block max-h-96 overflow-auto px-5 pb-1.5", child.props.className),
-            })
-          : child,
-      )
-    : codeElement
-      ? React.cloneElement(codeElement, {
-          ref: codeRef,
-          tabIndex: 0,
-          className: cx("block max-h-96 overflow-auto px-5 pb-1.5", codeElement.props.className),
-        })
-      : children;
-
   const getCopyText = installCommands
     ? () => installCommands[currentPackageManager()] ?? ""
-    : () => codeRef.current?.textContent ?? "";
+    : () => preRef.current?.querySelector("code")?.textContent ?? "";
 
   return (
     <pre
       {...rest}
+      ref={preRef}
       data-language={language}
       className={cx(
         "group relative my-6 overflow-auto rounded-md border border-border bg-transparent pb-4 text-[0.8125rem] leading-[1.55]",
@@ -106,7 +87,7 @@ export function CodeBlock({
           <LanguageIcon language={language} />
         </span>
       ) : null}
-      {codeChild}
+      {children}
       <CopyButton getText={getCopyText} />
     </pre>
   );
