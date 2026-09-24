@@ -1,4 +1,4 @@
-import type { SearchEntry } from "../../lib/docs/search";
+import { SECTION_ORDER, type SearchEntry } from "../../lib/docs/search";
 
 export type HighlightSegment = { readonly text: string; readonly match: boolean };
 
@@ -201,6 +201,10 @@ function buildExcerpt(
   const { entry } = prepared;
 
   if (entry.hash !== undefined) {
+    // An anchored item with its own description (a component or a block) shows the description when the
+    // query is found there; otherwise, like a docs heading, the page it lives on.
+    const at = firstMatchIndex(prepared.lowerDescription, query, tokens);
+    if (entry.description !== undefined && at >= 0) return excerptAround(entry.description, at, needles);
     return entry.pageTitle === undefined ? null : [{ text: entry.pageTitle, match: false }];
   }
 
@@ -226,7 +230,13 @@ function scoreEntry(
   tokens: readonly string[],
 ): number {
   if (prepared.entry.hash !== undefined) {
-    return scoreField(prepared.lowerTitle, query, tokens, HEADING_TIERS);
+    // Docs headings carry a title only; anchored components and blocks also carry a description and
+    // keywords, scored at the page tiers so a matching title still ranks the item above them.
+    return Math.max(
+      scoreField(prepared.lowerTitle, query, tokens, HEADING_TIERS),
+      scoreField(prepared.lowerDescription, query, tokens, DESCRIPTION_TIERS),
+      scoreField(prepared.lowerBody, query, tokens, BODY_TIERS),
+    );
   }
   return Math.max(
     scoreField(prepared.lowerTitle, query, tokens, PAGE_TITLE_TIERS),
@@ -285,9 +295,17 @@ export function countSections(hits: readonly SearchHit[]): SectionCount[] {
       routes = new Set<string>();
       routesBySection.set(hit.entry.section, routes);
     }
-    routes.add(hit.entry.route);
+    // A docs heading counts toward its page; an anchored component or block is a result of its own.
+    const standalone = hit.entry.hash !== undefined && hit.entry.description !== undefined;
+    routes.add(standalone ? hit.href : hit.entry.route);
   }
   return [...routesBySection]
     .map(([label, routes]) => ({ label, count: routes.size }))
-    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+    .sort((a, b) => sectionRank(a.label) - sectionRank(b.label) || b.count - a.count || a.label.localeCompare(b.label));
+}
+
+/** Known sections follow SECTION_ORDER; any other nav group sorts after them. */
+function sectionRank(label: string): number {
+  const at = SECTION_ORDER.indexOf(label);
+  return at === -1 ? SECTION_ORDER.length : at;
 }

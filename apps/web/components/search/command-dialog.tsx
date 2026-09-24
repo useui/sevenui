@@ -1,7 +1,7 @@
 "use client";
 
 import { Autocomplete } from "@base-ui/react/autocomplete";
-import { FileIcon, SearchIcon } from "lucide-react";
+import { BoxIcon, FileIcon, FileTextIcon, LayoutTemplateIcon, SearchIcon, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import {
   Fragment,
@@ -24,6 +24,7 @@ import {
   POPULAR,
   SEARCH_INDEX_URL,
   SEARCH_RESULT_LIMIT,
+  SITE_SECTIONS,
   type SearchEntry,
 } from "../../lib/docs/search";
 import {
@@ -37,8 +38,8 @@ import {
 } from "./scorer";
 
 const STRINGS = {
-  label: "Search docs",
-  placeholder: "Search documentation…",
+  label: "Search SevenUI",
+  placeholder: "Search docs, components, blocks…",
   popular: "Popular",
   results: "Results",
   noResults: "No results found.",
@@ -61,6 +62,20 @@ const KBD_CLASS = "rounded border border-border bg-muted px-1 py-0.5 font-mono";
 
 const DIALOG_CLASS =
   "top-[8vh] flex h-[min(480px,90dvh)] w-[min(40rem,94vw)] max-w-none translate-y-0 flex-col gap-0 border border-border bg-background/80 text-foreground shadow-2xl ring-0 backdrop-blur-xl sm:top-1/2 sm:max-w-none sm:-translate-y-1/2";
+
+/** Row icon by section; docs and primitive pages keep the plain page icon. */
+const SECTION_ICONS: Record<string, LucideIcon> = {
+  [SITE_SECTIONS.components]: BoxIcon,
+  [SITE_SECTIONS.blocks]: LayoutTemplateIcon,
+  [SITE_SECTIONS.pages]: FileTextIcon,
+};
+
+function rowIcon(href: string, section: string | undefined): LucideIcon {
+  if (section !== undefined) return SECTION_ICONS[section] ?? FileIcon;
+  if (href.startsWith("/components")) return BoxIcon;
+  if (href.startsWith("/blocks")) return LayoutTemplateIcon;
+  return href.startsWith("/docs") ? FileIcon : FileTextIcon;
+}
 
 type LoadStatus = "idle" | "loading" | "ready" | "error";
 
@@ -317,6 +332,7 @@ function PaletteItem({
   onClick: (event: MouseEvent<HTMLDivElement>) => void;
   row: PaletteRow;
 }) {
+  const Icon = rowIcon(row.href, row.kind === "hit" ? row.hit.entry.section : undefined);
   return (
     <CommandItem
       className={ROW_CLASS}
@@ -325,7 +341,7 @@ function PaletteItem({
       value={row}
     >
       <span className="mt-0.5 shrink-0 text-muted-foreground">
-        <FileIcon aria-hidden="true" size={16} />
+        <Icon aria-hidden="true" size={16} />
       </span>
       <span className="min-w-0 flex-1">
         <span className="block truncate font-normal text-foreground text-sm">

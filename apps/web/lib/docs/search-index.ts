@@ -3,7 +3,11 @@ import "server-only";
 import { getDocIndex, type DocPage } from "./index";
 import { stripFences } from "./headings";
 import { buildNavTree, isNavGroup, type NavNode } from "./nav";
-import { POPULAR, type SearchEntry } from "./search";
+import componentsRegistry from "../../../../packages/registry/components/registry.json";
+import type { Group } from "../blocks";
+import { GALLERY_SLUGS } from "../gallery";
+import { buildSiteSearchEntries, loosePageRoutes } from "../site-search";
+import { POPULAR, SITE_SECTIONS, type SearchEntry } from "./search";
 
 const GENERIC_HEADINGS = new Set(["Installation", "Usage", "API reference"]);
 
@@ -98,23 +102,77 @@ function assertSearchIndex(entries: SearchEntry[], pages: DocPage[]): void {
       );
     }
   }
+}
 
-  for (const popular of POPULAR) {
-    if (!popular.href.startsWith("/docs/")) {
-      throw new Error(
-        `lib/docs/search-index.ts: POPULAR entry "${popular.href}" is missing the literal /docs/ prefix ` +
-          `(§9 Step 4 — Blume applied this through basePath; there is no basePath here)`,
-      );
+const MIN_BLOCK_ITEMS = 1;
+
+function fail(message: string): never {
+  throw new Error(`lib/docs/search-index.ts: ${message}`);
+}
+
+/** Guards the non-docs part: every page, component and block the site shows has its entry, and nothing leaks into /docs. */
+function assertSiteEntries(entries: SearchEntry[], groups: Group[]): void {
+  const pageRoutes = new Set(entries.filter((e) => e.hash === undefined).map((e) => e.route));
+  const hrefs = new Set(entries.filter((e) => e.hash !== undefined).map((e) => `${e.route}#${e.hash}`));
+
+  for (const entry of entries) {
+    if (entry.route === "/docs" || entry.route.startsWith("/docs/")) {
+      fail(`site entry "${entry.title}" points into /docs (${entry.route}); docs pages come from the content index only`);
     }
   }
 
-  const routes = new Set(pages.map((p) => p.route));
-  for (const popular of POPULAR) {
-    if (!routes.has(popular.href)) {
-      throw new Error(
-        `lib/docs/search-index.ts: POPULAR entry "${popular.href}" has no matching page in the content index`,
-      );
+  for (const route of loosePageRoutes()) {
+    if (!pageRoutes.has(route)) fail(`page-meta route "${route}" has no entry in the Pages section`);
+  }
+
+  for (const slug of GALLERY_SLUGS) {
+    if (!pageRoutes.has(`/components/${slug}`)) fail(`gallery page /components/${slug} has no entry`);
+  }
+  for (const item of componentsRegistry.items) {
+    const slug = item.files[0].path.split("/")[0];
+    if (!hrefs.has(`/components/${slug}#${item.name}`)) {
+      fail(`component "${item.name}" from packages/registry/components/registry.json has no entry at /components/${slug}#${item.name}`);
     }
+  }
+  const componentItems = entries.filter((e) => e.section === SITE_SECTIONS.components && e.hash !== undefined);
+  if (componentItems.length !== componentsRegistry.items.length) {
+    fail(
+      `expected ${componentsRegistry.items.length} component entries (one per registry item), found ${componentItems.length}`,
+    );
+  }
+
+  let blockItems = 0;
+  for (const group of groups) {
+    if (!pageRoutes.has(`/blocks/${group.id}`)) fail(`block group /blocks/${group.id} has no entry`);
+    for (const category of group.categories) {
+      const route = `/blocks/${group.id}/${category.id}`;
+      if (!pageRoutes.has(route)) fail(`block category ${route} has no entry`);
+      for (const item of category.items) {
+        if (!hrefs.has(`${route}#${item.name}`)) fail(`block "${item.name}" has no entry at ${route}#${item.name}`);
+        blockItems++;
+      }
+    }
+  }
+  if (blockItems < MIN_BLOCK_ITEMS) {
+    fail("the Pro manifest yielded no blocks — refusing to publish a search index with an empty Blocks section");
+  }
+}
+
+/** Whole-index checks: rows are keyed by href, and every POPULAR link must land on an indexed page. */
+function assertWholeIndex(entries: SearchEntry[]): void {
+  const seen = new Set<string>();
+  for (const entry of entries) {
+    const href = entry.hash === undefined ? entry.route : `${entry.route}#${entry.hash}`;
+    if (seen.has(href)) fail(`duplicate href "${href}" — the palette keys rows by href`);
+    seen.add(href);
+  }
+
+  const pageRoutes = new Set(entries.filter((e) => e.hash === undefined).map((e) => e.route));
+  for (const popular of POPULAR) {
+    if (!popular.href.startsWith("/")) {
+      fail(`POPULAR entry "${popular.href}" must be a root-relative path (there is no basePath)`);
+    }
+    if (!pageRoutes.has(popular.href)) fail(`POPULAR entry "${popular.href}" has no matching page in the search index`);
   }
 }
 
@@ -147,5 +205,11 @@ export async function buildSearchIndex(): Promise<SearchEntry[]> {
   }
 
   assertSearchIndex(entries, pages);
-  return entries;
+
+  const site = await buildSiteSearchEntries();
+  assertSiteEntries(site.entries, site.groups);
+
+  const all = [...entries, ...site.entries];
+  assertWholeIndex(all);
+  return all;
 }

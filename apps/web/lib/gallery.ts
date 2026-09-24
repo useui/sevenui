@@ -13,6 +13,7 @@ export interface GalleryExample {
   /** Registry item name; also the anchor id, e.g. "accordion-01". */
   id: string;
   title: string;
+  description: string;
 }
 
 export const GALLERY_SLUGS = [
@@ -38,7 +39,7 @@ const examplesBySlug = new Map<string, GalleryExample[]>();
 for (const item of componentsRegistry.items) {
   const slug = item.files[0].path.split("/")[0];
   const list = examplesBySlug.get(slug);
-  const example = { id: item.name, title: item.title };
+  const example = { id: item.name, title: item.title, description: item.description };
   if (list) list.push(example);
   else examplesBySlug.set(slug, [example]);
 }
