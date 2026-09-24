@@ -338,7 +338,11 @@ html {
   .l-row {
     border-inline: 1px solid var(--border);
   }
+}
 
+/* The corner marks sit on the row's side rules; while the row still spans the
+   viewport they would hang past its edge and cause a horizontal scroll. */
+@media (min-width: 73rem) {
   .l-marks::before,
   .l-marks::after {
     content: "";
@@ -598,17 +602,6 @@ html {
     transparent;
 }
 
-/* Dotted specimen plate behind a live component. */
-.sv-plate {
-  background-color: var(--background);
-  background-image: radial-gradient(
-    color-mix(in oklch, var(--foreground) 14%, transparent) 1px,
-    transparent 1.2px
-  );
-  background-size: 16px 16px;
-  background-position: center;
-}
-
 /* Icon swap in copy controls. */
 .sv-swap {
   transition:
@@ -617,111 +610,86 @@ html {
     filter 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Home: the tier rail. Static and fully drawn by default; where scroll-driven
-   animation exists, a stroke draws down it and each node fills mid-viewport. */
-.sv-rail-fill {
-  transform-origin: top;
-}
-
-.sv-node {
-  background: var(--foreground);
-}
-
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .sv-rail-fill {
-      animation: sv-draw linear both;
-      animation-timeline: view();
-      animation-range: cover 18% cover 72%;
-    }
-
-    .sv-node {
-      animation: sv-node-fill linear both;
-      animation-timeline: view();
-      animation-range: entry 100% cover 48%;
-    }
-  }
-}
-
-@keyframes sv-draw {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
-}
-
-@keyframes sv-node-fill {
-  0%,
-  70% {
-    background: var(--background);
-  }
-  100% {
-    background: var(--foreground);
-  }
-}
-
-/* Home: the inspect sweep, played only when a visitor turns inspect back on. */
-.sv-scanline {
-  position: absolute;
-  inset-inline: 0;
-  top: 0;
-  z-index: 30;
-  height: 96px;
-  pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    color-mix(in oklab, var(--foreground) 5%, transparent) calc(100% - 1px),
-    color-mix(in oklab, var(--foreground) 45%, transparent) calc(100% - 1px)
-  );
-  opacity: 0;
-  animation: sv-sweep 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@keyframes sv-sweep {
-  0% {
-    top: 0%;
-    transform: translateY(-100%);
-    opacity: 1;
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    top: 100%;
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-}
-
-.sv-tag {
-  animation: sv-tag-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  animation-delay: calc(var(--sv-i, 0) * 45ms);
-}
-
-@keyframes sv-tag-in {
-  from {
-    opacity: 0;
-    filter: blur(4px);
-  }
-  to {
-    opacity: 1;
-    filter: blur(0);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .sv-scanline {
-    display: none;
-  }
-
-  .sv-tag {
-    animation: none;
-  }
-
   .sv-swap {
     transition: opacity 120ms linear;
   }
+}
+
+/* --- cookie consent (vanilla-cookieconsent) --- */
+
+/*
+ * Maps the plugin's variables onto the site tokens. The tokens already switch
+ * under [data-theme="dark"], so one block serves both themes; `html #cc-main`
+ * outranks the plugin's own `:root` and `#cc-main` defaults.
+ */
+html #cc-main {
+  --cc-font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --cc-modal-border-radius: calc(var(--radius) + 4px);
+  --cc-btn-border-radius: calc(var(--radius) - 2px);
+  --cc-pm-toggle-border-radius: 999px;
+  --cc-z-index: 60;
+
+  --cc-bg: var(--popover);
+  --cc-primary-color: var(--popover-foreground);
+  --cc-secondary-color: var(--muted-foreground);
+  --cc-link-color: var(--foreground);
+
+  /* Accept and reject share one style: equal visual weight. */
+  --cc-btn-primary-bg: var(--primary);
+  --cc-btn-primary-color: var(--primary-foreground);
+  --cc-btn-primary-border-color: var(--primary);
+  --cc-btn-primary-hover-bg: color-mix(in oklch, var(--primary) 88%, var(--background));
+  --cc-btn-primary-hover-color: var(--primary-foreground);
+  --cc-btn-primary-hover-border-color: color-mix(in oklch, var(--primary) 88%, var(--background));
+  --cc-btn-secondary-bg: var(--secondary);
+  --cc-btn-secondary-color: var(--secondary-foreground);
+  --cc-btn-secondary-border-color: var(--border);
+  --cc-btn-secondary-hover-bg: var(--accent);
+  --cc-btn-secondary-hover-color: var(--accent-foreground);
+  --cc-btn-secondary-hover-border-color: var(--ring);
+
+  --cc-separator-border-color: var(--border);
+  --cc-toggle-on-bg: var(--primary);
+  --cc-toggle-off-bg: var(--input);
+  --cc-toggle-on-knob-bg: var(--primary-foreground);
+  --cc-toggle-off-knob-bg: var(--background);
+  --cc-toggle-enabled-icon-color: var(--primary-foreground);
+  --cc-toggle-disabled-icon-color: var(--muted-foreground);
+  --cc-toggle-readonly-bg: var(--muted);
+  --cc-toggle-readonly-knob-bg: var(--muted-foreground);
+  --cc-toggle-readonly-knob-icon-color: var(--muted);
+
+  --cc-section-category-border: var(--border);
+  --cc-cookie-category-block-bg: var(--muted);
+  --cc-cookie-category-block-border: var(--border);
+  --cc-cookie-category-block-hover-bg: var(--accent);
+  --cc-cookie-category-block-hover-border: var(--border);
+  --cc-cookie-category-expanded-block-bg: transparent;
+  --cc-cookie-category-expanded-block-hover-bg: var(--accent);
+
+  --cc-overlay-bg: color-mix(in oklch, var(--background) 60%, transparent);
+  --cc-webkit-scrollbar-bg: var(--border);
+  --cc-webkit-scrollbar-hover-bg: var(--muted-foreground);
+
+  --cc-footer-bg: var(--muted);
+  --cc-footer-color: var(--muted-foreground);
+  --cc-footer-border-color: var(--border);
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] #cc-main {
+  color-scheme: dark;
+}
+
+#cc-main .cm,
+#cc-main .pm {
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 32px -12px color-mix(in oklch, var(--foreground) 25%, transparent);
+}
+
+#cc-main :focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }

@@ -87,6 +87,18 @@ const FAQ: { q: string; a: ReactNode }[] = [
     ),
   },
   {
+    q: "Can I request a Block that isn't in the catalog?",
+    a: (
+      <>
+        Yes — license holders can email a request from the address they paid with. See{" "}
+        <Link className="text-foreground underline underline-offset-4" href="/block-request">
+          Block Request
+        </Link>{" "}
+        for what to include.
+      </>
+    ),
+  },
+  {
     q: "Who handles payment and tax?",
     a: "Polar is the merchant of record. They process the payment, apply sales tax or VAT where it's due, and issue your invoice. We never see your card details.",
   },

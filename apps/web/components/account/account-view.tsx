@@ -345,6 +345,15 @@ function Licensed({ identity, rows }: { identity: Identity; rows: LicenseRow[] }
                   </Link>
                 </p>
               </div>
+              <div>
+                <h3 className="font-medium">Need a Block that isn't here?</h3>
+                <p className="mt-1.5 leading-relaxed text-pretty text-muted-foreground">
+                  Email a request from this account's address.{" "}
+                  <Link className={LINK} href="/block-request">
+                    Block Request
+                  </Link>
+                </p>
+              </div>
             </div>
           </div>
           <div className="min-w-0">

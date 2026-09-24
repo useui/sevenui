@@ -29,7 +29,7 @@ surface; the canonical definition lives in `apps/web/lib/site-tabs.ts`.
   `/r/pro/<name>.json`, browsed at `/blocks`.
 
 "Docs" is the guides only — Introduction, Installation, Theming. Header tabs:
-Docs · Primitives · Components · Blocks · Pro.
+Docs · Primitives · Components · Blocks · Pro · Roadmap · Block Request · Support.
 
 Do NOT rename in code: route segments, `@/components/ui/*` import paths, the
 `<Component />` MDX helper, `registry:ui`, or references to Base UI's own

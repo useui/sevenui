@@ -50,13 +50,13 @@ export function SearchTrigger() {
     <>
       <button
         aria-label={STRING_SEARCH}
-        className="inline-flex h-9 shrink-0 cursor-pointer items-center gap-2 rounded-full border border-border bg-background px-3 text-muted-foreground text-sm transition-colors hover:border-foreground hover:text-foreground lg:min-w-40"
+        className="inline-flex h-9 shrink-0 cursor-pointer items-center gap-2 rounded-full border border-border bg-background px-3 text-muted-foreground text-sm transition-colors hover:border-foreground hover:text-foreground xl:min-w-40"
         onClick={openPalette}
         type="button"
       >
         <SearchIcon aria-hidden="true" className="shrink-0" size={16} />
-        <span className="grow shrink-0 basis-0 text-start max-lg:hidden">{STRING_SEARCH}</span>
-        <kbd className="shrink-0 font-mono text-[0.7rem] max-lg:hidden">{shortcut}</kbd>
+        <span className="grow shrink-0 basis-0 text-start max-xl:hidden">{STRING_SEARCH}</span>
+        <kbd className="shrink-0 font-mono text-[0.7rem] max-xl:hidden">{shortcut}</kbd>
       </button>
       {everOpened && <SearchCommandDialog onOpenChange={setOpen} open={open} />}
     </>

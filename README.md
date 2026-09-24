@@ -1,5 +1,7 @@
 # SevenUI
 
+**Copy it. Own it. Ship it.**
+
 SevenUI is a React component library built exclusively on
 [Base UI](https://base-ui.com) primitives — no Radix underneath.
 Components are distributed as source through the shadcn registry, so

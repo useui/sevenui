@@ -5,7 +5,7 @@ import { pageMetadata } from "../../lib/metadata";
 import { requirePageMeta } from "../../lib/page-meta";
 
 const ROUTE = "/terms";
-const UPDATED = "September 24, 2026";
+const UPDATED = "September 25, 2026";
 
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await requirePageMeta(ROUTE, "app/terms/page.tsx");
@@ -90,6 +90,11 @@ export default async function TermsPage() {
           <a href="mailto:mail@sevenui.dev">mail@sevenui.dev</a> from the address on
           your account, or contact Polar directly. Refunds are returned through the
           original payment method.
+        </p>
+        <p>
+          If you submit a <a href="/block-request">Block request</a> and the Block you
+          requested is added to the Pro catalog, your purchase is no longer eligible for
+          a refund under this section.
         </p>
         <p>
           When a purchase is refunded, the licence granted in section 6 ends and the

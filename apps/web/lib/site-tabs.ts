@@ -8,6 +8,9 @@ export const SITE_TABS: SiteTab[] = [
   { label: "Components", path: "/components", href: "/components" },
   { label: "Blocks", path: "/blocks", href: "/blocks" },
   { label: "Pro", path: "/pro", href: "/pro" },
+  { label: "Roadmap", path: "/roadmap", href: "/roadmap" },
+  { label: "Block Request", path: "/block-request", href: "/block-request" },
+  { label: "Support", path: "/support", href: "/support" },
 ];
 
 export function getSiteTabs(primitivesHref: string): SiteTab[] {

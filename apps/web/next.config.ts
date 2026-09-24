@@ -11,6 +11,8 @@ const workspaceRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: workspaceRoot,
+  // The release notes page became the roadmap, which carries them.
+  redirects: async () => [{ source: "/changelog", destination: "/roadmap", permanent: true }],
 };
 
 const withMDX = createMDX({

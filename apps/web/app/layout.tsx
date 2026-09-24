@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Inter } from "next/font/google";
-import { Analytics } from "../components/analytics";
+import { CookieConsentBanner } from "../components/cookie-consent";
 import { DrawerProvider } from "../components/drawer-context";
 import { PackageManagerScript } from "../components/package-manager-script";
 import { SiteDrawer } from "../components/site-drawer";
@@ -68,7 +68,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <SiteFooter primitivesHref={primitivesHref} />
           </DrawerProvider>
         </ThemeProvider>
-        <Analytics />
+        <CookieConsentBanner />
       </body>
     </html>
   );

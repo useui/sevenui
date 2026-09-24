@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import * as CookieConsent from "vanilla-cookieconsent";
 import { Logomark } from "./logomark";
 
 const footerPrimitives = ["button", "input", "select", "combobox", "checkbox", "switch", "slider", "table"];
@@ -16,6 +17,7 @@ export function SiteFooter({ primitivesHref }: { primitivesHref: string }) {
           <Logomark className="h-5 w-auto" /> SevenUI
         </span>
         <p className="max-w-xs text-sm text-muted-foreground">
+          <span className="block font-medium text-foreground">Copy it. Own it. Ship it.</span>
           Base UI powered primitives, distributed through the shadcn registry.
         </p>
       </div>
@@ -40,6 +42,15 @@ export function SiteFooter({ primitivesHref }: { primitivesHref: string }) {
         </Link>
         <Link className="text-muted-foreground transition-colors hover:text-foreground" href="/docs/theming">
           Theming
+        </Link>
+        <Link className="text-muted-foreground transition-colors hover:text-foreground" href="/block-request">
+          Block Request
+        </Link>
+        <Link className="text-muted-foreground transition-colors hover:text-foreground" href="/roadmap">
+          Roadmap
+        </Link>
+        <Link className="text-muted-foreground transition-colors hover:text-foreground" href="/support">
+          Support
         </Link>
         <a className="text-muted-foreground transition-colors hover:text-foreground" href="https://github.com/useui/sevenui" rel="noopener noreferrer" target="_blank">
           GitHub
@@ -70,6 +81,9 @@ export function SiteFooter({ primitivesHref }: { primitivesHref: string }) {
         <Link className="transition-colors hover:text-foreground" href="/privacy">
           Privacy
         </Link>
+        <button className="cursor-pointer transition-colors hover:text-foreground" onClick={() => CookieConsent.showPreferences()} type="button">
+          Cookie settings
+        </button>
       </nav>
     </>
   );

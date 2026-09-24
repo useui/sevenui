@@ -43,7 +43,7 @@ export function SiteHeader({ primitivesHref }: { primitivesHref: string }) {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 flex h-16 items-center gap-3 border-b bg-background/90 px-4 backdrop-blur md:px-6">
+    <header className="sticky top-0 z-40 flex h-16 items-center gap-2 border-b sm:gap-3 bg-background/90 px-4 backdrop-blur md:px-6">
       <button
         aria-label="Toggle navigation"
         className={`${iconButton} lg:hidden`}
@@ -53,17 +53,18 @@ export function SiteHeader({ primitivesHref }: { primitivesHref: string }) {
         <Menu aria-hidden="true" size={20} />
       </button>
       <Link
-        className="inline-flex min-w-0 items-center gap-2 font-semibold text-base text-foreground"
+        className="inline-flex shrink-0 items-center gap-2 font-semibold text-base text-foreground"
         href="/"
       >
         <Logomark className="h-5 w-auto shrink-0" />
-        <span className="truncate">{site.name}</span>
+        {/* Below 360px only the mark fits next to the header controls; the name stays for screen readers. */}
+        <span className="max-[359px]:sr-only">{site.name}</span>
       </Link>
       <nav aria-label="Sections" className="hidden gap-1 lg:flex">
         {tabs.map((tab) => (
           <Link
             aria-current={tab.href === activeTabHref ? "page" : undefined}
-            className="shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 font-medium text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:text-foreground"
+            className="shrink-0 whitespace-nowrap rounded-full px-2 py-1.5 xl:px-3 font-medium text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:text-foreground"
             href={tab.href}
             key={tab.href}
           >
@@ -76,7 +77,7 @@ export function SiteHeader({ primitivesHref }: { primitivesHref: string }) {
       <div className="flex shrink-0 items-center gap-2">
         <a
           aria-label="GitHub repository"
-          className={iconButton}
+          className={`${iconButton} max-sm:hidden`}
           href={repoUrl}
           rel="noopener noreferrer"
           target="_blank"

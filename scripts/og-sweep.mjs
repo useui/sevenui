@@ -66,7 +66,7 @@ const MISSING_PAGES = [
   "/blocks/marketing/not-a-category", // §10's category `notFound()`
 ];
 
-const SITE_DESCRIPTION = "Base UI powered primitives, distributed through the shadcn registry.";
+const SITE_DESCRIPTION = "Copy it. Own it. Ship it. Base UI powered primitives, distributed through the shadcn registry.";
 
 const UNLISTED_PAGE_META = {
   "/": {
@@ -90,6 +90,20 @@ const UNLISTED_PAGE_META = {
   "/privacy": {
     title: "Privacy Policy",
     description: "What personal data SevenUI collects, who processes it, and how to exercise your rights.",
+  },
+  "/block-request": {
+    title: "Block Request",
+    description:
+      "Pro license holders can request a custom Block built around their use case. How to send a request and what to include.",
+  },
+  "/roadmap": {
+    title: "Roadmap",
+    description: "What is coming next to SevenUI, and what shipped in each release: primitives, components, Pro blocks, and the site.",
+  },
+  "/support": {
+    title: "Support",
+    description:
+      "Get help with SevenUI: email support at mail@sevenui.dev, quick links to the docs, primitives, components, and Pro blocks, and answers to common questions.",
   },
 };
 

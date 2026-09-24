@@ -5,7 +5,7 @@ import { pageMetadata } from "../../lib/metadata";
 import { requirePageMeta } from "../../lib/page-meta";
 
 const ROUTE = "/privacy";
-const UPDATED = "September 9, 2026";
+const UPDATED = "September 25, 2026";
 
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await requirePageMeta(ROUTE, "app/privacy/page.tsx");
@@ -63,10 +63,12 @@ export default async function PrivacyPage() {
         <p>
           <strong>Usage analytics</strong> — we use Google Analytics 4 (measurement
           ID <code>G-8702Z28SMN</code>) to understand which pages and components get
-          used. It sets cookies in your browser and reports pageviews, referrer,
-          device and browser type, and a coarse location derived from your IP address.
-          We look at this in aggregate; we do not use it to identify you or to build
-          advertising profiles.
+          used — <strong>only if you allow it</strong> in the cookie banner. Until
+          you do, the Google Analytics script is not loaded and no analytics cookies
+          are set. Once allowed, it sets cookies in your browser and reports
+          pageviews, referrer, device and browser type, and a coarse location derived
+          from your IP address. We look at this in aggregate; we do not use it to
+          identify you or to build advertising profiles.
         </p>
         <p>
           <strong>Correspondence</strong> — if you email us, we keep the message and
@@ -112,14 +114,15 @@ export default async function PrivacyPage() {
             <tr>
               <td>Measure how the site is used</td>
               <td>Analytics data</td>
-              <td>Legitimate interest in aggregate statistics, or your consent where local law requires it</td>
+              <td>Your consent, given through the cookie banner and withdrawable at any time</td>
             </tr>
           </tbody>
         </table>
         <p>
           Under Turkish data protection law (KVKK), the same processing rests on the
           grounds in Article 5/2 — in particular processing necessary for a contract,
-          compliance with a legal obligation, and our legitimate interests.
+          compliance with a legal obligation, and our legitimate interests — while
+          analytics rests on your explicit consent (Article 5/1).
         </p>
 
         <h2>3. Who processes data for us</h2>
@@ -175,7 +178,12 @@ export default async function PrivacyPage() {
 
         <h2>5. Cookies</h2>
         <p>
-          We use no advertising or cross-site tracking cookies. What the site sets:
+          We use no advertising or cross-site tracking cookies. On your first visit a
+          cookie banner asks whether you allow analytics; it is off unless you accept,
+          and “Reject all” is as easy as “Accept all”. You can
+          change or withdraw your choice at any time through{" "}
+          <strong>Cookie settings</strong> in the site footer; withdrawing deletes the
+          analytics cookies and reloads the page. What the site sets:
         </p>
         <table>
           <thead>
@@ -195,16 +203,24 @@ export default async function PrivacyPage() {
             </tr>
             <tr>
               <td>
+                <code>cc_cookie</code>
+              </td>
+              <td>SevenUI</td>
+              <td>Remembers your cookie choice so the banner does not reappear. Strictly necessary; expires after 182 days (about six months), after which we ask again.</td>
+            </tr>
+            <tr>
+              <td>
                 <code>_ga</code>, <code>_ga_*</code>
               </td>
               <td>Google Analytics</td>
-              <td>Distinguishes visitors for aggregate usage statistics. Expires after up to two years.</td>
+              <td>Distinguishes visitors for aggregate usage statistics. Only set after you accept analytics; expires after up to two years.</td>
             </tr>
           </tbody>
         </table>
         <p>
-          Your theme preference is stored in your browser's local storage and never
-          leaves your device. You can block or delete cookies in your browser
+          Your theme and package-manager preferences are stored in your browser's
+          local storage and never leave your device. You can also block or delete
+          cookies in your browser
           settings, or opt out of Google Analytics with Google's{" "}
           <a href="https://tools.google.com/dlpage/gaoptout" rel="noopener noreferrer" target="_blank">
             browser add-on
