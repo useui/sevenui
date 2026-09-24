@@ -17,7 +17,7 @@ const CUSTOM: Record<string, PageMeta> = {
   "/pro": {
     title: "Pro",
     description:
-      "Pre-order SevenUI Pro for $99 lifetime — the price rises to $249 once the Pro blocks catalog launches.",
+      "SevenUI Pro at its launch price: $99 instead of $249 — a lifetime license to every Pro Block, per developer.",
   },
   "/account": { title: "Account", description: site.description },
   "/terms": {

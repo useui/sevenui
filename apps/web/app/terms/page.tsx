@@ -5,7 +5,7 @@ import { pageMetadata } from "../../lib/metadata";
 import { requirePageMeta } from "../../lib/page-meta";
 
 const ROUTE = "/terms";
-const UPDATED = "September 9, 2026";
+const UPDATED = "September 24, 2026";
 
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await requirePageMeta(ROUTE, "app/terms/page.tsx");
@@ -31,7 +31,7 @@ export default async function TermsPage() {
         <h2>1. The free component registry</h2>
         <p>
           The public SevenUI components, documentation, and blocks published in this
-          repository and served from the public registry are open source under the
+          repository and served from the public registry are open source under the{" "}
           <strong>MIT License</strong>. That license — not these terms — governs what
           you may do with that source code. Nothing here restricts rights the MIT
           License grants you.
@@ -49,25 +49,25 @@ export default async function TermsPage() {
           the connected accounts secure, and for everything done through your account.
         </p>
         <p>
-          Create one account per person, give accurate information, and tell us at
+          Create one account per person, give accurate information, and tell us at{" "}
           <a href="mailto:mail@sevenui.dev">mail@sevenui.dev</a> if you believe your
           account has been used without your permission.
         </p>
 
-        <h2>3. SevenUI Pro is sold as a pre-order</h2>
+        <h2>3. Price and what you receive</h2>
         <p>
-          SevenUI Pro is currently offered as a <strong>pre-order</strong>. You pay
-          once, today, at the pre-order price shown at checkout, and you receive a
-          lifetime license to the Pro blocks catalog as it is released. The price will
-          rise for new customers once the catalog launches; your pre-order price is
-          locked in and you owe nothing further.
+          SevenUI Pro is sold for a <strong>single payment</strong> at the price shown
+          at checkout, which may be a launch price below the regular price. You receive
+          a lifetime license to the Pro blocks catalog, including blocks we publish
+          after your purchase. Later price changes apply only to new purchases; you owe
+          nothing further.
         </p>
         <p>
           We publish Pro blocks progressively and we do not commit to a delivery date,
           to a specific number of blocks, or to any particular block being built. The
           catalog names shown on the Pro page describe our intended direction, not a
           contractual promise. If your purchase depends on a specific block existing
-          today, do not pre-order — buy after it ships, or use the refund right in
+          today, do not buy yet — buy after it ships, or use the refund right in
           section 5.
         </p>
 
@@ -86,7 +86,7 @@ export default async function TermsPage() {
         <h2>5. Refunds</h2>
         <p>
           You may request a full refund within <strong>14 days</strong> of your
-          purchase, for any reason and without explanation. Email
+          purchase, for any reason and without explanation. Email{" "}
           <a href="mailto:mail@sevenui.dev">mail@sevenui.dev</a> from the address on
           your account, or contact Polar directly. Refunds are returned through the
           original payment method.
@@ -156,7 +156,7 @@ export default async function TermsPage() {
           <li>misrepresent your relationship with SevenUI.</li>
         </ul>
         <p>
-          Found a security issue? Please report it to
+          Found a security issue? Please report it to{" "}
           <a href="mailto:mail@sevenui.dev">mail@sevenui.dev</a> before disclosing it.
         </p>
 

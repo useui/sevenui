@@ -7,14 +7,14 @@ export function ProOffer() {
         <p className="max-w-xl text-pretty text-sm text-muted-foreground">
           Every block here is <span className="font-medium text-foreground">Pro</span>.
           One purchase, yours forever —
-          <span className="font-medium text-foreground">$99 lifetime</span>, rising to
-          $249 once the catalog launches.
+          <span className="font-medium text-foreground">$99 at launch</span> instead of
+          $249.
         </p>
         <Link
           className="inline-flex h-10 shrink-0 items-center rounded-lg bg-primary px-6 font-medium text-primary-foreground text-sm transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           href="/pro"
         >
-          Pre-order — $99
+          Get Pro — $99
         </Link>
       </div>
     </div>

@@ -1,6 +1,6 @@
 ---
 title: Installation
-description: Configure the SevenUI registry in your project.
+description: Install SevenUI primitives with the shadcn CLI.
 ---
 
 SevenUI requires a project already set up with the shadcn CLI and
@@ -8,30 +8,13 @@ Tailwind CSS v4. Run `npx shadcn@latest init` first if you have not.
 
 ## Add primitives
 
-Install any primitive straight from its registry URL — no extra
-configuration needed:
+`@sevenui` is listed in the
+[shadcn registry index](https://ui.shadcn.com/docs/registry/registry-index),
+so the CLI resolves the namespace with no extra configuration:
 
 <InstallCommand item="button" />
 
 Primitives install as source files under your `ui` alias.
-
-## Registry namespace (optional)
-
-For a shorter command, add the registry to your `components.json`:
-
-```json
-{
-  "registries": {
-    "@sevenui": "https://sevenui.dev/r/{name}.json"
-  }
-}
-```
-
-Then the `@sevenui` namespace resolves to the same URLs:
-
-```bash
-npx shadcn@latest add @sevenui/button
-```
 
 ## Animations
 
@@ -60,7 +43,7 @@ A component installs the same way as a primitive:
 
 <InstallCommand item="component/accordion-01" />
 
-With the `@sevenui` namespace configured, the short form works too:
+The `@sevenui` namespace form works the same way:
 
 ```bash
 npx shadcn@latest add @sevenui/component/accordion-01

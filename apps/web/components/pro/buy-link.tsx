@@ -2,9 +2,24 @@
 
 import { useEffect, useRef, useState } from "react";
 import { getClerkIfLikelySignedIn } from "../../lib/clerk";
+import { Spinner } from "@/registry/base/ui/spinner";
+import { cx } from "../../lib/cx";
 
-export function BuyLink({ checkoutUrl }: { checkoutUrl: string }) {
+/**
+ * The Polar checkout link, enhanced with the signed-in email when a session
+ * hint exists. Only the primary instance carries id="pro-buy".
+ */
+export function BuyLink({
+  checkoutUrl,
+  primary = true,
+  className,
+}: {
+  checkoutUrl: string;
+  primary?: boolean;
+  className?: string;
+}) {
   const [href, setHref] = useState(checkoutUrl);
+  const [opening, setOpening] = useState(false);
 
   const mountedRef = useRef(true);
   useEffect(() => {
@@ -33,13 +48,29 @@ export function BuyLink({ checkoutUrl }: { checkoutUrl: string }) {
     })();
   }, [checkoutUrl]);
 
+  // Back/forward cache restores the page as it was left; clear the pending look.
+  useEffect(() => {
+    const reset = () => setOpening(false);
+    window.addEventListener("pageshow", reset);
+    return () => window.removeEventListener("pageshow", reset);
+  }, []);
+
   return (
     <a
-      className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+      aria-busy={opening || undefined}
+      className={cx(
+        "inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+        className,
+      )}
       href={href}
-      id="pro-buy"
+      id={primary ? "pro-buy" : undefined}
+      onClick={(event) => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+        setOpening(true);
+      }}
     >
-      Pre-order — $99
+      {opening ? <Spinner aria-hidden className="size-4" /> : null}
+      {opening ? "Opening checkout…" : "Get Pro — $99"}
     </a>
   );
 }

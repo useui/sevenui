@@ -76,7 +76,7 @@ const UNLISTED_PAGE_META = {
   "/pro": {
     title: "Pro",
     description:
-      "Pre-order SevenUI Pro for $99 lifetime — the price rises to $249 once the Pro blocks catalog launches.",
+      "SevenUI Pro at its launch price: $99 instead of $249 — a lifetime license to every Pro Block, per developer.",
   },
   "/account": {
     title: "Account",

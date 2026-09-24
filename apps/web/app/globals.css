@@ -93,22 +93,6 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-:root[data-theme="dark"] {
-  --background: oklch(0.085 0 0);
-  --foreground: oklch(0.96 0 0);
-  --border: oklch(0.24 0 0 / 0.8);
-  --muted: oklch(0.16 0 0);
-  --muted-foreground: oklch(0.68 0 0);
-}
-
-[data-theme="dark"] [data-sevenui-example] {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-}
-
 @theme inline {
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
@@ -207,7 +191,8 @@
   justify-items: center;
 }
 
-article :where(kbd):not(:where([data-sevenui-example], [data-sevenui-example] *)) {
+article
+  :where(kbd):not(:where([data-sevenui-example], [data-sevenui-example] *)) {
   color: var(--foreground);
   box-shadow:
     0 0 0 1px color-mix(in oklch, var(--foreground) 10%, transparent),
@@ -294,12 +279,18 @@ html {
 [data-block-preview] [data-preview-wrap][data-dragging="true"] iframe {
   pointer-events: none;
 }
-[data-block-preview] [data-preview-wrap][data-dragging="true"] [data-width-readout] {
+[data-block-preview]
+  [data-preview-wrap][data-dragging="true"]
+  [data-width-readout] {
   opacity: 1;
 }
 
-[data-block-preview] [data-resize-frame]:has([data-resize-handle]:hover) [data-width-readout],
-[data-block-preview] [data-resize-frame]:has([data-resize-handle]:focus-visible) [data-width-readout] {
+[data-block-preview]
+  [data-resize-frame]:has([data-resize-handle]:hover)
+  [data-width-readout],
+[data-block-preview]
+  [data-resize-frame]:has([data-resize-handle]:focus-visible)
+  [data-width-readout] {
   opacity: 1;
 }
 
@@ -459,36 +450,6 @@ html {
   color: var(--foreground);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .l-row .hero-rise {
-    animation: hero-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
-
-  .l-row .hero-rise-2 {
-    animation-delay: 0.07s;
-  }
-
-  .l-row .hero-rise-3 {
-    animation-delay: 0.14s;
-  }
-
-  .l-row .hero-rise-4 {
-    animation-delay: 0.21s;
-  }
-}
-
-@keyframes hero-rise {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
 @utility animate-in {
   animation: enter var(--tw-duration, 0.15s) var(--tw-ease, ease) both;
 }
@@ -553,11 +514,7 @@ html {
         var(--enter-translate-y, 0),
         0
       )
-      scale3d(
-        var(--enter-scale, 1),
-        var(--enter-scale, 1),
-        1
-      );
+      scale3d(var(--enter-scale, 1), var(--enter-scale, 1), 1);
   }
 }
 
@@ -569,11 +526,7 @@ html {
         var(--exit-translate-y, 0),
         0
       )
-      scale3d(
-        var(--exit-scale, 1),
-        var(--exit-scale, 1),
-        1
-      );
+      scale3d(var(--exit-scale, 1), var(--exit-scale, 1), 1);
   }
 }
 
@@ -623,81 +576,152 @@ html {
   }
 }
 
-/* --- /account --- */
+/* --- home, /pro, /account --- */
 
-@media (prefers-reduced-motion: no-preference) {
-  #account-root .draw {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: account-draw 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
+/* Browser surfaces on the three marketing/account pages. */
+.sv-page ::selection {
+  background: color-mix(in oklch, var(--foreground) 16%, transparent);
+  color: var(--foreground);
+}
 
-  #account-root .ink {
-    opacity: 0;
-    animation: account-ink 0.5s ease-out 0.55s both;
+.sv-page :where(input, textarea) {
+  caret-color: var(--foreground);
+}
+
+.sv-page :where(code, kbd, samp, pre, td, dd) {
+  font-variant-numeric: tabular-nums;
+}
+
+.sv-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--foreground) 22%, transparent)
+    transparent;
+}
+
+/* Dotted specimen plate behind a live component. */
+.sv-plate {
+  background-color: var(--background);
+  background-image: radial-gradient(
+    color-mix(in oklch, var(--foreground) 14%, transparent) 1px,
+    transparent 1.2px
+  );
+  background-size: 16px 16px;
+  background-position: center;
+}
+
+/* Icon swap in copy controls. */
+.sv-swap {
+  transition:
+    opacity 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Home: the tier rail. Static and fully drawn by default; where scroll-driven
+   animation exists, a stroke draws down it and each node fills mid-viewport. */
+.sv-rail-fill {
+  transform-origin: top;
+}
+
+.sv-node {
+  background: var(--foreground);
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .sv-rail-fill {
+      animation: sv-draw linear both;
+      animation-timeline: view();
+      animation-range: cover 18% cover 72%;
+    }
+
+    .sv-node {
+      animation: sv-node-fill linear both;
+      animation-timeline: view();
+      animation-range: entry 100% cover 48%;
+    }
   }
 }
 
-#account-root .license-card::before,
-#account-root .license-card::after {
-  content: "";
+@keyframes sv-draw {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes sv-node-fill {
+  0%,
+  70% {
+    background: var(--background);
+  }
+  100% {
+    background: var(--foreground);
+  }
+}
+
+/* Home: the inspect sweep, played only when a visitor turns inspect back on. */
+.sv-scanline {
   position: absolute;
-  z-index: 1;
-  width: 7px;
-  height: 7px;
-  border: 1px solid var(--border);
-  background: var(--background);
-}
-
-#account-root .license-card::before {
+  inset-inline: 0;
   top: 0;
-  left: 0;
-  transform: translate(-50%, -50%);
+  z-index: 30;
+  height: 96px;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in oklab, var(--foreground) 5%, transparent) calc(100% - 1px),
+    color-mix(in oklab, var(--foreground) 45%, transparent) calc(100% - 1px)
+  );
+  opacity: 0;
+  animation: sv-sweep 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-#account-root .license-card::after {
-  bottom: 0;
-  right: 0;
-  transform: translate(50%, 50%);
-}
-
-@keyframes account-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes account-ink {
-  to {
+@keyframes sv-sweep {
+  0% {
+    top: 0%;
+    transform: translateY(-100%);
     opacity: 1;
   }
-}
-
-/* --- /pro --- */
-
-@media (prefers-reduced-motion: no-preference) {
-  .catalog-cell .draw {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: catalog-draw 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: var(--draw-delay, 0s);
+  80% {
+    opacity: 1;
   }
-
-  .catalog-cell .ink {
+  100% {
+    top: 100%;
+    transform: translateY(-100%);
     opacity: 0;
-    animation: catalog-ink 0.5s ease-out both;
-    animation-delay: calc(var(--draw-delay, 0s) + 0.55s);
   }
 }
 
-@keyframes catalog-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
+.sv-tag {
+  animation: sv-tag-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--sv-i, 0) * 45ms);
 }
 
-@keyframes catalog-ink {
+@keyframes sv-tag-in {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+  }
   to {
     opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sv-scanline {
+    display: none;
+  }
+
+  .sv-tag {
+    animation: none;
+  }
+
+  .sv-swap {
+    transition: opacity 120ms linear;
   }
 }

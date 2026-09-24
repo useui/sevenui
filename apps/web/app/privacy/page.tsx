@@ -205,7 +205,7 @@ export default async function PrivacyPage() {
         <p>
           Your theme preference is stored in your browser's local storage and never
           leaves your device. You can block or delete cookies in your browser
-          settings, or opt out of Google Analytics with Google's
+          settings, or opt out of Google Analytics with Google's{" "}
           <a href="https://tools.google.com/dlpage/gaoptout" rel="noopener noreferrer" target="_blank">
             browser add-on
           </a>
