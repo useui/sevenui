@@ -4,7 +4,9 @@ import { SearchIcon } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 
-const SearchCommandDialog = dynamic(() => import("./command-dialog"), { ssr: false });
+const SearchCommandDialog = dynamic(() => import("./command-dialog"), {
+  ssr: false,
+});
 
 const STRING_SEARCH = "Search";
 
@@ -50,13 +52,13 @@ export function SearchTrigger() {
     <>
       <button
         aria-label={STRING_SEARCH}
-        className="inline-flex h-9 shrink-0 cursor-pointer items-center gap-2 rounded-full border border-border bg-background px-3 text-muted-foreground text-sm transition-colors hover:border-foreground hover:text-foreground xl:min-w-40"
+        className="inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         onClick={openPalette}
         type="button"
       >
         <SearchIcon aria-hidden="true" className="shrink-0" size={16} />
-        <span className="grow shrink-0 basis-0 text-start max-xl:hidden">{STRING_SEARCH}</span>
-        <kbd className="shrink-0 font-mono text-[0.7rem] max-xl:hidden">{shortcut}</kbd>
+        {/* <span className="grow shrink-0 basis-0 text-start max-xl:hidden">{STRING_SEARCH}</span>
+        <kbd className="shrink-0 font-mono text-[0.7rem] max-xl:hidden">{shortcut}</kbd> */}
       </button>
       {everOpened && <SearchCommandDialog onOpenChange={setOpen} open={open} />}
     </>
@@ -65,7 +67,11 @@ export function SearchTrigger() {
 
 function isField(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
-  return target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable;
+  return (
+    target.tagName === "INPUT" ||
+    target.tagName === "TEXTAREA" ||
+    target.isContentEditable
+  );
 }
 
 function isApplePlatform(): boolean {
