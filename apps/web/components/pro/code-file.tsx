@@ -1,13 +1,18 @@
 import { CopyButton } from "./copy-button";
 import { cx } from "../../lib/cx";
 
-/** A named source panel with one copy control. `copyValue` is what the clipboard gets when it differs from the text shown. */
+/**
+ * A named source panel with one copy control. `copyValue` is what the clipboard gets when it differs from the text shown.
+ * `html` is `code` already highlighted on the server (`highlightLines`); without it the code renders plain, which is
+ * what a client caller gets, since Shiki never ships to the browser.
+ */
 export function CodeFile({
   name,
   note,
   code,
   copyValue,
   copyLabel,
+  html,
   className,
 }: {
   name: string;
@@ -15,6 +20,7 @@ export function CodeFile({
   code: string;
   copyValue?: string;
   copyLabel: string;
+  html?: string;
   className?: string;
 }) {
   return (
@@ -27,7 +33,12 @@ export function CodeFile({
         <CopyButton label={copyLabel} value={copyValue ?? code} />
       </div>
       <pre className="sv-scroll overflow-x-auto px-3.5 py-3 font-mono text-[0.8125rem] leading-6 whitespace-pre-wrap text-card-foreground [overflow-wrap:anywhere] sm:whitespace-pre sm:[overflow-wrap:normal]">
-        <code>{code}</code>
+        {html === undefined ? (
+          <code>{code}</code>
+        ) : (
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: server-side Shiki output from our own sources
+          <code className="shiki" dangerouslySetInnerHTML={{ __html: html }} />
+        )}
       </pre>
     </div>
   );

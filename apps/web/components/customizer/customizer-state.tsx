@@ -36,11 +36,17 @@ export type CustomizerOptions = {
   themeOptions: readonly ThemeOption[];
 };
 
+/** Lives here, not in the panel, so the toolbar button can name the panel without importing it. */
+export const CUSTOMIZER_PANEL_ID = "theme-customizer-panel";
+
 type CustomizerValue = CustomizerOptions & {
   /** `null` until the stored preset has been read on the client. */
   config: PresetValues | null;
   dirty: boolean;
   open: boolean;
+  /** True once a trigger has been hovered, focused or pressed: the cue to load and mount the panel. */
+  panelRequested: boolean;
+  requestPanel: () => void;
   reset: () => void;
   setOpen: (open: boolean) => void;
   /** The button that last opened the panel; focus returns to it on close. */
@@ -64,6 +70,8 @@ export function CustomizerStateProvider({
 }: CustomizerOptions & { children: ReactNode }) {
   const [config, setConfig] = useState<PresetValues | null>(null);
   const [open, setOpen] = useState(false);
+  const [panelRequested, setPanelRequested] = useState(false);
+  const requestPanel = useCallback(() => setPanelRequested(true), []);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const readerRef = useRef<PresetReader | null>(null);
   const readerPromiseRef = useRef<Promise<PresetReader | null> | null>(null);
@@ -136,7 +144,9 @@ export function CustomizerStateProvider({
       defaults,
       dirty,
       open,
+      panelRequested,
       radiusOptions,
+      requestPanel,
       reset,
       select,
       setOpen,
@@ -144,7 +154,18 @@ export function CustomizerStateProvider({
       themeOptions,
       triggerRef,
     };
-  }, [baseOptions, config, defaults, loadReader, open, radiusOptions, storageKey, themeOptions]);
+  }, [
+    baseOptions,
+    config,
+    defaults,
+    loadReader,
+    open,
+    panelRequested,
+    radiusOptions,
+    requestPanel,
+    storageKey,
+    themeOptions,
+  ]);
 
   return <CustomizerContext.Provider value={value}>{children}</CustomizerContext.Provider>;
 }

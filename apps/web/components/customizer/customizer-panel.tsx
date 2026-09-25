@@ -3,7 +3,8 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
-import { RotateCcw, X } from "lucide-react";
+import { Moon, RotateCcw, Sun, X } from "lucide-react";
+import { useTheme } from "next-themes";
 import type { ReactNode } from "react";
 import { Badge } from "@/registry/base/ui/badge";
 import { Button } from "@/registry/base/ui/button";
@@ -12,9 +13,7 @@ import { Switch } from "@/registry/base/ui/switch";
 import { usePresetScope } from "../preset-scope";
 import { PRESET_SCOPE_ATTR } from "../preset-scope-attr";
 import { TOOLBAR_ICON } from "../toolbar-classes";
-import { type PresetField, useCustomizer } from "./customizer-state";
-
-export const CUSTOMIZER_PANEL_ID = "theme-customizer-panel";
+import { CUSTOMIZER_PANEL_ID, type PresetField, useCustomizer } from "./customizer-state";
 
 // Every option in every group is the same key: a glyph over a label. Checked draws a 2px
 // foreground rim (border + inset ring) so the state reads without relying on color alone.
@@ -34,20 +33,21 @@ const SLIDE =
 function Group({
   children,
   columns,
-  field,
+  name,
   label,
+  onValueChange,
   readout,
   value,
 }: {
   children: ReactNode;
   columns: string;
-  field: PresetField;
+  name: PresetField | "mode";
   label: string;
+  onValueChange: (value: string) => void;
   readout: string;
   value: string;
 }) {
-  const { select } = useCustomizer();
-  const id = `customizer-${field}`;
+  const id = `customizer-${name}`;
   return (
     <div>
       <div className="mb-2 flex items-baseline gap-2">
@@ -62,7 +62,7 @@ function Group({
       <RadioGroup
         aria-labelledby={id}
         className={`grid gap-1.5 ${columns}`}
-        onValueChange={(next) => select(field, next as string)}
+        onValueChange={(next) => onValueChange(next as string)}
         value={value}
       >
         {children}
@@ -110,8 +110,23 @@ function Specimen() {
  * Tab moves between them and the arrow keys move within one.
  */
 export function CustomizerPanel() {
-  const { baseOptions, config, defaults, dirty, open, radiusOptions, reset, setOpen, themeOptions, triggerRef } =
-    useCustomizer();
+  const {
+    baseOptions,
+    config,
+    defaults,
+    dirty,
+    open,
+    radiusOptions,
+    reset,
+    select,
+    setOpen,
+    themeOptions,
+    triggerRef,
+  } = useCustomizer();
+  // The header toggle's job, from inside the panel: the same next-themes switch for the whole site.
+  // Mounted only on the client (the panel loads lazily), so resolvedTheme is already known here.
+  const { resolvedTheme, setTheme } = useTheme();
+  const mode = resolvedTheme === "dark" ? "dark" : "light";
 
   const labelOf = (options: readonly { label: string; value: string }[], value: string | undefined) =>
     options.find((option) => option.value === value)?.label ?? "";
@@ -163,8 +178,9 @@ export function CustomizerPanel() {
             <div className="flex shrink-0 flex-col gap-5 px-5 py-5">
               <Group
                 columns="grid-cols-4"
-                field="theme"
                 label="Theme"
+                name="theme"
+                onValueChange={(next) => select("theme", next)}
                 readout={labelOf(themeOptions, config?.theme)}
                 value={config?.theme ?? ""}
               >
@@ -183,8 +199,9 @@ export function CustomizerPanel() {
 
               <Group
                 columns="grid-cols-5"
-                field="baseColor"
                 label="Base color"
+                name="baseColor"
+                onValueChange={(next) => select("baseColor", next)}
                 readout={labelOf(baseOptions, config?.baseColor)}
                 value={config?.baseColor ?? ""}
               >
@@ -205,8 +222,9 @@ export function CustomizerPanel() {
 
               <Group
                 columns="grid-cols-4"
-                field="radius"
                 label="Radius"
+                name="radius"
+                onValueChange={(next) => select("radius", next)}
                 readout={labelOf(radiusOptions, config?.radius)}
                 value={config?.radius ?? ""}
               >
@@ -220,6 +238,24 @@ export function CustomizerPanel() {
                     <span className="max-w-full truncate">{option.label}</span>
                   </Radio.Root>
                 ))}
+              </Group>
+
+              <Group
+                columns="grid-cols-2"
+                label="Mode"
+                name="mode"
+                onValueChange={setTheme}
+                readout={mode === "dark" ? "Dark" : "Light"}
+                value={mode}
+              >
+                <Radio.Root className={KEY} value="light">
+                  <Sun aria-hidden="true" className={`${GLYPH} size-4`} strokeWidth={1.75} />
+                  <span className="max-w-full truncate">Light</span>
+                </Radio.Root>
+                <Radio.Root className={KEY} value="dark">
+                  <Moon aria-hidden="true" className={`${GLYPH} size-4`} strokeWidth={1.75} />
+                  <span className="max-w-full truncate">Dark</span>
+                </Radio.Root>
               </Group>
             </div>
           </div>

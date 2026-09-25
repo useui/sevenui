@@ -9,8 +9,8 @@ import {
   THEME_NAMES,
 } from "@sevenui/presets/schema";
 import type { ReactNode } from "react";
-import { CustomizerPanel } from "./customizer-panel";
 import { CustomizerStateProvider } from "./customizer-state";
+import { LazyCustomizerPanel } from "./lazy-customizer-panel";
 
 const themeSwatch = (name: (typeof THEME_NAMES)[number]) => THEMES[name].light.primary ?? BASE_COLORS.neutral.light.primary;
 
@@ -35,7 +35,7 @@ const RADIUS_GLYPH: Record<(typeof RADIUS_NAMES)[number], string> = {
 
 /**
  * Resolves the option swatches on the server so the preset tables stay out of the client bundle,
- * and mounts the page's one customizer panel.
+ * and mounts the page's one customizer panel, loaded only once someone reaches for a trigger.
  */
 export function CustomizerProvider({ children }: { children: ReactNode }) {
   return (
@@ -60,7 +60,7 @@ export function CustomizerProvider({ children }: { children: ReactNode }) {
       }))}
     >
       {children}
-      <CustomizerPanel />
+      <LazyCustomizerPanel />
     </CustomizerStateProvider>
   );
 }

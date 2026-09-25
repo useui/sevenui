@@ -9,6 +9,17 @@ export const REGISTRY_SNIPPET = `"registries": {
 
 export const EXAMPLE_BLOCK = "dashboard-01";
 
+export type SetupSnippet = "env" | "registry" | "install";
+
+/** The code each step shows, so a server caller can highlight exactly what the steps render. */
+export function setupSnippets({ displayKey, block = EXAMPLE_BLOCK }: { displayKey?: string; block?: string } = {}) {
+  return {
+    env: { code: `SEVENUI_PRO_KEY=${displayKey ?? "<your key>"}`, lang: "dotenv" },
+    registry: { code: REGISTRY_SNIPPET, lang: "json" },
+    install: { code: `npx shadcn@latest add @sevenui/pro/${block}`, lang: "bash" },
+  } as const satisfies Record<SetupSnippet, { code: string; lang: string }>;
+}
+
 /**
  * The three real setup steps for a Pro key. With `licenseKey`, the .env copy
  * carries the full key while the page only ever shows `displayKey`.
@@ -18,24 +29,27 @@ export function SetupSteps({
   displayKey,
   block = EXAMPLE_BLOCK,
   headingLevel = "h3",
+  highlighted,
 }: {
   licenseKey?: string;
   displayKey?: string;
   block?: string;
   headingLevel?: "h2" | "h3";
+  /** Server-highlighted HTML per snippet (see `setupSnippets`); the account page renders them plain. */
+  highlighted?: Partial<Record<SetupSnippet, string>>;
 }) {
   const Heading = headingLevel;
-  const shown = displayKey ?? "<your key>";
-  const install = `npx shadcn@latest add @sevenui/pro/${block}`;
+  const snippets = setupSnippets({ displayKey, block });
   const steps = [
     {
       title: "Put the key in your environment",
       body: "Add it to .env or your host's secret settings. Keep it out of committed files; anyone holding it installs as you.",
       file: (
         <CodeFile
-          code={`SEVENUI_PRO_KEY=${shown}`}
+          code={snippets.env.code}
           copyLabel={licenseKey ? ".env line with your full key" : ".env line"}
           copyValue={`SEVENUI_PRO_KEY=${licenseKey ?? "<your key>"}`}
+          html={highlighted?.env}
           name=".env"
           note="never committed"
         />
@@ -44,12 +58,21 @@ export function SetupSteps({
     {
       title: "Send the key with @sevenui",
       body: "Give the @sevenui registry an Authorization header in components.json, once. The CLI then sends your key with every @sevenui install, so set SEVENUI_PRO_KEY wherever you run it.",
-      file: <CodeFile code={REGISTRY_SNIPPET} copyLabel="registry config" name="components.json" />,
+      file: (
+        <CodeFile
+          code={snippets.registry.code}
+          copyLabel="registry config"
+          html={highlighted?.registry}
+          name="components.json"
+        />
+      ),
     },
     {
       title: "Add any Block by name",
       body: "The same CLI as the free tiers. The source lands in your repo.",
-      file: <CodeFile code={install} copyLabel="install command" name="terminal" />,
+      file: (
+        <CodeFile code={snippets.install.code} copyLabel="install command" html={highlighted?.install} name="terminal" />
+      ),
     },
   ];
 

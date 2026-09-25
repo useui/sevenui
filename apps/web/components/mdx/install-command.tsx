@@ -27,8 +27,6 @@ export async function InstallCommand({ item }: { item: string }) {
           className={cx(CODE_CLASS, `pm-only pm-only-${pm} shiki`)}
           // biome-ignore lint/security/noDangerouslySetInnerHtml: build-time Shiki output from our own sources
           dangerouslySetInnerHTML={{ __html: html }}
-          // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable code region must be keyboard-focusable
-          tabIndex={0}
         />
       ))}
     </CodeBlock>

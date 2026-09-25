@@ -10,11 +10,12 @@ const highlighterPromise: Promise<HighlighterCore> = createHighlighterCore({
     import("@shikijs/langs/css"),
     import("@shikijs/langs/bash"),
     import("@shikijs/langs/json"),
+    import("@shikijs/langs/dotenv"),
   ],
   engine: createOnigurumaEngine(import("shiki/wasm")),
 });
 
-export type HighlightLang = "tsx" | "css" | "bash" | "json";
+export type HighlightLang = "tsx" | "css" | "bash" | "json" | "dotenv";
 
 export type HighlightStructure = "classic" | "inline";
 
@@ -38,4 +39,21 @@ export async function highlight(
   });
   cache.set(key, html);
   return html;
+}
+
+/**
+ * The highlighted lines alone — the inside of Shiki's `<pre><code>` — for a caller that renders its own
+ * `<code className="shiki">`. A trailing newline is dropped first so it does not become an empty, numbered last line.
+ */
+export async function highlightLines(code: string, lang: HighlightLang): Promise<string> {
+  const html = await highlight(code.replace(/\n+$/, ""), lang, "classic");
+  const match = /^<pre[^>]*><code>([\s\S]*)<\/code><\/pre>\s*$/.exec(html);
+  if (!match) {
+    throw new Error(
+      "lib/shiki.ts: shiki's classic-structure output did not match the expected " +
+        `"<pre ...><code>…</code></pre>" shape (got: ${html.slice(0, 120)}…). ` +
+        "highlightLines()'s extraction regex needs updating to match the new shape.",
+    );
+  }
+  return match[1] ?? "";
 }

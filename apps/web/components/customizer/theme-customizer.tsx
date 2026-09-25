@@ -2,8 +2,7 @@
 
 import { Palette } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/registry/base/ui/tooltip";
-import { CUSTOMIZER_PANEL_ID } from "./customizer-panel";
-import { useCustomizer } from "./customizer-state";
+import { CUSTOMIZER_PANEL_ID, useCustomizer } from "./customizer-state";
 
 /**
  * Toolbar button that toggles the page's customizer panel. Every instance drives the same panel
@@ -11,7 +10,7 @@ import { useCustomizer } from "./customizer-state";
  * It sits outside the preset scope, so it keeps the site's own primary whatever theme is picked.
  */
 export function ThemeCustomizer() {
-  const { config, open, setOpen, triggerRef } = useCustomizer();
+  const { config, open, requestPanel, setOpen, triggerRef } = useCustomizer();
 
   return (
     <Tooltip>
@@ -28,8 +27,12 @@ export function ThemeCustomizer() {
             className="inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md border border-transparent bg-primary px-2 text-xs font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-expanded:bg-primary/85"
             onClick={(event) => {
               triggerRef.current = event.currentTarget;
+              requestPanel();
               setOpen(!open);
             }}
+            // Intent to open: start loading the panel so it is mounted, closed, before the click.
+            onFocus={requestPanel}
+            onPointerEnter={requestPanel}
             type="button"
           />
         }

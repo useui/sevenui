@@ -243,6 +243,31 @@ article > :last-child {
   text-decoration: var(--shiki-dark-text-decoration, inherit);
 }
 
+/*
+ * Line numbers for every multi-line Shiki block (MDX fences, Code tabs, CodeFile). Pure CSS keyed on
+ * Shiki's own `.line` spans, so no renderer has to count lines, a one-line command stays bare, and the
+ * numbers are never part of a selection or a copy (CodeBlock copies textContent, which skips ::before).
+ */
+code:has(> .line + .line) {
+  counter-reset: line;
+}
+
+code:has(> .line + .line) > .line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 2ch;
+  margin-inline-end: 2ch;
+  text-align: end;
+  color: color-mix(in oklab, var(--muted-foreground) 70%, transparent);
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+
+code:has(> .line:nth-child(100)) > .line::before {
+  width: 3ch;
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   mix-blend-mode: normal;

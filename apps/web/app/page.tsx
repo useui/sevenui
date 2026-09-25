@@ -14,6 +14,7 @@ import { CodeFile } from "../components/pro/code-file";
 import { getNavTree, resolvePrimitivesHref } from "../lib/docs/nav";
 import { pageMetadata, RootUrlTags } from "../lib/metadata";
 import { requirePageMeta } from "../lib/page-meta";
+import { highlightLines } from "../lib/shiki";
 import { packageManagerCommands } from "../lib/package-manager";
 import { installCommand } from "../lib/registry";
 import { buttonVariants } from "@/registry/base/ui/button";
@@ -197,6 +198,7 @@ export default async function Home() {
           <CodeFile
             code={sourceOf("switch")}
             copyLabel="abridged switch source"
+            html={await highlightLines(sourceOf("switch"), "tsx")}
             name="components/ui/switch.tsx"
           />
         </div>

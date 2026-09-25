@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { ScrollArea } from "@/registry/base/ui/scroll-area";
 import { CopyButton } from "./copy-button";
 import { currentPackageManager, type PackageManager } from "../../lib/package-manager";
 
@@ -65,7 +66,7 @@ export function CodeBlock({
       ref={preRef}
       data-language={language}
       className={cx(
-        "group relative my-6 overflow-auto rounded-md border border-border bg-transparent pb-4 text-[0.8125rem] leading-[1.55]",
+        "group relative my-6 rounded-md border border-border bg-transparent pb-2.5 text-[0.8125rem] leading-[1.55]",
         label || headerRight ? "pt-15" : "pt-4",
         className,
       )}
@@ -87,7 +88,10 @@ export function CodeBlock({
           <LanguageIcon language={language} />
         </span>
       ) : null}
-      {children}
+      {/* The viewport scrolls (and takes the tab stop once it overflows), so the header and copy button stay put. */}
+      <ScrollArea className="[&_[data-slot=scroll-area-viewport]]:max-h-96" orientation="both">
+        {children}
+      </ScrollArea>
       <CopyButton getText={getCopyText} />
     </pre>
   );

@@ -5,10 +5,18 @@ import { loadCatalog } from "../../components/home/registry-data";
 import { JsonLd } from "../../components/json-ld";
 import { BlockCover } from "../../components/pro/block-cover";
 import { BuyLink } from "../../components/pro/buy-link";
-import { SetupSteps } from "../../components/pro/setup-steps";
+import { SetupSteps, setupSnippets } from "../../components/pro/setup-steps";
 import { pageMetadata } from "../../lib/metadata";
 import { requirePageMeta } from "../../lib/page-meta";
+import { highlightLines } from "../../lib/shiki";
 import { FAQ } from "./faq";
+
+async function highlightSetupSnippets() {
+  const entries = await Promise.all(
+    Object.entries(setupSnippets()).map(async ([key, { code, lang }]) => [key, await highlightLines(code, lang)] as const),
+  );
+  return Object.fromEntries(entries);
+}
 
 // The Pro manifest is read at render time; match its 300 s ISR window.
 export const revalidate = 300;
@@ -253,7 +261,7 @@ export default async function ProPage() {
               per project.
             </p>
           </div>
-          <SetupSteps />
+          <SetupSteps highlighted={await highlightSetupSnippets()} />
         </div>
       </section>
 

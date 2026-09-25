@@ -3,7 +3,7 @@ import "server-only";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { rewriteRegistryImports } from "../../lib/registry-imports";
-import { highlight } from "../../lib/shiki";
+import { highlightLines } from "../../lib/shiki";
 import { CodeBlock } from "../mdx/code-block";
 import { CODE_CLASS, cx } from "../mdx/code-element";
 
@@ -23,24 +23,11 @@ async function readRegistrySource(relPath: string): Promise<string> {
   return readFile(fullPath, "utf8");
 }
 
-async function highlightSource(code: string): Promise<string> {
-  const html = await highlight(code, "tsx", "classic");
-  const match = /^<pre[^>]*><code>([\s\S]*)<\/code><\/pre>\s*$/.exec(html);
-  if (!match) {
-    throw new Error(
-      "components/demo/source-pane.tsx: shiki's classic-structure output did not match the expected " +
-        `"<pre ...><code>…</code></pre>" shape (got: ${html.slice(0, 120)}…). ` +
-        "highlightSource()'s extraction regex needs updating to match the new shape.",
-    );
-  }
-  return match[1] ?? "";
-}
-
 export async function sourcePane(relPath: string): Promise<React.ReactElement> {
   // Rewritten before highlighting so the tokens shiki colours are the ones the
   // reader will have on disk after `shadcn add`, not the registry's own spelling.
   const source = rewriteRegistryImports(await readRegistrySource(relPath));
-  const highlighted = await highlightSource(source);
+  const highlighted = await highlightLines(source, "tsx");
 
   return (
     <CodeBlock className="my-0! rounded-none! border-0!" language="tsx">
@@ -48,8 +35,6 @@ export async function sourcePane(relPath: string): Promise<React.ReactElement> {
         className={cx(CODE_CLASS, "language-tsx shiki")}
         // biome-ignore lint/security/noDangerouslySetInnerHtml: build-time Shiki output from our own sources
         dangerouslySetInnerHTML={{ __html: highlighted }}
-        // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable code region must be keyboard-focusable
-        tabIndex={0}
       />
     </CodeBlock>
   );

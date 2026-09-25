@@ -1,3 +1,7 @@
+import { TooltipProvider } from "@/registry/base/ui/tooltip";
+import { Announcer } from "../../components/announcer";
+import { PackageManagerIcons } from "../../components/blocks/package-manager-icons";
+import { CustomizerProvider } from "../../components/customizer/customizer-provider";
 import { DocsSidebar } from "../../components/docs/sidebar";
 import { getNavTree, resolvePrimitivesHref } from "../../lib/docs/nav";
 
@@ -11,10 +15,19 @@ export default async function DocsLayout({ children }: { children: React.ReactNo
     throw new Error("app/docs/layout.tsx: nav tree has no Primitives group with a resolvable href");
   }
 
+  // The same providers as the gallery: every <Component> demo carries the gallery's toolbar, whose
+  // install menu announces its copies and whose Customize button drives the page's one panel.
   return (
-    <div className="mx-auto grid grid-cols-1 items-start lg:grid-cols-[17.5rem_minmax(0,1fr)] xl:grid-cols-[17.5rem_minmax(0,1fr)_17.5rem]">
-      <DocsSidebar primitivesHref={primitivesHref} tree={tree} />
-      {children}
-    </div>
+    <TooltipProvider>
+      <Announcer>
+        <CustomizerProvider>
+          <PackageManagerIcons />
+          <div className="mx-auto grid grid-cols-1 items-start lg:grid-cols-[17.5rem_minmax(0,1fr)] xl:grid-cols-[17.5rem_minmax(0,1fr)_17.5rem]">
+            <DocsSidebar primitivesHref={primitivesHref} tree={tree} />
+            {children}
+          </div>
+        </CustomizerProvider>
+      </Announcer>
+    </TooltipProvider>
   );
 }
