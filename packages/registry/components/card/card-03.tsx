@@ -1,7 +1,6 @@
 "use client";
 
-import { Avatar, AvatarFallback } from "@/registry/base/ui/avatar";
-import { Button } from "@/registry/base/ui/button";
+import { Badge } from "@/registry/base/ui/badge";
 import {
   Card,
   CardContent,
@@ -10,37 +9,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/registry/base/ui/card";
-
-const members = [
-  { name: "Emma Wilson", role: "Product Designer", initials: "EW" },
-  { name: "James Carter", role: "Frontend Engineer", initials: "JC" },
-  { name: "Sofia Reyes", role: "Product Manager", initials: "SR" },
-];
+import { Progress, ProgressLabel, ProgressValue } from "@/registry/base/ui/progress";
 
 export default function Card03() {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>Team members</CardTitle>
-        <CardDescription>People with access to this project.</CardDescription>
+        <CardTitle>Design system refresh</CardTitle>
+        <CardDescription>
+          Unify tokens and components across the product.
+        </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {members.map((member) => (
-          <div key={member.name} className="flex items-center gap-3">
-            <Avatar>
-              <AvatarFallback>{member.initials}</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col">
-              <span className="text-sm font-medium">{member.name}</span>
-              <span className="text-xs text-muted-foreground">{member.role}</span>
-            </div>
+      <CardContent>
+        <Progress value={68} className="w-full">
+          <div className="flex w-full items-center justify-between">
+            <ProgressLabel>Tasks completed</ProgressLabel>
+            <ProgressValue />
           </div>
-        ))}
+        </Progress>
       </CardContent>
-      <CardFooter>
-        <Button variant="outline" className="w-full">
-          Invite
-        </Button>
+      <CardFooter className="flex items-center justify-between">
+        <Badge variant="secondary">In progress</Badge>
+        <span className="text-xs text-muted-foreground">Due Sep 30</span>
       </CardFooter>
     </Card>
   );

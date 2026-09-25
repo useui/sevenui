@@ -1,16 +1,24 @@
 "use client";
 
+import { ArrowRight, Download, Mail } from "lucide-react";
+
 import { Button } from "@/registry/base/ui/button";
-import { Spinner } from "@/registry/base/ui/spinner";
 
 export default function Button01() {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <Button disabled>
-        <Spinner />
-        Saving changes
+      <Button>
+        <Mail aria-hidden="true" />
+        Email us
       </Button>
-      <Button>Save changes</Button>
+      <Button variant="outline">
+        Continue
+        <ArrowRight aria-hidden="true" />
+      </Button>
+      <Button variant="secondary">
+        <Download aria-hidden="true" />
+        Download report
+      </Button>
     </div>
   );
 }

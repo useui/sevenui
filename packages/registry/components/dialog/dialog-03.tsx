@@ -17,12 +17,20 @@ import { Input } from "@/registry/base/ui/input";
 
 export default function Dialog03() {
   const [copied, setCopied] = React.useState(false);
+  const timer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const link = "https://sevenui.dev/s/9f3a1c";
+
+  React.useEffect(() => {
+    return () => {
+      if (timer.current) clearTimeout(timer.current);
+    };
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard?.writeText(link).catch(() => {});
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -36,7 +44,13 @@ export default function Dialog03() {
           </DialogDescription>
         </DialogHeader>
         <div className="flex items-center gap-2">
-          <Input readOnly value={link} className="flex-1" />
+          <Input
+            readOnly
+            value={link}
+            aria-label="Share link"
+            className="flex-1"
+            onFocus={(event) => event.currentTarget.select()}
+          />
           <Button
             type="button"
             variant="outline"
@@ -51,6 +65,9 @@ export default function Dialog03() {
             )}
           </Button>
         </div>
+        <p className="sr-only" aria-live="polite">
+          {copied ? "Link copied to clipboard." : ""}
+        </p>
         <DialogFooter showCloseButton />
       </DialogContent>
     </Dialog>

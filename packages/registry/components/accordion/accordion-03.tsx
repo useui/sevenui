@@ -33,19 +33,31 @@ const faqs = [
 export default function Accordion03() {
   return (
     <div className="flex w-full max-w-lg flex-col gap-6">
-      <h3 className="text-lg font-semibold">Frequently asked questions</h3>
+      <div className="flex flex-col gap-1.5">
+        <h3 className="text-lg font-semibold text-balance">
+          Frequently asked questions
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          Plans, billing, and what happens to your data.
+        </p>
+      </div>
       <Accordion defaultValue={["trial"]}>
         {faqs.map((faq) => (
           <AccordionItem key={faq.value} value={faq.value}>
             <AccordionTrigger>{faq.question}</AccordionTrigger>
-            <AccordionContent>{faq.answer}</AccordionContent>
+            <AccordionContent className="text-muted-foreground">
+              {faq.answer}
+            </AccordionContent>
           </AccordionItem>
         ))}
       </Accordion>
       <p className="text-sm text-muted-foreground">
         Still stuck?{" "}
-        <a href="#" className="font-medium text-foreground underline underline-offset-4">
-          Contact support
+        <a
+          href="mailto:support@northwind.dev"
+          className="rounded-sm font-medium text-foreground underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        >
+          Email our support team
         </a>
         .
       </p>

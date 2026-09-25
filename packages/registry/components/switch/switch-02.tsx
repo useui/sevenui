@@ -26,7 +26,7 @@ const settings = [
 
 export default function Switch02() {
   return (
-    <div className="flex w-full max-w-sm flex-col divide-y divide-border rounded-lg border border-border">
+    <div className="flex w-full max-w-sm flex-col divide-y divide-border rounded-lg border border-border bg-card text-card-foreground">
       {settings.map((setting) => (
         <div key={setting.id} className="flex items-start justify-between gap-4 px-4 py-3">
           <div className="flex flex-col gap-0.5">

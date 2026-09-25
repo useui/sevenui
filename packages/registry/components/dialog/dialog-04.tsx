@@ -1,5 +1,7 @@
 "use client";
 
+import * as React from "react";
+
 import { Button } from "@/registry/base/ui/button";
 import {
   Dialog,
@@ -44,25 +46,54 @@ const sections = [
 ];
 
 export default function Dialog04() {
+  const [reachedEnd, setReachedEnd] = React.useState(false);
+
+  // Accept unlocks once the reader has scrolled to the last section, or
+  // right away when everything already fits on screen.
+  const checkEnd = (node: HTMLElement | null) => {
+    if (node && node.scrollTop + node.clientHeight >= node.scrollHeight - 8) {
+      setReachedEnd(true);
+    }
+  };
+
   return (
-    <Dialog>
+    <Dialog
+      onOpenChangeComplete={(open) => {
+        if (!open) setReachedEnd(false);
+      }}
+    >
       <DialogTrigger render={<Button variant="outline">Read terms</Button>} />
       <DialogContent className="max-h-[min(32rem,80vh)] grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Terms of service</DialogTitle>
           <DialogDescription>Last updated September 1, 2026.</DialogDescription>
         </DialogHeader>
-        <div className="flex min-h-0 flex-col gap-4 overflow-y-auto pr-1 text-sm">
+        <section
+          ref={checkEnd}
+          aria-label="Terms of service text"
+          // biome-ignore lint/a11y/noNoninteractiveTabindex: the scroll region must be keyboard scrollable
+          tabIndex={0}
+          onScroll={(event) => checkEnd(event.currentTarget)}
+          className="-mx-1 flex min-h-0 flex-col gap-4 overflow-y-auto rounded-md px-1 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        >
           {sections.map((section) => (
             <div key={section.heading} className="flex flex-col gap-1">
-              <h4 className="font-medium text-foreground">{section.heading}</h4>
+              <h3 className="font-medium text-foreground">{section.heading}</h3>
               <p className="text-muted-foreground">{section.body}</p>
             </div>
           ))}
-        </div>
-        <DialogFooter>
+        </section>
+        <DialogFooter className="sm:items-center">
+          <p
+            aria-live="polite"
+            className="text-center text-xs text-muted-foreground sm:mr-auto sm:text-left"
+          >
+            {reachedEnd ? "Thanks for reading." : "Scroll to the end to accept."}
+          </p>
           <DialogClose render={<Button variant="outline">Decline</Button>} />
-          <Button>Accept terms</Button>
+          <DialogClose
+            render={<Button disabled={!reachedEnd}>Accept terms</Button>}
+          />
         </DialogFooter>
       </DialogContent>
     </Dialog>

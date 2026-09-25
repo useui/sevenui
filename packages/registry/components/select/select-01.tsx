@@ -4,35 +4,55 @@ import { Label } from "@/registry/base/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/registry/base/ui/select";
 
-const statuses = [
-  { value: "active", label: "Active", dotClassName: "bg-emerald-500" },
-  { value: "pending", label: "Pending", dotClassName: "bg-amber-500" },
-  { value: "failed", label: "Failed", dotClassName: "bg-red-500" },
-];
+const timezones = {
+  "North America": [
+    { value: "america-new-york", label: "New York (ET)" },
+    { value: "america-chicago", label: "Chicago (CT)" },
+    { value: "america-los-angeles", label: "Los Angeles (PT)" },
+  ],
+  Europe: [
+    { value: "europe-london", label: "London (GMT)" },
+    { value: "europe-berlin", label: "Berlin (CET)" },
+    { value: "europe-istanbul", label: "Istanbul (TRT)" },
+  ],
+};
+
+const items = Object.values(timezones).flat();
 
 export default function Select01() {
   return (
     <div className="grid w-full max-w-xs gap-1.5">
-      <Label htmlFor="select-01-status">Status</Label>
-      <Select items={statuses} defaultValue="active">
-        <SelectTrigger id="select-01-status" className="w-full">
+      <Label htmlFor="select-01-timezone">Timezone</Label>
+      <Select items={items} defaultValue="europe-istanbul">
+        <SelectTrigger id="select-01-timezone" className="w-full">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {statuses.map((status) => (
-            <SelectItem key={status.value} value={status.value}>
-              <span
-                aria-hidden="true"
-                className={`size-1.5 rounded-full ${status.dotClassName}`}
-              />
-              {status.label}
-            </SelectItem>
-          ))}
+          <SelectGroup>
+            <SelectLabel>North America</SelectLabel>
+            {timezones["North America"].map((zone) => (
+              <SelectItem key={zone.value} value={zone.value}>
+                {zone.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+          <SelectSeparator />
+          <SelectGroup>
+            <SelectLabel>Europe</SelectLabel>
+            {timezones.Europe.map((zone) => (
+              <SelectItem key={zone.value} value={zone.value}>
+                {zone.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
         </SelectContent>
       </Select>
     </div>

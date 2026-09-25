@@ -4,55 +4,34 @@ import { Label } from "@/registry/base/ui/label";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
-  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/registry/base/ui/select";
 
-const timezones = {
-  "North America": [
-    { value: "america-new-york", label: "New York (ET)" },
-    { value: "america-chicago", label: "Chicago (CT)" },
-    { value: "america-los-angeles", label: "Los Angeles (PT)" },
-  ],
-  Europe: [
-    { value: "europe-london", label: "London (GMT)" },
-    { value: "europe-berlin", label: "Berlin (CET)" },
-    { value: "europe-istanbul", label: "Istanbul (TRT)" },
-  ],
-};
-
-const items = Object.values(timezones).flat();
+const plans = [
+  { value: "starter", label: "Starter", description: "For solo projects and side hustles" },
+  { value: "team", label: "Team", description: "For growing teams that ship together" },
+  { value: "enterprise", label: "Enterprise", description: "Advanced controls and support" },
+];
 
 export default function Select02() {
   return (
     <div className="grid w-full max-w-xs gap-1.5">
-      <Label htmlFor="select-02-timezone">Timezone</Label>
-      <Select items={items} defaultValue="europe-istanbul">
-        <SelectTrigger id="select-02-timezone" className="w-full">
+      <Label htmlFor="select-02-plan">Plan</Label>
+      <Select items={plans} defaultValue="team">
+        <SelectTrigger id="select-02-plan" className="w-full">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectGroup>
-            <SelectLabel>North America</SelectLabel>
-            {timezones["North America"].map((zone) => (
-              <SelectItem key={zone.value} value={zone.value}>
-                {zone.label}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-          <SelectSeparator />
-          <SelectGroup>
-            <SelectLabel>Europe</SelectLabel>
-            {timezones.Europe.map((zone) => (
-              <SelectItem key={zone.value} value={zone.value}>
-                {zone.label}
-              </SelectItem>
-            ))}
-          </SelectGroup>
+          {plans.map((plan) => (
+            <SelectItem key={plan.value} value={plan.value}>
+              <span className="flex flex-col">
+                <span>{plan.label}</span>
+                <span className="text-xs text-muted-foreground">{plan.description}</span>
+              </span>
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </div>

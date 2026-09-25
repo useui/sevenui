@@ -17,6 +17,7 @@ export default function Input03() {
         <Input
           id="input-03-password"
           type={visible ? "text" : "password"}
+          autoComplete="current-password"
           defaultValue="sevenui-secret"
           className="pr-9"
         />
@@ -24,7 +25,7 @@ export default function Input03() {
           type="button"
           variant="ghost"
           size="icon-sm"
-          className="absolute top-1/2 right-1 -translate-y-1/2"
+          className="absolute inset-y-0 right-1 my-auto"
           aria-label={visible ? "Hide password" : "Show password"}
           onClick={() => setVisible((prev) => !prev)}
         >

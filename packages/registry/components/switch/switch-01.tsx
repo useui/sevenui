@@ -5,7 +5,7 @@ import { Switch } from "@/registry/base/ui/switch";
 
 export default function Switch01() {
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex w-full max-w-sm items-center justify-between gap-4">
       <div className="flex flex-col gap-0.5">
         <Label htmlFor="switch-01-marketing">Marketing emails</Label>
         <span className="text-xs text-muted-foreground">

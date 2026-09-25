@@ -7,21 +7,26 @@ import {
   AccordionTrigger,
 } from "@/registry/base/ui/accordion";
 
-const items = [
+const sections = [
+  {
+    value: "details",
+    title: "Product details",
+    body: "A lightweight three-layer shell with fully taped seams, a helmet-compatible hood, and pit zips for venting on steep climbs.",
+  },
+  {
+    value: "materials",
+    title: "Materials and care",
+    body: "Face fabric is 100% recycled nylon with a PFC-free water repellent finish. Machine wash cold, then tumble dry low to reactivate the coating.",
+  },
+  {
+    value: "fit",
+    title: "Size and fit",
+    body: "Regular fit with room for a midlayer. The model is 6'1\" and wears a size M. Sleeves are cut long to stay put when you reach overhead.",
+  },
   {
     value: "shipping",
-    title: "How long does shipping take?",
-    body: "Standard delivery takes 3-5 business days. Express shipping ensures next-day delivery for orders placed before 2pm.",
-  },
-  {
-    value: "returns",
-    title: "What is the return policy?",
-    body: "Every purchase includes a 30-day return window. Items go back in their original condition; refunds land within 48 hours.",
-  },
-  {
-    value: "warranty",
-    title: "Is there a warranty?",
-    body: "All products carry a two-year limited warranty covering manufacturing defects and hardware failures.",
+    title: "Shipping and returns",
+    body: "Free standard shipping on orders over $75, delivered in 3-5 business days. Unworn items can be returned within 30 days.",
   },
 ];
 
@@ -29,16 +34,18 @@ export default function Accordion01() {
   return (
     <Accordion
       className="flex w-full max-w-md flex-col gap-2"
-      defaultValue={["shipping"]}
+      defaultValue={["details"]}
     >
-      {items.map((item) => (
+      {sections.map((section) => (
         <AccordionItem
-          key={item.value}
-          value={item.value}
+          key={section.value}
+          value={section.value}
           className="rounded-lg border px-4 last:border-b"
         >
-          <AccordionTrigger>{item.title}</AccordionTrigger>
-          <AccordionContent>{item.body}</AccordionContent>
+          <AccordionTrigger>{section.title}</AccordionTrigger>
+          <AccordionContent className="text-muted-foreground">
+            {section.body}
+          </AccordionContent>
         </AccordionItem>
       ))}
     </Accordion>

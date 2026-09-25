@@ -6,39 +6,54 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/registry/base/ui/accordion";
+import { Badge } from "@/registry/base/ui/badge";
 
-const items = [
+const sections = [
   {
-    value: "email",
-    title: "Email notifications",
-    body: "Get a summary of activity in your workspace delivered every morning.",
+    value: "rate-limits",
+    title: "Rate limits",
+    body: "Your API keys can make 600 requests per minute. Requests over the limit return 429 with a Retry-After header.",
   },
   {
-    value: "sms",
-    title: "SMS alerts",
-    disabled: true,
-    body: "Requires a verified phone number on a Pro plan or higher.",
+    value: "ip-allowlist",
+    title: "IP allowlist",
+    plan: "Enterprise",
+    body: "Restrict API access to a list of trusted CIDR ranges.",
   },
   {
-    value: "push",
-    title: "Push notifications",
-    body: "Enable browser push to get notified the moment something changes.",
+    value: "signing",
+    title: "Request signing",
+    body: "Every webhook carries an HMAC-SHA256 signature in the X-Signature header. Rotate the signing secret at any time without downtime.",
   },
 ];
 
 export default function Accordion04() {
   return (
-    <Accordion className="w-full max-w-md" defaultValue={["email"]}>
-      {items.map((item) => (
-        <AccordionItem
-          key={item.value}
-          value={item.value}
-          disabled={item.disabled}
-        >
-          <AccordionTrigger>{item.title}</AccordionTrigger>
-          <AccordionContent>{item.body}</AccordionContent>
-        </AccordionItem>
-      ))}
-    </Accordion>
+    <div className="flex w-full max-w-md flex-col gap-2">
+      <Accordion defaultValue={["rate-limits"]}>
+        {sections.map((section) => (
+          <AccordionItem
+            key={section.value}
+            value={section.value}
+            disabled={Boolean(section.plan)}
+          >
+            <AccordionTrigger>
+              <span className="flex flex-wrap items-center gap-2">
+                {section.title}
+                {section.plan ? (
+                  <Badge variant="outline">{section.plan} plan</Badge>
+                ) : null}
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-muted-foreground">
+              {section.body}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+      <p className="text-xs text-muted-foreground">
+        Sections marked with a plan name unlock when you upgrade.
+      </p>
+    </div>
   );
 }
