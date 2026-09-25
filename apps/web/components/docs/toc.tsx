@@ -33,12 +33,12 @@ function ariaCurrent(isActive: boolean): "location" | undefined {
   return isActive ? "location" : undefined;
 }
 
-export function DocsTocMobile() {
+export function DocsTocMobile({ className = "mx-auto mb-6 max-w-content" }: { className?: string }) {
   const { activeId, headings } = useToc();
   if (headings.length === 0) return null;
 
   return (
-    <details className="group mx-auto mb-6 max-w-content rounded-lg border border-border xl:hidden">
+    <details className={`group rounded-lg border border-border xl:hidden ${className}`}>
       <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 font-medium text-foreground text-sm [&::-webkit-details-marker]:hidden">
         <span>On this page</span>
         <ChevronDown

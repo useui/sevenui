@@ -23,8 +23,10 @@ export default function CopyCommand({ commands }: { commands: Record<PackageMana
         $
       </span>
       {PACKAGE_MANAGERS.map((pm) => (
-        <code className={`pm-only pm-only-${pm} flex-1 truncate text-left`} key={pm}>
-          {commands[pm]}
+        // An RTL box clips from the start, so a narrow screen keeps the item id (the only unique part)
+        // and loses "npx shadcn@latest" instead; the LTR isolate keeps the command's own order.
+        <code className={`pm-only pm-only-${pm} flex-1 truncate text-left [direction:rtl]`} key={pm}>
+          <bdi dir="ltr">{commands[pm]}</bdi>
         </code>
       ))}
       <button

@@ -245,9 +245,14 @@ function scoreEntry(
   );
 }
 
+/**
+ * `preferredSection` lifts the section the reader is browsing (Components on /components) above the
+ * rest; within each side the score order is untouched, and nothing is filtered out.
+ */
 export function rankEntries(
   prepared: readonly PreparedEntry[],
   rawQuery: string,
+  preferredSection?: string,
 ): SearchHit[] {
   const query = normalizeQuery(rawQuery);
   if (query === "") return [];
@@ -270,7 +275,11 @@ export function rankEntries(
     });
   }
 
-  hits.sort(compareHits);
+  hits.sort(
+    (a, b) =>
+      Number(b.entry.section === preferredSection) - Number(a.entry.section === preferredSection) ||
+      compareHits(a, b),
+  );
   return hits;
 }
 

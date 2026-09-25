@@ -9,6 +9,12 @@ export interface GalleryComponent {
   count: number;
 }
 
+export interface GalleryFamily {
+  id: string;
+  label: string;
+  components: GalleryComponent[];
+}
+
 export interface GalleryExample {
   /** Registry item name; also the anchor id, e.g. "accordion-01". */
   id: string;
@@ -126,6 +132,100 @@ export const galleryComponents: GalleryComponent[] = [...examplesBySlug.entries(
           : ""),
     );
   }
+}
+
+/** Family order is the sidebar order; a Record keyed by slug makes an unfiled primitive a type error. */
+const FAMILIES = [
+  { id: "actions", label: "Actions" },
+  { id: "forms", label: "Forms" },
+  { id: "overlays", label: "Overlays & Menus" },
+  { id: "navigation", label: "Navigation" },
+  { id: "layout", label: "Layout" },
+  { id: "data", label: "Data Display" },
+  { id: "feedback", label: "Feedback" },
+  { id: "chat", label: "Chat" },
+] as const;
+
+type FamilyId = (typeof FAMILIES)[number]["id"];
+
+const FAMILY_OF: Record<GallerySlug, FamilyId> = {
+  button: "actions",
+  "button-group": "actions",
+  kbd: "actions",
+  toggle: "actions",
+  "toggle-group": "actions",
+  toolbar: "actions",
+  calendar: "forms",
+  checkbox: "forms",
+  combobox: "forms",
+  field: "forms",
+  form: "forms",
+  input: "forms",
+  "input-group": "forms",
+  "input-otp": "forms",
+  label: "forms",
+  "native-select": "forms",
+  "number-field": "forms",
+  questionnaire: "forms",
+  "radio-group": "forms",
+  select: "forms",
+  slider: "forms",
+  switch: "forms",
+  textarea: "forms",
+  "alert-dialog": "overlays",
+  command: "overlays",
+  "context-menu": "overlays",
+  dialog: "overlays",
+  drawer: "overlays",
+  "dropdown-menu": "overlays",
+  "hover-card": "overlays",
+  menubar: "overlays",
+  popover: "overlays",
+  sheet: "overlays",
+  tooltip: "overlays",
+  breadcrumb: "navigation",
+  "navigation-menu": "navigation",
+  pagination: "navigation",
+  sidebar: "navigation",
+  tabs: "navigation",
+  accordion: "layout",
+  "aspect-ratio": "layout",
+  collapsible: "layout",
+  resizable: "layout",
+  "scroll-area": "layout",
+  separator: "layout",
+  avatar: "data",
+  badge: "data",
+  card: "data",
+  carousel: "data",
+  chart: "data",
+  item: "data",
+  marker: "data",
+  table: "data",
+  alert: "feedback",
+  empty: "feedback",
+  meter: "feedback",
+  progress: "feedback",
+  skeleton: "feedback",
+  spinner: "feedback",
+  toast: "feedback",
+  attachment: "chat",
+  bubble: "chat",
+  message: "chat",
+  "message-scroller": "chat",
+};
+
+export const galleryFamilies: GalleryFamily[] = FAMILIES.map(({ id, label }) => ({
+  id,
+  label,
+  components: galleryComponents.filter((component) => FAMILY_OF[component.slug as GallerySlug] === id),
+}));
+
+/** The primitives either side of `slug` in sidebar order, for the page-end pager. */
+export function galleryNeighbors(slug: string): { prev?: GalleryComponent; next?: GalleryComponent } {
+  const ordered = galleryFamilies.flatMap((family) => family.components);
+  const at = ordered.findIndex((component) => component.slug === slug);
+  return { prev: ordered[at - 1], next: ordered[at + 1] };
 }
 
 /** Look up a gallery component, or fail loudly if the pairing is broken. */

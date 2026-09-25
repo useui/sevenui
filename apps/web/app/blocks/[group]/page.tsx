@@ -4,6 +4,7 @@ import { ProOffer } from "../../../components/blocks/pro-offer";
 import { CategoryCard } from "../../../components/blocks/category-card";
 import { Breadcrumb, type Crumb } from "../../../components/breadcrumb";
 import { JsonLd } from "../../../components/json-ld";
+import { ShareOnX } from "../../../components/page-actions";
 import { loadBlocksTree } from "../../../lib/blocks";
 import { pageMetadataOrNotFound } from "../../../lib/metadata";
 
@@ -37,12 +38,16 @@ export default async function BlocksGroupPage({ params }: { params: Promise<Para
 
   return (
     <>
-      <header className="border-b border-border px-6 py-12 lg:px-10">
+      <header className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6 border-b border-border px-6 py-12 lg:px-10">
         <div className="max-w-2xl">
           <Breadcrumb className="text-sm text-muted-foreground" crumbs={crumbs} />
           <h1 className="mt-4 text-3xl font-semibold tracking-tight">{group.label}</h1>
           <p className="mt-2 text-muted-foreground">{summary}</p>
         </div>
+        <ShareOnX
+          route={route}
+          text={`${group.label}: ${group.items.length} Pro blocks for React, built on Base UI.`}
+        />
       </header>
       <ProOffer />
       <div className="px-6 py-12 lg:px-10">

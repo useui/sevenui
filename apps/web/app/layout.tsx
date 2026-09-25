@@ -9,7 +9,7 @@ import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
 import { ThemeProvider } from "../components/theme-provider";
 import { getNavTree, resolvePrimitivesHref } from "../lib/docs/nav";
-import { galleryComponents } from "../lib/gallery";
+import { galleryFamilies } from "../lib/gallery";
 import { site } from "../lib/site";
 
 const inter = Inter({
@@ -64,7 +64,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <DrawerProvider>
             <SiteHeader primitivesHref={primitivesHref} />
             {children}
-            <SiteDrawer galleryComponents={galleryComponents} primitivesHref={primitivesHref} />
+            <SiteDrawer galleryFamilies={galleryFamilies} primitivesHref={primitivesHref} />
             <SiteFooter primitivesHref={primitivesHref} />
           </DrawerProvider>
         </ThemeProvider>

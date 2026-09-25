@@ -2,17 +2,17 @@
 
 import { usePathname } from "next/navigation";
 import { useCallback } from "react";
-import type { GalleryComponent } from "../lib/gallery";
+import type { GalleryFamily } from "../lib/gallery";
 import { useDrawer } from "./drawer-context";
 import { DrawerShell } from "./drawer-shell";
 import { GalleryNav } from "./gallery/nav";
 
 export function SiteDrawer({
   primitivesHref,
-  galleryComponents,
+  galleryFamilies,
 }: {
   primitivesHref: string;
-  galleryComponents: GalleryComponent[];
+  galleryFamilies: GalleryFamily[];
 }) {
   const { setOpen } = useDrawer();
   const pathname = usePathname();
@@ -30,7 +30,7 @@ export function SiteDrawer({
   return (
     <DrawerShell
       primitivesHref={primitivesHref}
-      tree={isGallery ? <GalleryNav components={galleryComponents} onNavigate={closeDrawer} /> : undefined}
+      tree={isGallery ? <GalleryNav families={galleryFamilies} onNavigate={closeDrawer} /> : undefined}
     />
   );
 }

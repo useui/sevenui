@@ -3,6 +3,7 @@
 import { Autocomplete } from "@base-ui/react/autocomplete";
 import { BoxIcon, FileIcon, FileTextIcon, LayoutTemplateIcon, SearchIcon, type LucideIcon } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Fragment,
   useCallback,
@@ -89,6 +90,13 @@ type PaletteGroup = {
   readonly items: readonly PaletteRow[];
 };
 
+/** The section a reader is browsing, whose results the palette lists first. */
+function sectionForPath(pathname: string): string | undefined {
+  if (pathname === "/components" || pathname.startsWith("/components/")) return SITE_SECTIONS.components;
+  if (pathname === "/blocks" || pathname.startsWith("/blocks/")) return SITE_SECTIONS.blocks;
+  return undefined;
+}
+
 export default function SearchCommandDialog({
   open,
   onOpenChange,
@@ -146,10 +154,12 @@ export default function SearchCommandDialog({
     setActiveSection(null);
   }, [open]);
 
+  const pathname = usePathname();
+  const preferredSection = sectionForPath(pathname);
   const normalizedQuery = normalizeQuery(query);
   const allHits = useMemo(
-    () => (entries === null ? [] : rankEntries(entries, query)),
-    [entries, query],
+    () => (entries === null ? [] : rankEntries(entries, query, preferredSection)),
+    [entries, query, preferredSection],
   );
   const sections = useMemo(() => countSections(allHits), [allHits]);
   const sectionStripVisible = sections.length >= 2;

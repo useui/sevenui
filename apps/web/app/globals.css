@@ -173,7 +173,7 @@
     }
   }
 
-  :is(h1, h2, h3, h4, h5, h6):not(:where(article [data-sevenui-example] *)) {
+  :is(h1, h2, h3, h4, h5, h6):not(:where([data-sevenui-example] *)) {
     font-family: var(--font-display);
     letter-spacing: -0.05em;
   }
@@ -205,7 +205,8 @@ article
   font-weight: 500;
 }
 
-article [data-sevenui-example] {
+/* Every live preview (docs article or /components gallery) renders as the installed component would. */
+[data-sevenui-example] {
   font-size: 1rem;
   line-height: normal;
   color: var(--foreground);
