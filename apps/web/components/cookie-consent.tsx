@@ -99,8 +99,9 @@ const config: CookieConsent.CookieConsentConfig = {
       en: {
         consentModal: {
           title: "Cookies on SevenUI",
-          description:
-            "We use strictly necessary cookies to run the site. With your consent, we also use Google Analytics to see which pages get used. You can change your choice any time under “Cookie settings” in the footer.",
+          // Kept to two short lines on purpose: a longer paragraph out-sizes the page's own text and
+          // becomes every first visit's Largest Contentful Paint, painted only after hydration.
+          description: "Google Analytics runs only if you accept. Change it any time in the footer.",
           acceptAllBtn: "Accept all",
           acceptNecessaryBtn: "Reject all",
           showPreferencesBtn: "Manage preferences",

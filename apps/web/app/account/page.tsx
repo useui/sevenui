@@ -8,7 +8,8 @@ const ROUTE = "/account";
 
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await requirePageMeta(ROUTE, "app/account/page.tsx");
-  return pageMetadata(ROUTE, meta.title, meta.description);
+  // A signed-in view with nothing for a search visitor: kept out of the index and the sitemap.
+  return pageMetadata(ROUTE, meta.title, meta.description, { noindex: true });
 }
 
 export default function AccountPage() {

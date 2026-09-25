@@ -1,10 +1,15 @@
 import { galleryComponents } from "./gallery";
 import { site } from "./site";
+import { PRO_LAUNCH, PRO_REGULAR } from "./pro-pricing";
 
 export type PageMeta = { title: string; description: string };
 
 const CUSTOM: Record<string, PageMeta> = {
-  "/": { title: site.name, description: site.description },
+  "/": {
+    title: site.name,
+    description:
+      "Copy it. Own it. Ship it. React primitives built on Base UI, free components, and Pro blocks, installed with the shadcn CLI.",
+  },
   "/components": {
     title: "Components",
     description:
@@ -12,14 +17,18 @@ const CUSTOM: Record<string, PageMeta> = {
   },
   "/blocks": {
     title: "Blocks",
-    description: "Production-ready pro blocks built on SevenUI components.",
+    description:
+      "Production-ready Pro blocks for React, built on SevenUI primitives: app dashboards, auth, marketing sections, AI chat, and storefronts.",
   },
   "/pro": {
     title: "Pro",
     description:
-      "SevenUI Pro at its launch price: $99 instead of $249 — a lifetime license to every Pro Block, per developer.",
+      `SevenUI Pro at its launch price: ${PRO_LAUNCH} instead of ${PRO_REGULAR} — a lifetime license to every Pro Block, per developer.`,
   },
-  "/account": { title: "Account", description: site.description },
+  "/account": {
+    title: "Account",
+    description: "Your SevenUI account: sign in, see your Pro licenses, and copy the license key that installs Pro blocks.",
+  },
   "/terms": {
     title: "Terms of Service",
     description:
@@ -48,7 +57,9 @@ const CUSTOM: Record<string, PageMeta> = {
       `/components/${component.slug}`,
       {
         title: component.label,
-        description: `Free, copy-and-go ${component.label} components built on the SevenUI ${component.label} primitive.`,
+        description:
+          `${component.count} free, copy-and-go React ${component.label} ${component.count === 1 ? "example" : "examples"} ` +
+          `built on the SevenUI ${component.label} primitive. Install any of them with the shadcn CLI.`,
       },
     ]),
   ),

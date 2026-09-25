@@ -2,7 +2,7 @@ import "server-only";
 
 import { DemoTabs } from "../demo/demo-tabs";
 import { PreviewPane } from "../demo/preview-pane";
-import { sourcePane } from "../demo/source-pane";
+import { LazyCode } from "../demo/lazy-code";
 import { ExampleActions } from "./example-actions";
 
 export async function ExampleCard({
@@ -24,7 +24,7 @@ export async function ExampleCard({
     <section className="scroll-mt-24" id={id}>
       <DemoTabs
         actions={<ExampleActions id={id} title={title} />}
-        code={await sourcePane(`components/${slug}/${id}.tsx`)}
+        code={<LazyCode rawHref={`/r/component/${id}.json`} src={`/components/${slug}/code/${id}`} />}
         heading={
           <div className="min-w-0">
             <h2 className="text-base font-semibold tracking-tight">

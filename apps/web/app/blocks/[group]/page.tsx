@@ -41,7 +41,7 @@ export default async function BlocksGroupPage({ params }: { params: Promise<Para
       <header className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6 border-b border-border px-6 py-12 lg:px-10">
         <div className="max-w-2xl">
           <Breadcrumb className="text-sm text-muted-foreground" crumbs={crumbs} />
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight">{group.label}</h1>
+          <h1 className="mt-4 text-3xl font-semibold tracking-tight">{group.label} blocks</h1>
           <p className="mt-2 text-muted-foreground">{summary}</p>
         </div>
         <ShareOnX
@@ -53,7 +53,7 @@ export default async function BlocksGroupPage({ params }: { params: Promise<Para
       <div className="px-6 py-12 lg:px-10">
         <div className="grid max-w-5xl gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {group.categories.map((category) => (
-            <CategoryCard category={category} group={group.id} key={category.id} />
+            <CategoryCard category={category} group={group.id} headingLevel={2} key={category.id} />
           ))}
         </div>
       </div>

@@ -35,14 +35,14 @@ export function BlockCard({
       id={name}
     >
       <div>
-        <h2 className="flex items-center gap-2 text-sm font-medium tracking-tighter">
-          {title}
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-medium tracking-tighter">{title}</h2>
           {badge && (
             <span className="rounded-md bg-primary px-1.5 py-0.5 text-xs font-medium text-primary-foreground">
               {badge}
             </span>
           )}
-        </h2>
+        </div>
         <p className="text-sm text-muted-foreground" data-block-description="">
           {description}
         </p>

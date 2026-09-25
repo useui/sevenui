@@ -51,7 +51,7 @@ export default async function BlocksCategoryPage({ params }: { params: Promise<P
       <header className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6 border-b border-border px-6 py-12 lg:px-10">
         <div className="max-w-2xl">
           <Breadcrumb className="text-sm text-muted-foreground" crumbs={crumbs} />
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight">{category.label}</h1>
+          <h1 className="mt-4 text-3xl font-semibold tracking-tight">{category.label} blocks</h1>
           <p className="mt-2 text-muted-foreground">{summary}</p>
         </div>
         <ShareOnX

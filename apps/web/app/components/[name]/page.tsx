@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const { name } = await params;
   const route = `/components/${name}`;
   const meta = await requirePageMeta(route, "app/components/[name]/page.tsx");
-  return pageMetadata(route, `${meta.title} Components`, meta.description);
+  return pageMetadata(route, meta.title, meta.description);
 }
 
 export default async function GalleryComponentPage({ params }: { params: Promise<Params> }) {
@@ -51,7 +51,7 @@ export default async function GalleryComponentPage({ params }: { params: Promise
             <div className="mx-auto max-w-4xl">
               <Breadcrumb className="text-sm text-muted-foreground" crumbs={crumbs} />
               <h1 className="mt-6 font-display text-4xl leading-[1.1] font-medium tracking-tighter text-balance sm:text-5xl">
-                {component.label}
+                {component.label} components
               </h1>
               <p className="mt-4 max-w-2xl text-pretty text-lg text-muted-foreground">{meta.description}</p>
               <div className="mt-6 flex flex-wrap gap-2">

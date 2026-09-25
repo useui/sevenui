@@ -61,7 +61,8 @@ const MISSING_PAGES = [
   "/not-a-page", // the root miss
   "/docs/not-a-primitive", // the docs catch-all's miss branch
   "/components/not-a-component", // a gallery miss
-  "/components/field", // §11.7's old target: it must still 404 rather than quietly becoming something
+  // §11.7's old target, /components/field, left this list when the gallery grew to every primitive
+  // (1b7af17): it is a real page now, and the stale links it guarded were fixed at source.
   "/blocks/not-a-group", // a `dynamicParams = true` group miss
   "/blocks/marketing/not-a-category", // §10's category `notFound()`
 ];
@@ -71,7 +72,8 @@ const SITE_DESCRIPTION = "Copy it. Own it. Ship it. Base UI powered primitives, 
 const UNLISTED_PAGE_META = {
   "/": {
     title: "SevenUI",
-    description: SITE_DESCRIPTION,
+    description:
+      "Copy it. Own it. Ship it. React primitives built on Base UI, free components, and Pro blocks, installed with the shadcn CLI.",
   },
   "/pro": {
     title: "Pro",
@@ -80,7 +82,7 @@ const UNLISTED_PAGE_META = {
   },
   "/account": {
     title: "Account",
-    description: SITE_DESCRIPTION,
+    description: "Your SevenUI account: sign in, see your Pro licenses, and copy the license key that installs Pro blocks.",
   },
   "/terms": {
     title: "Terms of Service",
@@ -108,19 +110,37 @@ const UNLISTED_PAGE_META = {
 };
 
 const GALLERY_CHILD = /^\/components\/[^/]+$/u;
+const PRIMITIVE_CHILD = /^\/docs\/components\/[^/]+$/u;
+const BLOCKS_CHILD = /^\/blocks\/.+$/u;
+
+// The search-facing titles of lib/metadata.tsx's documentTitle(), restated.
+const HUB_TITLES = {
+  "/": "SevenUI — Base UI components for shadcn/ui",
+  "/docs/components": `React Primitives built on Base UI${SUFFIX}`,
+  "/components": `Free React Components for shadcn/ui${SUFFIX}`,
+  "/blocks": `Pro React Blocks for shadcn/ui${SUFFIX}`,
+};
+
+const TITLE_RULES = ["hub", "primitive", "gallery", "blocks", "suffixed"];
 
 function titleRuleFor(route) {
-  if (route === "/") return "root-bare";
-  if (GALLERY_CHILD.test(route)) return "gallery-components";
+  if (route in HUB_TITLES) return "hub";
+  if (PRIMITIVE_CHILD.test(route)) return "primitive";
+  if (GALLERY_CHILD.test(route)) return "gallery";
+  if (BLOCKS_CHILD.test(route)) return "blocks";
   return "suffixed";
 }
 
 function expectedTitle(route, registryTitle) {
   switch (titleRuleFor(route)) {
-    case "root-bare":
-      return registryTitle;
-    case "gallery-components":
-      return `${registryTitle} Components${SUFFIX}`;
+    case "hub":
+      return HUB_TITLES[route];
+    case "primitive":
+      return `React ${registryTitle} built on Base UI${SUFFIX}`;
+    case "gallery":
+      return `React ${registryTitle} Examples, shadcn compatible${SUFFIX}`;
+    case "blocks":
+      return `${registryTitle.replace(/ blocks$/u, "")} Blocks for React and shadcn/ui${SUFFIX}`;
     default:
       return `${registryTitle}${SUFFIX}`;
   }
@@ -272,7 +292,7 @@ const CHECK = {
   coverageSingleSource: "input diff: no route is answered by both /llms.txt and the restatement",
   coverageNoStray: "input diff: every restated route is still in the inventory",
   descriptionDiff: "input diff: og:description is the registry's description for that route, byte for byte",
-  titleDiff: "input diff: og:title is the registry's title under the route's own title rule (three rules, not one)",
+  titleDiff: "input diff: og:title is the registry's title under the route's own title rule (five rules, not one)",
   inventory: "inventory: the swept route lists and route-inventory.mjs's own total reconcile",
   ogMisses: `negative: all ${OG_MISSES.length} unknown card slugs answer 404, not a generated image`,
   notFoundStatus: "negative: every §17.4 missing page answers 404",
@@ -668,7 +688,7 @@ function runChecks(cap, { verbose }) {
   );
 
   const wrongTitle = [];
-  const ruleCounts = { "root-bare": 0, "gallery-components": 0, suffixed: 0 };
+  const ruleCounts = Object.fromEntries(TITLE_RULES.map((rule) => [rule, 0]));
   for (const route of routes) {
     const meta = metaFor(route);
     if (!meta) continue;
@@ -684,8 +704,7 @@ function runChecks(cap, { verbose }) {
     wrongTitle.length === 0,
     wrongTitle.length
       ? sample(wrongTitle, 3)
-      : `root-bare ${ruleCounts["root-bare"]}, gallery-components ${ruleCounts["gallery-components"]}, ` +
-        `suffixed ${ruleCounts.suffixed}${skipNote}`,
+      : `${TITLE_RULES.map((rule) => `${rule} ${ruleCounts[rule]}`).join(", ")}${skipNote}`,
   );
 
   const totals = cap.inventoryTotals;
@@ -1032,13 +1051,13 @@ const PERTURB = {
     apply: (cap) =>
       editMissing(cap, MISSING_PAGES[0], (head) => setTag(head, "og:description", "Something else entirely"), "og:description replaced"),
   },
-  fieldlives: {
+  gallerymisslives: {
     target: CHECK.notFoundStatus,
     apply: (cap) => {
-      const page = cap.missingPages["/components/field"];
+      const page = cap.missingPages["/components/not-a-component"];
       if (!page) return undefined;
       page.status = 200;
-      return "/components/field -> 200";
+      return "/components/not-a-component -> 200";
     },
   },
   registryparsed: {

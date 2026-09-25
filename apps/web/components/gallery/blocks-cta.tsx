@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { PRO_LAUNCH, PRO_REGULAR } from "../../lib/pro-pricing";
 
 const FOCUS = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-background";
 
@@ -86,12 +87,14 @@ export function BlocksCta() {
     >
       <div className="mx-auto grid max-w-6xl gap-12 px-6 pt-16 lg:px-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-end lg:gap-16 lg:pt-24">
         <div className="max-w-xl lg:pb-24">
-          <h2
+          {/* A <p>, not a heading: this closes every gallery page, and one repeated heading on 65 pages
+              reads as part of each page's own outline. It still names the section through aria-labelledby. */}
+          <p
             className="font-display text-4xl leading-[1.05] font-medium tracking-tighter text-balance sm:text-5xl lg:text-6xl"
             id="blocks-cta-heading"
           >
             Components are the parts. Blocks are the page.
-          </h2>
+          </p>
           <p className="mt-5 text-pretty text-lg text-background/70">
             Pro blocks are whole sections and pages — heroes, pricing, dashboards, auth — composed from the same
             primitives and themed by the same tokens you already use. Install one and it is yours.
@@ -108,11 +111,11 @@ export function BlocksCta() {
               className={`inline-flex h-11 items-center rounded-lg border border-background/20 px-5 text-sm font-medium transition-colors hover:border-background/40 hover:bg-background/5 ${FOCUS}`}
               href="/pro"
             >
-              Get Pro — $99
+              Get Pro — {PRO_LAUNCH}
             </Link>
           </div>
           <p className="mt-4 text-sm text-background/60">
-            One purchase, yours forever. $99 at launch instead of $249.
+            One purchase, yours forever. {PRO_LAUNCH} at launch instead of {PRO_REGULAR}.
           </p>
         </div>
         <ComposedPage />

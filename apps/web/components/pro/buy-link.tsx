@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { getClerkIfLikelySignedIn } from "../../lib/clerk";
 import { Spinner } from "@/registry/base/ui/spinner";
 import { cx } from "../../lib/cx";
+import { PRO_LAUNCH } from "../../lib/pro-pricing";
 
 /**
  * The Polar checkout link, enhanced with the signed-in email when a session
@@ -70,7 +71,7 @@ export function BuyLink({
       }}
     >
       {opening ? <Spinner aria-hidden className="size-4" /> : null}
-      {opening ? "Opening checkout…" : "Get Pro — $99"}
+      {opening ? "Opening checkout…" : `Get Pro — ${PRO_LAUNCH}`}
     </a>
   );
 }

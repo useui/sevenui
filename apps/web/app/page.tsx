@@ -18,6 +18,7 @@ import { highlightLines } from "../lib/shiki";
 import { packageManagerCommands } from "../lib/package-manager";
 import { installCommand } from "../lib/registry";
 import { buttonVariants } from "@/registry/base/ui/button";
+import { PRO_LAUNCH } from "../lib/pro-pricing";
 
 // The Pro manifest is read at render time; match its 300 s ISR window.
 export const revalidate = 300;
@@ -67,23 +68,25 @@ export default async function Home() {
       count: catalog.blockCount,
       name: "Blocks",
       body: `Finished sections and pages across ${catalog.categoryCount} categories, installed with the same CLI.`,
-      terms: "Pro · $99 once",
+      terms: `Pro · ${PRO_LAUNCH} once`,
       href: "/blocks",
     },
   ];
 
   return (
     <main className="sv-page" id="content">
-      {/* Hero: the slogan, one sentence, one command. */}
+      {/* Hero: what it is, the slogan, one sentence, one command. */}
       <section aria-labelledby="home-title" className="border-b border-border">
         <div className="l-row px-6 pt-20 pb-16 sm:px-8 sm:pt-28 sm:pb-24">
           <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-            <h1
-              className="text-[clamp(2.75rem,7vw,4.75rem)] leading-[1.02] font-semibold tracking-[-0.045em] text-balance"
-              id="home-title"
-            >
-              <Slogan />
+            {/* The heading says what the site is; the animated slogan below is display type, kept out of the
+                heading so its rolling words don't become part of the page's title text. */}
+            <h1 className="text-sm font-medium text-muted-foreground sm:text-base" id="home-title">
+              Base UI components for shadcn/ui
             </h1>
+            <p className="mt-4 text-[clamp(2.75rem,7vw,4.75rem)] leading-[1.02] font-semibold tracking-[-0.045em] text-balance">
+              <Slogan />
+            </p>
             <p className={`${LEAD} mt-6 max-w-[48ch] text-lg sm:text-xl`}>
               <span className="tabular-nums">{primitiveCount}</span> accessible
               React primitives built on Base UI. The shadcn CLI copies the
@@ -108,7 +111,7 @@ export default async function Home() {
             </div>
             <Link className={`${QUIET_LINK} mt-6 text-muted-foreground`} href="/pro">
               <span className="tabular-nums">
-                {`${catalog.blockCount} Pro Blocks, $99 once`}
+                {`${catalog.blockCount} Pro Blocks, ${PRO_LAUNCH} once`}
               </span>
               <ArrowRightIcon aria-hidden="true" className="size-3.5" />
             </Link>

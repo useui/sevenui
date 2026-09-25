@@ -9,6 +9,12 @@ const TABS = [
 
 type Tab = (typeof TABS)[number]["value"];
 
+/**
+ * True once the reader has opened, hovered or focused the Code tab. A lazily loaded code pane
+ * (see lazy-code.tsx) waits for it, so the source is fetched only for examples someone looks at.
+ */
+export const CodeWantedContext = React.createContext(false);
+
 const TAB_CLASSES =
   "rounded-md px-2.5 py-1 text-muted-foreground transition-colors hover:text-foreground aria-selected:bg-muted aria-selected:text-foreground";
 
@@ -30,6 +36,8 @@ export function DemoTabs({
   className?: string;
 }) {
   const [tab, setTab] = React.useState<Tab>("preview");
+  const [codeWanted, setCodeWanted] = React.useState(false);
+  const wantCode = () => setCodeWanted(true);
   const id = React.useId();
   const tabRefs = React.useRef<Record<Tab, HTMLButtonElement | null>>({ preview: null, code: null });
 
@@ -43,6 +51,7 @@ export function DemoTabs({
     else return;
     event.preventDefault();
     const value = TABS[next].value;
+    if (value === "code") wantCode();
     setTab(value);
     tabRefs.current[value]?.focus();
   };
@@ -61,7 +70,12 @@ export function DemoTabs({
           className={TAB_CLASSES}
           id={`${id}-${entry.value}-tab`}
           key={entry.value}
-          onClick={() => setTab(entry.value)}
+          onClick={() => {
+            if (entry.value === "code") wantCode();
+            setTab(entry.value);
+          }}
+          onFocus={entry.value === "code" ? wantCode : undefined}
+          onPointerEnter={entry.value === "code" ? wantCode : undefined}
           ref={(node) => {
             tabRefs.current[entry.value] = node;
           }}
@@ -81,7 +95,7 @@ export function DemoTabs({
         {preview}
       </div>
       <div aria-labelledby={`${id}-code-tab`} hidden={tab !== "code"} id={`${id}-code`} role="tabpanel">
-        {code}
+        <CodeWantedContext.Provider value={codeWanted}>{code}</CodeWantedContext.Provider>
       </div>
     </>
   );

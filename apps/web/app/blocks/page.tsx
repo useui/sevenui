@@ -51,13 +51,15 @@ export default async function BlocksPage() {
               : null;
             return (
               <section key={group.id}>
-                <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+                <div className="flex items-center gap-2">
                   {GroupIcon && <GroupIcon aria-hidden="true" className="size-4 text-muted-foreground" />}
-                  <Link className="hover:underline" href={`/blocks/${group.id}`}>
-                    {group.label}
-                  </Link>
-                  <span className="text-sm font-normal text-muted-foreground">{group.items.length}</span>
-                </h2>
+                  <h2 className="text-lg font-semibold tracking-tight">
+                    <Link className="hover:underline" href={`/blocks/${group.id}`}>
+                      {group.label}
+                    </Link>
+                  </h2>
+                  <span className="text-sm text-muted-foreground">{group.items.length}</span>
+                </div>
                 <p className="mt-1 text-sm text-muted-foreground">{group.description}</p>
                 <div className="mt-4 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                   {group.categories.map((category) => (

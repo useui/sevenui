@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { PRO_LAUNCH, PRO_REGULAR } from "../../lib/pro-pricing";
 
 /** The /pro FAQ. Its own module so the ⌘K search index can list the questions without duplicating them. */
 export const FAQ: { q: string; a: ReactNode }[] = [
@@ -8,8 +9,8 @@ export const FAQ: { q: string; a: ReactNode }[] = [
     a: "A lifetime license to the Pro catalog: everything listed on this page is live now, and new Blocks reach your key as they ship. We don't promise a date or a particular Block — if you need one that isn't here yet, wait for it, or use the refund window.",
   },
   {
-    q: "Why $99 instead of $249?",
-    a: "$99 is the launch price; the regular price is $249. What you pay at checkout is all you ever pay — when the launch price ends, the regular price applies only to new purchases."
+    q: `Why ${PRO_LAUNCH} instead of ${PRO_REGULAR}?`,
+    a: `${PRO_LAUNCH} is the launch price; the regular price is ${PRO_REGULAR}. What you pay at checkout is all you ever pay — when the launch price ends, the regular price applies only to new purchases.`
   },
   {
     q: "Is this a subscription?",

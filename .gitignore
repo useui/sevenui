@@ -9,6 +9,9 @@ apps/web/public/*.md
 # Generated from packages/registry/demos/registry.json by
 # apps/web/scripts/build-demo-map.ts before dev, build and typecheck.
 apps/web/components/mdx/demo-map.generated.ts
+# Generated from git history by apps/web/scripts/build-lastmod.ts before dev,
+# build and typecheck.
+apps/web/lib/lastmod.generated.json
 *.log
 .DS_Store
 .env

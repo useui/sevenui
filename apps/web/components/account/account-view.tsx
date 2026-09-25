@@ -12,6 +12,7 @@ import { SetupSteps } from "../pro/setup-steps";
 import { KeyLedger, keyName } from "./key-ledger";
 import { KeySkeleton, KeySurface, LockedKey, SURFACE } from "./key-surface";
 import type { AccountViewProps, Identity, LicenseRow, LicensesState } from "./types";
+import { PRO_LAUNCH, PRO_REGULAR } from "../../lib/pro-pricing";
 
 const BUY_HREF = "/pro#order";
 const SUPPORT_EMAIL = "mail@sevenui.dev";
@@ -80,7 +81,7 @@ function SignedOut({ onSignIn }: { onSignIn: () => void }) {
         <p className="text-sm text-muted-foreground">
           No license yet?{" "}
           <Link className={LINK} href={BUY_HREF}>
-            Pro is $99 at launch
+            Pro is {PRO_LAUNCH} at launch
           </Link>
         </p>
       </div>
@@ -420,8 +421,8 @@ function NoLicense({ failed, onRetry }: { failed: boolean; onRetry: () => void }
       <h1 className={TITLE}>{failed ? "We couldn't check your licenses." : "No license on this account yet."}</h1>
       <p className={LEAD}>
         {failed
-          ? "The license service didn't answer just now. If you already bought Pro, try again; if you haven't, it's $99 at launch instead of $249 — lifetime, per developer, every Block."
-          : "SevenUI Pro is $99 at launch instead of $249 — lifetime, per developer, every Block. Your key shows here the moment checkout completes."}
+          ? `The license service didn't answer just now. If you already bought Pro, try again; if you haven't, it's ${PRO_LAUNCH} at launch instead of ${PRO_REGULAR} — lifetime, per developer, every Block.`
+          : `SevenUI Pro is ${PRO_LAUNCH} at launch instead of ${PRO_REGULAR} — lifetime, per developer, every Block. Your key shows here the moment checkout completes.`}
       </p>
       <div className="mt-9 flex flex-wrap items-center gap-3">
         {failed ? (
@@ -441,12 +442,12 @@ function NoLicense({ failed, onRetry }: { failed: boolean; onRetry: () => void }
               {checking ? "Checking…" : "Try again"}
             </Button>
             <Link className={buttonVariants({ variant: "outline", size: "lg", className: "h-10 px-5" })} href={BUY_HREF}>
-              Get Pro — $99
+              Get Pro — {PRO_LAUNCH}
             </Link>
           </>
         ) : (
           <Link className={buttonVariants({ size: "lg", className: "h-10 px-5" })} href={BUY_HREF}>
-            Get Pro — $99
+            Get Pro — {PRO_LAUNCH}
           </Link>
         )}
       </div>

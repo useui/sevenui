@@ -25,10 +25,18 @@ export async function blocksRoutes(): Promise<string[]> {
   return routes;
 }
 
-export async function sitemapRoutes(): Promise<string[]> {
+/** Real pages that carry `noindex` (see their generateMetadata), so they stay out of the sitemap too. */
+export const NOINDEX_ROUTES: ReadonlySet<string> = new Set(["/account"]);
+
+/** Every page route with page-meta, indexable or not — each one still has its own OG card. */
+export async function pageRoutes(): Promise<string[]> {
   const [index, blocks] = await Promise.all([getDocIndex(), blocksRoutes()]);
   const routes = new Set<string>([...CUSTOM_ROUTES, ...index.map((page) => page.route), ...blocks]);
   return [...routes].sort((a, b) => a.localeCompare(b));
+}
+
+export async function sitemapRoutes(): Promise<string[]> {
+  return (await pageRoutes()).filter((route) => !NOINDEX_ROUTES.has(route));
 }
 
 const entry = (title: string, route: string, description: string): string =>

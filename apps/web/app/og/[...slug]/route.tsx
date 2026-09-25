@@ -6,7 +6,7 @@ import { OgCard } from "../../../lib/og/card";
 import { HEIGHT, WIDTH } from "../../../lib/og/dimensions";
 import { routeToSlug, slugToRoute } from "../../../lib/og/path";
 import { getPageMeta } from "../../../lib/page-meta";
-import { sitemapRoutes } from "../../../lib/site-index";
+import { pageRoutes } from "../../../lib/site-index";
 
 const FONTS_DIR = path.join(process.cwd(), "lib/og/fonts");
 const geistRegular = readFileSync(path.join(FONTS_DIR, "Geist-Regular.ttf"));
@@ -19,7 +19,7 @@ export const revalidate = 300;
 type Params = { slug: string[] };
 
 export async function generateStaticParams(): Promise<Params[]> {
-  const routes = await sitemapRoutes();
+  const routes = await pageRoutes();
   return routes.map((route) => ({ slug: routeToSlug(route) }));
 }
 

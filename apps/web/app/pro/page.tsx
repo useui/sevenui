@@ -10,6 +10,7 @@ import { pageMetadata } from "../../lib/metadata";
 import { requirePageMeta } from "../../lib/page-meta";
 import { highlightLines } from "../../lib/shiki";
 import { FAQ } from "./faq";
+import { PRO_LAUNCH, PRO_REGULAR } from "../../lib/pro-pricing";
 
 async function highlightSetupSnippets() {
   const entries = await Promise.all(
@@ -77,7 +78,7 @@ export default async function ProPage() {
               className="text-[2.5rem] leading-[1.02] font-semibold tracking-[-0.04em] text-balance sm:text-6xl lg:text-[4.25rem]"
               id="pro-title"
             >
-              Every Pro Block, for $99 once.
+              Every Pro Block, for {PRO_LAUNCH} once.
             </h1>
             <p className={`${LEAD} mt-6 text-lg`}>
               <span className="tabular-nums">{catalog.blockCount}</span> finished sections and pages across{" "}
@@ -86,7 +87,7 @@ export default async function ProPage() {
               built on the same Base UI primitives as the free registry and installed with the same shadcn CLI.
             </p>
             <p className={`${LEAD} mt-4 text-lg`}>
-              Launch price: $99 instead of the regular $249. The license you buy today covers every Block released
+              Launch price: {PRO_LAUNCH} instead of the regular {PRO_REGULAR}. The license you buy today covers every Block released
               after it.
             </p>
             <div className="mt-8 flex flex-wrap gap-x-7 gap-y-3">
@@ -146,9 +147,10 @@ export default async function ProPage() {
             </div>
             <div className="px-5 pt-5 pb-4">
               <p className="flex items-baseline gap-2.5">
-                <span className="text-5xl font-semibold tracking-[-0.04em] tabular-nums">$99</span>
+                <span className="text-5xl font-semibold tracking-[-0.04em] tabular-nums">{PRO_LAUNCH}</span>
                 <span className="text-xl text-muted-foreground tabular-nums line-through decoration-1">
-                  <span className="sr-only">Regular price </span>$249
+                  <span className="sr-only">Regular price </span>
+                  {PRO_REGULAR}
                 </span>
               </p>
               <p className="mt-2 text-sm text-muted-foreground">One payment, at the launch price.</p>
@@ -328,7 +330,7 @@ export default async function ProPage() {
         <div className="l-row flex flex-col gap-8 px-6 py-20 sm:px-8 sm:py-24 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-xl">
             <h2 className="text-4xl font-semibold tracking-[-0.04em] text-balance sm:text-5xl" id="close-title">
-              $249, now $99.
+              {PRO_REGULAR}, now {PRO_LAUNCH}.
             </h2>
             <p className={`${LEAD} mt-4`}>The full lifetime license at the launch price.</p>
           </div>

@@ -23,11 +23,16 @@ async function readRegistrySource(relPath: string): Promise<string> {
   return readFile(fullPath, "utf8");
 }
 
-export async function sourcePane(relPath: string): Promise<React.ReactElement> {
+/** The highlighted lines of one registry source file, as the inside of a `<code className="shiki">`. */
+export async function highlightRegistrySource(relPath: string): Promise<string> {
   // Rewritten before highlighting so the tokens shiki colours are the ones the
   // reader will have on disk after `shadcn add`, not the registry's own spelling.
   const source = rewriteRegistryImports(await readRegistrySource(relPath));
-  const highlighted = await highlightLines(source, "tsx");
+  return highlightLines(source, "tsx");
+}
+
+export async function sourcePane(relPath: string): Promise<React.ReactElement> {
+  const highlighted = await highlightRegistrySource(relPath);
 
   return (
     <CodeBlock className="my-0! rounded-none! border-0!" language="tsx">
