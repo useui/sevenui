@@ -33,7 +33,7 @@ const channels = [
     reply: "Typical reply within 4 hours",
     body: "Send screenshots, logs, or export files and we'll pick it up from there.",
     action: "Write to support@acme.io",
-    href: "mailto:support@acme.io",
+    href: "#email-support",
     confirmation: undefined,
   },
   {

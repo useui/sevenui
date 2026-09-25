@@ -56,11 +56,11 @@ export default function Empty16() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink href="/files">All files</BreadcrumbLink>
+                <BreadcrumbLink href="#files">All files</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbLink href="/files/brand-refresh">
+                <BreadcrumbLink href="#brand-refresh">
                   Brand refresh
                 </BreadcrumbLink>
               </BreadcrumbItem>

@@ -165,7 +165,7 @@ export default function Card14() {
           size="sm"
           nativeButton={false}
           render={
-            <a href={`https://${domain}`} target="_blank" rel="noreferrer" />
+            <a href={`#${domain}`} />
           }
         >
           Visit

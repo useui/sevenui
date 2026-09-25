@@ -63,7 +63,7 @@ export default function Bubble10() {
             size="icon"
             aria-label="Call Daniel"
             nativeButton={false}
-            render={<a href="tel:+15550148821" />}
+            render={<a href="#call-daniel" />}
           >
             <PhoneIcon aria-hidden />
           </Button>

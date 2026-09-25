@@ -54,7 +54,7 @@ export default function Accordion03() {
       <p className="text-sm text-muted-foreground">
         Still stuck?{" "}
         <a
-          href="mailto:support@northwind.dev"
+          href="#contact-support"
           className="rounded-sm font-medium text-foreground underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           Email our support team

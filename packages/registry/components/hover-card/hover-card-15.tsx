@@ -98,9 +98,7 @@ function PackageDetails({
   return (
     <HoverCard>
       <HoverCardTrigger
-        href={`https://www.npmjs.com/package/${dependency.name}`}
-        target="_blank"
-        rel="noreferrer"
+        href={`#package-${dependency.name}`}
         delay={300}
         className="truncate rounded-sm font-mono text-sm font-medium outline-none hover:underline hover:underline-offset-4 focus-visible:ring-2 focus-visible:ring-ring/50"
       >

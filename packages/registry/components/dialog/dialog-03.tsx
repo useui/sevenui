@@ -18,7 +18,7 @@ import { Input } from "@/registry/base/ui/input";
 export default function Dialog03() {
   const [copied, setCopied] = React.useState(false);
   const timer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-  const link = "https://sevenui.dev/s/9f3a1c";
+  const link = "https://example.com/s/9f3a1c";
 
   React.useEffect(() => {
     return () => {

@@ -46,7 +46,7 @@ export default function AspectRatio13() {
   const [reservedId, setReservedId] = React.useState<string | null>(null);
   const active = stores.find((store) => store.id === activeId) ?? stores[0];
   const reserved = reservedId === active.id;
-  const directionsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${active.address}, San Francisco, CA`)}`;
+  const directionsHref = `#directions-${active.id}`;
 
   return (
     <section
@@ -127,7 +127,7 @@ export default function AspectRatio13() {
             variant="outline"
             size="sm"
             nativeButton={false}
-            render={<a href={directionsHref} target="_blank" rel="noreferrer" />}
+            render={<a href={directionsHref} />}
           >
             <Navigation aria-hidden="true" data-icon="inline-start" />
             Directions

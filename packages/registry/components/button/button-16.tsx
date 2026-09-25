@@ -4,8 +4,8 @@ import { ArrowLeft, ArrowRight, ExternalLink, Pencil } from "lucide-react";
 
 import { buttonVariants } from "@/registry/base/ui/button";
 
-const previous = { title: "Installation", href: "/docs/installation" };
-const next = { title: "Theming", href: "/docs/theming" };
+const previous = { title: "Installation", href: "#installation" };
+const next = { title: "Theming", href: "#theming" };
 
 export default function Button16() {
   return (
@@ -43,9 +43,7 @@ export default function Button16() {
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t pt-3">
         <p className="text-xs text-muted-foreground">Last updated on Sep 18, 2026</p>
         <a
-          href="https://github.com/northwind/docs/edit/main/components.mdx"
-          target="_blank"
-          rel="noreferrer"
+          href="#edit-this-page"
           className={buttonVariants({
             variant: "link",
             size: "sm",
@@ -55,7 +53,6 @@ export default function Button16() {
           <Pencil data-icon="inline-start" aria-hidden="true" />
           Edit this page
           <ExternalLink data-icon="inline-end" aria-hidden="true" />
-          <span className="sr-only">(opens in a new tab)</span>
         </a>
       </div>
     </nav>
