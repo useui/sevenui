@@ -2,6 +2,7 @@ import { TooltipProvider } from "@/registry/base/ui/tooltip";
 import { Announcer } from "../../components/announcer";
 import { PackageManagerIcons } from "../../components/blocks/package-manager-icons";
 import { CustomizerProvider } from "../../components/customizer/customizer-provider";
+import { BlocksCta } from "../../components/gallery/blocks-cta";
 import { GalleryNav } from "../../components/gallery/nav";
 import { galleryFamilies } from "../../lib/gallery";
 
@@ -17,6 +18,8 @@ export default function GalleryLayout({ children }: { children: React.ReactNode 
             </aside>
             <main className="min-w-0" id="content">
               {children}
+              {/* Inside the content column, so it never runs under the sidebar. */}
+              <BlocksCta />
             </main>
           </div>
         </CustomizerProvider>
