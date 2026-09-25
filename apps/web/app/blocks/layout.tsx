@@ -1,11 +1,11 @@
 import type { ComponentType, ReactNode, SVGProps } from "react";
 import { TooltipProvider } from "@/registry/base/ui/tooltip";
-import { BlocksAnnouncer } from "../../components/blocks/blocks-announcer";
+import { Announcer } from "../../components/announcer";
 import { BlocksDrawer } from "../../components/blocks/blocks-drawer";
 import { BlocksLoadGate } from "../../components/blocks/blocks-load-gate";
 import type { BlocksNavGroup } from "../../components/blocks/blocks-nav";
 import { BlocksSidebar } from "../../components/blocks/blocks-sidebar";
-import { ThemeDock } from "../../components/blocks/theme-dock";
+import { CustomizerProvider } from "../../components/customizer/customizer-provider";
 import { loadBlocksTree } from "../../lib/blocks";
 import { getNavTree, resolvePrimitivesHref } from "../../lib/docs/nav";
 import { lucideIcon } from "../../lib/pro-manifest";
@@ -41,18 +41,19 @@ export default async function BlocksLayout({ children }: { children: ReactNode }
 
   return (
     <TooltipProvider>
-      <BlocksAnnouncer>
-        <BlocksLoadGate>
-          <div className="lg:grid lg:grid-cols-[260px_minmax(0,1fr)]">
-            <BlocksSidebar groups={navGroups} />
-            <main className="min-w-0" id="content">
-              {children}
-              <ThemeDock />
-            </main>
-          </div>
-          <BlocksDrawer groups={navGroups} primitivesHref={primitivesHref} />
-        </BlocksLoadGate>
-      </BlocksAnnouncer>
+      <Announcer>
+        <CustomizerProvider>
+          <BlocksLoadGate>
+            <div className="lg:grid lg:grid-cols-[260px_minmax(0,1fr)]">
+              <BlocksSidebar groups={navGroups} />
+              <main className="min-w-0" id="content">
+                {children}
+              </main>
+            </div>
+            <BlocksDrawer groups={navGroups} primitivesHref={primitivesHref} />
+          </BlocksLoadGate>
+        </CustomizerProvider>
+      </Announcer>
     </TooltipProvider>
   );
 }

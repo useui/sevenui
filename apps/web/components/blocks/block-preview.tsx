@@ -15,7 +15,9 @@ import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, 
 import { currentPackageManager } from "../../lib/package-manager";
 import { installCommand } from "../../lib/registry";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/registry/base/ui/tooltip";
-import { useAnnounce } from "./blocks-announcer";
+import { useAnnounce } from "../announcer";
+import { ThemeCustomizer } from "../customizer/theme-customizer";
+import { TOOLBAR_ICON } from "../toolbar-classes";
 import { useBlockLoadGate } from "./blocks-load-gate";
 import { InstallControl } from "./install-control";
 
@@ -27,9 +29,7 @@ const HANDLE_HALF = 8;
 const KEY_STEP = 24;
 const COPIED_MS = 1600;
 
-const ICON =
-  "size-8 shrink-0 cursor-pointer items-center justify-center rounded-md border border-border text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
-const ALWAYS = `${ICON} inline-flex`;
+const ALWAYS = `${TOOLBAR_ICON} inline-flex`;
 const PRESET = `${ALWAYS} aria-pressed:bg-muted aria-pressed:text-foreground`;
 
 function presetBucket(width: number): "384" | "768" | "max" {
@@ -366,7 +366,7 @@ export function BlockPreview({
       ref={wrapperRef}
       style={{ maxWidth: `calc(${MAX_WIDTH}px + 2px)` }}
     >
-      <div className="flex h-11 items-center gap-2 rounded-t-xl border border-border bg-muted/30 px-3">
+      <div className="@container/toolbar flex h-11 items-center gap-2 rounded-t-xl border border-border bg-muted/30 px-3">
         {/* biome-ignore lint/a11y/useSemanticElements: a <fieldset> brings its own border and min-width into a toolbar row */}
         <div aria-label="Preview width" className="hidden shrink-0 items-center gap-1 @2xl/card:flex" role="group">
           {presets.map(({ value, tip, name: label, Icon }) => (
@@ -397,7 +397,7 @@ export function BlockPreview({
               closeOnClick={false}
               render={
                 <button
-                  className={`${ICON} hidden @3xl/card:inline-flex`}
+                  className={`${TOOLBAR_ICON} hidden @3xl/card:inline-flex`}
                   onClick={() =>
                     void copy(buildPrompt(), `Copied an agent prompt for ${title}.`, "prompt")
                   }
@@ -425,7 +425,7 @@ export function BlockPreview({
               closeOnClick={false}
               render={
                 <button
-                  className={`${ICON} hidden @3xl/card:inline-flex`}
+                  className={`${TOOLBAR_ICON} hidden @3xl/card:inline-flex`}
                   onClick={() =>
                     void copy(
                       `${location.origin}${location.pathname}#${name}`,
@@ -455,7 +455,7 @@ export function BlockPreview({
           <Tooltip>
             <TooltipTrigger
               render={
-                <button className={`${ICON} hidden @sm/card:inline-flex`} onClick={refresh} type="button">
+                <button className={`${TOOLBAR_ICON} hidden @sm/card:inline-flex`} onClick={refresh} type="button">
                   <span className="sr-only">{`Reload the ${title} preview`}</span>
                   <RotateCw aria-hidden="true" className="size-4" strokeWidth={1.5} />
                 </button>
@@ -469,7 +469,7 @@ export function BlockPreview({
               render={
                 <button
                   aria-pressed={fullscreen}
-                  className={`${ICON} hidden @sm/card:inline-flex aria-pressed:bg-muted aria-pressed:text-foreground`}
+                  className={`${TOOLBAR_ICON} hidden @sm/card:inline-flex aria-pressed:bg-muted aria-pressed:text-foreground`}
                   data-fullscreen-button=""
                   onClick={() => (fullscreen ? exitFullscreen() : enterFullscreen())}
                   type="button"
@@ -515,6 +515,7 @@ export function BlockPreview({
           )}
 
           <InstallControl item={installItem} title={title} />
+          <ThemeCustomizer />
         </div>
       </div>
 

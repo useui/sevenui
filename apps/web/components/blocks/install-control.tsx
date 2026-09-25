@@ -12,7 +12,7 @@ import {
 } from "../../lib/package-manager";
 import { installCommand } from "../../lib/registry";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/registry/base/ui/tooltip";
-import { useAnnounce } from "./blocks-announcer";
+import { useAnnounce } from "../announcer";
 
 const KEY =
   "relative inline-flex cursor-pointer items-center text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:z-[1] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring";

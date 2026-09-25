@@ -1,11 +1,9 @@
 import "server-only";
 
-import CopyCommand from "../copy-command";
 import { DemoTabs } from "../demo/demo-tabs";
 import { PreviewPane } from "../demo/preview-pane";
 import { sourcePane } from "../demo/source-pane";
-import { packageManagerCommands } from "../../lib/package-manager";
-import { installCommand } from "../../lib/registry";
+import { ExampleActions } from "./example-actions";
 
 export async function ExampleCard({
   slug,
@@ -25,9 +23,10 @@ export async function ExampleCard({
     // or a shared link would land hundreds of pixels off.
     <section className="scroll-mt-24" id={id}>
       <DemoTabs
+        actions={<ExampleActions id={id} title={title} />}
         code={await sourcePane(`components/${slug}/${id}.tsx`)}
         heading={
-          <div className="min-w-0 flex-1 basis-72">
+          <div className="min-w-0">
             <h2 className="text-base font-semibold tracking-tight">
               <a className="hover:underline" href={`#${id}`}>
                 {title}
@@ -43,9 +42,6 @@ export async function ExampleCard({
           </PreviewPane>
         }
       />
-      <div className="mt-3">
-        <CopyCommand commands={packageManagerCommands((pm) => installCommand(`component/${id}`, pm))} />
-      </div>
     </section>
   );
 }

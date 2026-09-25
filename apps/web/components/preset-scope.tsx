@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { PRESET_SCOPE_ATTR } from "./preset-scope-attr";
+import { PRESET_CHANGE_EVENT, PRESET_SCOPE_ATTR } from "./preset-scope-attr";
 
 const STYLE_ID = "preset-scope-vars";
 
@@ -56,8 +56,13 @@ export function usePresetScope(): void {
         const handler = (event: StorageEvent) => {
           if (event.key === mods.PRESET_CONFIG_KEY || event.key === null) applyScopedPresetCssWith(mods);
         };
+        const onChange = () => applyScopedPresetCssWith(mods);
         window.addEventListener("storage", handler);
-        detachListener = () => window.removeEventListener("storage", handler);
+        window.addEventListener(PRESET_CHANGE_EVENT, onChange);
+        detachListener = () => {
+          window.removeEventListener("storage", handler);
+          window.removeEventListener(PRESET_CHANGE_EVENT, onChange);
+        };
       }
       myCleanup = () => {
         activeInstances -= 1;
