@@ -9,7 +9,10 @@ export function ProOffer() {
           Every block here is <span className="font-medium text-foreground">Pro</span>.
           One purchase, yours forever —
           <span className="font-medium text-foreground">{PRO_LAUNCH} at launch</span> instead of{" "}
-          {PRO_REGULAR}.
+          {PRO_REGULAR}.{" "}
+          <Link className="underline underline-offset-4 hover:text-foreground" href="/docs/installation#pro-blocks">
+            How to install
+          </Link>
         </p>
         <Link
           className="inline-flex h-10 shrink-0 items-center rounded-lg bg-primary px-6 font-medium text-primary-foreground text-sm transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"

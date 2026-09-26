@@ -13,7 +13,7 @@ function teammateSetup(license: LicenseRow) {
   return [
     "SevenUI Pro — your license key",
     "",
-    "1. Add it to .env (never commit it):",
+    "1. Add it to .env.local or .env (never commit it):",
     `SEVENUI_PRO_KEY=${license.key}`,
     "",
     "2. Add the key header to @sevenui in components.json:",

@@ -43,7 +43,7 @@ export function SetupSteps({
   const steps = [
     {
       title: "Put the key in your environment",
-      body: "Add it to .env or your host's secret settings. Keep it out of committed files; anyone holding it installs as you.",
+      body: "Add it to .env.local (or .env) or your host's secret settings. Keep it out of committed files; anyone holding it installs as you.",
       file: (
         <CodeFile
           code={snippets.env.code}

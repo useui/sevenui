@@ -4,7 +4,26 @@ description: Install SevenUI primitives with the shadcn CLI. The @sevenui regist
 ---
 
 SevenUI requires a project already set up with the shadcn CLI and
-Tailwind CSS v4. Run `npx shadcn@latest init` first if you have not.
+Tailwind CSS v4. If you have not initialized one yet, pick the Base UI
+base, since every SevenUI primitive is built on it:
+
+```bash
+npx shadcn@latest init --base base
+```
+
+`init` can write starter primitives of its own, such as
+`components/ui/button.tsx`. The first time you add SevenUI primitives
+over those files, pass `--overwrite`:
+
+```bash
+npx shadcn@latest add @sevenui/button @sevenui/dialog --overwrite
+```
+
+Without it the CLI asks before replacing each existing file. In a
+non-interactive shell (CI, an AI agent) there is no one to answer, and
+the command exits with "Done" having written none of the requested
+files. Leave `--overwrite` off later on, once you have edited primitives
+you want to keep.
 
 ## Add primitives
 
@@ -55,3 +74,71 @@ land in `components/ui/`.
 
 Browse components at [sevenui.dev/components](/components)
 and pro blocks at [sevenui.dev/blocks](/blocks).
+
+## Pro blocks
+
+Blocks install through the same `@sevenui` registry as everything else,
+with your [Pro](/pro) license key sent along. Copy the key from
+[your account](/account), then:
+
+Put the key in your environment. In a Next.js project `.env.local` is
+the natural place; `.env` works too, and the shadcn CLI reads both. Keep
+the file out of version control.
+
+```dotenv
+SEVENUI_PRO_KEY=<your key>
+```
+
+Give the `@sevenui` registry an `Authorization` header in
+`components.json`, once:
+
+```json
+"registries": {
+  "@sevenui": {
+    "url": "https://sevenui.dev/r/{name}.json",
+    "headers": { "Authorization": "Bearer ${SEVENUI_PRO_KEY}" }
+  }
+}
+```
+
+Then add any block by name:
+
+```bash
+npx shadcn@latest add @sevenui/pro/dashboard-01
+```
+
+The header applies to the whole `@sevenui` namespace, not only to
+blocks. Once it is in `components.json`, the CLI requires
+`SEVENUI_PRO_KEY` for every `@sevenui` install, free primitives and
+components included. Where the variable is unset, every install stops
+with:
+
+```text
+Registry "@sevenui" requires the following environment variables:
+  • SEVENUI_PRO_KEY
+```
+
+Set it everywhere `shadcn add` runs: each teammate's machine and CI.
+A 401 means no key reached the registry; a 403 means the key was
+rejected. The [support FAQ](/support) covers both.
+
+## Troubleshooting
+
+### Text renders in a serif font
+
+`shadcn init` can write `--font-sans: var(--font-sans);` into the
+`@theme inline` block of `globals.css`. The variable refers to itself,
+so it resolves to nothing and the page falls back to the browser's
+default serif. A `create-next-app` layout defines its font as
+`--font-geist-sans`; point the theme at that instead:
+
+```css
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+}
+```
+
+### `toast.add()` shows nothing
+
+Toasts render through `<Toaster />`, which has to be mounted once. See
+[Toast setup](/docs/components/toast#setup).

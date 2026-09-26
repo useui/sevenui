@@ -9,31 +9,50 @@ description: Stacked, swipe-dismissable notifications driven by the Base UI toas
 
 <InstallCommand item="toast" />
 
+## Setup
+
+Mount `<Toaster />` once in your root layout (`app/layout.tsx` in a
+Next.js app). Until it is mounted, `toast.add()` does nothing visible.
+
+```tsx
+import { Toaster } from "@/components/ui/toast";
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <Toaster />
+      </body>
+    </html>
+  );
+}
+```
+
 ## Usage
 
 ```tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Toaster, toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast";
 
-export function App() {
+export function SaveButton() {
   return (
-    <div>
-      <Toaster />
-      <Button
-        onClick={() =>
-          toast.add({ title: "Changes saved", type: "success" })
-        }
-      >
-        Save
-      </Button>
-    </div>
+    <Button
+      onClick={() => toast.add({ title: "Changes saved", type: "success" })}
+    >
+      Save
+    </Button>
   );
 }
 ```
 
-Render `<Toaster />` once, near your app root. It owns a module-level
+`<Toaster />` owns a module-level
 `createToastManager()` instance, so `toast.add(...)` works from anywhere
 — event handlers, effects, or plain functions outside the React tree.
 No third-party dependency (no sonner).
