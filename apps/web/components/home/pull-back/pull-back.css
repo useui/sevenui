@@ -1,0 +1,309 @@
+/* The home page's "Pull Back" story. The world is authored at the zoomed-in size, in em on a
+   64 x 40 page, and only ever scaled down, so text stays sharp. 1 world em = stage width / 64 * 7. */
+
+.pb-story-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 900px) {
+  .pb-story-grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: 3.5rem;
+  }
+}
+
+.pb-stage-col {
+  position: sticky;
+  top: 4rem; /* the site header is h-16 */
+  z-index: 5;
+  align-self: start;
+  background: var(--background);
+  padding-block: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+@media (min-width: 900px) {
+  .pb-stage-col {
+    grid-column: 2;
+    grid-row: 1;
+    top: calc(4rem + max(1.5rem, (100vh - 4rem - 460px) / 2));
+    border: 0;
+    padding: 0;
+  }
+}
+
+.pb-steps { list-style: none; margin: 0; padding: 0; }
+@media (min-width: 900px) { .pb-steps { grid-column: 1; grid-row: 1; } }
+.pb-step {
+  min-height: 72svh;
+  padding-block: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+@media (min-width: 900px) { .pb-step { min-height: 88vh; } }
+
+/* .pb-stage is the wrapper that carries data-scale; .pb-view is the clipped picture inside it. The
+   readout is the wrapper's other child, so on phones it can sit below the picture instead of over it. */
+.pb-stage { position: relative; }
+.pb-view {
+  margin: 0;
+  position: relative;
+  container-type: inline-size;
+  aspect-ratio: 64 / 40;
+  width: 100%;
+  overflow: clip;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 6px);
+  background: var(--background);
+}
+@media (min-width: 900px) { .pb-view { max-width: 46rem; } }
+/* Under 900px the picture sticks above the text, so on short viewports it must leave room to read:
+   its height is capped at 38svh - 2rem and its width follows at 64:40. */
+@media (max-width: 899px) {
+  .pb-stage { max-width: min(100%, calc((38svh - 2rem) * 64 / 40)); margin-inline: auto; }
+}
+
+.pb-world {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 64em;
+  height: 40em;
+  font-size: calc(700cqi / 64);
+  transform-origin: 0 0;
+  transform: translate(-55.35em, -28.35em) scale(1);
+  background: var(--background);
+  color: var(--foreground);
+}
+.pb-stage[data-scale="2"] .pb-world { transform: translate(-6.139em, -1.994em) scale(0.21); }
+.pb-stage[data-scale="3"] .pb-world { transform: translate(0, 0) scale(0.142857); }
+
+/* Which size the camera is at. Under 640px it sits below the stage so it never covers the card. */
+.pb-readout {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  z-index: 2;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--background) 85%, transparent);
+  backdrop-filter: blur(6px);
+  font-size: 11px;
+  font-weight: 500;
+}
+@media (max-width: 639px) {
+  .pb-readout { position: static; width: max-content; margin-top: 0.5rem; backdrop-filter: none; }
+}
+/* The highlight is a layer over each pill that only fades: Chrome mis-repaints scroll-driven background
+   and color when scrolling back, while opacity stays correct. */
+.pb-readout span {
+  position: relative;
+  padding: 3px 9px;
+  border-radius: 999px;
+  color: color-mix(in oklch, var(--foreground) 75%, transparent);
+}
+.pb-readout span::after {
+  content: attr(data-label);
+  position: absolute;
+  inset: 0;
+  padding: inherit;
+  border-radius: inherit;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  opacity: 0;
+}
+.pb-readout .pb-ro-1::after,
+.pb-stage[data-scale="2"] .pb-ro-2::after,
+.pb-stage[data-scale="3"] .pb-ro-3::after { opacity: 1; }
+.pb-stage[data-scale="2"] .pb-ro-1::after,
+.pb-stage[data-scale="3"] .pb-ro-1::after { opacity: 0; }
+
+.pb-try {
+  position: absolute;
+  z-index: 2;
+  left: 10px;
+  bottom: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--background);
+  border: 1px solid var(--border);
+}
+.pb-stage[data-scale="2"] .pb-try,
+.pb-stage[data-scale="3"] .pb-try { visibility: hidden; }
+
+/* The page inside the stage (a stand-in for the account-02 Block). */
+.pb-w { position: absolute; }
+.pb-side { left: 0; top: 0; width: 12em; height: 40em; background: var(--muted); border-right: 0.08em solid var(--border); padding: 1.4em 1.1em; }
+.pb-logo { display: flex; align-items: center; gap: 0.55em; font-weight: 600; }
+.pb-logo i { width: 1.3em; height: 1.3em; border-radius: 0.35em; background: var(--primary); display: block; }
+.pb-nav { margin-top: 2em; display: grid; gap: 0.35em; font-size: 0.95em; }
+.pb-nav span { padding: 0.45em 0.7em; border-radius: 0.45em; color: var(--muted-foreground); }
+.pb-nav .pb-on { background: var(--background); color: var(--foreground); font-weight: 500; box-shadow: 0 0 0 0.08em var(--border); }
+.pb-top { left: 12em; top: 0; width: 52em; height: 4em; border-bottom: 0.08em solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 2em; font-size: 0.95em; color: var(--muted-foreground); }
+.pb-top b { color: var(--foreground); font-weight: 500; }
+.pb-av { width: 2.2em; height: 2.2em; border-radius: 50%; background: linear-gradient(135deg, oklch(0.75 0.08 60), oklch(0.6 0.1 20)); display: grid; place-items: center; color: white; font-size: 0.8em; font-weight: 600; }
+.pb-title { left: 14em; top: 5.4em; }
+.pb-title > span { display: block; }
+.pb-title > span:first-child { font-size: 2em; font-weight: 600; letter-spacing: -0.03em; line-height: 1.2; }
+.pb-title > span:last-child { font-size: 0.95em; color: var(--muted-foreground); margin-top: 0.2em; }
+.pb-card { background: var(--card); border: 0.08em solid var(--border); border-radius: 0.8em; padding: 1em 1.2em; }
+.pb-card-t { display: block; font-weight: 600; }
+.pb-card-d { display: block; font-size: 0.8em; color: var(--muted-foreground); margin-top: 0.15em; }
+.pb-profile { left: 14em; top: 11em; width: 24em; height: 12.5em; }
+.pb-field { display: grid; grid-template-columns: 5.5em 1fr auto; align-items: center; gap: 0.6em; font-size: 0.85em; padding: 0.75em 0; border-top: 0.08em solid var(--border); }
+.pb-field:first-of-type { margin-top: 0.9em; }
+.pb-field span:first-child { color: var(--muted-foreground); }
+.pb-pill { font-size: 0.8em; padding: 0.15em 0.6em; border-radius: 999px; border: 0.08em solid var(--border); color: var(--muted-foreground); }
+.pb-sessions { left: 14em; top: 25em; width: 24em; height: 6.5em; }
+.pb-session { display: flex; justify-content: space-between; font-size: 0.8em; margin-top: 0.7em; color: var(--muted-foreground); }
+.pb-danger { left: 14em; top: 33em; width: 24em; height: 5em; display: flex; align-items: center; justify-content: space-between; border-color: color-mix(in oklch, var(--destructive) 40%, var(--border)); }
+.pb-danger-btn { font-size: 0.8em; padding: 0.45em 0.9em; border-radius: 0.5em; background: var(--destructive); color: white; font-weight: 500; }
+
+/* The Component: the Public profile card (switch-12). Row heights are fixed: the framing depends on them. */
+.pb-pc { left: 40em; top: 11em; width: 22em; height: 24.2em; padding: 1em; box-shadow: 0 0.6em 2em -1em color-mix(in oklch, var(--foreground) 25%, transparent); }
+.pb-pc-hd { height: 3.4em; }
+.pb-pv { height: 8.6em; background: var(--muted); border-radius: 0.6em; padding: 0.8em; }
+.pb-who { display: flex; align-items: center; gap: 0.7em; }
+.pb-who .pb-av { width: 2.4em; height: 2.4em; }
+.pb-who-name { display: block; font-size: 0.85em; font-weight: 500; }
+.pb-who-handle { display: block; font-size: 0.72em; color: var(--muted-foreground); }
+.pb-pv ul { list-style: none; margin: 0.6em 0 0; padding: 0; display: grid; gap: 0.3em; font-size: 0.72em; }
+.pb-pv li { display: none; align-items: center; gap: 0.5em; white-space: nowrap; overflow: hidden; }
+.pb-pv li::before { content: ""; width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--muted-foreground); flex: none; }
+.pb-pv li.pb-empty { display: block; color: var(--muted-foreground); }
+.pb-pv li.pb-empty::before { display: none; }
+.pb-rows { margin-top: 0.6em; }
+.pb-row { height: 2.6em; display: flex; align-items: center; justify-content: space-between; gap: 0.8em; border-top: 0.08em solid var(--border); }
+.pb-row:first-child { border-top: 0; }
+.pb-row label { min-width: 0; cursor: pointer; }
+.pb-row-label { display: block; font-size: 0.85em; font-weight: 500; }
+.pb-row-value { display: block; font-size: 0.7em; color: var(--muted-foreground); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 11em; }
+.pb-right { display: flex; align-items: center; gap: 0.5em; }
+.pb-state { font-size: 0.7em; color: var(--muted-foreground); width: 3.6em; text-align: right; }
+.pb-state .pb-on-label { display: none; }
+.pb-row:has(.pb-sw:checked) .pb-state .pb-on-label { display: inline; }
+.pb-row:has(.pb-sw:checked) .pb-state .pb-off-label { display: none; }
+
+/* The Switch, drawn like the registry Switch but in em so it scales with the world. */
+.pb-sw {
+  appearance: none;
+  margin: 0;
+  flex: none;
+  font-size: inherit;
+  cursor: pointer;
+  width: 2em;
+  height: 1.15em;
+  border-radius: 999px;
+  background: var(--input);
+  position: relative;
+  transition: background-color 0.2s;
+}
+.pb-sw::before {
+  content: "";
+  position: absolute;
+  top: 0.125em;
+  left: 0.125em;
+  width: 0.9em;
+  height: 0.9em;
+  border-radius: 50%;
+  background: var(--background);
+  box-shadow: 0 0.05em 0.15em rgb(0 0 0 / 0.2);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.pb-sw:checked { background: var(--primary); }
+.pb-sw:checked::before { transform: translateX(0.85em); }
+.pb-sw:focus-visible { outline: 0.12em solid var(--ring); outline-offset: 0.12em; }
+@media (prefers-reduced-motion: reduce) { .pb-sw, .pb-sw::before { transition: none; } }
+
+/* State flows up the sizes: the switches decide what the card and the page show. No JS. */
+.pb-world:has(#pb-sw-company:checked) .pb-pv-company,
+.pb-world:has(#pb-sw-location:checked) .pb-pv-location,
+.pb-world:has(#pb-sw-email:checked) .pb-pv-email,
+.pb-world:has(#pb-sw-phone:checked) .pb-pv-phone { display: flex; }
+.pb-world:has(.pb-sw:checked) .pb-pv li.pb-empty { display: none; }
+.pb-email-pill .pb-pub,
+.pb-world:has(#pb-sw-email:checked) .pb-email-pill .pb-priv { display: none; }
+.pb-world:has(#pb-sw-email:checked) .pb-email-pill .pb-pub { display: inline; }
+.pb-world:has(#pb-sw-email:checked) .pb-email-pill { background: var(--primary); color: var(--primary-foreground); border-color: transparent; }
+
+/* ---- Motion. The rules above are the finished, static state; everything below only animates it. ---- */
+
+/* Each move is driven by the step it leads into: the camera moves while that step's top edge crosses
+   the reading line, from 0.2 of a step before it to 0.2 after. The reading line is the viewport's middle
+   beside the picture and, under 900px, the middle of the band below the sticky picture. Tied to each
+   step's own position, the framing matches the text at every width. */
+.pb-story-grid { timeline-scope: --pb-s2, --pb-s3; --pb-read: 50vh; --pb-step: 88vh; }
+@media (max-width: 899px) { .pb-story-grid { --pb-read: 72vh; --pb-step: 72svh; } }
+.pb-step[data-step="2"] { view-timeline-name: --pb-s2; }
+.pb-step[data-step="3"] { view-timeline-name: --pb-s3; }
+
+@supports (animation-timeline: view()) and (timeline-scope: none) {
+  @media (prefers-reduced-motion: no-preference) {
+    .pb-world,
+    .pb-readout span::after,
+    .pb-try {
+      animation-timing-function: linear;
+      animation-range:
+        cover calc(100vh - var(--pb-read) - 0.2 * var(--pb-step))
+        cover calc(100vh - var(--pb-read) + 0.2 * var(--pb-step));
+    }
+    /* Two animations on one property: the later one only fills forwards, so before its range the
+       earlier one's end state shows through. */
+    .pb-world {
+      animation-name: pb-to-component, pb-to-block;
+      animation-timeline: --pb-s2, --pb-s3;
+      animation-fill-mode: both, forwards;
+      animation-timing-function: cubic-bezier(0.45, 0, 0.2, 1);
+    }
+    .pb-readout .pb-ro-1::after { animation-name: pb-off; animation-timeline: --pb-s2; animation-fill-mode: both; }
+    .pb-readout .pb-ro-2::after {
+      animation-name: pb-on, pb-off;
+      animation-timeline: --pb-s2, --pb-s3;
+      animation-fill-mode: both, forwards;
+    }
+    .pb-readout .pb-ro-3::after { animation-name: pb-on; animation-timeline: --pb-s3; animation-fill-mode: both; }
+    .pb-try { animation-name: pb-try; animation-timeline: --pb-s2; animation-fill-mode: both; }
+  }
+}
+
+@keyframes pb-to-component {
+  from { transform: translate(-55.35em, -28.35em) scale(1); }
+  to { transform: translate(-6.139em, -1.994em) scale(0.21); }
+}
+@keyframes pb-to-block {
+  from { transform: translate(-6.139em, -1.994em) scale(0.21); }
+  to { transform: translate(0, 0) scale(0.142857); }
+}
+@keyframes pb-on {
+  0%, 49% { opacity: 0; }
+  51%, 100% { opacity: 1; }
+}
+@keyframes pb-off {
+  0%, 49% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+@keyframes pb-try {
+  0% { opacity: 1; }
+  30%, 100% { opacity: 0; visibility: hidden; }
+}
+
+/* Fallback path (no scroll timelines, or reduced motion): ScaleFallback sets data-scale. Motion users
+   get an eased move between framings; reduced-motion users get instant cuts. */
+@media (prefers-reduced-motion: no-preference) {
+  .pb-stage[data-fallback] .pb-world { transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1); }
+}
+
+/* A keyboard user on any of the card's switches gets the Component framing, on every path, so focus
+   never lands out of sight and the camera holds still while Tab walks the rows (Email included: it is
+   in view at this framing too, and zooming back in for it would hide the rows either side). */
+.pb-stage:has(.pb-sw:focus-visible) .pb-world {
+  animation: none;
+  transform: translate(-6.139em, -1.994em) scale(0.21);
+}
+.pb-stage:has(.pb-sw:focus-visible) :is(.pb-ro-1, .pb-ro-3)::after { animation: none; opacity: 0; }
+.pb-stage:has(.pb-sw:focus-visible) .pb-ro-2::after { animation: none; opacity: 1; }
+.pb-stage:has(.pb-sw:focus-visible) .pb-try { animation: none; visibility: hidden; }
