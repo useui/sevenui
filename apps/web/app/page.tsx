@@ -7,14 +7,12 @@ import {
   componentCount,
   loadCatalog,
   primitiveCount,
-  sourceOf,
 } from "../components/home/registry-data";
 import { JsonLd } from "../components/json-ld";
-import { CodeFile } from "../components/pro/code-file";
+import { Story } from "../components/home/pull-back/story";
 import { getNavTree, resolvePrimitivesHref } from "../lib/docs/nav";
 import { pageMetadata, RootUrlTags } from "../lib/metadata";
 import { requirePageMeta } from "../lib/page-meta";
-import { highlightLines } from "../lib/shiki";
 import { packageManagerCommands } from "../lib/package-manager";
 import { installCommand } from "../lib/registry";
 import { buttonVariants } from "@/registry/base/ui/button";
@@ -49,28 +47,35 @@ export default async function Home() {
 
   const catalog = await loadCatalog();
 
-  const tiers = [
+  const sizes = [
     {
-      count: primitiveCount,
-      name: "Primitives",
-      body: "Single parts, one file each. Behavior from Base UI, styling on the shadcn/ui CSS variables you already have.",
-      terms: "Free · MIT",
-      href: primitivesHref,
+      name: "Primitive",
+      terms: `${primitiveCount} · free, MIT`,
+      commands: packageManagerCommands((pm) => installCommand("switch", pm)),
+      href: "/docs/components/switch",
+      linkLabel: "Switch docs",
     },
     {
-      count: componentCount,
-      name: "Components",
-      body: "Primitives composed into real interface: cards, forms, settings. Copy one and adapt it.",
-      terms: "Free",
+      name: "Component",
+      terms: `${componentCount} · free`,
+      commands: packageManagerCommands((pm) => installCommand("component/switch-12", pm)),
       href: "/components",
+      linkLabel: "Browse components",
     },
     {
-      count: catalog.blockCount,
-      name: "Blocks",
-      body: `Finished sections and pages across ${catalog.categoryCount} categories, installed with the same CLI.`,
-      terms: `Pro · ${PRO_LAUNCH} once`,
+      name: "Block",
+      terms: `${catalog.blockCount} · Pro`,
+      commands: packageManagerCommands((pm) => installCommand("pro/account-02", pm)),
       href: "/blocks",
+      linkLabel: "Browse Blocks",
     },
+  ];
+
+  const doors = [
+    { href: "/docs", label: "Read the installation guide", note: "Two minutes, one command" },
+    { href: primitivesHref, label: "Browse the primitives", note: `${primitiveCount} single parts` },
+    { href: "/components", label: "Browse free components", note: `${componentCount} composed examples` },
+    { href: "/blocks", label: "See Pro Blocks", note: `${catalog.blockCount} finished sections and pages` },
   ];
 
   return (
@@ -88,9 +93,10 @@ export default async function Home() {
               <Slogan />
             </p>
             <p className={`${LEAD} mt-6 max-w-[48ch] text-lg sm:text-xl`}>
-              <span className="tabular-nums">{primitiveCount}</span> accessible
-              React primitives built on Base UI. The shadcn CLI copies the
-              source into your repo, and from there it&apos;s yours.
+              <span className="tabular-nums">{primitiveCount}</span> accessible React primitives built on
+              Base UI, composed into <span className="tabular-nums">{componentCount}</span> free components
+              and <span className="tabular-nums">{catalog.blockCount}</span> Pro Blocks. The shadcn CLI copies
+              the source into your repo.
             </p>
             <div className="mt-10 flex w-full max-w-[40rem] flex-col items-stretch gap-3 sm:flex-row sm:items-center">
               <InstallCommand
@@ -119,45 +125,36 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* The three tiers, as one ruled list instead of a stats row. */}
-      <section aria-labelledby="tiers-title" className="border-b border-border">
-        <div className={SECTION}>
-          <div className="grid grid-cols-1 gap-x-16 gap-y-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:items-end">
-            <h2 className={H2} id="tiers-title">
-              One registry, three sizes.
-            </h2>
-            <p className={`${LEAD} max-w-[52ch]`}>
-              Start free with the parts and the assemblies. Go Pro when you want
-              the finished page. Everything installs the same way and lands as
-              source.
-            </p>
-          </div>
+      <Story
+        blockCount={catalog.blockCount}
+        categoryCount={catalog.categoryCount}
+        componentCount={componentCount}
+        primitiveCount={primitiveCount}
+        primitivesHref={primitivesHref}
+      />
 
-          <ul className="mt-12 divide-y divide-border border-y border-border sm:mt-16">
-            {tiers.map((tier) => (
-              <li key={tier.name}>
-                <Link
-                  className="group grid grid-cols-[4.5rem_minmax(0,1fr)] items-baseline gap-x-5 gap-y-2 py-7 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring sm:grid-cols-[8rem_minmax(0,1fr)_auto] sm:gap-x-8 sm:py-9"
-                  href={tier.href}
-                >
-                  <span className="text-4xl font-semibold tracking-[-0.04em] tabular-nums sm:text-5xl">
-                    {tier.count}
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block text-lg font-semibold tracking-[-0.02em] group-hover:underline group-hover:decoration-foreground/40 group-hover:underline-offset-4 sm:text-xl">
-                      {tier.name}
-                    </span>
-                    <span className="mt-1.5 block max-w-[56ch] text-[0.9375rem] leading-relaxed text-pretty text-muted-foreground">
-                      {tier.body}
-                    </span>
-                  </span>
-                  <span className="col-start-2 flex items-center gap-2 text-sm font-medium whitespace-nowrap sm:col-start-3">
-                    {tier.terms}
-                    <ArrowRightIcon
-                      aria-hidden="true"
-                      className="size-4 text-muted-foreground transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1 group-hover:text-foreground motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
-                    />
-                  </span>
+      <section aria-labelledby="commands-title" className="border-b border-border">
+        <div className={SECTION}>
+          <h2 className={H2} id="commands-title">
+            Same command at every size.
+          </h2>
+          <p className={`${LEAD} mt-4 max-w-[52ch]`}>
+            A switch, a card, or a whole page. Each one arrives through the shadcn CLI as source in your repo,
+            styled by the theme you already have.
+          </p>
+          <ul className="mt-10 divide-y divide-border border-y border-border">
+            {sizes.map((size) => (
+              <li
+                className="grid grid-cols-1 gap-x-6 gap-y-3 py-5 md:grid-cols-[11rem_minmax(0,1fr)_auto] md:items-center"
+                key={size.name}
+              >
+                <span className="font-semibold">
+                  {size.name}
+                  <span className="block text-[0.8125rem] font-normal text-muted-foreground">{size.terms}</span>
+                </span>
+                <InstallCommand className="min-w-0" commands={size.commands} label={`${size.name} install command`} />
+                <Link className={QUIET_LINK} href={size.href}>
+                  {size.linkLabel}
                 </Link>
               </li>
             ))}
@@ -165,45 +162,24 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Ownership: what the command actually does, shown with the real file. */}
-      <section aria-labelledby="own-title" className="border-b border-border">
-        <div
-          className={`${SECTION} grid grid-cols-1 items-start gap-x-16 gap-y-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]`}
-        >
-          <div>
-            <h2 className={H2} id="own-title">
-              The file is yours.
-            </h2>
-            <dl className="mt-10 grid grid-cols-1 gap-8">
-              <div>
-                <dt className="font-semibold">Base UI handles behavior.</dt>
-                <dd className={`${LEAD} mt-1.5 text-[0.9375rem]`}>
-                  Focus, keyboard, ARIA and positioning come from Base UI. The
-                  file only styles it.
-                </dd>
-              </div>
-              <div>
-                <dt className="font-semibold">The shadcn CLI delivers it.</dt>
-                <dd className={`${LEAD} mt-1.5 text-[0.9375rem]`}>
-                  @sevenui is in the shadcn registry index: nothing to
-                  configure, and your existing theme applies unchanged.
-                </dd>
-              </div>
-              <div>
-                <dt className="font-semibold">Nothing to stay in sync with.</dt>
-                <dd className={`${LEAD} mt-1.5 text-[0.9375rem]`}>
-                  No SevenUI package joins your dependencies. Rename a prop,
-                  delete a variant — there is no upstream.
-                </dd>
-              </div>
-            </dl>
-          </div>
-          <CodeFile
-            code={sourceOf("switch")}
-            copyLabel="abridged switch source"
-            html={await highlightLines(sourceOf("switch"), "tsx")}
-            name="components/ui/switch.tsx"
-          />
+      <section aria-labelledby="start-title" className="border-b border-border">
+        <div className={SECTION}>
+          <h2 className={H2} id="start-title">
+            Start at any size.
+          </h2>
+          <ul className="mt-10 divide-y divide-border border-y border-border">
+            {doors.map((door) => (
+              <li key={door.href}>
+                <Link
+                  className="group flex justify-between gap-4 py-5 text-lg font-medium focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                  href={door.href}
+                >
+                  <span className="group-hover:underline group-hover:underline-offset-4">{door.label}</span>
+                  <span className="text-right text-[0.9375rem] font-normal text-muted-foreground">{door.note}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
       <RootUrlTags />
