@@ -1,0 +1,191 @@
+---
+title: Layer Card
+description: A muted tray holding one or more raised panels, with a header and footer as chrome.
+---
+
+<Component path="layer-card/layer-card-demo" />
+
+## Installation
+
+<InstallCommand item="layer-card" />
+
+## Usage
+
+```tsx
+import {
+  LayerCard,
+  LayerCardAction,
+  LayerCardDescription,
+  LayerCardFooter,
+  LayerCardHeader,
+  LayerCardPanel,
+  LayerCardTitle,
+} from "@/components/ui/layer-card";
+
+<LayerCard>
+  <LayerCardHeader>
+    <LayerCardTitle>Subrequests</LayerCardTitle>
+    <LayerCardDescription>Origins called by this worker.</LayerCardDescription>
+    <LayerCardAction>…</LayerCardAction>
+  </LayerCardHeader>
+  <LayerCardPanel>Panel content</LayerCardPanel>
+  <LayerCardFooter>Showing 8 of 24</LayerCardFooter>
+</LayerCard>;
+```
+
+The tray is the root. The header and footer sit on it as chrome, and each
+`LayerCardPanel` is a raised surface inside it. Panel corners are derived
+from the tray's, so the two arcs stay parallel at any radius.
+
+## Examples
+
+### Surface
+
+Without a panel, the root is a single plain surface.
+
+<Component path="layer-card/layer-card-surface" />
+
+### Several panels
+
+A tray can hold any number of panels.
+
+<Component path="layer-card/layer-card-panels" />
+
+### Stacked
+
+`stacked` joins adjacent panels with a shared border.
+
+<Component path="layer-card/layer-card-stacked" />
+
+### Dense
+
+`dense` removes the tray padding so panels run edge to edge. Combine it
+with `stacked` for a single joined list.
+
+<Component path="layer-card/layer-card-dense" />
+
+### Horizontal
+
+`orientation="horizontal"` lays panels in a row while the header and
+footer stay full width. Below 28rem of tray width the panels stack, and
+stacked seams turn horizontal.
+
+<Component path="layer-card/layer-card-horizontal" />
+
+### Variants
+
+`default` is a muted tray with card panels, `inverse` swaps the two, and
+`ghost` drops the tray border.
+
+<Component path="layer-card/layer-card-variants" />
+
+### Sizes
+
+`size` sets the padding of the panels, header, and footer.
+
+<Component path="layer-card/layer-card-sizes" />
+
+### Links
+
+Render a panel as a link with `render`. It gains hover and focus styles.
+
+<Component path="layer-card/layer-card-link" />
+
+### Danger zone
+
+`tone="destructive"` tints the tray and its title. Panels stay neutral.
+
+<Component path="layer-card/layer-card-destructive" />
+
+### Radius
+
+Override `--layer-card-radius` on the root; panels follow. Content inside a
+panel can use `--layer-card-panel-radius` to match the panel's corners.
+
+<Component path="layer-card/layer-card-radius" />
+
+## Accessibility
+
+The root is a `div` with no role. To make a titled layer card a labelled
+region, render it as a `section` and point it at the title:
+
+```tsx
+<LayerCard render={<section aria-labelledby="usage-title" />}>
+  <LayerCardHeader>
+    <LayerCardTitle render={<h3 id="usage-title" />}>Usage</LayerCardTitle>
+  </LayerCardHeader>
+  …
+</LayerCard>
+```
+
+A link panel is one interactive element. Don't nest buttons or other links
+inside it.
+
+## API reference
+
+### LayerCard
+
+Extends `div` and accepts `render`.
+
+| Prop          | Type                                     | Default      |
+| ------------- | ---------------------------------------- | ------------ |
+| `variant`     | `"default" \| "inverse" \| "ghost"`      | `"default"`  |
+| `size`        | `"xs" \| "sm" \| "default" \| "lg"`      | `"default"`  |
+| `orientation` | `"vertical" \| "horizontal"`             | `"vertical"` |
+| `stacked`     | `boolean`                                | `false`      |
+| `dense`       | `boolean`                                | `false`      |
+| `tone`        | `"default" \| "destructive"`             | `"default"`  |
+
+The root carries `data-slot="layer-card"`, `data-variant`, `data-size`,
+`data-orientation`, and `data-tone`, plus `data-stacked` and `data-dense`
+when those are set.
+
+### LayerCardPanel
+
+Extends `div` and accepts `render`.
+
+| Prop  | Type      | Default |
+| ----- | --------- | ------- |
+| `fit` | `boolean` | `false` |
+
+A panel grows into spare space along the tray's direction. `fit` keeps it
+at its content size. Rendered as an `a` or `button`, it gets hover and
+`focus-visible` styles.
+
+### LayerCardHeader, LayerCardTitle, LayerCardDescription, LayerCardAction, LayerCardFooter
+
+Structural wrappers extending `div`. `LayerCardTitle` also accepts `render`,
+for example to pick a heading level. `LayerCardHeader` switches to two
+columns when a `LayerCardAction` is present.
+
+### CSS variables
+
+| Variable                    | Default                                 | Description                                        |
+| --------------------------- | --------------------------------------- | -------------------------------------------------- |
+| `--layer-card-radius`       | `var(--radius-xl)`                      | Tray corner radius. Set it on the root.            |
+| `--layer-card-panel-radius` | tray radius minus padding and border    | Panel corner radius, never below 0. Read-only use. |
+
+### Notes
+
+- The tray switches to panel mode when it contains a `LayerCardPanel` at
+  any depth, so panels wrapped by `Collapsible` or your own component still
+  count. A surface-mode card that directly contains another layered card is
+  read as layered.
+- A panel that unmounts takes panel mode with it. Base UI's `Collapsible`
+  unmounts its panel when closed, so pass `keepMounted` to
+  `CollapsibleContent render={<LayerCardPanel />}`; otherwise the tray turns
+  into a plain surface every time it closes.
+- In surface mode the header and footer drop their own padding, since the
+  root already pads the content.
+- `stacked` and `dense` only affect panels that are direct children of the
+  root.
+- In horizontal orientation, `dense` only removes the tray padding, so the
+  panels' outer borders sit against the tray border as a double edge. Use
+  vertical orientation when you want edge-to-edge panels.
+- A horizontal layer card is a size container, so it needs a width from its
+  parent. As a flex item without one it collapses; give it `w-full` or a
+  `basis-*`.
+- Override padding, background, and shadow with ordinary classes
+  (`p-6`, `bg-*`, `shadow-none`). To drop the tray border, use
+  `variant="ghost"` rather than `border-0`: the panel radius is derived from
+  the border width the variant sets.

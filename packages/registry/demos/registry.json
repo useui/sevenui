@@ -2264,6 +2264,180 @@
           "type": "registry:component"
         }
       ]
+    },
+    {
+      "name": "layer-card-demo",
+      "type": "registry:component",
+      "title": "Layer Card Demo",
+      "description": "A layer card with a header action, one panel, and a footer.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/layer-card.json"
+      ],
+      "files": [
+        {
+          "path": "layer-card/layer-card-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "layer-card-surface",
+      "type": "registry:component",
+      "title": "Layer Card Surface",
+      "description": "A layer card without panels, used as a single surface.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/layer-card.json"
+      ],
+      "files": [
+        {
+          "path": "layer-card/layer-card-surface.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "layer-card-panels",
+      "type": "registry:component",
+      "title": "Layer Card Panels",
+      "description": "Several separate panels on one tray.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/badge.json",
+        "https://sevenui.dev/r/layer-card.json"
+      ],
+      "files": [
+        {
+          "path": "layer-card/layer-card-panels.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "layer-card-stacked",
+      "type": "registry:component",
+      "title": "Layer Card Stacked",
+      "description": "Adjacent panels joined with shared borders.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/layer-card.json"
+      ],
+      "files": [
+        {
+          "path": "layer-card/layer-card-stacked.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "layer-card-dense",
+      "type": "registry:component",
+      "title": "Layer Card Dense",
+      "description": "Panels flush with the tray edge, alone and stacked.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/layer-card.json"
+      ],
+      "files": [
+        {
+          "path": "layer-card/layer-card-dense.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "layer-card-horizontal",
+      "type": "registry:component",
+      "title": "Layer Card Horizontal",
+      "description": "A stacked row of stat panels that stacks vertically when narrow.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/layer-card.json"
+      ],
+      "files": [
+        {
+          "path": "layer-card/layer-card-horizontal.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "layer-card-variants",
+      "type": "registry:component",
+      "title": "Layer Card Variants",
+      "description": "The default, inverse, and ghost variants side by side.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/layer-card.json"
+      ],
+      "files": [
+        {
+          "path": "layer-card/layer-card-variants.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "layer-card-sizes",
+      "type": "registry:component",
+      "title": "Layer Card Sizes",
+      "description": "The xs, sm, default, and lg sizes.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/layer-card.json"
+      ],
+      "files": [
+        {
+          "path": "layer-card/layer-card-sizes.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "layer-card-link",
+      "type": "registry:component",
+      "title": "Layer Card Link",
+      "description": "Panels rendered as links for navigation.",
+      "dependencies": [
+        "lucide-react@^1.41.0"
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/layer-card.json"
+      ],
+      "files": [
+        {
+          "path": "layer-card/layer-card-link.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "layer-card-destructive",
+      "type": "registry:component",
+      "title": "Layer Card Destructive",
+      "description": "A danger zone with the destructive tone.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/layer-card.json"
+      ],
+      "files": [
+        {
+          "path": "layer-card/layer-card-destructive.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "layer-card-radius",
+      "type": "registry:component",
+      "title": "Layer Card Radius",
+      "description": "A custom tray radius and a media panel matching the panel radius.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/layer-card.json"
+      ],
+      "files": [
+        {
+          "path": "layer-card/layer-card-radius.tsx",
+          "type": "registry:component"
+        }
+      ]
     }
   ]
 }
