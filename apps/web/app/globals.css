@@ -14,7 +14,8 @@
   color-scheme: dark;
 }
 
-:root {
+:root,
+[data-theme="light"] {
   --background: oklch(0.9878 0.0013 106.423);
   --foreground: oklch(0.2048 0.0061 271.107);
   --card: oklch(1 0 0);

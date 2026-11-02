@@ -104,6 +104,8 @@ async function standaloneRoutes(gallery, blocks) {
     if (!entry.isDirectory()) continue;
     const { name } = entry;
     if (/^\(.+\)$/u.test(name) || /^\[.*\]$/u.test(name) || name.startsWith("_")) continue;
+    // Dev-only visual harness; 404s in production, so it is not a route of the site.
+    if (name === "v2-lab") continue;
     const children = await readdir(join(appDir, name));
     if (!children.includes("page.tsx")) continue;
     candidates.push(name);
