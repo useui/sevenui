@@ -62,7 +62,7 @@ export const UPCOMING: UpcomingRelease = {
     },
     {
       title: "New primitives",
-      description: "More installable primitives, built on Base UI and served through the shadcn registry like the existing 65.",
+      description: "More installable primitives, built on Base UI and served through the shadcn registry like the existing 66.",
       status: "Planned",
     },
     {

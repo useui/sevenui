@@ -17,11 +17,11 @@ SevenUI is a React component library built exclusively on Base UI (`@base-ui/rea
 Three tiers, named by composition size. Use these words in every user-visible
 surface; the canonical definition lives in `apps/web/lib/site-tabs.ts`.
 
-- **Primitive** — an installable unit (`npx shadcn add @sevenui/button`), 65 of
+- **Primitive** — an installable unit (`npx shadcn add @sevenui/button`), 66 of
   them, `registry:ui` in `packages/registry/registry.json`, served at
   `/r/<name>.json`, documented under `/docs/components/*`. The URL keeps the
   older `components` segment on purpose: those are published pages, and a label
-  change does the same work without breaking 65 links.
+  change does the same work without breaking 66 links.
 - **Component** — composed, copy-and-go usage of the primitives, free, in
   `packages/registry/components`, served at `/r/component/<name>.json`, browsed
   at `/components`.

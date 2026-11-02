@@ -87,7 +87,7 @@ export function BlocksCta() {
     >
       <div className="mx-auto grid max-w-6xl gap-12 px-6 pt-16 lg:px-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-end lg:gap-16 lg:pt-24">
         <div className="max-w-xl lg:pb-24">
-          {/* A <p>, not a heading: this closes every gallery page, and one repeated heading on 65 pages
+          {/* A <p>, not a heading: this closes every gallery page, and one repeated heading on 66 pages
               reads as part of each page's own outline. It still names the section through aria-labelledby. */}
           <p
             className="font-display text-4xl leading-[1.05] font-medium tracking-tighter text-balance sm:text-5xl lg:text-6xl"
