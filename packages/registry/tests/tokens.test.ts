@@ -1,0 +1,64 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { describe, expect, it } from "vitest";
+
+import { BASE_TOKEN_KEYS } from "../../presets/presets";
+import { contrastRatio } from "./helpers/contrast";
+
+type Item = {
+  name: string;
+  type: string;
+  cssVars?: { light?: Record<string, string>; dark?: Record<string, string>; theme?: Record<string, string> };
+  css?: Record<string, unknown>;
+  registryDependencies?: string[];
+};
+
+const registry = JSON.parse(
+  readFileSync(path.resolve(import.meta.dirname, "../registry.json"), "utf8"),
+) as { items: Item[] };
+
+const tokens = registry.items.find((i) => i.name === "sevenui-tokens");
+const theme = registry.items.find((i) => i.name === "theme")!;
+const light = tokens?.cssVars?.light ?? {};
+const dark = tokens?.cssVars?.dark ?? {};
+
+describe("sevenui-tokens", () => {
+  it("ships a sevenui-tokens item of type registry:theme", () => {
+    expect(tokens?.type).toBe("registry:theme");
+    expect(tokens?.css).toBeDefined();
+    expect(tokens?.cssVars?.theme).toBeDefined();
+  });
+
+  it("defines identical key sets in light and dark", () => {
+    expect(Object.keys(light).length).toBeGreaterThan(0);
+    expect(Object.keys(dark).sort()).toEqual(Object.keys(light).sort());
+  });
+
+  it("never writes a shadcn variable", () => {
+    const forbidden = new Set<string>([...BASE_TOKEN_KEYS, "radius"]);
+    const keys = [...Object.keys(light), ...Object.keys(dark)];
+    expect(keys.length).toBeGreaterThan(0);
+    for (const key of keys) {
+      expect(forbidden.has(key), key).toBe(false);
+      expect(/^(success|warning)/.test(key), key).toBe(false);
+    }
+  });
+
+  it("every registry:ui item depends on sevenui-tokens", () => {
+    const ui = registry.items.filter((i) => i.type === "registry:ui");
+    expect(ui.length).toBeGreaterThan(0);
+    for (const item of ui) {
+      expect(item.registryDependencies ?? [], item.name).toContain("https://sevenui.dev/r/sevenui-tokens.json");
+    }
+  });
+
+  it("meets AA", () => {
+    const lightBg = theme.cssVars!.light!.background;
+    const darkBg = theme.cssVars!.dark!.background;
+    expect(contrastRatio(light["brand-strong"], light["brand-foreground"])).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio(dark["brand-strong"], dark["brand-foreground"])).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio(light.brand, lightBg)).toBeGreaterThanOrEqual(3);
+    expect(contrastRatio(dark.brand, darkBg)).toBeGreaterThanOrEqual(3);
+    expect(contrastRatio(dark.brand, darkBg)).toBeGreaterThanOrEqual(4.5);
+  });
+});

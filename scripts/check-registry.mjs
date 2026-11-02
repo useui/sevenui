@@ -14,6 +14,7 @@ const demos = loadJson(join(DEMOS_ROOT, "registry.json"));
 const uiNames = new Set(ui.items.map((i) => i.name));
 const demoNames = new Set(demos.items.map((i) => i.name));
 // registryDependencies always point at ui primitives in the root namespace.
+const TOKENS_URL = "https://sevenui.dev/r/sevenui-tokens.json";
 const OWN_URL = /^https:\/\/sevenui\.dev\/r\/([a-z0-9-]+)\.json$/;
 
 const registryPkg = loadJson(join(UI_ROOT, "package.json"));
@@ -104,6 +105,13 @@ function checkRegistry(registry, root, label, { fileType } = {}) {
           }
         }
       }
+    }
+
+    if (
+      item.type === "registry:ui" &&
+      !(item.registryDependencies ?? []).includes(TOKENS_URL)
+    ) {
+      errors.push(`${item.name}: missing sevenui-tokens dependency`);
     }
 
     checkLucideDep(item, root, where);

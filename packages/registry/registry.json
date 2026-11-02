@@ -151,6 +151,86 @@
       }
     },
     {
+      "name": "sevenui-tokens",
+      "type": "registry:theme",
+      "title": "SevenUI Tokens",
+      "description": "SevenUI v2 design tokens: accent, surfaces, hairlines, elevation, focus ring and density variables. Never overrides a shadcn variable.",
+      "cssVars": {
+        "theme": {
+          "--color-brand": "var(--brand)",
+          "--color-brand-foreground": "var(--brand-foreground)",
+          "--color-brand-strong": "var(--brand-strong)",
+          "--color-surface-tray": "var(--surface-tray)",
+          "--color-surface-panel": "var(--surface-panel)",
+          "--color-surface-raised": "var(--surface-raised)",
+          "--color-surface-inset": "var(--surface-inset)",
+          "--color-hairline": "var(--hairline)",
+          "--color-hairline-strong": "var(--hairline-strong)",
+          "--shadow-highlight": "var(--elevation-highlight)",
+          "--shadow-inset": "var(--elevation-inset)",
+          "--shadow-raised": "var(--elevation-raised)",
+          "--shadow-overlay": "var(--elevation-overlay)",
+          "--ease-spring": "cubic-bezier(0.3, 1.4, 0.5, 1)",
+          "--ease-snappy": "cubic-bezier(0.2, 0, 0, 1)"
+        },
+        "light": {
+          "brand": "#2f5ce8",
+          "brand-foreground": "#ffffff",
+          "brand-strong": "#2f5ce8",
+          "surface-tray": "color-mix(in oklch, var(--background) 40%, var(--muted))",
+          "surface-panel": "var(--card)",
+          "surface-raised": "var(--popover)",
+          "surface-inset": "var(--background)",
+          "hairline": "color-mix(in oklch, var(--foreground) 8%, transparent)",
+          "hairline-strong": "color-mix(in oklch, var(--foreground) 13%, transparent)",
+          "elevation-highlight": "inset 0 1px 0 rgb(255 255 255 / 0.9)",
+          "elevation-inset": "inset 0 1px 2px rgb(0 0 0 / 0.05)",
+          "elevation-raised": "0 1px 2px rgb(0 0 0 / 0.06)",
+          "elevation-overlay": "0 0 0 1px var(--hairline-strong), 0 30px 60px -30px rgb(20 22 30 / 0.25)"
+        },
+        "dark": {
+          "brand": "#4d7cff",
+          "brand-foreground": "#ffffff",
+          "brand-strong": "#3a68f0",
+          "surface-tray": "color-mix(in oklch, var(--background) 30%, var(--card))",
+          "surface-panel": "color-mix(in oklch, var(--card), var(--foreground) 4%)",
+          "surface-raised": "color-mix(in oklch, var(--popover), var(--foreground) 7%)",
+          "surface-inset": "color-mix(in oklch, var(--background), black 25%)",
+          "hairline": "color-mix(in oklch, var(--foreground) 7%, transparent)",
+          "hairline-strong": "color-mix(in oklch, var(--foreground) 12%, transparent)",
+          "elevation-highlight": "inset 0 1px 0 rgb(255 255 255 / 0.06)",
+          "elevation-inset": "inset 0 1px 2px rgb(0 0 0 / 0.4)",
+          "elevation-raised": "0 1px 2px rgb(0 0 0 / 0.3)",
+          "elevation-overlay": "0 0 0 1px var(--hairline-strong), 0 30px 60px -30px rgb(0 0 0 / 0.8)"
+        }
+      },
+      "css": {
+        "@utility focus-ring": {
+          "outline": "var(--focus-width) solid var(--focus-color)",
+          "outline-offset": "var(--focus-gap)"
+        },
+        ":root": {
+          "--focus-width": "1.5px",
+          "--focus-gap": "2px",
+          "--focus-color": "var(--brand)",
+          "--control-h": "2.125rem",
+          "--control-px": "0.75rem",
+          "--control-gap": "0.5rem",
+          "--control-text": "0.8125rem",
+          "--panel-pad": "1.125rem",
+          "--item-h": "2rem"
+        },
+        "[data-density=compact]": {
+          "--control-h": "1.75rem",
+          "--control-px": "0.5625rem",
+          "--control-gap": "0.375rem",
+          "--control-text": "0.78125rem",
+          "--panel-pad": "0.75rem",
+          "--item-h": "1.625rem"
+        }
+      }
+    },
+    {
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
@@ -165,6 +245,9 @@
           "path": "registry/base/ui/button.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -182,6 +265,9 @@
           "path": "registry/base/ui/badge.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -197,6 +283,9 @@
           "path": "registry/base/ui/kbd.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -212,6 +301,9 @@
           "path": "registry/base/ui/label.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -227,6 +319,9 @@
           "path": "registry/base/ui/card.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -243,6 +338,9 @@
           "path": "registry/base/ui/input.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -260,6 +358,9 @@
           "path": "registry/base/ui/input-otp.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -276,6 +377,9 @@
           "path": "registry/base/ui/alert.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -292,6 +396,9 @@
           "path": "registry/base/ui/avatar.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -308,6 +415,9 @@
           "path": "registry/base/ui/separator.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -323,6 +433,9 @@
           "path": "registry/base/ui/skeleton.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -339,6 +452,9 @@
           "path": "registry/base/ui/spinner.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -354,6 +470,9 @@
           "path": "registry/base/ui/aspect-ratio.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -369,6 +488,9 @@
           "path": "registry/base/ui/textarea.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -384,6 +506,9 @@
           "path": "registry/base/ui/table.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -401,6 +526,9 @@
           "path": "registry/base/ui/breadcrumb.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -413,7 +541,8 @@
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/button.json"
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -436,6 +565,9 @@
           "path": "registry/base/ui/progress.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -450,7 +582,8 @@
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/label.json",
-        "https://sevenui.dev/r/separator.json"
+        "https://sevenui.dev/r/separator.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -473,6 +606,9 @@
           "path": "registry/base/ui/form.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -490,6 +626,9 @@
           "path": "registry/base/ui/checkbox.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -506,6 +645,9 @@
           "path": "registry/base/ui/radio-group.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -522,6 +664,9 @@
           "path": "registry/base/ui/switch.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -539,6 +684,9 @@
           "path": "registry/base/ui/toggle.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -552,7 +700,8 @@
         "cn@^0.2.5"
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/toggle.json"
+        "https://sevenui.dev/r/toggle.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -575,6 +724,9 @@
           "path": "registry/base/ui/slider.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -592,6 +744,9 @@
           "path": "registry/base/ui/number-field.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -611,7 +766,8 @@
         }
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/animations.json"
+        "https://sevenui.dev/r/animations.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -627,7 +783,8 @@
       "registryDependencies": [
         "https://sevenui.dev/r/animations.json",
         "https://sevenui.dev/r/button.json",
-        "https://sevenui.dev/r/input-group.json"
+        "https://sevenui.dev/r/input-group.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -650,6 +807,9 @@
           "path": "registry/base/ui/tooltip.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -668,7 +828,8 @@
         }
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/animations.json"
+        "https://sevenui.dev/r/animations.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -687,7 +848,8 @@
         }
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/animations.json"
+        "https://sevenui.dev/r/animations.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -702,7 +864,8 @@
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/animations.json",
-        "https://sevenui.dev/r/button.json"
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -722,7 +885,8 @@
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/animations.json",
-        "https://sevenui.dev/r/button.json"
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -742,7 +906,8 @@
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/button.json"
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -765,6 +930,9 @@
           "path": "registry/base/ui/drawer.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -784,7 +952,8 @@
         }
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/animations.json"
+        "https://sevenui.dev/r/animations.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -804,7 +973,8 @@
         }
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/animations.json"
+        "https://sevenui.dev/r/animations.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -819,7 +989,8 @@
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/animations.json",
-        "https://sevenui.dev/r/dropdown-menu.json"
+        "https://sevenui.dev/r/dropdown-menu.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -839,7 +1010,8 @@
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/button.json"
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -863,6 +1035,9 @@
           "path": "registry/base/ui/tabs.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -906,7 +1081,8 @@
         }
       },
       "registryDependencies": [
-        "https://sevenui.dev/r/animations.json"
+        "https://sevenui.dev/r/animations.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -947,7 +1123,10 @@
             "height": "0"
           }
         }
-      }
+      },
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
+      ]
     },
     {
       "name": "scroll-area",
@@ -963,6 +1142,9 @@
           "path": "registry/base/ui/scroll-area.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -979,6 +1161,9 @@
           "path": "registry/base/ui/meter.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -995,6 +1180,9 @@
           "path": "registry/base/ui/toolbar.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -1015,7 +1203,8 @@
         }
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/animations.json"
+        "https://sevenui.dev/r/animations.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -1030,7 +1219,8 @@
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/dialog.json",
-        "https://sevenui.dev/r/input-group.json"
+        "https://sevenui.dev/r/input-group.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -1056,7 +1246,8 @@
         "https://sevenui.dev/r/separator.json",
         "https://sevenui.dev/r/sheet.json",
         "https://sevenui.dev/r/skeleton.json",
-        "https://sevenui.dev/r/tooltip.json"
+        "https://sevenui.dev/r/tooltip.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -1083,6 +1274,9 @@
           "path": "registry/base/ui/resizable.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -1096,7 +1290,8 @@
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/button.json"
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -1116,7 +1311,8 @@
         "react-day-picker@^10.0.1"
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/button.json"
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -1139,6 +1335,9 @@
           "path": "registry/base/ui/chart.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -1152,7 +1351,8 @@
         "cn@^0.2.5"
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/separator.json"
+        "https://sevenui.dev/r/separator.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -1173,7 +1373,8 @@
       "registryDependencies": [
         "https://sevenui.dev/r/button.json",
         "https://sevenui.dev/r/input.json",
-        "https://sevenui.dev/r/textarea.json"
+        "https://sevenui.dev/r/textarea.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -1193,7 +1394,8 @@
         "cn@^0.2.5"
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/separator.json"
+        "https://sevenui.dev/r/separator.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -1216,6 +1418,9 @@
           "path": "registry/base/ui/empty.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -1232,6 +1437,9 @@
           "path": "registry/base/ui/native-select.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -1247,6 +1455,9 @@
           "path": "registry/base/ui/direction.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -1264,6 +1475,9 @@
           "path": "registry/base/ui/marker.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -1279,6 +1493,9 @@
           "path": "registry/base/ui/message.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -1292,7 +1509,8 @@
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/button.json"
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -1316,6 +1534,9 @@
           "path": "registry/base/ui/bubble.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     },
     {
@@ -1329,7 +1550,8 @@
         "cn@^0.2.5"
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/button.json"
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -1349,7 +1571,8 @@
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
-        "https://sevenui.dev/r/button.json"
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ],
       "files": [
         {
@@ -1373,6 +1596,9 @@
           "path": "registry/base/ui/layer-card.tsx",
           "type": "registry:ui"
         }
+      ],
+      "registryDependencies": [
+        "https://sevenui.dev/r/sevenui-tokens.json"
       ]
     }
   ]
