@@ -1,7 +1,7 @@
 # Layer Card — Design
 
 Date: 2026-10-23
-Status: approved in conversation, awaiting spec review
+Status: implemented (uncommitted, branch `feat/layer-card`)
 
 ## Goal
 
@@ -18,8 +18,11 @@ Success means:
 - It is built on Base UI only (`useRender`, `mergeProps`), adds no new
   dependency beyond what `item` already uses, and introduces no new CSS token,
   so it stays a shadcn drop-in.
-- It renders in a React Server Component: no `"use client"`, no context, no
-  state. Every mode is resolved in CSS.
+- No context and no state: every mode is resolved in CSS. The file does
+  carry `"use client"`, because Base UI's `useRender` calls `React.useRef`
+  (through `useMergedRefs`), which the `react-server` build does not export.
+  A Server Component can still render it; the client boundary costs no
+  hydration state.
 - It ships like the other primitives: registry item, tests, docs page with
   demos, and gallery Components.
 
@@ -129,9 +132,9 @@ Extend `div`. Data slots `layer-card-header`, `layer-card-description`,
 `layer-card-action`, `layer-card-footer`.
 
 - Header is a grid, like `CardHeader`. With an action present it becomes two
-  columns and the action spans both rows. It is its own container
-  (`@container/layer-card-header`); below a narrow width the action drops
-  under the title.
+  columns and the action spans both rows. (No narrow-width wrap: the header
+  would have to change its own grid columns from its own container query,
+  which a container cannot do to itself.)
 - The action is vertically centered when there is no description and
   top-aligned when there is one.
 - Footer is a flex row with muted small text.
@@ -152,14 +155,17 @@ own `className` still wins.
 |---|---|---|
 | `--layer-card-radius` | `var(--radius-xl)` (same as Card) | consumer override |
 | `--layer-card-inset` | `--spacing(1)` | `dense` sets 0 |
-| `--layer-card-bg` | `color-mix(var(--muted) 50%)` | `variant`, `tone` |
-| `--layer-card-border-color` | `foreground / 10%` (Card's ring color) | `tone` |
-| `--layer-card-panel-bg` | `var(--card)` | `variant` |
-| `--layer-card-panel-radius` | `max(0px, calc(var(--layer-card-radius) - var(--layer-card-inset) - 1px))` | `ghost` drops the `1px`; `dense` pins it to `--layer-card-radius` |
+| `--layer-card-bg` | `color-mix(var(--muted) 50%)` | `variant` |
+| `--layer-card-tone-mix` | `0%` | `tone` (destructive: 6%, 12% dark), mixed into the tray background |
+| `--layer-card-border-color` | `foreground / 10%` (Card's ring color) | `tone` (via `--layer-card-tone-border`) |
+| `--layer-card-panel-bg` | `var(--card)`, lifted 4% toward `--foreground` in dark mode | `variant` (inverse: opaque muted-on-card) |
+| `--layer-card-panel-radius` | `max(0px, calc(var(--layer-card-radius) - var(--layer-card-inset) - var(--layer-card-border-width)))` | `ghost` sets the border width to 0; vertical `dense` sets it to 0 on panels and rounds only a panel touching the tray's top or bottom edge (no clipping, so bar focus rings stay whole) |
+| `--layer-card-pad-x/y`, `--layer-card-fill`, `--layer-card-shadow` | inset / `--layer-card-bg` / none | surface mode re-points them to panel padding, panel colour, `shadow-xs`; consumer `p-*`, `bg-*`, `shadow-*` classes replace the properties outright |
 | padding vars (panel, bar) | per `size` | `size` |
 
-Size scale (Tailwind spacing units). Panel px and bar px are equal so header,
-panel content and footer left-align. Bar py is roughly half the panel py so the
+Size scale (Tailwind spacing units). Bar px is panel px plus the panel's 1px
+side border (exactly panel px under vertical `dense`, where panels have no
+side border), so header, panel content and footer left-align. Bar py is roughly half the panel py so the
 bars read as chrome rather than a second content block.
 
 | size | panel px / py | bar px / py |
@@ -196,7 +202,10 @@ removed on one side.
   panels switch to full width, and stacked seams flip from vertical to
   horizontal. Container type is not set in vertical mode, because inline-size
   containment collapses a root that sizes to its content, for example as a
-  flex item without a width.
+  flex item without a width. In horizontal orientation `dense` only removes
+  the tray inset; the edge-merging rules of vertical `dense` (side borders
+  dropped, outer panel corners rounded to the tray's inner radius, no
+  clipping) are vertical-only.
 - **Nesting.** Every root redefines every variable, so a `LayerCard` inside a
   panel computes its own radius and colors.
 - **Dark mode** uses the same tokens. Verify contrast of the muted tray
@@ -290,7 +299,8 @@ container queries, so unit tests assert structure, not appearance:
   keeps `href` and `data-slot`, title as `h3`).
 - `fit` changes the panel's grow class.
 - `layerCardVariants` is exported and callable.
-- No `"use client"` directive in the source (guards the RSC promise).
+- The source starts with `"use client"` (guards the client boundary
+  `useRender` needs).
 
 Gates: `pnpm test`, `pnpm typecheck`, `pnpm lint`, `pnpm check:registry`,
 `pnpm check:docs-imports`, and the registry build.
