@@ -1357,6 +1357,23 @@
           "type": "registry:ui"
         }
       ]
+    },
+    {
+      "name": "layer-card",
+      "type": "registry:ui",
+      "title": "Layer Card",
+      "description": "A muted tray holding one or more raised panels, with a header and footer as chrome.",
+      "dependencies": [
+        "@base-ui/react@^1.7.0",
+        "class-variance-authority@^0.7.1",
+        "cn@^0.2.5"
+      ],
+      "files": [
+        {
+          "path": "registry/base/ui/layer-card.tsx",
+          "type": "registry:ui"
+        }
+      ]
     }
   ]
 }
