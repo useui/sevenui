@@ -6101,6 +6101,121 @@
       "files": [{ "path": "label/label-10.tsx", "type": "registry:component" }]
     },
     {
+      "name": "layer-card-01",
+      "type": "registry:component",
+      "title": "Subrequests",
+      "description": "Origins filtered by a search field and status tabs in the header, listed in a table panel.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/badge.json",
+        "https://sevenui.dev/r/input.json",
+        "https://sevenui.dev/r/layer-card.json",
+        "https://sevenui.dev/r/tabs.json"
+      ],
+      "files": [{ "path": "layer-card/layer-card-01.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "layer-card-02",
+      "type": "registry:component",
+      "title": "Collapsible build steps",
+      "description": "A build summary whose step list collapses from a chevron in the header.",
+      "dependencies": ["lucide-react@^1.41.0"],
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/collapsible.json",
+        "https://sevenui.dev/r/layer-card.json"
+      ],
+      "files": [{ "path": "layer-card/layer-card-02.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "layer-card-03",
+      "type": "registry:component",
+      "title": "Build log",
+      "description": "A scrolling log panel under a fixed header with a live status badge.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/badge.json",
+        "https://sevenui.dev/r/layer-card.json",
+        "https://sevenui.dev/r/scroll-area.json"
+      ],
+      "files": [{ "path": "layer-card/layer-card-03.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "layer-card-04",
+      "type": "registry:component",
+      "title": "Plan picker",
+      "description": "Pricing plans as selectable panels backed by a radio group.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/layer-card.json",
+        "https://sevenui.dev/r/radio-group.json"
+      ],
+      "files": [{ "path": "layer-card/layer-card-04.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "layer-card-05",
+      "type": "registry:component",
+      "title": "Drop zone",
+      "description": "A dashed empty panel inviting file uploads.",
+      "dependencies": ["lucide-react@^1.41.0"],
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/empty.json",
+        "https://sevenui.dev/r/layer-card.json"
+      ],
+      "files": [{ "path": "layer-card/layer-card-05.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "layer-card-06",
+      "type": "registry:component",
+      "title": "Notification settings",
+      "description": "Stacked setting rows, each with a description and a switch.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/layer-card.json",
+        "https://sevenui.dev/r/switch.json"
+      ],
+      "files": [{ "path": "layer-card/layer-card-06.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "layer-card-07",
+      "type": "registry:component",
+      "title": "Nested cards",
+      "description": "A project panel holding a nested inverse card of environment variables.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/badge.json",
+        "https://sevenui.dev/r/layer-card.json"
+      ],
+      "files": [{ "path": "layer-card/layer-card-07.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "layer-card-08",
+      "type": "registry:component",
+      "title": "Usage row",
+      "description": "Plan quotas as a horizontal row of meters that stacks when narrow.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/layer-card.json",
+        "https://sevenui.dev/r/meter.json"
+      ],
+      "files": [{ "path": "layer-card/layer-card-08.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "layer-card-09",
+      "type": "registry:component",
+      "title": "Navigation cards",
+      "description": "A grid of titled cards whose panels link to each section.",
+      "dependencies": ["lucide-react@^1.41.0"],
+      "registryDependencies": ["https://sevenui.dev/r/layer-card.json"],
+      "files": [{ "path": "layer-card/layer-card-09.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "layer-card-10",
+      "type": "registry:component",
+      "title": "Danger zone",
+      "description": "Archive and delete actions on a destructive-toned tray.",
+      "registryDependencies": [
+        "https://sevenui.dev/r/button.json",
+        "https://sevenui.dev/r/layer-card.json"
+      ],
+      "files": [{ "path": "layer-card/layer-card-10.tsx", "type": "registry:component" }]
+    },
+    {
       "name": "marker-01",
       "type": "registry:component",
       "title": "Activity Notes",

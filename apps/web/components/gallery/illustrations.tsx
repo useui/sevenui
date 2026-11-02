@@ -588,6 +588,18 @@ const DRAWINGS: Record<GallerySlug, ReactNode> = {
       <Text strong w={60} x={62} y={79.5} />
     </>
   ),
+  "layer-card": (
+    <>
+      <rect className="fill-muted stroke-border" height={88} rx={9} width={128} x={36} y={16} {...STROKE} />
+      <Text strong w={44} x={46} y={27} />
+      <Panel h={28} w={120} x={40} y={36} />
+      <Text strong w={52} x={50} y={46} />
+      <Text w={76} x={50} y={55} />
+      <Panel h={28} w={120} x={40} y={70} />
+      <Text strong w={40} x={50} y={80} />
+      <Text w={64} x={50} y={89} />
+    </>
+  ),
   marker: (
     <>
       <Text w={120} x={40} y={36} />
