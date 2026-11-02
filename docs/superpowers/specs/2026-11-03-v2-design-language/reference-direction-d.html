@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SevenUI — direction D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#08090a; --s1:#0e0f10; --s2:#131416; --s3:#191a1d;
+    --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.11);
+    --fg:#f7f8f8; --fg2:#d0d6e0; --mute:#8a8f98; --dim:#62666d;
+    --ok:#4cb782; --warn:#f2c94c;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-feature-settings:"cv01","ss03";-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--dim)}
+  .note{position:sticky;top:0;z-index:10;background:#111;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--mute);padding:10px 32px}
+  .note b{color:var(--fg)}
+
+  /* nav */
+  nav{display:flex;align-items:center;justify-content:space-between;height:64px;border-bottom:1px solid var(--line)}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:560;font-size:15px;letter-spacing:-.01em}
+  .logo i{display:grid;place-items:center;width:20px;height:20px;border-radius:6px;background:var(--fg);color:var(--bg);font-style:normal;font-size:12px;font-weight:700}
+  .links{display:flex;gap:26px;font-size:13px;color:var(--mute)}
+  .navr{display:flex;gap:10px;align-items:center}
+  .btn{height:32px;padding:0 14px;border-radius:8px;font:500 13px/32px Inter;border:0;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+  .btn.p{background:var(--fg);color:#08090a;box-shadow:0 1px 0 rgba(255,255,255,.5) inset}
+  .btn.g{background:var(--s2);color:var(--fg);box-shadow:0 0 0 1px var(--line2) inset}
+  .kbd{font:500 10.5px/1 "JetBrains Mono";padding:3px 5px;border-radius:4px;background:var(--s3);color:var(--mute);box-shadow:0 0 0 1px var(--line) inset}
+
+  /* hero */
+  .hero{padding:104px 0 56px}
+  .pill{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--fg2);padding:4px 12px 4px 4px;border-radius:99px;background:var(--s1);box-shadow:0 0 0 1px var(--line) inset;margin-bottom:28px}
+  .pill span{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--s3);color:var(--fg)}
+  h1{font-size:64px;line-height:1.02;font-weight:510;letter-spacing:-.022em;margin:0;max-width:820px}
+  h1 em{font-style:normal;color:var(--dim)}
+  .sub{font-size:16px;line-height:1.55;color:var(--mute);max-width:520px;margin:22px 0 32px}
+  .cta{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .cmd{display:inline-flex;align-items:center;gap:12px;height:40px;padding:0 6px 0 14px;border-radius:10px;background:var(--s1);box-shadow:0 0 0 1px var(--line2) inset;font:400 13px "JetBrains Mono";color:var(--fg2)}
+  .cmd b{color:var(--dim);font-weight:400}
+  .cta .btn{height:40px;padding:0 16px;border-radius:10px}
+  .agents{display:flex;gap:18px;margin-top:22px;font-size:12.5px;color:var(--dim);align-items:center}
+  .agents a{color:var(--mute);text-decoration:none;border-bottom:1px solid var(--line2)}
+
+  /* product frame */
+  .stage{position:relative;margin-top:8px;padding:40px 0 0}
+  .stage:before{content:"";position:absolute;inset:120px -40px -40px;background:radial-gradient(60% 70% at 50% 100%,rgba(208,214,224,.10),transparent 70%);pointer-events:none}
+  .frame{position:relative;border-radius:16px;padding:6px;background:linear-gradient(var(--s2),var(--s1));box-shadow:0 0 0 1px var(--line2),0 1px 0 rgba(255,255,255,.06) inset,0 40px 80px -30px rgba(0,0,0,.8)}
+  .app{display:grid;grid-template-columns:200px 1fr 300px;border-radius:11px;overflow:hidden;background:var(--s1);box-shadow:0 0 0 1px var(--line) inset;min-height:420px}
+  .side{border-right:1px solid var(--line);padding:12px 10px;font-size:12.5px;color:var(--mute)}
+  .side .ws{display:flex;align-items:center;gap:8px;color:var(--fg);font-weight:510;padding:4px 6px 12px}
+  .side .ws i{width:18px;height:18px;border-radius:5px;background:linear-gradient(135deg,#d0d6e0,#8a8f98)}
+  .it{display:flex;justify-content:space-between;align-items:center;padding:5px 8px;border-radius:6px}
+  .it.on{background:var(--s3);color:var(--fg);box-shadow:0 0 0 1px var(--line) inset}
+  .grp{margin:14px 8px 6px}
+  .main{padding:22px 26px}
+  .crumb{font-size:12px;color:var(--dim);margin-bottom:14px}
+  .main h2{font-size:22px;font-weight:510;letter-spacing:-.015em;margin:0 0 4px}
+  .main p{font-size:13px;color:var(--mute);margin:0 0 18px}
+  .card{border-radius:12px;padding:5px;background:var(--s2);box-shadow:0 0 0 1px var(--line) inset}
+  .card .in{border-radius:8px;background:var(--s3);box-shadow:0 0 0 1px var(--line) inset;padding:14px 16px}
+  .field{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+  .field:last-child{border-bottom:0}
+  .field span{color:var(--mute)}
+  .inp{height:32px;border-radius:8px;background:var(--s1);box-shadow:0 0 0 1px var(--line2) inset,0 1px 2px rgba(0,0,0,.4) inset;padding:0 10px;display:flex;align-items:center;color:var(--fg2)}
+  .sw{width:30px;height:18px;border-radius:99px;background:var(--fg);position:relative}
+  .sw:after{content:"";position:absolute;right:2px;top:2px;width:14px;height:14px;border-radius:99px;background:var(--bg)}
+  .seg{display:inline-flex;padding:2px;border-radius:8px;background:var(--s1);box-shadow:0 0 0 1px var(--line) inset}
+  .seg i{font-style:normal;padding:4px 10px;border-radius:6px;color:var(--mute)}
+  .seg i.on{background:var(--s3);color:var(--fg);box-shadow:0 0 0 1px var(--line2) inset}
+  .cfoot{display:flex;justify-content:space-between;align-items:center;padding:9px 8px 4px;font-size:12px;color:var(--dim)}
+  .agent{border-left:1px solid var(--line);display:flex;flex-direction:column;font-size:12.5px}
+  .agent .hd{display:flex;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--fg2)}
+  .msgs{flex:1;padding:14px;display:flex;flex-direction:column;gap:12px}
+  .me{align-self:flex-end;max-width:85%;background:var(--s3);box-shadow:0 0 0 1px var(--line) inset;border-radius:10px;padding:8px 10px;color:var(--fg2)}
+  .step{display:flex;gap:8px;align-items:flex-start;color:var(--mute)}
+  .step i{width:14px;height:14px;border-radius:99px;box-shadow:0 0 0 1.5px var(--ok) inset;flex:none;margin-top:1px;display:grid;place-items:center}
+  .step i:after{content:"";width:6px;height:6px;border-radius:99px;background:var(--ok)}
+  .step code{font:400 11.5px "JetBrains Mono";color:var(--fg2);background:var(--s2);padding:1px 5px;border-radius:4px;box-shadow:0 0 0 1px var(--line) inset}
+  .step.run i{box-shadow:0 0 0 1.5px var(--warn) inset}.step.run i:after{background:var(--warn)}
+  .compose{margin:10px;border-radius:10px;background:var(--s2);box-shadow:0 0 0 1px var(--line2) inset;padding:10px;color:var(--dim)}
+
+  /* statement + figs */
+  .sect{border-top:1px solid var(--line);padding:96px 0}
+  .statement{font-size:36px;line-height:1.15;font-weight:510;letter-spacing:-.018em;max-width:900px;margin:0}
+  .statement em{font-style:normal;color:var(--dim)}
+  .figs{display:grid;grid-template-columns:repeat(3,1fr);margin-top:72px;border-top:1px solid var(--line)}
+  .fig{padding:20px 28px 0 0;border-right:1px solid var(--line);margin-right:28px}
+  .fig:last-child{border-right:0;margin-right:0}
+  .fig svg{display:block;margin:28px 0 30px;height:120px}
+  .fig h4{font-size:14px;font-weight:510;margin:0 0 6px}
+  .fig p{font-size:13.5px;line-height:1.55;color:var(--mute);margin:0;max-width:300px}
+
+  /* docs slice */
+  .docs{display:grid;grid-template-columns:200px 1fr;gap:48px}
+  .dnav{font-size:13px;color:var(--mute);display:flex;flex-direction:column;gap:2px}
+  .dnav .h{margin:14px 0 6px}
+  .dnav a{padding:4px 8px;border-radius:6px}
+  .dnav a.on{color:var(--fg);background:var(--s2);box-shadow:0 0 0 1px var(--line) inset}
+  .dh{font-size:44px;line-height:1.05;font-weight:510;letter-spacing:-.024em;margin:10px 0 12px}
+  .dh em{font-style:normal;color:var(--dim)}
+  .dd{font-size:15px;color:var(--mute);line-height:1.55;max-width:560px;margin:0 0 26px}
+  .tabsr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .preview{border-radius:14px;padding:5px;background:var(--s1);box-shadow:0 0 0 1px var(--line) inset}
+  .preview .in{border-radius:10px;background:var(--bg);box-shadow:0 0 0 1px var(--line) inset;height:240px;display:grid;place-items:center;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:16px 16px}
+  .nf{display:flex;align-items:center;border-radius:10px;background:var(--s2);box-shadow:0 0 0 1px var(--line2) inset,0 1px 0 rgba(255,255,255,.05) inset,0 10px 30px -10px rgba(0,0,0,.6);padding:4px}
+  .nf b{width:30px;height:30px;display:grid;place-items:center;border-radius:7px;color:var(--mute);font-weight:400}
+  .nf span{width:70px;text-align:center;font-size:15px;font-variant-numeric:tabular-nums}
+  .meta{display:flex;gap:28px;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="note"><b>Yön D:</b> C2 + Linear'ın sadeliği + BoardUI'ın "ürünü göster" tavrı. Süs yok, karakter tipografiden, ince çizgilerden ve katmanlı yüzeylerden geliyor. Aşağıda üç dilim var: landing hero'su, bir bölüm ve bir docs sayfası. Metinler İngilizce (sitede olacakları gibi).</div>
+
+<div class="wrap">
+  <nav>
+    <div class="logo"><i>7</i>SevenUI</div>
+    <div class="links"><span>Docs</span><span>Primitives</span><span>Components</span><span>Blocks</span><span>MCP</span><span>Pricing</span></div>
+    <div class="navr"><span class="kbd">⌘K</span><button class="btn g">Sign in</button><button class="btn p">Get Pro</button></div>
+  </nav>
+
+  <section class="hero">
+    <div class="pill"><span>New</span>SevenUI MCP server is live →</div>
+    <h1>Interfaces your agents can build. <em>Quality your users can feel.</em></h1>
+    <p class="sub">66 accessible primitives on Base UI, composed into 900+ components and Pro blocks. Copy the source, or let your agent assemble it.</p>
+    <div class="cta">
+      <div class="cmd"><b>$</b>npx shadcn add @sevenui/button <span class="kbd">copy</span></div>
+      <button class="btn p">Browse components</button>
+    </div>
+    <div class="agents"><span class="mono">Connect your agent</span><a>Claude Code</a><a>Cursor</a><a>VS Code</a><a>Codex</a></div>
+
+    <div class="stage"><div class="frame"><div class="app">
+      <div class="side">
+        <div class="ws"><i></i>Acme Inc</div>
+        <div class="it">Inbox<span class="kbd">4</span></div>
+        <div class="it">Projects</div>
+        <div class="it">Members</div>
+        <div class="grp mono">Settings</div>
+        <div class="it on">Workspace</div>
+        <div class="it">Billing</div>
+        <div class="it">API keys</div>
+        <div class="it">Agents</div>
+      </div>
+      <div class="main">
+        <div class="crumb">Settings / Workspace</div>
+        <h2>Workspace</h2>
+        <p>How your workspace looks to members and agents.</p>
+        <div class="card"><div class="in">
+          <div class="field"><span>Name</span><div class="inp">Acme Inc</div></div>
+          <div class="field"><span>URL</span><div class="inp">acme.sevenui.app</div></div>
+          <div class="field"><span>Agent access</span><div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--fg2)">Allow agents to open PRs</span><span class="sw"></span></div></div>
+          <div class="field"><span>Density</span><div><span class="seg"><i class="on">Comfortable</i><i>Compact</i></span></div></div>
+        </div>
+        <div class="cfoot"><span>Last saved 2 min ago</span><span style="display:flex;gap:8px"><button class="btn g">Cancel</button><button class="btn p">Save changes</button></span></div></div>
+      </div>
+      <div class="agent">
+        <div class="hd"><span>Agent</span><span class="kbd">⌘J</span></div>
+        <div class="msgs">
+          <div class="me">Add a danger zone with a delete-workspace dialog.</div>
+          <div class="step"><i></i><span>Searched registry for <code>alert-dialog</code></span></div>
+          <div class="step"><i></i><span>Installed <code>@sevenui/alert-dialog</code></span></div>
+          <div class="step run"><i></i><span>Composing <code>settings/danger-zone.tsx</code></span></div>
+        </div>
+        <div class="compose">Ask the agent…</div>
+      </div>
+    </div></div></div>
+  </section>
+</div>
+
+<div class="sect"><div class="wrap">
+  <p class="statement">One registry, three sizes. <em>A primitive is the switch. A component is the card it sits in. A block is the settings page around it. The code is the same at every size, and so is the command.</em></p>
+  <div class="figs">
+    <div class="fig"><div class="mono">Fig 0.1 — Primitive</div>
+      <svg viewBox="0 0 220 120" fill="none" stroke="#3a3d42"><rect x="70" y="45" width="80" height="34" rx="17"/><circle cx="133" cy="62" r="12" stroke="#8a8f98"/></svg>
+      <h4>66 primitives</h4><p>Accessible building blocks on Base UI. Every state, every keyboard path, tested.</p></div>
+    <div class="fig"><div class="mono">Fig 0.2 — Component</div>
+      <svg viewBox="0 0 220 120" fill="none" stroke="#3a3d42"><rect x="40" y="15" width="140" height="90" rx="10"/><rect x="52" y="27" width="116" height="52" rx="6"/><line x1="62" y1="42" x2="120" y2="42"/><line x1="62" y1="56" x2="100" y2="56"/><rect x="134" y="48" width="24" height="14" rx="7" stroke="#8a8f98"/><rect x="128" y="86" width="40" height="12" rx="4"/></svg>
+      <h4>900+ components</h4><p>Copy-and-go compositions for real screens, free and MIT.</p></div>
+    <div class="fig"><div class="mono">Fig 0.3 — Block</div>
+      <svg viewBox="0 0 220 120" fill="none" stroke="#3a3d42"><rect x="20" y="10" width="180" height="100" rx="10"/><line x1="62" y1="10" x2="62" y2="110"/><rect x="74" y="34" width="112" height="48" rx="6"/><rect x="84" y="44" width="92" height="28" rx="4"/><rect x="152" y="52" width="16" height="10" rx="5" stroke="#8a8f98"/><line x1="30" y1="26" x2="52" y2="26"/><line x1="30" y1="38" x2="48" y2="38"/><line x1="30" y1="50" x2="50" y2="50"/></svg>
+      <h4>Pro blocks</h4><p>Full sections and pages. Installed by you, or by your agent with a license key.</p></div>
+  </div>
+</div></div>
+
+<div class="sect"><div class="wrap docs">
+  <div class="dnav">
+    <div class="mono h">Get started</div><a>Introduction</a><a>Installation</a><a>For agents</a><a>Theming</a>
+    <div class="mono h">Primitives</div><a>Input</a><a>Input OTP</a><a class="on">Number Field</a><a>Radio Group</a><a>Select</a>
+  </div>
+  <div>
+    <div class="mono">Primitives / Forms</div>
+    <h3 class="dh">Number Field. <em>Counts, scrubs, formats.</em></h3>
+    <p class="dd">A numeric input with increment and decrement controls, pointer scrubbing and locale-aware formatting.</p>
+    <div class="tabsr"><span class="seg" style="font-size:12.5px"><i class="on">Preview</i><i>Code</i><i>For agents</i></span><span style="display:flex;gap:8px"><button class="btn g">Copy page</button><button class="btn g">Customize</button></span></div>
+    <div class="preview"><div class="in"><div class="nf"><b>−</b><span>1,024</span><b>+</b></div></div></div>
+    <div class="meta"><span class="mono">Base UI · NumberField</span><span class="mono">0 deps</span><span class="mono">WAI-ARIA spinbutton</span></div>
+  </div>
+</div></div>
+<div style="height:80px"></div>
+</body>
+</html>
