@@ -61,4 +61,11 @@ describe("sevenui-tokens", () => {
     expect(contrastRatio(dark.brand, darkBg)).toBeGreaterThanOrEqual(3);
     expect(contrastRatio(dark.brand, darkBg)).toBeGreaterThanOrEqual(4.5);
   });
+
+  it("theme muted-foreground meets 4.5:1 on background in both themes", () => {
+    for (const mode of ["light", "dark"] as const) {
+      const vars = theme.cssVars![mode]!;
+      expect(contrastRatio(vars["muted-foreground"], vars.background), mode).toBeGreaterThanOrEqual(4.5);
+    }
+  });
 });
