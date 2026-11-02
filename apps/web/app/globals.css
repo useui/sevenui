@@ -4,7 +4,8 @@
 @source "../../../packages/registry/components";
 @source "../../../packages/registry/demos";
 
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)));
+/* Supports one level of theme nesting: a light scope inside a dark one (the v2 lab cells) opts out of dark: utilities. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="dark"] [data-theme="light"], [data-theme="dark"] [data-theme="light"] *)));
 
 :root {
   color-scheme: light;
