@@ -206,13 +206,12 @@
       },
       "css": {
         "@utility focus-ring": {
-          "outline": "var(--focus-width) solid var(--focus-color)",
+          "outline": "var(--focus-width) solid var(--focus-color, var(--brand))",
           "outline-offset": "var(--focus-gap)"
         },
         ":root": {
           "--focus-width": "1.5px",
           "--focus-gap": "2px",
-          "--focus-color": "var(--brand)",
           "--control-h": "2.125rem",
           "--control-px": "0.75rem",
           "--control-gap": "0.5rem",

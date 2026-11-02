@@ -26,6 +26,9 @@ describe("sevenui-tokens", () => {
   it("ships a sevenui-tokens item of type registry:theme", () => {
     expect(tokens?.type).toBe("registry:theme");
     expect(tokens?.css).toBeDefined();
+    const css = tokens!.css as Record<string, Record<string, string>>;
+    expect(css["@utility focus-ring"].outline).toBe("var(--focus-width) solid var(--focus-color, var(--brand))");
+    expect(css[":root"]).not.toHaveProperty("--focus-color");
     expect(tokens?.cssVars?.theme).toBeDefined();
   });
 

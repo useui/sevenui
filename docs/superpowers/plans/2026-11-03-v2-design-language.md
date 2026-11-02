@@ -99,8 +99,8 @@ elevation-overlay: 0 0 0 1px var(--hairline-strong), 0 30px 60px -30px rgb(0 0 0
 ```
 **`css`**
 ```
-"@utility focus-ring": { outline: "var(--focus-width) solid var(--focus-color)", "outline-offset": "var(--focus-gap)" }
-":root": { --focus-width: 1.5px; --focus-gap: 2px; --focus-color: var(--brand);
+"@utility focus-ring": { outline: "var(--focus-width) solid var(--focus-color, var(--brand))", "outline-offset": "var(--focus-gap)" }
+":root": { --focus-width: 1.5px; --focus-gap: 2px;
            --control-h: 2.125rem; --control-px: 0.75rem; --control-gap: 0.5rem;
            --control-text: 0.8125rem; --panel-pad: 1.125rem; --item-h: 2rem }
 "[data-density=compact]": { --control-h: 1.75rem; --control-px: 0.5625rem; --control-gap: 0.375rem;

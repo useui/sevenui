@@ -15,7 +15,9 @@ const tokens = registry.items.find((i) => i.name === "sevenui-tokens")!;
 const theme = registry.items.find((i) => i.name === "theme")!;
 
 const FILES = {
-  "apps/web/app/globals.css": { light: /^:root \{\n(?=\s+--background)/m, dark: /^\[data-theme="dark"\] \{\n/m },
+  "apps/web/app/globals.css": {
+    light: /^:root,\n\[data-theme="light"\] \{\n(?=\s+--background)/m, dark: /^\[data-theme="dark"\] \{\n/m,
+  },
   "packages/registry/demos/theme.css": {
     light: /^:root \{\n(?=\s+--background)/m,
     dark: /^\.dark,\n\[data-theme="dark"\] \{\n/m,
@@ -54,6 +56,8 @@ describe.each(Object.entries(FILES))("%s", (file, openers) => {
       expect(css, key).toContain(`${key}: ${value};`);
     }
     expect(css).toContain("@utility focus-ring");
+    expect(css).toContain("outline: var(--focus-width) solid var(--focus-color, var(--brand));");
+    expect(css).not.toMatch(/^\s*--focus-color:/m);
     expect(css).toMatch(/\[data-density="?compact"?\]/);
     expect(css).toContain("--focus-width: 1.5px;");
     expect(css).toContain("--control-h: 1.75rem;");
