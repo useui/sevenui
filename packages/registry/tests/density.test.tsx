@@ -4,7 +4,7 @@ import registry from "../registry.json";
 
 type Css = Record<string, string | Record<string, string>>;
 const tokens = registry.items.find((i) => i.name === "sevenui-tokens");
-const css = tokens?.css as Css;
+const css: Css = (tokens?.css ?? {}) as unknown as Css;
 
 function cssText(): string {
   return Object.entries(css)
