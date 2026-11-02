@@ -9,7 +9,12 @@ import createMDX from "@next/mdx";
 // webpack, `experimental.externalDir` is the escape hatch for the same reason.
 const workspaceRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
+// The v2 lab routes are `page.dev.tsx`, so they only exist while developing.
+const defaultPageExtensions = ["tsx", "ts", "jsx", "js"];
+const isDev = process.env.NODE_ENV !== "production";
+
 const nextConfig: NextConfig = {
+  pageExtensions: isDev ? ["dev.tsx", ...defaultPageExtensions] : defaultPageExtensions,
   outputFileTracingRoot: workspaceRoot,
   // The release notes page became the roadmap, which carries them.
   redirects: async () => [{ source: "/changelog", destination: "/roadmap", permanent: true }],

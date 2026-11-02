@@ -17,7 +17,7 @@ export function LabFrame({ children }: { children: ReactNode }) {
           data-theme={theme}
           data-density={density}
           data-lab-cell={`${theme}-${density}`}
-          className="bg-background text-foreground rounded-lg border p-6"
+          className={`${theme === "dark" ? "[color-scheme:dark]" : "[color-scheme:light]"} bg-background text-foreground rounded-lg border p-6`}
         >
           <p className="text-muted-foreground mb-4 font-mono text-xs">
             {theme} / {density}
