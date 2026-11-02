@@ -63,8 +63,16 @@ describe("LayerCard", () => {
   it("keeps its variable defaults at zero specificity so a className override wins", () => {
     render(<LayerCard data-testid="root" />);
     expect(screen.getByTestId("root").className).toContain(
-      "[:where(&)]:[--layer-card-radius:var(--radius-xl)]",
+      "[:where(&)]:[--layer-card-radius:--theme(--radius-xl)]",
     );
+  });
+
+  it("inlines the theme radius so a scoped --radius reaches the tray", () => {
+    // var(--radius-xl) is computed once on :root, so a --radius set on a
+    // wrapper (a preset scope, a themed section) never reaches it. --theme()
+    // inlines calc(var(--radius) + …) the way rounded-xl does on Card.
+    render(<LayerCard data-testid="root" />);
+    expect(screen.getByTestId("root").className).not.toContain("var(--radius-xl)");
   });
 
   it("renders the root through the render prop", () => {

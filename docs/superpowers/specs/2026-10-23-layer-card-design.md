@@ -153,7 +153,7 @@ own `className` still wins.
 
 | Variable | Default | Set by |
 |---|---|---|
-| `--layer-card-radius` | `var(--radius-xl)` (same as Card) | consumer override |
+| `--layer-card-radius` | `--theme(--radius-xl)` (same as Card's `rounded-xl`; inlined, not `var()`, so a `--radius` set on a wrapper is honoured) | consumer override |
 | `--layer-card-inset` | `--spacing(1)` | `dense` sets 0 |
 | `--layer-card-bg` | `color-mix(var(--muted) 50%)` | `variant` |
 | `--layer-card-tone-mix` | `0%` | `tone` (destructive: 6%, 12% dark), mixed into the tray background |

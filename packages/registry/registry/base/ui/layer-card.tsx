@@ -19,7 +19,9 @@ const layerCardVariants = cva(
     // or ghost tray keeps its own base and only takes the tint. The base comes
     // first because Tailwind's no-color-mix() fallback is the first colour.
     "bg-[color:color-mix(in_oklch,var(--layer-card-fill),var(--destructive)_var(--layer-card-tone-mix))] border-[color:var(--layer-card-tone-border,var(--layer-card-border-color))]",
-    "[:where(&)]:[--layer-card-radius:var(--radius-xl)]",
+    // --theme() inlines the token like rounded-xl does on Card; var() would
+    // read --radius-xl as computed on :root and miss a scoped --radius.
+    "[:where(&)]:[--layer-card-radius:--theme(--radius-xl)]",
     "[:where(&)]:[--layer-card-pad-x:var(--layer-card-inset)] [:where(&)]:[--layer-card-pad-y:var(--layer-card-inset)] [:where(&)]:[--layer-card-fill:var(--layer-card-bg)] [:where(&)]:[--layer-card-shadow:0_0_#0000]",
     "[:where(&)]:[--layer-card-border-color:color-mix(in_oklch,var(--foreground)_10%,transparent)]",
     // Concentric: the panel is inset by the tray padding plus the tray border,
