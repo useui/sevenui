@@ -90,4 +90,36 @@ describe("Card", () => {
     expect(screen.getByTestId("content").className).toContain("custom-content");
     expect(screen.getByTestId("footer").className).toContain("custom-footer");
   });
+
+  describe("v2 design language", () => {
+    it("draws a single panel surface with a hairline and a raised lift", () => {
+      render(<Card data-testid="card" />);
+      const cls = screen.getByTestId("card").className;
+      expect(cls).toContain("bg-surface-panel");
+      expect(cls).toContain("0_0_0_1px_var(--hairline,");
+      expect(cls).toContain("var(--elevation-raised,");
+      expect(cls).toContain("var(--elevation-highlight,");
+      expect(cls).not.toContain("ring-foreground/10");
+      expect(cls.split(" ")).not.toContain("bg-card");
+    });
+
+    it("spaces its parts from --panel-pad, read with a fallback so density inherits", () => {
+      render(<Card data-testid="card" />);
+      const cls = screen.getByTestId("card").className;
+      expect(cls).toContain("[--card-spacing:var(--panel-pad,1.125rem)]");
+      expect(cls).toContain(
+        "data-[size=sm]:[--card-spacing:calc(var(--panel-pad,1.125rem)*0.75)]",
+      );
+      // A :where() default on the card itself would shadow an ancestor's
+      // data-density="compact" value.
+      expect(cls).not.toContain("[:where(&)]:[--panel-pad");
+    });
+
+    it("sets the footer on the tray behind a hairline", () => {
+      render(<CardFooter data-testid="footer" />);
+      const cls = screen.getByTestId("footer").className;
+      expect(cls).toContain("bg-surface-tray");
+      expect(cls).toContain("border-hairline");
+    });
+  });
 });
