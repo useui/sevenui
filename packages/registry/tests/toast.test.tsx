@@ -180,6 +180,15 @@ describe("Toast v2 styling", () => {
     expect(root.className).toContain("motion-reduce:[transition:opacity_200ms]");
     expect(root.className).toContain("motion-reduce:data-starting-style:opacity-0");
     expect(root.className).toContain("motion-reduce:data-ending-style:opacity-0");
+    // the entering/leaving transform is pinned to the resting one, so nothing moves
+    for (const state of ["data-starting-style", "data-ending-style"]) {
+      expect(root.className).toContain(
+        `motion-reduce:${state}:[transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(`,
+      );
+      expect(root.className).toContain(
+        `motion-reduce:data-expanded:${state}:[transform:translateX(var(--toast-swipe-movement-x))_translateY(var(--offset-y))]!`,
+      );
+    }
   });
 
   it("renders the action as an outline xs button", async () => {

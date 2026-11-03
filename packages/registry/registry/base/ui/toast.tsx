@@ -49,6 +49,9 @@ function Toast({ className, ...props }: ToastPrimitive.Root.Props) {
         "data-expanded:h-(--toast-height) data-expanded:[transform:translateX(var(--toast-swipe-movement-x))_translateY(var(--offset-y))]",
         "data-limited:opacity-0 data-starting-style:[transform:translateY(150%)]",
         "motion-reduce:[transition:opacity_200ms] motion-reduce:data-starting-style:opacity-0 motion-reduce:data-ending-style:opacity-0",
+        // Reduced motion is a pure fade: pin the entering/leaving toast to its resting transform.
+        "motion-reduce:data-starting-style:[transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)-(var(--toast-index)*var(--peek))-(var(--shrink)*var(--height))))_scale(var(--scale))]! motion-reduce:data-ending-style:[transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)-(var(--toast-index)*var(--peek))-(var(--shrink)*var(--height))))_scale(var(--scale))]!",
+        "motion-reduce:data-expanded:data-starting-style:[transform:translateX(var(--toast-swipe-movement-x))_translateY(var(--offset-y))]! motion-reduce:data-expanded:data-ending-style:[transform:translateX(var(--toast-swipe-movement-x))_translateY(var(--offset-y))]!",
         "[&[data-ending-style]:not([data-limited]):not([data-swipe-direction])]:[transform:translateY(150%)]",
         "data-ending-style:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+150%))]",
         "data-ending-style:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))]",
