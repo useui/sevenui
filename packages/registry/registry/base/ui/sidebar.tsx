@@ -424,7 +424,7 @@ function SidebarGroupAction({
     props: mergeProps<"button">(
       {
         className: cn(
-          "absolute top-[calc((var(--item-h,2rem)-1.25rem)/2+0.5rem)] right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-muted-foreground outline-none transition-colors motion-reduce:transition-none group-data-[collapsible=icon]:hidden after:absolute after:-inset-2 hover:bg-hairline-strong hover:text-foreground focus-visible:focus-ring md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
+          "absolute top-[calc((var(--item-h,2rem)-1.25rem)/2+0.5rem)] right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-muted-foreground outline-none transition-[color,background-color,border-color] motion-reduce:transition-none group-data-[collapsible=icon]:hidden after:absolute after:-inset-2 hover:bg-hairline-strong hover:text-foreground focus-visible:focus-ring md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
           className,
         ),
       },
@@ -564,7 +564,7 @@ function SidebarMenuAction({
     props: mergeProps<"button">(
       {
         className: cn(
-          "absolute top-[calc((var(--item-h,2rem)-1.25rem)/2)] right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-muted-foreground outline-none transition-colors motion-reduce:transition-none group-data-[collapsible=icon]:hidden peer-hover/menu-button:text-foreground peer-data-[size=default]/menu-button:top-[calc((var(--item-h,2rem)-1.25rem)/2)] peer-data-[size=lg]/menu-button:top-2.5 peer-data-[size=sm]/menu-button:top-[calc((var(--item-h,2rem)-1.5rem)/2)] after:absolute after:-inset-2 hover:bg-hairline-strong hover:text-foreground focus-visible:focus-ring md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
+          "absolute top-[calc((var(--item-h,2rem)-1.25rem)/2)] right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-muted-foreground outline-none transition-[color,background-color,border-color] motion-reduce:transition-none group-data-[collapsible=icon]:hidden peer-hover/menu-button:text-foreground peer-data-[size=default]/menu-button:top-[calc((var(--item-h,2rem)-1.25rem)/2)] peer-data-[size=lg]/menu-button:top-2.5 peer-data-[size=sm]/menu-button:top-[calc((var(--item-h,2rem)-1.5rem)/2)] after:absolute after:-inset-2 hover:bg-hairline-strong hover:text-foreground focus-visible:focus-ring md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
           showOnHover &&
             "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 peer-data-active/menu-button:text-foreground aria-expanded:opacity-100 md:opacity-0",
           className,
@@ -679,7 +679,7 @@ function SidebarMenuSubButton({
     props: mergeProps<"a">(
       {
         className: cn(
-          "flex h-[calc(var(--item-h,2rem)-0.25rem)] min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 text-muted-foreground outline-none transition-colors motion-reduce:transition-none group-data-[collapsible=icon]:hidden hover:bg-hairline hover:text-foreground focus-visible:focus-ring active:bg-hairline-strong active:text-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-sm data-[size=sm]:text-xs data-active:bg-surface-raised data-active:text-foreground data-active:shadow-[var(--elevation-highlight,0_0_#0000),0_0_0_1px_var(--hairline-strong,var(--sidebar-border))] [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-muted-foreground",
+          "flex h-[calc(var(--item-h,2rem)-0.25rem)] min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 text-muted-foreground outline-none transition-[color,background-color,border-color] motion-reduce:transition-none group-data-[collapsible=icon]:hidden hover:bg-hairline hover:text-foreground focus-visible:focus-ring active:bg-hairline-strong active:text-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-sm data-[size=sm]:text-xs data-active:bg-surface-raised data-active:text-foreground data-active:shadow-[var(--elevation-highlight,0_0_#0000),0_0_0_1px_var(--hairline-strong,var(--sidebar-border))] [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-muted-foreground",
           className,
         ),
       },
