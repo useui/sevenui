@@ -129,7 +129,9 @@ describe("LayerCard", () => {
     const link = screen.getByRole("link", { name: "Docs" });
     expect(link.getAttribute("href")).toBe("/docs");
     expect(link.getAttribute("data-slot")).toBe("layer-card-panel");
-    expect(link.className).toContain("[a,button]:focus-visible:ring-3");
+    expect(link.className).toContain("[a,button]:focus-visible:focus-ring");
+    expect(link.className).not.toContain("ring-3");
+    expect(link.className).not.toContain("focus-visible:border-ring");
   });
 
   it("keeps the panel slot when another component passes its own data-slot", () => {
@@ -208,8 +210,9 @@ describe("LayerCard", () => {
   });
 
   it("insets the focus ring of panels under dense, where the root clips", () => {
+    // A negative gap draws the offset ring inside the panel's own edge.
     expect(layerCardVariants({ dense: true })).toContain(
-      "[&>[data-slot=layer-card-panel]]:focus-visible:ring-inset",
+      "[&>[data-slot=layer-card-panel]]:focus-visible:[--focus-gap:calc(var(--focus-width)*-2)]",
     );
   });
 
@@ -257,7 +260,7 @@ describe("LayerCard", () => {
 
   it("gives inverse panels an opaque background so a tone never shows through", () => {
     expect(layerCardVariants({ variant: "inverse" })).toContain(
-      "[--layer-card-panel-bg:color-mix(in_oklch,var(--muted)_50%,var(--card))]",
+      "[--layer-card-panel-bg:var(--surface-tray,color-mix(in_oklch,var(--muted)_50%,var(--card)))]",
     );
   });
 
@@ -322,13 +325,86 @@ describe("LayerCard", () => {
     expect(classes.some((c) => /^shadow-.*layer-card/.test(c))).toBe(false);
   });
 
-  it("lifts panels off the tray in dark mode", () => {
-    expect(layerCardVariants({ variant: "default" })).toContain(
-      "dark:[--layer-card-panel-bg:color-mix(in_oklch,var(--card),var(--foreground)_4%)]",
-    );
-    expect(layerCardVariants({ variant: "ghost" })).toContain(
-      "dark:[--layer-card-panel-bg:color-mix(in_oklch,var(--card),var(--foreground)_4%)]",
-    );
+  it("lifts panels off the tray through the panel token, without a dark: override", () => {
+    // --surface-panel is color-mix(card, foreground 4%) in dark, which is
+    // what the old dark: override wrote by hand.
+    for (const variant of ["default", "ghost"] as const) {
+      const classes = layerCardVariants({ variant });
+      expect(classes).toContain("[--layer-card-panel-bg:var(--surface-panel,var(--card))]");
+      expect(classes).not.toContain("dark:[--layer-card-panel-bg");
+    }
+  });
+
+  describe("v2 design language", () => {
+    it("points the tray, panel and hairline at the surface tokens, with the old values as fallbacks", () => {
+      const classes = layerCardVariants();
+      expect(classes).toContain(
+        "[--layer-card-bg:var(--surface-tray,color-mix(in_oklch,var(--muted)_50%,transparent))]",
+      );
+      expect(classes).toContain("[--layer-card-panel-bg:var(--surface-panel,var(--card))]");
+      expect(classes).toContain(
+        "[:where(&)]:[--layer-card-border-color:var(--hairline,color-mix(in_oklch,var(--foreground)_10%,transparent))]",
+      );
+      expect(layerCardVariants({ variant: "inverse" })).toContain(
+        "[--layer-card-bg:var(--surface-panel,var(--card))]",
+      );
+    });
+
+    it("keeps every variable default at zero specificity", () => {
+      const classes = layerCardVariants();
+      for (const name of [
+        "radius",
+        "pad-x",
+        "pad-y",
+        "fill",
+        "shadow",
+        "border-color",
+        "panel-radius",
+        "bar-px",
+      ]) {
+        expect(classes).toContain(`[:where(&)]:[--layer-card-${name}:`);
+      }
+      // Shared token variables are inherited, never declared on the root: a
+      // declaration here would shadow an ancestor's value.
+      expect(classes).not.toMatch(/\[:where\(&\)\]:\[--(focus|control|panel|item)-/);
+    });
+
+    it("raises the tray with the top highlight and panels with the raised elevation", () => {
+      expect(layerCardVariants()).toContain(
+        "[:where(&)]:[--layer-card-shadow:var(--elevation-highlight,0_0_#0000)]",
+      );
+      render(
+        <LayerCard>
+          <LayerCardPanel data-testid="panel">P</LayerCardPanel>
+        </LayerCard>,
+      );
+      const panel = screen.getByTestId("panel").className;
+      expect(panel).toContain("shadow-[var(--elevation-raised,");
+      expect(panel.split(" ")).not.toContain("shadow-xs");
+    });
+
+    it("pads panels from --panel-pad through a var() fallback, so an ancestor's density reaches them", () => {
+      expect(layerCardVariants()).toContain(
+        "[--layer-card-panel-px:var(--panel-pad,1.125rem)]",
+      );
+      expect(layerCardVariants({ size: "sm" })).toContain(
+        "[--layer-card-panel-py:calc(var(--panel-pad,1.125rem)*0.75)]",
+      );
+      expect(layerCardVariants()).not.toContain("[:where(&)]:[--panel-pad");
+      // --layer-card-inset is not density-driven.
+      expect(layerCardVariants()).toContain("[--layer-card-inset:--spacing(1)]");
+    });
+
+    it("drops the hover transition under reduced motion", () => {
+      render(
+        <LayerCard>
+          <LayerCardPanel render={<a href="/docs" />}>Docs</LayerCardPanel>
+        </LayerCard>,
+      );
+      expect(screen.getByRole("link", { name: "Docs" }).className).toContain(
+        "[a,button]:motion-reduce:transition-none",
+      );
+    });
   });
 
   it("exports layerCardVariants as a callable class builder", () => {

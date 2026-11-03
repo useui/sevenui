@@ -22,9 +22,10 @@ const layerCardVariants = cva(
     // --theme() inlines the token like rounded-xl does on Card; var() would
     // read --radius-xl as computed on :root and miss a scoped --radius.
     "[:where(&)]:[--layer-card-radius:--theme(--radius-xl)]",
-    "[:where(&)]:[--layer-card-pad-x:var(--layer-card-inset)] [:where(&)]:[--layer-card-pad-y:var(--layer-card-inset)] [:where(&)]:[--layer-card-fill:var(--layer-card-bg)] [:where(&)]:[--layer-card-shadow:0_0_#0000]",
-    "[:where(&)]:[--layer-card-border-color:color-mix(in_oklch,var(--foreground)_10%,transparent)]",
-    // Concentric: the panel is inset by the tray padding plus the tray border,
+    "[:where(&)]:[--layer-card-pad-x:var(--layer-card-inset)] [:where(&)]:[--layer-card-pad-y:var(--layer-card-inset)] [:where(&)]:[--layer-card-fill:var(--layer-card-bg)] [:where(&)]:[--layer-card-shadow:var(--elevation-highlight,0_0_#0000)]",
+    // Surfaces, hairline and lift come from the SevenUI tokens; each keeps its
+    // pre-token value as the fallback for a file copied without them.
+    "[:where(&)]:[--layer-card-border-color:var(--hairline,color-mix(in_oklch,var(--foreground)_10%,transparent))]",    // Concentric: the panel is inset by the tray padding plus the tray border,
     // so subtracting exactly that keeps both arcs parallel. Clamped, because
     // the radius-none preset leaves --radius-xl at 4px.
     "[:where(&)]:[--layer-card-panel-radius:max(0px,calc(var(--layer-card-radius)_-_var(--layer-card-inset)_-_var(--layer-card-border-width)))]",
@@ -33,26 +34,31 @@ const layerCardVariants = cva(
     // Surface mode: no panel anywhere inside, so the root is the surface. It
     // only re-points variables, so a consumer's p-* / bg-* / shadow-* class
     // still wins. The root's padding insets the content; the bars add none.
-    "[&:not(:has([data-slot=layer-card-panel]))]:[--layer-card-fill:var(--layer-card-panel-bg)] [&:not(:has([data-slot=layer-card-panel]))]:[--layer-card-pad-x:var(--layer-card-panel-px)] [&:not(:has([data-slot=layer-card-panel]))]:[--layer-card-pad-y:var(--layer-card-panel-py)] [&:not(:has([data-slot=layer-card-panel]))]:[--layer-card-shadow:0_1px_2px_0_rgb(0_0_0/0.05)]",
+    "[&:not(:has([data-slot=layer-card-panel]))]:[--layer-card-fill:var(--layer-card-panel-bg)] [&:not(:has([data-slot=layer-card-panel]))]:[--layer-card-pad-x:var(--layer-card-panel-px)] [&:not(:has([data-slot=layer-card-panel]))]:[--layer-card-pad-y:var(--layer-card-panel-py)] [&:not(:has([data-slot=layer-card-panel]))]:[--layer-card-shadow:var(--elevation-highlight,0_0_#0000),var(--elevation-raised,0_1px_2px_0_rgb(0_0_0/0.05))]",
     "[&:not(:has([data-slot=layer-card-panel]))]:[--layer-card-bar-px:0px] [&:not(:has([data-slot=layer-card-panel]))]:[--layer-card-bar-py:0px]",
   ],
   {
     variants: {
       variant: {
+        // The panel token already lifts itself off the tray in dark, so the
+        // variants need no dark: override.
         default:
-          "border [--layer-card-border-width:1px] [--layer-card-bg:color-mix(in_oklch,var(--muted)_50%,transparent)] [--layer-card-panel-bg:var(--card)] dark:[--layer-card-panel-bg:color-mix(in_oklch,var(--card),var(--foreground)_4%)]",
+          "border [--layer-card-border-width:1px] [--layer-card-bg:var(--surface-tray,color-mix(in_oklch,var(--muted)_50%,transparent))] [--layer-card-panel-bg:var(--surface-panel,var(--card))]",
         inverse:
-          "border [--layer-card-border-width:1px] [--layer-card-bg:var(--card)] [--layer-card-panel-bg:color-mix(in_oklch,var(--muted)_50%,var(--card))]",
+          "border [--layer-card-border-width:1px] [--layer-card-bg:var(--surface-panel,var(--card))] [--layer-card-panel-bg:var(--surface-tray,color-mix(in_oklch,var(--muted)_50%,var(--card)))]",
         ghost:
-          "border-0 [--layer-card-border-width:0px] [--layer-card-bg:color-mix(in_oklch,var(--muted)_50%,transparent)] [--layer-card-panel-bg:var(--card)] dark:[--layer-card-panel-bg:color-mix(in_oklch,var(--card),var(--foreground)_4%)]",
+          "border-0 [--layer-card-border-width:0px] [--layer-card-bg:var(--surface-tray,color-mix(in_oklch,var(--muted)_50%,transparent))] [--layer-card-panel-bg:var(--surface-panel,var(--card))]",
       },
+      // Panel padding scales from --panel-pad, so data-density on any ancestor
+      // tightens it. Its fallback sits inside var() rather than in a :where()
+      // default: a declaration on the root would shadow the inherited value.
       // Bars read as chrome: their py is about half the panel's, px is equal.
       size: {
-        xs: "[--layer-card-panel-px:--spacing(2)] [--layer-card-panel-py:--spacing(2)] [--layer-card-bar-py:--spacing(0.5)]",
-        sm: "[--layer-card-panel-px:--spacing(3)] [--layer-card-panel-py:--spacing(3)] [--layer-card-bar-py:--spacing(1.5)]",
+        xs: "[--layer-card-panel-px:calc(var(--panel-pad,1.125rem)*0.5)] [--layer-card-panel-py:calc(var(--panel-pad,1.125rem)*0.5)] [--layer-card-bar-py:calc(var(--panel-pad,1.125rem)*0.125)]",
+        sm: "[--layer-card-panel-px:calc(var(--panel-pad,1.125rem)*0.75)] [--layer-card-panel-py:calc(var(--panel-pad,1.125rem)*0.75)] [--layer-card-bar-py:calc(var(--panel-pad,1.125rem)*0.375)]",
         default:
-          "[--layer-card-panel-px:--spacing(4)] [--layer-card-panel-py:--spacing(4)] [--layer-card-bar-py:--spacing(2)]",
-        lg: "[--layer-card-panel-px:--spacing(5)] [--layer-card-panel-py:--spacing(5)] [--layer-card-bar-py:--spacing(2.5)]",
+          "[--layer-card-panel-px:var(--panel-pad,1.125rem)] [--layer-card-panel-py:var(--panel-pad,1.125rem)] [--layer-card-bar-py:calc(var(--panel-pad,1.125rem)*0.5)]",
+        lg: "[--layer-card-panel-px:calc(var(--panel-pad,1.125rem)*1.25)] [--layer-card-panel-py:calc(var(--panel-pad,1.125rem)*1.25)] [--layer-card-bar-py:calc(var(--panel-pad,1.125rem)*0.625)]",
       },
       orientation: {
         vertical: "flex-col",
@@ -98,7 +104,7 @@ const layerCardVariants = cva(
         orientation: "vertical",
         dense: true,
         className:
-          "[--layer-card-bar-px:var(--layer-card-panel-px)] [&>[data-slot=layer-card-panel]]:[--layer-card-panel-radius:0px] [&>[data-slot=layer-card-panel]]:border-x-0 [&>[data-slot=layer-card-panel]]:shadow-none [&>[data-slot=layer-card-panel]:first-child]:border-t-0 [&>[data-slot=layer-card-panel]:last-child]:border-b-0 [&>[data-slot=layer-card-panel]:first-child]:rounded-t-[max(0px,calc(var(--layer-card-radius)_-_var(--layer-card-border-width)))] [&>[data-slot=layer-card-panel]:last-child]:rounded-b-[max(0px,calc(var(--layer-card-radius)_-_var(--layer-card-border-width)))] [&>[data-slot=layer-card-panel]]:focus-visible:ring-inset",
+          "[--layer-card-bar-px:var(--layer-card-panel-px)] [&>[data-slot=layer-card-panel]]:[--layer-card-panel-radius:0px] [&>[data-slot=layer-card-panel]]:border-x-0 [&>[data-slot=layer-card-panel]]:shadow-none [&>[data-slot=layer-card-panel]:first-child]:border-t-0 [&>[data-slot=layer-card-panel]:last-child]:border-b-0 [&>[data-slot=layer-card-panel]:first-child]:rounded-t-[max(0px,calc(var(--layer-card-radius)_-_var(--layer-card-border-width)))] [&>[data-slot=layer-card-panel]:last-child]:rounded-b-[max(0px,calc(var(--layer-card-radius)_-_var(--layer-card-border-width)))] [&>[data-slot=layer-card-panel]]:focus-visible:[--focus-gap:calc(var(--focus-width)*-2)]",
       },
     ],
     defaultVariants: {
@@ -213,9 +219,9 @@ function LayerCardPanel({
     props: mergeProps<"div">(
       {
         className: cn(
-          "relative min-w-0 rounded-(--layer-card-panel-radius) border border-(color:--layer-card-border-color) bg-(--layer-card-panel-bg) bg-clip-padding px-(--layer-card-panel-px) py-(--layer-card-panel-py) text-card-foreground shadow-xs",
+          "relative min-w-0 rounded-(--layer-card-panel-radius) border border-(color:--layer-card-border-color) bg-(--layer-card-panel-bg) bg-clip-padding px-(--layer-card-panel-px) py-(--layer-card-panel-py) text-card-foreground shadow-[var(--elevation-raised,0_1px_2px_0_rgb(0_0_0/0.05))]",
           !fit && "grow",
-          "[a,button]:text-start [a,button]:no-underline [a,button]:transition-colors [a,button]:outline-none [a,button]:hover:bg-[color-mix(in_oklch,var(--layer-card-panel-bg),var(--foreground)_4%)] [a,button]:focus-visible:border-ring [a,button]:focus-visible:z-10 [a,button]:focus-visible:ring-3 [a,button]:focus-visible:ring-ring/50",
+          "[a,button]:text-start [a,button]:no-underline [a,button]:transition-colors [a,button]:outline-none [a,button]:hover:bg-[color-mix(in_oklch,var(--layer-card-panel-bg),var(--foreground)_4%)] [a,button]:focus-visible:z-10 [a,button]:focus-visible:focus-ring [a,button]:motion-reduce:transition-none",
           className,
         ),
       },
