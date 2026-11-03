@@ -152,7 +152,7 @@ describe("Alert destructive contrast (AA)", () => {
   const themeVars = cssVarsOf("theme");
   const tokenVars = cssVarsOf("sevenui-tokens");
 
-  it.each(["light", "dark"] as const)("title and description reach 4.5:1 on the tint in %s", (mode) => {
+  it.each(["light", "dark"] as const)("title and description reach AA (4.5:1) on the tint in %s", (mode) => {
     render(
       <Alert variant="destructive">
         <AlertTitle>T</AlertTitle>
@@ -182,7 +182,7 @@ describe("Alert destructive contrast (AA)", () => {
     };
     const report = Object.entries(ratios).map(([k, r]) => `${k} ${r.toFixed(2)}`).join(", ");
     expect(Math.min(...Object.values(ratios)), `${mode}: ${report}`).toBeGreaterThanOrEqual(
-      Number(process.env.ALERT_AA ?? 4.5),
+      4.5,
     );
   });
 });
