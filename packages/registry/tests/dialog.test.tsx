@@ -118,3 +118,59 @@ describe("Dialog", () => {
     });
   });
 });
+
+describe("Dialog v2 styles", () => {
+  async function renderOpen() {
+    render(<ExampleDialog open />);
+    return screen.findByRole("dialog");
+  }
+
+  it("renders the popup as a tray with an overlay shadow", async () => {
+    const popup = await renderOpen();
+    expect(popup.className).toContain("bg-surface-tray");
+    expect(popup.className).toContain("p-1");
+    expect(popup.className).toContain("shadow-overlay");
+    expect(popup.className).not.toContain("ring-3");
+  });
+
+  it("holds a padded panel for everything but the footer", async () => {
+    const popup = await renderOpen();
+    const panel = popup.querySelector('[data-slot="dialog-panel"]');
+    expect(panel?.className).toContain("bg-surface-panel");
+    expect(panel?.className).toContain("p-(--panel-pad)");
+    expect(panel?.querySelector('[data-slot="dialog-header"]')).toBeTruthy();
+    const footer = popup.querySelector('[data-slot="dialog-footer"]');
+    expect(footer?.parentElement).toBe(popup);
+  });
+
+  it("keeps the panel radius valid when the theme radius is 0", async () => {
+    const popup = await renderOpen();
+    const panel = popup.querySelector('[data-slot="dialog-panel"]');
+    expect(panel?.className).toContain(
+      "rounded-[max(0px,calc(--theme(--radius-xl)_-_4px))]",
+    );
+  });
+
+  it("scales in with a reduced-motion fallback", async () => {
+    const popup = await renderOpen();
+    expect(popup.className).toContain("data-starting-style:scale-[0.98]");
+    expect(popup.className).toContain("duration-150");
+    expect(popup.className).toContain("ease-snappy");
+    expect(popup.className).toContain("motion-reduce:scale-100!");
+  });
+
+  it("uses a plain dimmed backdrop without blur", async () => {
+    await renderOpen();
+    const overlay = document.querySelector('[data-slot="dialog-overlay"]');
+    expect(overlay?.className).toContain("bg-black/40");
+    expect(overlay?.className).toContain("dark:bg-black/60");
+    expect(overlay?.className).not.toContain("backdrop-blur");
+  });
+
+  it("sets the title in semibold with tight tracking", async () => {
+    await renderOpen();
+    const title = screen.getByText("Edit profile");
+    expect(title.className).toContain("font-semibold");
+    expect(title.className).toContain("tracking-[-0.01em]");
+  });
+});
