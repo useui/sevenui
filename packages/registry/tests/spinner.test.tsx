@@ -38,4 +38,18 @@ describe("Spinner", () => {
     expect(className).toContain("size-8");
     expect(className).toContain("animate-spin");
   });
+
+  it("is muted and slows down, rather than stopping, under reduced motion (v2)", () => {
+    render(<Spinner />);
+    const className = screen.getByRole("status").getAttribute("class") ?? "";
+    expect(className).toContain("text-muted-foreground");
+    expect(className).toContain("motion-reduce:animate-[spin_2.5s_linear_infinite]");
+  });
+
+  it("keeps the current colour inside a button or badge it sits in (v2)", () => {
+    render(<Spinner />);
+    const className = screen.getByRole("status").getAttribute("class") ?? "";
+    expect(className).toContain("in-data-[slot=button]:text-current");
+    expect(className).toContain("in-data-[slot=badge]:text-current");
+  });
 });

@@ -7,7 +7,13 @@ function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
       data-slot="spinner"
       role="status"
       aria-label="Loading"
-      className={cn("size-4 animate-spin", className)}
+      // Muted on its own, but it takes the text colour of a button or badge
+      // it sits in. Reduced motion slows the spin instead of freezing it, so
+      // the status still reads as in progress.
+      className={cn(
+        "size-4 animate-spin text-muted-foreground in-data-[slot=badge]:text-current in-data-[slot=button]:text-current motion-reduce:animate-[spin_2.5s_linear_infinite]",
+        className,
+      )}
       {...props}
     />
   );
