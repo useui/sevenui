@@ -91,4 +91,35 @@ describe("Marker", () => {
   it("exports markerVariants for external composition", () => {
     expect(markerVariants({ variant: "border" })).toContain("border-b");
   });
+
+  describe("v2 design language", () => {
+    it("draws the separator lines and the border as hairlines", () => {
+      const separator = markerVariants({ variant: "separator" }).split(" ");
+      expect(separator).toContain("before:bg-hairline");
+      expect(separator).toContain("after:bg-hairline");
+      expect(separator).not.toContain("before:bg-border");
+      const border = markerVariants({ variant: "border" }).split(" ");
+      expect(border).toContain("border-hairline");
+      expect(border).not.toContain("border-border");
+    });
+
+    it("mutes the icon", () => {
+      render(<MarkerIcon data-testid="icon" />);
+      expect(screen.getByTestId("icon").className).toContain("text-muted-foreground");
+    });
+
+    it("sets the separator label as a secondary badge chip", () => {
+      render(<MarkerContent data-testid="content">Today</MarkerContent>);
+      const cls = screen.getByTestId("content").className;
+      for (const c of [
+        "group-data-[variant=separator]/marker:rounded-full",
+        "group-data-[variant=separator]/marker:bg-surface-panel",
+        "group-data-[variant=separator]/marker:border-hairline",
+        "group-data-[variant=separator]/marker:px-2",
+        "group-data-[variant=separator]/marker:text-[11px]",
+      ]) {
+        expect(cls).toContain(c);
+      }
+    });
+  });
 });
