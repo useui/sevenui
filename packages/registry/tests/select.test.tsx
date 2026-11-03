@@ -247,6 +247,12 @@ describe("Select v2 styles", () => {
     expect(item.className).not.toContain("data-disabled:focus-visible:outline-none");
     const check = item.querySelector("[data-slot=select-item-indicator]")!;
     expect(check.className).toContain("text-brand");
+    // Muted descendants lift to the foreground on the highlight (AA), the
+    // brand check keeps its colour.
+    expect(item.className.split(" ")).toContain(
+      "data-highlighted:[&_.text-muted-foreground]:text-foreground",
+    );
+    expect(item.className).not.toContain("**:text-foreground");
   });
 
   it("ellipsizes a long trigger value and long item text instead of hard-clipping", async () => {

@@ -16,6 +16,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/registry/base/ui/dropdown-menu";
+import { AA, contrastOn, palette } from "./helpers/palette";
 
 function BasicMenu({
   onProfile = () => {},
@@ -234,6 +235,25 @@ describe("DropdownMenu v2 styles", () => {
   const slot = (name: string) =>
     document.querySelector(`[data-slot="${name}"]`)?.getAttribute("class") ?? "";
 
+  it("lifts muted descendants to the foreground on a highlighted row", async () => {
+    render(<StyledMenu />);
+    await screen.findByRole("menu");
+    // Muted text on the hairline highlight is ~4.1-4.3:1, under AA.
+    expect(slot("dropdown-menu-shortcut").split(" ")).toContain(
+      "group-data-highlighted/dropdown-menu-item:text-foreground",
+    );
+    expect(slot("dropdown-menu-item").split(" ")).toContain(
+      "not-data-[variant=destructive]:data-highlighted:**:text-foreground",
+    );
+    for (const row of ["dropdown-menu-checkbox-item", "dropdown-menu-radio-item"]) {
+      // Only muted text, so the brand check indicator keeps its colour.
+      expect(slot(row).split(" ")).toContain(
+        "data-highlighted:[&_.text-muted-foreground]:text-foreground",
+      );
+      expect(slot(row)).not.toContain("**:text-foreground");
+    }
+  });
+
   it("renders the popup as a raised overlay with a reduced-motion fallback", async () => {
     render(<StyledMenu />);
     await screen.findByRole("menu");
@@ -288,5 +308,22 @@ describe("DropdownMenu v2 styles", () => {
     expect(destructive?.getAttribute("class")).toContain(
       "data-[variant=destructive]:text-destructive",
     );
+  });
+});
+
+// --- Contrast -------------------------------------------------------------
+// A highlighted row is the hairline (foreground at 7-8%) over the raised
+// menu surface. Muted text fails AA there, which is why highlighted rows lift
+// muted descendants to the foreground.
+
+describe("Highlighted menu row contrast (AA)", () => {
+  it.each(["light", "dark"] as const)("muted fails and foreground passes on the highlight in %s", (mode) => {
+    const p = palette(mode);
+    const highlight = { color: p.foreground, alpha: p.hairlineAlpha };
+    const muted = contrastOn(p.mutedForeground, p.surfaces.raised, highlight);
+    const lifted = contrastOn(p.foreground, p.surfaces.raised, highlight);
+    // Positive control: without the lift this pair is under AA.
+    expect(muted, `${mode} muted ${muted.toFixed(2)}`).toBeLessThan(AA);
+    expect(lifted, `${mode} foreground ${lifted.toFixed(2)}`).toBeGreaterThanOrEqual(AA);
   });
 });

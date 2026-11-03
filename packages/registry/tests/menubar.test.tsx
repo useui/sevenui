@@ -118,6 +118,21 @@ describe("Menubar", () => {
 describe("Menubar v2 styles", () => {
   const cls = (el: Element | null) => el?.getAttribute("class") ?? "";
 
+  it("lifts the shortcut and muted descendants to the foreground on a highlighted row", async () => {
+    const user = userEvent.setup();
+    render(<BasicMenubar />);
+    await user.click(screen.getByRole("menuitem", { name: "File" }));
+    await screen.findByRole("menu");
+    const item = screen.getByRole("menuitem", { name: /New Tab/ });
+    expect(cls(item).split(" ")).toContain("group/menubar-item");
+    expect(cls(item).split(" ")).toContain(
+      "not-data-[variant=destructive]:data-highlighted:**:text-foreground",
+    );
+    expect(cls(document.querySelector('[data-slot="menubar-shortcut"]')).split(" ")).toContain(
+      "group-data-highlighted/menubar-item:text-foreground",
+    );
+  });
+
   it("renders the bar as a hairline toolbar tray sized from --control-h", () => {
     render(<BasicMenubar />);
     const bar = cls(screen.getByRole("menubar"));

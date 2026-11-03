@@ -204,6 +204,25 @@ describe("ContextMenu v2 styles", () => {
   const slot = (name: string) =>
     document.querySelector(`[data-slot="${name}"]`)?.getAttribute("class") ?? "";
 
+  it("lifts muted descendants to the foreground on a highlighted row", async () => {
+    render(<StyledMenu />);
+    await openContextMenu();
+    // Muted text on the hairline highlight is ~4.1-4.3:1, under AA.
+    expect(slot("context-menu-shortcut").split(" ")).toContain(
+      "group-data-highlighted/context-menu-item:text-foreground",
+    );
+    expect(slot("context-menu-item").split(" ")).toContain(
+      "not-data-[variant=destructive]:data-highlighted:**:text-foreground",
+    );
+    for (const row of ["context-menu-checkbox-item", "context-menu-radio-item"]) {
+      // Only muted text, so the brand check indicator keeps its colour.
+      expect(slot(row).split(" ")).toContain(
+        "data-highlighted:[&_.text-muted-foreground]:text-foreground",
+      );
+      expect(slot(row)).not.toContain("**:text-foreground");
+    }
+  });
+
   it("renders the popup as a raised overlay with a reduced-motion fallback", async () => {
     render(<StyledMenu />);
     await openContextMenu();

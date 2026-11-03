@@ -184,6 +184,15 @@ describe("Combobox v2 styles", () => {
     expect(group.className).toContain("w-64");
   });
 
+  it("lifts muted descendants of a highlighted item to the foreground", async () => {
+    await openPopup();
+    const item = document.querySelector("[data-slot=combobox-item]") as HTMLElement;
+    expect(item.className.split(" ")).toContain(
+      "data-highlighted:[&_.text-muted-foreground]:text-foreground",
+    );
+    expect(item.className).not.toContain("**:text-foreground");
+  });
+
   it("renders the popup as a raised overlay with a reduced-motion-safe entry", async () => {
     await openPopup();
     const popup = document.querySelector(
