@@ -90,7 +90,7 @@ describe("BubbleContent", () => {
     );
     const content = container.querySelector('[data-slot="bubble-content"]');
     expect(content?.className).toContain("font-mono");
-    expect(content?.className).toContain("rounded-3xl");
+    expect(content?.className).toContain("rounded-xl");
   });
 });
 
@@ -154,5 +154,57 @@ describe("BubbleGroup", () => {
     expect(group.childElementCount).toBe(0);
     expect(group.className).toContain("gap-4");
     expect(group.className).toContain("flex-col");
+  });
+});
+
+describe("Bubble v2 styles", () => {
+  const contentSel = "*:data-[slot=bubble-content]:";
+
+  it("draws the default (user) bubble on a raised surface with a hairline", () => {
+    render(<Bubble data-testid="bubble" />);
+    const cls = screen.getByTestId("bubble").className;
+    expect(cls).toContain(`${contentSel}bg-surface-raised`);
+    expect(cls).toContain(`${contentSel}text-foreground`);
+    expect(cls).toContain(`${contentSel}shadow-[inset_0_0_0_1px_var(--hairline`);
+    expect(cls).not.toContain("bg-primary");
+  });
+
+  it("keeps the ghost (assistant) bubble as plain text", () => {
+    render(<Bubble data-testid="bubble" variant="ghost" />);
+    const cls = screen.getByTestId("bubble").className;
+    expect(cls).toContain(`${contentSel}bg-transparent`);
+    expect(cls).toContain(`${contentSel}p-0`);
+    expect(cls).toContain(`${contentSel}shadow-none`);
+  });
+
+  it("pads the content from the density tokens and uses the offset focus ring", () => {
+    const { container } = render(
+      <Bubble>
+        <BubbleContent>Hello</BubbleContent>
+      </Bubble>,
+    );
+    const cls = (
+      container.querySelector('[data-slot="bubble-content"]') as HTMLElement
+    ).className;
+    expect(cls).toContain("px-(--control-px)");
+    expect(cls).toContain("py-[calc(var(--control-px)*0.66)]");
+    expect(cls).toContain("[:where(&)]:[--control-px:0.75rem]");
+    expect(cls).toContain("[button,a]:focus-visible:focus-ring");
+    expect(cls).toContain("[:where(&)]:[--focus-width:1.5px]");
+    expect(cls).not.toContain("ring-3");
+    expect(cls).not.toContain("ring-ring");
+    expect(cls).not.toContain("focus-visible:border-ring");
+  });
+
+  it("separates reactions with a hairline instead of a ring-3 cutout", () => {
+    render(
+      <Bubble>
+        <BubbleReactions data-testid="reactions">1</BubbleReactions>
+      </Bubble>,
+    );
+    const cls = screen.getByTestId("reactions").className;
+    expect(cls).toContain("bg-surface-raised");
+    expect(cls).toContain("var(--hairline-strong");
+    expect(cls).not.toContain("ring-3");
   });
 });
