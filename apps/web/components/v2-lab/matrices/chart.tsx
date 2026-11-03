@@ -1,14 +1,14 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import {
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
-  ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
 } from "@/registry/base/ui/chart";
+// recharts is a registry dependency, not a web one: the live charts come from
+// the registry demos, which resolve it from packages/registry.
+import ChartDemo from "@/demos/chart/chart-demo";
+import ChartLine from "@/demos/chart/chart-line";
 import { LabSection } from "../lab-frame";
 
 const DATA = [
@@ -47,29 +47,11 @@ const PAYLOAD = [
 export default function ChartMatrix() {
   return (
     <div>
-      <LabSection title="bar chart with grid, axes and legend (hover for tooltip)">
-        <ChartContainer config={CONFIG} className="h-48 w-full max-w-md">
-          <BarChart data={DATA} accessibilityLayer>
-            <CartesianGrid vertical={false} />
-            <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <ChartLegend content={<ChartLegendContent />} />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
-            <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
-          </BarChart>
-        </ChartContainer>
+      <LabSection title="bar chart demo with grid, axis and legend (hover for tooltip)">
+        <ChartDemo />
       </LabSection>
-      <LabSection title="line chart with visible axis lines">
-        <ChartContainer config={CONFIG} className="h-48 w-full max-w-md">
-          <LineChart data={DATA}>
-            <CartesianGrid />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <ChartTooltip content={<ChartTooltipContent indicator="line" />} />
-            <Line dataKey="desktop" stroke="var(--color-desktop)" dot={false} />
-            <Line dataKey="mobile" stroke="var(--color-mobile)" dot={false} />
-          </LineChart>
-        </ChartContainer>
+      <LabSection title="line chart demo">
+        <ChartLine />
       </LabSection>
       <LabSection title="tooltip content (static): dot / line / dashed / hideLabel">
         {(["dot", "line", "dashed"] as const).map((indicator) => (
