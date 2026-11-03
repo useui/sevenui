@@ -75,7 +75,7 @@ describe("ButtonGroupText", () => {
     render(<ButtonGroupText className="custom-class">kg</ButtonGroupText>);
     const text = screen.getByText("kg");
     expect(text.className.split(/\s+/)).toContain("custom-class");
-    expect(text.className.split(/\s+/)).toContain("bg-muted");
+    expect(text.className.split(/\s+/)).toContain("bg-surface-tray");
   });
 });
 
@@ -97,5 +97,35 @@ describe("ButtonGroupSeparator", () => {
     render(<ButtonGroupSeparator orientation="horizontal" />);
     const separator = screen.getByRole("separator");
     expect(separator.getAttribute("data-orientation")).toBe("horizontal");
+  });
+});
+
+describe("ButtonGroup v2 design language", () => {
+  it("lifts a focused child above its siblings so the offset ring is not clipped", () => {
+    render(
+      <ButtonGroup>
+        <Button>Copy</Button>
+      </ButtonGroup>,
+    );
+    const classes = screen.getByRole("group").className.split(/\s+/);
+    expect(classes).toContain("*:focus-visible:relative");
+    expect(classes).toContain("*:focus-visible:z-10");
+  });
+
+  it("draws separators with the strong hairline", () => {
+    render(<ButtonGroupSeparator />);
+    const classes = screen.getByRole("separator").className.split(/\s+/);
+    expect(classes).toContain("bg-hairline-strong");
+    expect(classes).not.toContain("bg-input");
+    expect(classes).not.toContain("bg-border");
+  });
+
+  it("renders text addons as a recessed tray with a hairline edge, sized by density", () => {
+    render(<ButtonGroupText>https://</ButtonGroupText>);
+    const classes = screen.getByText("https://").className.split(/\s+/);
+    expect(classes).toContain("bg-surface-tray");
+    expect(classes).toContain("border-hairline-strong");
+    expect(classes).toContain("px-[var(--control-px,0.75rem)]");
+    expect(classes).toContain("text-[length:var(--control-text,0.8125rem)]");
   });
 });
