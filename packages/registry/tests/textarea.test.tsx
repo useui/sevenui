@@ -56,3 +56,20 @@ describe("Textarea", () => {
     ).toBe("true");
   });
 });
+
+describe("Textarea v2 styles", () => {
+  it("uses the offset focus ring, inset surface and density tokens", () => {
+    render(<Textarea placeholder="Styled" />);
+    const cls = screen.getByPlaceholderText("Styled").className;
+    expect(cls).toContain("focus-visible:focus-ring");
+    expect(cls).not.toContain("ring-3");
+    expect(cls).not.toContain("focus-visible:border-ring");
+    expect(cls).toContain("min-h-[calc(var(--control-h,2.125rem)*2.5)]");
+    expect(cls).toContain("py-[calc(var(--control-px,0.75rem)*0.66)]");
+    expect(cls).toContain("bg-surface-inset");
+    expect(cls).toContain("inset_0_0_0_1px_var(--hairline-strong");
+    expect(cls).toContain("placeholder:text-muted-foreground/70");
+    expect(cls).toContain("aria-invalid:[--focus-color:var(--destructive)]");
+    expect(cls).toContain("motion-reduce:transition-none");
+  });
+});
