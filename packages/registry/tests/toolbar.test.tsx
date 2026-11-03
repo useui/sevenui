@@ -105,3 +105,55 @@ describe("Toolbar", () => {
     expect((input as HTMLInputElement).value).toBe("16");
   });
 });
+
+describe("Toolbar v2 design language", () => {
+  function split(el: Element) {
+    return el.className.split(/\s+/);
+  }
+
+  it("sits on a recessed tray with a hairline edge and density gap", () => {
+    render(<BasicToolbar />);
+    const list = split(screen.getByRole("toolbar"));
+    expect(list).toContain("bg-surface-tray");
+    expect(list).toContain("p-0.5");
+    expect(list).toContain("shadow-[inset_0_0_0_1px_var(--hairline,var(--border))]");
+    expect(list).toContain("gap-[var(--control-gap,0.5rem)]");
+    expect(list).not.toContain("shadow-xs");
+  });
+
+  it("sizes buttons 4px under the control height and uses the offset focus ring", () => {
+    render(<BasicToolbar />);
+    const list = split(screen.getByText("Underline"));
+    expect(list).toContain("h-[calc(var(--control-h,2.125rem)-4px)]");
+    expect(list).toContain("text-[length:var(--control-text,0.8125rem)]");
+    expect(list).toContain("focus-visible:focus-ring");
+    expect(list).toContain("data-[pressed]:bg-surface-raised");
+    expect(list.join(" ")).not.toMatch(/ring-2|ring-3|ring-ring/);
+    expect(list.some((c) => c.includes("brand"))).toBe(false);
+  });
+
+  it("uses the offset focus ring on links and an inset field for inputs", () => {
+    render(
+      <Toolbar>
+        <ToolbarLink href="/help">Help</ToolbarLink>
+        <ToolbarInput placeholder="Font size" />
+      </Toolbar>,
+    );
+    expect(split(screen.getByRole("link", { name: "Help" }))).toContain(
+      "focus-visible:focus-ring",
+    );
+    const input = split(screen.getByPlaceholderText("Font size"));
+    expect(input).toContain("focus-visible:focus-ring");
+    expect(input).toContain("bg-surface-inset");
+    expect(input).toContain(
+      "shadow-[inset_0_0_0_1px_var(--hairline-strong,var(--input)),var(--elevation-inset,0_0_#0000)]",
+    );
+  });
+
+  it("draws separators with the hairline", () => {
+    render(<BasicToolbar />);
+    const list = split(screen.getByRole("separator"));
+    expect(list).toContain("bg-hairline");
+    expect(list).not.toContain("bg-border");
+  });
+});
