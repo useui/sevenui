@@ -6,7 +6,10 @@ function Empty({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="empty"
       className={cn(
-        "flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-xl border-dashed p-6 text-center text-balance",
+        // The dashed border stays opt-in (add `border`); it is drawn as a
+        // hairline. --panel-pad falls back inside var(), so an ancestor's
+        // data-density still reaches it.
+        "flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-xl border-dashed border-hairline-strong p-[var(--panel-pad,1.125rem)] text-center text-balance",
         className,
       )}
       {...props}
@@ -30,7 +33,8 @@ const emptyMediaVariants = cva(
     variants: {
       variant: {
         default: "bg-transparent",
-        icon: "flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground [&_svg:not([class*='size-'])]:size-4",
+        // A small raised tile: top highlight, hairline, soft lift.
+        icon: "flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-raised text-foreground shadow-[var(--elevation-highlight,0_0_#0000),0_0_0_1px_var(--hairline-strong,color-mix(in_oklch,var(--foreground)_13%,transparent)),var(--elevation-raised,0_0_#0000)] [&_svg:not([class*='size-'])]:size-4",
       },
     },
     defaultVariants: {
@@ -59,7 +63,7 @@ function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="empty-title"
       className={cn(
-        "cn-font-heading text-sm font-medium tracking-tight",
+        "cn-font-heading text-[0.9375rem] font-medium tracking-tight",
         className,
       )}
       {...props}
@@ -72,7 +76,7 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"div">) 
     <div
       data-slot="empty-description"
       className={cn(
-        "text-sm/relaxed text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
+        "text-[0.8125rem]/relaxed text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
         className,
       )}
       {...props}
