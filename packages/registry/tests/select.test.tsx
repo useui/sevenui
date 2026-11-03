@@ -192,3 +192,51 @@ describe("Select", () => {
     expect(screen.getByRole("combobox").textContent).toContain("Pick a fruit");
   });
 });
+
+describe("Select v2 styles", () => {
+  it("renders a raised trigger with the offset focus ring and control scale", () => {
+    render(<FruitSelect />);
+    const cls = screen.getByRole("combobox").className;
+    expect(cls).toContain("focus-visible:focus-ring");
+    expect(cls).not.toContain("ring-3");
+    expect(cls).not.toContain("ring-ring");
+    expect(cls).not.toContain("focus-visible:border-ring");
+    expect(cls).toContain("bg-surface-raised");
+    expect(cls).toContain("var(--hairline-strong");
+    expect(cls).toContain("data-[size=default]:h-[var(--control-h,2.125rem)]");
+    expect(cls).toContain(
+      "data-[size=sm]:h-[calc(var(--control-h,2.125rem)-0.25rem)]",
+    );
+  });
+
+  it("renders the popup as an overlay surface with a reduced-motion counterpart", async () => {
+    const user = userEvent.setup();
+    render(<FruitSelect defaultValue="banana" />);
+    await user.click(screen.getByRole("combobox"));
+    const listbox = await screen.findByRole("listbox");
+    const popup = listbox.closest("[data-slot=select-content]")!;
+    const cls = popup.className;
+    expect(cls).toContain("bg-surface-raised");
+    expect(cls).toContain("shadow-overlay");
+    expect(cls).toContain("rounded-lg");
+    expect(cls).toContain("p-1");
+    expect(cls).toContain("data-starting-style:opacity-0");
+    expect(cls).toContain("data-starting-style:scale-[0.98]");
+    expect(cls).toContain("motion-reduce:transition-none");
+    // Base UI positioning classes stay.
+    expect(cls).toContain("max-h-(--available-height)");
+    expect(cls).toContain("origin-(--transform-origin)");
+    expect(popup.parentElement!.className).toContain("isolate z-50");
+  });
+
+  it("sizes items from --item-h, highlights on the panel surface and checks in brand", async () => {
+    const user = userEvent.setup();
+    render(<FruitSelect defaultValue="banana" />);
+    await user.click(screen.getByRole("combobox"));
+    const item = await screen.findByRole("option", { name: "Banana" });
+    expect(item.className).toContain("min-h-[var(--item-h,2rem)]");
+    expect(item.className).toContain("data-highlighted:bg-surface-panel");
+    const check = item.querySelector("[data-slot=select-item-indicator]")!;
+    expect(check.className).toContain("text-brand");
+  });
+});
