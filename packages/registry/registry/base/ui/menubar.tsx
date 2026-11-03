@@ -59,7 +59,7 @@ function MenubarTrigger({
     <DropdownMenuTrigger
       data-slot="menubar-trigger"
       className={cn(
-        "relative flex h-full items-center rounded-[max(0px,calc(--theme(--radius-lg)-2px))] px-[var(--control-px,0.75rem)] text-[length:var(--control-text,0.8125rem)] font-medium text-muted-foreground outline-none select-none transition-[background-color,color,box-shadow] duration-100 hover:bg-surface-panel hover:text-foreground focus-visible:z-10 focus-visible:focus-ring aria-expanded:bg-surface-raised aria-expanded:text-foreground aria-expanded:shadow-[var(--elevation-highlight),0_0_0_1px_var(--hairline-strong)] data-popup-open:bg-surface-raised data-popup-open:text-foreground data-popup-open:shadow-[var(--elevation-highlight),0_0_0_1px_var(--hairline-strong)] data-disabled:pointer-events-none data-disabled:opacity-50 motion-reduce:transition-none",
+        "relative flex h-full items-center rounded-[max(0px,calc(--theme(--radius-lg)-2px))] px-[var(--control-px,0.75rem)] text-[length:var(--control-text,0.8125rem)] font-medium text-muted-foreground outline-none select-none transition-[background-color,color,box-shadow] duration-100 hover:bg-hairline hover:text-foreground focus-visible:z-10 focus-visible:focus-ring aria-expanded:bg-surface-raised aria-expanded:text-foreground aria-expanded:shadow-[var(--elevation-highlight),0_0_0_1px_var(--hairline-strong)] data-popup-open:bg-surface-raised data-popup-open:text-foreground data-popup-open:shadow-[var(--elevation-highlight),0_0_0_1px_var(--hairline-strong)] data-disabled:pointer-events-none data-disabled:opacity-50 motion-reduce:transition-none",
         className,
       )}
       {...props}

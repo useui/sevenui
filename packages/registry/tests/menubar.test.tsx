@@ -133,7 +133,9 @@ describe("Menubar v2 styles", () => {
     const trigger = cls(screen.getByRole("menuitem", { name: "File" }));
     expect(trigger).toContain("focus-visible:focus-ring");
     expect(trigger).not.toContain("ring-3");
-    expect(trigger).toContain("hover:bg-surface-panel");
+    // Hover darkens the tray like a list row; the open state stays raised.
+    expect(trigger).toContain("hover:bg-hairline");
+    expect(trigger).not.toContain("surface-panel");
     expect(trigger).toContain("data-popup-open:bg-surface-raised");
     expect(trigger).toContain("px-[var(--control-px,0.75rem)]");
     expect(trigger).toContain("motion-reduce:transition-none");
