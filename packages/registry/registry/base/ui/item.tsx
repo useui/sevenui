@@ -44,10 +44,15 @@ const itemVariants = cva(
         outline: "border-hairline-strong",
         muted: "border-transparent bg-surface-tray",
       },
+      // Padding and gap scale from the density variables, so compact rows
+      // tighten (the --item-h floor sits below a row's content and rarely
+      // binds). Comfortable values match the previous fixed spacing:
+      // default/sm 10px 12px with a 10px gap, xs 8px 10px with an 8px gap.
       size: {
-        default: "gap-2.5 px-3 py-2.5",
-        sm: "gap-2.5 px-3 py-2.5",
-        xs: "gap-2 px-2.5 py-2 in-data-[slot=dropdown-menu-content]:p-0",
+        default:
+          "gap-[calc(var(--control-gap,0.5rem)*1.25)] px-[var(--control-px,0.75rem)] py-[calc(var(--control-gap,0.5rem)*1.25)]",
+        sm: "gap-[calc(var(--control-gap,0.5rem)*1.25)] px-[var(--control-px,0.75rem)] py-[calc(var(--control-gap,0.5rem)*1.25)]",
+        xs: "gap-[var(--control-gap,0.5rem)] px-[calc(var(--control-px,0.75rem)*5/6)] py-[var(--control-gap,0.5rem)] in-data-[slot=dropdown-menu-content]:p-0",
       },
     },
     defaultVariants: {

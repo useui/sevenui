@@ -88,6 +88,36 @@ describe("Item", () => {
       expect(screen.getByTestId("item").className).not.toContain("[:where(&)]:[--item-h");
     });
 
+    it("scales row padding and gap from the density variables in every size", () => {
+      const expected = {
+        default: [
+          "py-[calc(var(--control-gap,0.5rem)*1.25)]",
+          "px-[var(--control-px,0.75rem)]",
+          "gap-[calc(var(--control-gap,0.5rem)*1.25)]",
+        ],
+        sm: [
+          "py-[calc(var(--control-gap,0.5rem)*1.25)]",
+          "px-[var(--control-px,0.75rem)]",
+          "gap-[calc(var(--control-gap,0.5rem)*1.25)]",
+        ],
+        xs: [
+          "py-[var(--control-gap,0.5rem)]",
+          "px-[calc(var(--control-px,0.75rem)*5/6)]",
+          "gap-[var(--control-gap,0.5rem)]",
+        ],
+      } as const;
+      for (const [size, classes] of Object.entries(expected)) {
+        render(
+          <Item data-testid={`density-${size}`} size={size as keyof typeof expected}>
+            R
+          </Item>,
+        );
+        const list = screen.getByTestId(`density-${size}`).className.split(" ");
+        for (const c of classes) expect(list, `${size}: ${c}`).toContain(c);
+        expect(list.some((c) => /^p[xy]-\d|^gap-\d/.test(c)), size).toBe(false);
+      }
+    });
+
     it("drops transitions under reduced motion", () => {
       render(<Item data-testid="item">M</Item>);
       expect(screen.getByTestId("item").className).toContain("motion-reduce:transition-none");
