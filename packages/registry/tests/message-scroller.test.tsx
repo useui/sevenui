@@ -403,3 +403,25 @@ describe("auto-scroll", () => {
     expect(spacer.hidden).toBe(false);
   });
 });
+
+describe("MessageScrollerButton v2 styles", () => {
+  it("is a raised outline icon button whose fade stops under reduced motion", () => {
+    render(<Chat />);
+    const button = screen.getByTestId("scroll-button");
+    expect(button.getAttribute("data-variant")).toBe("outline");
+    expect(button.getAttribute("data-size")).toBe("icon-sm");
+    expect(button.className).toContain("bg-surface-raised");
+    expect(button.className).toContain("border-hairline-strong");
+    expect(button.className).toContain("shadow-[");
+    expect(button.className).toContain("var(--elevation-raised");
+    expect(button.className).toContain("motion-reduce:transition-none");
+    expect(button.className).toContain("focus-visible:focus-ring");
+    // The rest of the base (focus halo, outline fill) belongs to Button.
+  });
+
+  it("keeps the viewport plain", () => {
+    render(<Chat />);
+    const viewport = screen.getByTestId("viewport");
+    expect(viewport.className).not.toMatch(/\b(bg|border|shadow|ring)-/);
+  });
+});
