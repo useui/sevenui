@@ -411,8 +411,10 @@ describe("MessageScrollerButton v2 styles", () => {
     expect(button.getAttribute("data-variant")).toBe("outline");
     expect(button.getAttribute("data-size")).toBe("icon-sm");
     expect(button.className).toContain("bg-surface-raised");
-    // Opaque in dark too: outranks the outline variant's dark fill.
-    expect(button.className).toContain("dark:bg-surface-raised");
+    // The outline variant is opaque in both themes, so no dark: override is needed.
+    expect(button.className).not.toContain("dark:bg-surface-raised");
+    expect(button.className).not.toContain("dark:border-hairline-strong");
+    expect(button.className).not.toContain("dark:hover:");
     expect(button.className).toContain("border-hairline-strong");
     expect(button.className).toContain("shadow-[");
     expect(button.className).toContain("var(--elevation-raised");
