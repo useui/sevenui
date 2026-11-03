@@ -133,3 +133,45 @@ describe("Sheet", () => {
     });
   });
 });
+
+describe("Sheet v2 styles", () => {
+  it("renders a single raised panel with an overlay shadow", async () => {
+    render(<ExampleSheet open />);
+    const sheet = await screen.findByRole("dialog");
+    expect(sheet.className).toContain("bg-surface-raised");
+    expect(sheet.className).toContain("shadow-overlay");
+    expect(sheet.className).not.toContain("ring-3");
+  });
+
+  it("draws a hairline on the inner edge", async () => {
+    render(<ExampleSheet open />);
+    const sheet = await screen.findByRole("dialog");
+    expect(sheet.className).toContain("border-hairline");
+    expect(sheet.className).toContain("data-[side=right]:border-l");
+  });
+
+  it("pads the header and footer with the panel padding", async () => {
+    render(<ExampleSheet open />);
+    await screen.findByRole("dialog");
+    for (const slot of ["sheet-header", "sheet-footer"]) {
+      const el = document.querySelector(`[data-slot="${slot}"]`);
+      expect(el?.className).toContain("p-[var(--panel-pad,1.125rem)]");
+    }
+  });
+
+  it("slides in with a reduced-motion fade", async () => {
+    render(<ExampleSheet open />);
+    const sheet = await screen.findByRole("dialog");
+    expect(sheet.className).toContain("duration-200");
+    expect(sheet.className).toContain("ease-snappy");
+    expect(sheet.className).toContain("motion-reduce:translate-none!");
+  });
+
+  it("uses a plain dimmed backdrop without blur", async () => {
+    render(<ExampleSheet open />);
+    await screen.findByRole("dialog");
+    const overlay = document.querySelector('[data-slot="sheet-overlay"]');
+    expect(overlay?.className).toContain("bg-black/40");
+    expect(overlay?.className).not.toContain("backdrop-blur");
+  });
+});
