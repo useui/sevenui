@@ -84,3 +84,12 @@ describe("Collapsible", () => {
     expect(screen.queryByText("Hidden details")).toBeNull();
   });
 });
+
+describe("Collapsible v2 style", () => {
+  it("keeps the panel keyframes and drops them for reduced motion", () => {
+    const { container } = render(<BasicCollapsible defaultOpen />);
+    const panel = container.querySelector('[data-slot="collapsible-content"]');
+    expect(panel?.className).toContain("data-open:animate-collapsible-down");
+    expect(panel?.className).toContain("motion-reduce:animate-none");
+  });
+});
