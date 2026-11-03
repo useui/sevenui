@@ -17,7 +17,16 @@ describe("Skeleton", () => {
     const skeleton = screen.getByTestId("skeleton");
     expect(skeleton.className).toContain("h-4");
     expect(skeleton.className).toContain("w-40");
-    expect(skeleton.className).toContain("bg-muted");
+    expect(skeleton.className).toContain("bg-hairline-strong");
+  });
+
+  it("pulses on the strong hairline and stops under reduced motion (v2)", () => {
+    render(<Skeleton data-testid="skeleton" />);
+    const classes = screen.getByTestId("skeleton").className.split(" ");
+    expect(classes).toContain("bg-hairline-strong");
+    expect(classes).toContain("animate-pulse");
+    expect(classes).toContain("motion-reduce:animate-none");
+    expect(classes).not.toContain("bg-muted");
   });
 
   it("passes through arbitrary props such as aria-hidden", () => {
