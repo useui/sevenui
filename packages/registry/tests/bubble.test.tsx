@@ -8,6 +8,7 @@ import {
   BubbleGroup,
   BubbleReactions,
 } from "@/registry/base/ui/bubble";
+import { AA, contrastOn, destructivePull, destructiveTint, mix, palette } from "./helpers/palette";
 
 describe("Bubble", () => {
   it("renders its content", () => {
@@ -206,5 +207,37 @@ describe("Bubble v2 styles", () => {
     expect(cls).toContain("bg-surface-raised");
     expect(cls).toContain("var(--hairline-strong");
     expect(cls).not.toContain("ring-3");
+  });
+});
+
+// --- Contrast -------------------------------------------------------------
+// The destructive bubble's text must reach AA on its tint at rest and on the
+// interactive (button/link) hover tint, over the page, a card and a panel.
+
+describe("Destructive bubble contrast (AA)", () => {
+  const cases = (["light", "dark"] as const).flatMap((mode) =>
+    (["rest", "hover"] as const).map((state) => ({ mode, state })),
+  );
+
+  it.each(cases)("text reaches AA on the $state tint in $mode", ({ mode, state }) => {
+    render(<Bubble data-testid="bubble" variant="destructive" />);
+    const classes = screen.getByTestId("bubble").className;
+    const dark = mode === "dark" ? "dark:" : "";
+    const prefix =
+      state === "rest"
+        ? `${dark}*:data-[slot=bubble-content]:`
+        : `${dark}[&>[data-slot=bubble-content]:is(button,a):hover]:`;
+    const alpha = destructiveTint(classes, prefix);
+    const pull = destructivePull(classes, "*:data-[slot=bubble-content]:");
+    expect(alpha).not.toBeNaN();
+    expect(pull).toBeGreaterThan(0);
+    const p = palette(mode);
+    const text = mix(p.foreground, pull, p.destructive);
+    const surfaces = { background: p.surfaces.background, card: p.surfaces.card, panel: p.surfaces.panel };
+    const ratios = Object.entries(surfaces).map(
+      ([name, s]) => [name, contrastOn(text, s, { color: p.destructive, alpha })] as const,
+    );
+    const report = ratios.map(([n, r]) => `${n} ${r.toFixed(2)}`).join(", ");
+    expect(Math.min(...ratios.map(([, r]) => r)), `${mode} ${state}: ${report}`).toBeGreaterThanOrEqual(AA);
   });
 });
