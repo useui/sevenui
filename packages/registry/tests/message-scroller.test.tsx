@@ -38,7 +38,10 @@ const scrollToMock = vi.fn(function (
 
 beforeAll(() => {
   window.requestAnimationFrame ??= ((cb: FrameRequestCallback) =>
-    window.setTimeout(() => cb(performance.now()), 16)) as typeof window.requestAnimationFrame;
+    window.setTimeout(
+      () => cb(performance.now()),
+      16,
+    )) as typeof window.requestAnimationFrame;
   window.cancelAnimationFrame ??= (id: number) => window.clearTimeout(id);
   Object.defineProperty(Element.prototype, "scrollTo", {
     configurable: true,
@@ -296,7 +299,11 @@ describe("useMessageScrollerScrollable", () => {
 });
 
 describe("useMessageScroller", () => {
-  function ScrollActions({ onResult }: { onResult: (result: boolean) => void }) {
+  function ScrollActions({
+    onResult,
+  }: {
+    onResult: (result: boolean) => void;
+  }) {
     const { scrollToEnd, scrollToMessage } = useMessageScroller();
     return (
       <div>
@@ -318,7 +325,10 @@ describe("useMessageScroller", () => {
     const results: boolean[] = [];
     const ids = ["m1", "m2", "m3"];
     render(
-      <Chat ids={ids} probe={<ScrollActions onResult={(r) => results.push(r)} />} />,
+      <Chat
+        ids={ids}
+        probe={<ScrollActions onResult={(r) => results.push(r)} />}
+      />,
     );
     mockChatLayout(ids);
 
@@ -421,6 +431,14 @@ describe("MessageScrollerButton v2 styles", () => {
     expect(button.className).toContain("motion-reduce:transition-none");
     expect(button.className).toContain("focus-visible:focus-ring");
     // The rest of the base (focus halo, outline fill) belongs to Button.
+  });
+
+  it("rings the focused viewport inset", () => {
+    render(<Chat />);
+    const cls = screen.getByTestId("viewport").className;
+    expect(cls).toContain("focus-visible:focus-ring");
+    expect(cls).toContain("outline-none");
+    expect(cls).toContain("[--focus-gap:-1.5px]");
   });
 
   it("keeps the viewport plain", () => {
