@@ -201,6 +201,9 @@ describe("Combobox v2 styles", () => {
     const option = screen.getByRole("option", { name: "Cherry" });
     expect(option.className).toContain("min-h-[var(--item-h,2rem)]");
     expect(option.className).toContain("data-highlighted:bg-surface-panel");
+    expect(option.className).toContain(
+      "data-highlighted:shadow-[inset_0_0_0_1px_var(--hairline)]",
+    );
     expect(option.className).not.toContain("bg-accent");
     const indicator = option.querySelector("svg")?.parentElement as HTMLElement;
     expect(indicator.className).toContain("text-brand");
