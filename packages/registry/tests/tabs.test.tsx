@@ -135,4 +135,56 @@ describe("Tabs", () => {
       "line",
     );
   });
+
+  describe("v2 style", () => {
+    it("renders the default list as a segmented tray at control height", () => {
+      render(<BasicTabs />);
+      const list = screen.getByRole("tablist");
+      expect(list.className).toContain("bg-surface-tray");
+      expect(list.className).toContain("inset_0_0_0_1px_var(--hairline");
+      expect(list.className).toContain("p-0.5");
+      expect(list.className).toContain("h-(--control-h)");
+    });
+
+    it("sizes triggers inside the tray and focuses with the offset ring", () => {
+      render(<BasicTabs />);
+      for (const tab of screen.getAllByRole("tab")) {
+        expect(tab.className).toContain("h-[calc(var(--control-h)-4px)]");
+        expect(tab.className).toContain("focus-visible:focus-ring");
+        expect(tab.className).not.toContain("ring-3");
+        expect(tab.className).not.toContain("ring-ring");
+        expect(tab.className).not.toContain("focus-visible:border-ring");
+      }
+    });
+
+    it("raises the active tab with a brand bottom indicator", () => {
+      render(<BasicTabs />);
+      const tab = screen.getByRole("tab", { name: "Account" });
+      expect(tab.className).toContain("data-active:bg-surface-raised");
+      expect(tab.className).toContain("inset_0_-2px_0_var(--brand");
+    });
+
+    it("draws the line variant on a hairline with a 2px brand bar", () => {
+      render(
+        <Tabs defaultValue="one">
+          <TabsList variant="line">
+            <TabsTrigger value="one">One</TabsTrigger>
+          </TabsList>
+        </Tabs>,
+      );
+      expect(screen.getByRole("tablist").className).toContain(
+        "var(--hairline",
+      );
+      const tab = screen.getByRole("tab");
+      expect(tab.className).toContain("after:bg-brand");
+      expect(tab.className).toContain("after:h-0.5");
+    });
+
+    it("pairs every transition with a motion-reduce counterpart", () => {
+      render(<BasicTabs />);
+      const tab = screen.getByRole("tab", { name: "Account" });
+      expect(tab.className).toContain("motion-reduce:transition-none");
+      expect(tab.className).toContain("motion-reduce:after:transition-none");
+    });
+  });
 });
