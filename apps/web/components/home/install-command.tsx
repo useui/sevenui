@@ -13,10 +13,13 @@ import { cx } from "../../lib/cx";
 export function InstallCommand({
   commands,
   label = "install command",
+  wrap = false,
   className,
 }: {
   commands: Record<PackageManager, string>;
   label?: string;
+  /** Wrap long commands at every width instead of truncating from sm up. */
+  wrap?: boolean;
   className?: string;
 }) {
   const [state, setState] = React.useState<"idle" | "copied" | "failed">("idle");
@@ -33,16 +36,20 @@ export function InstallCommand({
   return (
     <div
       className={cx(
-        "flex w-full items-start gap-3 rounded-lg border border-border bg-card py-2 pr-2 pl-4 font-mono text-sm text-card-foreground shadow-xs",
+        // The D command box: an inset field, not a card. Hairline edge, inset shadow, mono text.
+        "flex min-h-10 w-full items-start gap-3 rounded-[10px] border border-hairline-strong bg-surface-inset py-1.5 pr-1.5 pl-3.5 font-mono text-[0.8125rem] text-foreground shadow-inset",
         className,
       )}
     >
-      <span aria-hidden="true" className="py-1 text-muted-foreground select-none">
+      <span aria-hidden="true" className="py-1 leading-5 text-muted-foreground/70 select-none">
         $
       </span>
       {PACKAGE_MANAGERS.map((pm) => (
         <code
-          className={`pm-only pm-only-${pm} min-w-0 flex-1 py-1 text-left leading-5 break-words sm:truncate`}
+          className={cx(
+            `pm-only pm-only-${pm} min-w-0 flex-1 py-1 text-left leading-5 break-words`,
+            !wrap && "sm:truncate",
+          )}
           key={pm}
         >
           {commands[pm]}
@@ -50,7 +57,7 @@ export function InstallCommand({
       ))}
       <button
         aria-label={`Copy ${label}`}
-        className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
+        className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground shadow-[inset_0_0_0_1px_var(--hairline)] hover:bg-surface-panel hover:text-foreground focus-visible:focus-ring"
         onClick={copy}
         type="button"
       >

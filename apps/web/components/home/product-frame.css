@@ -1,0 +1,56 @@
+/* The home page's product frame. The agent script reveals parts that are in the
+   DOM from the first render, with their space reserved, so only opacity and
+   transform ever change (Chrome mis-repaints background and color animations
+   while the page scrolls). */
+
+.pf-reveal {
+  transition:
+    opacity 360ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 480ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pf-reveal[data-shown="false"] {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+/* The server renders the finished state. Until the client takes over, a
+   visitor who allows motion sees the frame before the script, not after it,
+   so hydration never flashes the result and then hides it. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-pf="ssr"] .pf-reveal {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* Icon crossfade inside a step: spinner while it runs, check once done. */
+.pf-icon {
+  transition: opacity 200ms linear;
+}
+
+.pf-step[data-state="running"] .pf-icon-done,
+.pf-step[data-state="done"] .pf-icon-run {
+  opacity: 0;
+}
+
+.pf-caret {
+  animation: pf-caret 1s steps(1, end) infinite;
+}
+
+@keyframes pf-caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-reveal,
+  .pf-icon {
+    transition: none;
+  }
+
+  .pf-caret {
+    animation: none;
+  }
+}
