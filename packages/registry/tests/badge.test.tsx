@@ -110,7 +110,7 @@ describe("Badge", () => {
       expect(badge.className).toContain("bg-brand/14");
       // The brand pulled towards the foreground, so it reads at AA on its tint.
       expect(badge.className).toContain(
-        "text-[color:color-mix(in_oklch,var(--foreground)_10%,var(--brand))]",
+        "text-[color:color-mix(in_oklch,var(--foreground)_16%,var(--brand))]",
       );
       expect(badge.className).toContain("border-brand/30");
     });
@@ -237,35 +237,44 @@ function foregroundPull(classes: string): number {
   return m ? Number(m[1]) : 0;
 }
 
-/** The tint's alpha from `transparent_N%` (status tones) or `bg-brand/N` (highlight). */
-function tintAlpha(classes: string): number {
-  const status = classes.match(/bg-\[color:color-mix\(in_oklch,transparent_(\d+)%,var\(--badge-tone\)\)\]/);
+/**
+ * The tint's alpha at rest, or on a linked badge's hover (`[a]:hover:`), from
+ * `transparent_N%` (status tones) or `bg-brand/N` (highlight).
+ */
+function tintAlpha(classes: string, state: "rest" | "hover"): number {
+  const prefix = state === "hover" ? "\\[a\\]:hover:" : "";
+  const status = classes.match(
+    new RegExp(`(?:^|\\s)${prefix}bg-\\[color:color-mix\\(in_oklch,transparent_(\\d+)%,var\\(--badge-tone\\)\\)\\]`),
+  );
   if (status) return 1 - Number(status[1]) / 100;
-  const brand = classes.match(/(?:^|\s)bg-brand\/(\d+)(?:\s|$)/);
+  const brand = classes.match(new RegExp(`(?:^|\\s)${prefix}bg-brand\\/(\\d+)(?:\\s|$)`));
   if (brand) return Number(brand[1]) / 100;
-  throw new Error("no tint");
+  throw new Error(`no ${state} tint`);
 }
 
-describe("Badge text contrast (AA)", () => {
+const AA = 4.5;
+
+describe("Badge text contrast (WCAG AA)", () => {
   const cases = (["light", "dark"] as const).flatMap((mode) =>
-    (["destructive", "success", "warning", "highlight"] as const).map((variant) => ({ mode, variant })),
+    (["destructive", "success", "warning", "highlight"] as const).flatMap((variant) =>
+      (["rest", "hover"] as const).map((state) => ({ mode, variant, state })),
+    ),
   );
 
-  it.each(cases)("$variant text reaches 4.5:1 on its tint in $mode", ({ mode, variant }) => {
+  it.each(cases)("$variant text reaches AA on its $state tint in $mode", ({ mode, variant, state }) => {
     const classes = badgeVariants({ variant });
     const p = palette(mode);
     const tone = variant === "highlight" ? p.brand : p.tones[variant];
     const pull = foregroundPull(classes);
     expect(pull, `${variant} text must be a foreground pull of its tone`).toBeGreaterThan(0);
-    const text = toRgb(pull ? mix(p.foreground, pull, tone) : tone);
+    const text = toRgb(mix(p.foreground, pull, tone));
     const tint = toRgb(tone);
+    const alpha = tintAlpha(classes, state);
     const ratios = Object.entries(p.surfaces).map(([name, surface]) => {
-      const bg = over(tint, tintAlpha(classes), toRgb(surface));
+      const bg = over(tint, alpha, toRgb(surface));
       return [name, contrastRatio(hex(text), hex(bg))] as const;
     });
     const report = ratios.map(([name, r]) => `${name} ${r.toFixed(2)}`).join(", ");
-    expect(Math.min(...ratios.map(([, r]) => r)), `${variant} ${mode}: ${report}`).toBeGreaterThanOrEqual(
-      Number(process.env.BADGE_AA ?? 4.5),
-    );
+    expect(Math.min(...ratios.map(([, r]) => r)), `${variant} ${mode} ${state}: ${report}`).toBeGreaterThanOrEqual(AA);
   });
 });
