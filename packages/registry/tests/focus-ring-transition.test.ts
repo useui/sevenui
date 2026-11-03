@@ -43,7 +43,7 @@ function stringLiterals(src: string): string[] {
  * Class lists that land on one element: every `cn(…)` / `cva(…)` call, plus
  * any focus-ring string literal outside those calls.
  */
-export function classUnits(src: string): string[] {
+function classUnits(src: string): string[] {
   const units: string[] = [];
   const covered: Array<[number, number]> = [];
   for (const m of src.matchAll(/\b(?:cn|cva)\(/g)) {
@@ -69,7 +69,7 @@ function fadesRing(token: string): boolean {
   return list ? /outline|(^|,)all(,|$)/.test(list[1]) : false;
 }
 
-export function offenders(src: string): string[] {
+function offenders(src: string): string[] {
   return classUnits(src)
     .map((unit) => unit.split(/\s+/).filter(Boolean))
     .filter((tokens) => tokens.some((t) => ringToken.test(t)))
