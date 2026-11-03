@@ -354,3 +354,86 @@ describe("Questionnaire", () => {
     expect(onStatusChange).not.toHaveBeenCalledWith("answered");
   });
 });
+
+describe("Questionnaire v2 styles", () => {
+  function slot(container: HTMLElement, name: string) {
+    return container.querySelector<HTMLElement>(`[data-slot="${name}"]`)!;
+  }
+
+  it("draws the step as a tray-and-panel with panel padding and a reduced-motion fade", () => {
+    const { container } = render(<Wizard />);
+    const cls = items(container)[0].className;
+    expect(cls).toContain("bg-surface-panel");
+    expect(cls).toContain("var(--surface-tray,var(--muted))");
+    expect(cls).toContain("p-[var(--panel-pad,1.125rem)]");
+    expect(cls).toContain("starting:opacity-0");
+    expect(cls).toContain("motion-reduce:transition-none");
+  });
+
+  it("renders a brand range bar on a hairline track sized to the progress", () => {
+    const { container } = render(<Wizard />);
+    const track = slot(container, "questionnaire-progress-track");
+    const indicator = slot(container, "questionnaire-progress-indicator");
+    expect(track.className).toContain("bg-hairline-strong");
+    expect(indicator.className).toContain("bg-brand");
+    expect(indicator.className).toContain("motion-reduce:transition-none");
+    expect(Number.parseFloat(indicator.style.width)).toBeCloseTo(100 / 3, 3);
+  });
+
+  it("omits the bar when there is nothing to count", () => {
+    const { container } = render(
+      <Questionnaire>
+        <QuestionnaireProgress />
+      </Questionnaire>,
+    );
+    expect(
+      container.querySelector('[data-slot="questionnaire-progress-track"]'),
+    ).toBeNull();
+  });
+
+  it("keeps a custom progress render in charge", () => {
+    const { container } = render(
+      <Questionnaire>
+        <QuestionnaireProgress
+          render={(props, state) => <div {...props}>Step {state.current}</div>}
+        />
+        <QuestionnaireItem name="a">
+          <QuestionnaireTitle>A</QuestionnaireTitle>
+        </QuestionnaireItem>
+      </Questionnaire>,
+    );
+    expect(screen.getByRole("progressbar").textContent).toBe("Step 1");
+    expect(
+      container.querySelector('[data-slot="questionnaire-progress-track"]'),
+    ).toBeNull();
+  });
+
+  it("marks a selected option with the brand and focuses with the offset ring", () => {
+    const { container } = render(<Wizard />);
+    const choice = slot(container, "questionnaire-choice").className;
+    expect(choice).toContain("has-[>input:focus-visible]:focus-ring");
+    expect(choice).toContain("data-checked:border-brand/50");
+    expect(choice).toContain("data-checked:bg-brand/8");
+    expect(choice).toContain("motion-reduce:transition-none");
+    expect(choice).not.toContain("ring-3");
+    expect(choice).not.toContain("ring-ring");
+    expect(choice).not.toContain("border-ring");
+    const indicator = slot(container, "questionnaire-choice-indicator").className;
+    expect(indicator).toContain(
+      "group-data-checked/questionnaire-choice:bg-brand",
+    );
+    expect(
+      slot(container, "questionnaire-choice-indicator-dot").className,
+    ).toContain("bg-brand-foreground");
+  });
+
+  it("styles the text answer as an inset field at control height", () => {
+    const { container } = render(<Wizard item="email" />);
+    const input = slot(container, "questionnaire-input").className;
+    expect(input).toContain("h-[var(--control-h,2.125rem)]");
+    expect(input).toContain("bg-surface-inset");
+    expect(input).toContain("focus-visible:focus-ring");
+    expect(input).not.toContain("ring-3");
+    expect(input).not.toContain("focus-visible:border-ring");
+  });
+});

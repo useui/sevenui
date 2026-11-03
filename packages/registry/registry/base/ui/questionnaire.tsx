@@ -20,17 +20,49 @@ function Questionnaire({
   );
 }
 
+type QuestionnaireProgressState = { current: number; total: number };
+
+// Default rendering: the announced label plus a range bar. A custom `render`
+// replaces both, so compositions that draw their own progress keep doing so.
+function renderProgress(
+  props: React.HTMLAttributes<HTMLDivElement>,
+  state: QuestionnaireProgressState,
+) {
+  const { children, ...rest } = props;
+  const percent = state.total ? (state.current / state.total) * 100 : 0;
+  return (
+    <div {...rest}>
+      {children}
+      {state.total ? (
+        <span
+          aria-hidden="true"
+          data-slot="questionnaire-progress-track"
+          className="block h-1 w-full overflow-hidden rounded-full bg-hairline-strong"
+        >
+          <span
+            data-slot="questionnaire-progress-indicator"
+            className="block h-full rounded-full bg-brand transition-[width] duration-300 ease-snappy motion-reduce:transition-none"
+            style={{ width: `${percent}%` }}
+          />
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
 function QuestionnaireProgress({
   className,
+  render,
   ...props
 }: React.ComponentProps<typeof QuestionnairePrimitive.Progress>) {
   return (
     <QuestionnairePrimitive.Progress
       data-slot="questionnaire-progress"
       className={cn(
-        "min-h-[1lh] w-fit min-w-[14ch] text-xs font-medium text-muted-foreground tabular-nums",
+        "flex min-h-[1lh] w-fit min-w-[14ch] flex-col gap-1.5 text-xs font-medium text-muted-foreground tabular-nums",
         className,
       )}
+      render={render ?? renderProgress}
       {...props}
     />
   );
@@ -44,7 +76,11 @@ function QuestionnaireItem({
     <QuestionnairePrimitive.Item
       data-slot="questionnaire-item"
       className={cn(
-        "flex min-w-0 flex-col gap-4 border-0 p-0 outline-none",
+        "flex min-w-0 flex-col gap-4 border-0 p-[var(--panel-pad,1.125rem)] outline-none",
+        // Layer-card-like step: a panel inside a thin tray band, drawn with
+        // spread shadows so the hidden/active fieldset stays one element.
+        "rounded-lg bg-surface-panel shadow-[0_0_0_1px_var(--hairline,var(--border)),0_0_0_5px_var(--surface-tray,var(--muted)),0_0_0_6px_var(--hairline,var(--border))]",
+        "transition-opacity duration-200 ease-snappy starting:opacity-0 motion-reduce:transition-none",
         className,
       )}
       {...props}
@@ -60,7 +96,9 @@ function QuestionnaireTitle({
     <QuestionnairePrimitive.Title
       data-slot="questionnaire-title"
       className={cn(
-        "cn-font-heading text-base leading-snug font-medium text-pretty [&:not(:has(~[data-slot=questionnaire-description]))]:mb-4",
+        // Floated so it lays out inside the panel padding: a rendered <legend>
+        // straddles the fieldset edge, above where the panel background starts.
+        "float-left w-full cn-font-heading text-base leading-snug font-medium text-pretty [&:has(~[data-slot=questionnaire-description])]:-mb-2.5",
         className,
       )}
       {...props}
@@ -106,7 +144,7 @@ function QuestionnaireChoice({
     <QuestionnairePrimitive.Choice
       data-slot="questionnaire-choice"
       className={cn(
-        "group/questionnaire-choice relative flex min-h-11 cursor-pointer items-start gap-2.5 rounded-lg border border-input bg-transparent px-3 py-2.5 text-start text-sm transition-colors outline-none select-none hover:bg-muted/50 has-[>input:focus-visible]:border-ring has-[>input:focus-visible]:ring-3 has-[>input:focus-visible]:ring-ring/50 data-invalid:border-destructive dark:bg-input/20 data-checked:border-primary/40 data-checked:bg-muted dark:data-checked:bg-muted",
+        "group/questionnaire-choice relative flex min-h-11 cursor-pointer items-start gap-2.5 rounded-lg border border-hairline-strong bg-surface-inset px-3 py-2.5 text-start text-sm transition-colors outline-none select-none hover:bg-muted/50 has-[>input:focus-visible]:focus-ring data-invalid:border-destructive data-invalid:[--focus-color:var(--destructive)] data-checked:border-brand/50 data-checked:bg-brand/8 motion-reduce:transition-none",
         "data-disabled:pointer-events-none data-disabled:cursor-not-allowed data-disabled:opacity-50",
         className,
       )}
@@ -119,11 +157,11 @@ function QuestionnaireChoice({
       <span
         aria-hidden="true"
         data-slot="questionnaire-choice-indicator"
-        className="pointer-events-none relative flex size-4 shrink-0 translate-y-[--spacing(0.45)] items-center justify-center rounded-[4px] border border-input group-has-data-[slot=questionnaire-choice-description]/questionnaire-choice:translate-y-0.5 group-data-[type=radio]/questionnaire-choice:rounded-full group-data-checked/questionnaire-choice:border-primary group-data-checked/questionnaire-choice:bg-primary group-data-checked/questionnaire-choice:text-primary-foreground dark:bg-input/30 dark:group-data-checked/questionnaire-choice:bg-primary"
+        className="pointer-events-none relative flex size-4 shrink-0 translate-y-[--spacing(0.45)] items-center justify-center rounded-[4px] border border-hairline-strong bg-surface-inset shadow-inset transition-colors group-has-data-[slot=questionnaire-choice-description]/questionnaire-choice:translate-y-0.5 group-data-[type=radio]/questionnaire-choice:rounded-full group-data-checked/questionnaire-choice:border-brand group-data-checked/questionnaire-choice:bg-brand group-data-checked/questionnaire-choice:text-brand-foreground group-data-checked/questionnaire-choice:shadow-none motion-reduce:transition-none"
       >
         <span
           data-slot="questionnaire-choice-indicator-dot"
-          className="hidden size-2 rounded-full bg-primary-foreground group-data-[type=checkbox]/questionnaire-choice:hidden group-data-checked/questionnaire-choice:block"
+          className="hidden size-2 rounded-full bg-brand-foreground group-data-[type=checkbox]/questionnaire-choice:hidden group-data-checked/questionnaire-choice:block"
         />
         <CheckIcon
           data-slot="questionnaire-choice-indicator-check"
@@ -138,7 +176,7 @@ function QuestionnaireChoice({
       </QuestionnairePrimitive.ChoiceLabel>
       <QuestionnairePrimitive.ChoiceShortcut
         data-slot="questionnaire-choice-shortcut"
-        className="pointer-events-none ms-auto hidden size-5 shrink-0 translate-y-[--spacing(0.45)] items-center justify-center rounded-md border border-input bg-background font-mono text-[0.625rem] leading-none font-medium text-muted-foreground group-has-data-[slot=questionnaire-choice-description]/questionnaire-choice:translate-y-0.5 group-data-[shortcut]/questionnaire-choice:inline-flex"
+        className="pointer-events-none ms-auto hidden size-5 shrink-0 translate-y-[--spacing(0.45)] items-center justify-center rounded-[4px] bg-surface-raised shadow-[inset_0_0_0_1px_var(--hairline,var(--border))] font-mono text-[0.625rem] leading-none font-medium text-muted-foreground group-has-data-[slot=questionnaire-choice-description]/questionnaire-choice:translate-y-0.5 group-data-[shortcut]/questionnaire-choice:inline-flex"
       />
     </QuestionnairePrimitive.Choice>
   );
@@ -169,7 +207,7 @@ function QuestionnaireInput({
       <QuestionnairePrimitive.Input
         data-slot="questionnaire-input"
         className={cn(
-          "h-8 min-h-11 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-[color,box-shadow,background-color] outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 sm:min-h-0 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+          "h-[var(--control-h,2.125rem)] min-h-11 w-full min-w-0 rounded-lg bg-surface-inset px-[var(--control-px,0.75rem)] py-1 text-base shadow-[inset_0_0_0_1px_var(--hairline-strong,var(--input)),var(--elevation-inset,0_0_#0000)] transition-[color,box-shadow,background-color] outline-none focus-visible:focus-ring disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:shadow-[inset_0_0_0_1px_var(--destructive),var(--elevation-inset,0_0_#0000)] aria-invalid:[--focus-color:var(--destructive)] motion-reduce:transition-none sm:min-h-0 md:text-[length:var(--control-text,0.8125rem)]",
           "selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground",
           className,
         )}
