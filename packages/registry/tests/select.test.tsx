@@ -243,7 +243,8 @@ describe("Select v2 styles", () => {
     // Inset ring so the scrolling popup's overflow does not clip it.
     expect(item.className).toContain("[--focus-gap:-1.5px]");
     expect(item.className).toContain("focus-visible:focus-ring");
-    expect(item.className).toContain("data-disabled:focus-visible:outline-none");
+    // Disabled rows keep the inset keyboard focus ring.
+    expect(item.className).not.toContain("data-disabled:focus-visible:outline-none");
     const check = item.querySelector("[data-slot=select-item-indicator]")!;
     expect(check.className).toContain("text-brand");
   });

@@ -153,7 +153,8 @@ describe("Menubar v2 styles", () => {
     expect(cls(item)).toContain("data-highlighted:bg-hairline");
     expect(cls(item)).not.toContain("surface-panel");
     expect(cls(item)).toContain("data-disabled:data-highlighted:bg-transparent");
-    expect(cls(item)).toContain("data-disabled:focus-visible:outline-none");
+    // Disabled rows keep the inset keyboard focus ring (ruling: focus stays visible).
+    expect(cls(item)).not.toContain("data-disabled:focus-visible:outline-none");
     expect(cls(document.querySelector('[data-slot="menubar-separator"]'))).toContain(
       "bg-hairline",
     );

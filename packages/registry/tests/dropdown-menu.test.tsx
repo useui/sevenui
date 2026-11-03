@@ -263,7 +263,8 @@ describe("DropdownMenu v2 styles", () => {
       expect(cls).not.toContain("data-highlighted:shadow-");
       expect(cls).toContain("data-disabled:data-highlighted:bg-transparent");
       expect(cls).toContain("focus-visible:focus-ring");
-      expect(cls).toContain("data-disabled:focus-visible:outline-none");
+      // Disabled rows keep the inset keyboard focus ring.
+      expect(cls).not.toContain("data-disabled:focus-visible:outline-none");
       if (name === "dropdown-menu-item") {
         // The destructive highlight outranks the generic guard, so it needs its own.
         expect(cls).toContain(

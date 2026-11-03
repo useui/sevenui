@@ -123,7 +123,7 @@ function MenubarCheckboxItem({
       data-slot="menubar-checkbox-item"
       data-inset={inset}
       className={cn(
-        "relative flex min-h-[var(--item-h,2rem)] cursor-default items-center gap-2 rounded-sm px-2 text-[length:var(--control-text,0.8125rem)] outline-none select-none [--focus-gap:-1.5px] focus-visible:focus-ring data-disabled:focus-visible:outline-none data-highlighted:bg-hairline data-highlighted:text-foreground data-disabled:data-highlighted:bg-transparent data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 pr-2 pl-8",
+        "relative flex min-h-[var(--item-h,2rem)] cursor-default items-center gap-2 rounded-sm px-2 text-[length:var(--control-text,0.8125rem)] outline-none select-none [--focus-gap:-1.5px] focus-visible:focus-ring data-highlighted:bg-hairline data-highlighted:text-foreground data-disabled:data-highlighted:bg-transparent data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 pr-2 pl-8",
         className,
       )}
       checked={checked}
@@ -158,7 +158,7 @@ function MenubarRadioItem({
       data-slot="menubar-radio-item"
       data-inset={inset}
       className={cn(
-        "relative flex min-h-[var(--item-h,2rem)] cursor-default items-center gap-2 rounded-sm px-2 text-[length:var(--control-text,0.8125rem)] outline-none select-none [--focus-gap:-1.5px] focus-visible:focus-ring data-disabled:focus-visible:outline-none data-highlighted:bg-hairline data-highlighted:text-foreground data-disabled:data-highlighted:bg-transparent data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 pr-2 pl-8",
+        "relative flex min-h-[var(--item-h,2rem)] cursor-default items-center gap-2 rounded-sm px-2 text-[length:var(--control-text,0.8125rem)] outline-none select-none [--focus-gap:-1.5px] focus-visible:focus-ring data-highlighted:bg-hairline data-highlighted:text-foreground data-disabled:data-highlighted:bg-transparent data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 pr-2 pl-8",
         className,
       )}
       {...props}
