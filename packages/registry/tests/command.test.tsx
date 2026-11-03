@@ -188,6 +188,9 @@ describe("Command v2 styles", () => {
     ) as HTMLElement;
     expect(item.className).toContain("min-h-[var(--item-h,2rem)]");
     expect(item.className).toContain("data-highlighted:bg-surface-panel");
+    expect(item.className).toContain(
+      "data-highlighted:shadow-[inset_0_0_0_1px_var(--hairline)]",
+    );
     expect(item.className).not.toContain("data-highlighted:bg-muted");
   });
 
