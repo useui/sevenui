@@ -143,3 +143,47 @@ describe("Drawer", () => {
     spy.mockRestore();
   });
 });
+
+describe("Drawer v2 styles", () => {
+  it("renders a single raised panel with an overlay shadow", async () => {
+    render(<ExampleDrawer open />);
+    await screen.findByRole("dialog");
+    const popup = getPopup();
+    expect(popup?.className).toContain("bg-surface-raised");
+    expect(popup?.className).toContain("shadow-overlay");
+    expect(popup?.className).not.toContain("ring-3");
+  });
+
+  it("colours the swipe handle with the strong hairline", async () => {
+    render(<ExampleDrawer open showSwipeHandle />);
+    await screen.findByRole("dialog");
+    const handle = document.querySelector('[data-slot="drawer-swipe-handle"]');
+    expect(handle?.className).toContain("after:bg-hairline-strong");
+  });
+
+  it("pads the header and footer with the panel padding", async () => {
+    render(<ExampleDrawer open />);
+    await screen.findByRole("dialog");
+    for (const slot of ["drawer-header", "drawer-footer"]) {
+      const el = document.querySelector(`[data-slot="${slot}"]`);
+      expect(el?.className).toContain("p-[var(--panel-pad,1.125rem)]");
+    }
+  });
+
+  it("slides in with a reduced-motion fade", async () => {
+    render(<ExampleDrawer open />);
+    await screen.findByRole("dialog");
+    const popup = getPopup();
+    expect(popup?.className).toContain("duration-200");
+    expect(popup?.className).toContain("ease-snappy");
+    expect(popup?.className).toContain("motion-reduce:data-ending-style:opacity-0!");
+  });
+
+  it("uses a plain dimmed backdrop without blur", async () => {
+    render(<ExampleDrawer open />);
+    await screen.findByRole("dialog");
+    const overlay = document.querySelector('[data-slot="drawer-overlay"]');
+    expect(overlay?.className).toContain("bg-black/40");
+    expect(overlay?.className).not.toContain("backdrop-blur");
+  });
+});
