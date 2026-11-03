@@ -259,7 +259,7 @@ describe("Select v2 styles", () => {
     // Plain-text values switch to block so text-overflow can apply; rich
     // values (icon plus label) stay flex.
     expect(trigger.className).toContain("*:data-[slot=select-value]:not-has-[*]:block");
-    const value = trigger.querySelector("[data-slot=select-value]")!;
+    const value = trigger.querySelector("[data-slot=select-value]") as HTMLElement;
     for (const c of ["min-w-0", "truncate", "not-has-[*]:block"]) {
       expect(value.classList.contains(c)).toBe(true);
     }
