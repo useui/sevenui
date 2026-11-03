@@ -122,7 +122,7 @@ describe("Accordion v2 style", () => {
   it("sizes triggers to the item height and focuses with the offset ring", () => {
     render(<BasicAccordion />);
     for (const trigger of screen.getAllByRole("button")) {
-      expect(trigger.className).toContain("min-h-(--item-h)");
+      expect(trigger.className).toContain("min-h-[var(--item-h,2rem)]");
       expect(trigger.className).toContain("focus-visible:focus-ring");
       expect(trigger.className).not.toContain("ring-3");
       expect(trigger.className).not.toContain("ring-ring");
