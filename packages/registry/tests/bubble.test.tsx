@@ -186,11 +186,11 @@ describe("Bubble v2 styles", () => {
     const cls = (
       container.querySelector('[data-slot="bubble-content"]') as HTMLElement
     ).className;
-    expect(cls).toContain("px-(--control-px)");
-    expect(cls).toContain("py-[calc(var(--control-px)*0.66)]");
-    expect(cls).toContain("[:where(&)]:[--control-px:0.75rem]");
+    expect(cls).toContain("px-[var(--control-px,0.75rem)]");
+    expect(cls).toContain("py-[calc(var(--control-px,0.75rem)*0.66)]");
+    // Declaring density vars on the element would shadow a compact ancestor.
+    expect(cls).not.toMatch(/\[:where\(&\)\]:\[--(control|focus)/);
     expect(cls).toContain("[button,a]:focus-visible:focus-ring");
-    expect(cls).toContain("[:where(&)]:[--focus-width:1.5px]");
     expect(cls).not.toContain("ring-3");
     expect(cls).not.toContain("ring-ring");
     expect(cls).not.toContain("focus-visible:border-ring");

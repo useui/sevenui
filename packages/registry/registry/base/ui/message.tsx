@@ -6,7 +6,7 @@ function MessageGroup({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="message-group"
       className={cn(
-        "flex min-w-0 flex-col gap-(--control-gap) [:where(&)]:[--control-gap:0.5rem]",
+        "flex min-w-0 flex-col gap-[var(--control-gap,0.5rem)]",
         className,
       )}
       {...props}
@@ -24,7 +24,7 @@ function Message({
       data-slot="message"
       data-align={align}
       className={cn(
-        "group/message relative flex w-full min-w-0 gap-(--control-gap) text-sm data-[align=end]:flex-row-reverse [:where(&)]:[--control-gap:0.5rem]",
+        "group/message relative flex w-full min-w-0 gap-[var(--control-gap,0.5rem)] text-sm data-[align=end]:flex-row-reverse",
         className,
       )}
       {...props}
@@ -65,7 +65,7 @@ function MessageHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="message-header"
       className={cn(
-        "flex max-w-full min-w-0 items-center px-(--control-px) text-xs font-medium text-muted-foreground group-has-data-[variant=ghost]/message:px-0 [:where(&)]:[--control-px:0.75rem]",
+        "flex max-w-full min-w-0 items-center px-[var(--control-px,0.75rem)] text-xs font-medium text-muted-foreground group-has-data-[variant=ghost]/message:px-0",
         className,
       )}
       {...props}
@@ -78,7 +78,7 @@ function MessageFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="message-footer"
       className={cn(
-        "flex max-w-full min-w-0 items-center px-(--control-px) text-xs font-medium text-muted-foreground group-has-data-[variant=ghost]/message:px-0 group-data-[align=end]/message:justify-end [:where(&)]:[--control-px:0.75rem]",
+        "flex max-w-full min-w-0 items-center px-[var(--control-px,0.75rem)] text-xs font-medium text-muted-foreground group-has-data-[variant=ghost]/message:px-0 group-data-[align=end]/message:justify-end",
         className,
       )}
       {...props}

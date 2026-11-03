@@ -206,7 +206,7 @@ describe("Attachment v2 styles", () => {
     expect(cls).toContain(
       "has-[>[data-slot=attachment-trigger]:focus-visible]:focus-ring",
     );
-    expect(cls).toContain("[:where(&)]:[--focus-width:1.5px]");
+    expect(cls).not.toMatch(/\[:where\(&\)\]:\[--(control|focus)/);
     expect(cls).not.toContain("ring-ring");
     expect(cls).not.toContain("bg-card");
   });

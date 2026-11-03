@@ -125,8 +125,8 @@ describe("Message v2 styles", () => {
     );
     for (const slot of ["message", "message-group"]) {
       const el = container.querySelector(`[data-slot="${slot}"]`) as HTMLElement;
-      expect(el.className).toContain("gap-(--control-gap)");
-      expect(el.className).toContain("[:where(&)]:[--control-gap:0.5rem]");
+      expect(el.className).toContain("gap-[var(--control-gap,0.5rem)]");
+      expect(el.className).not.toContain("[:where(&)]:[--control");
     }
   });
 
@@ -136,8 +136,8 @@ describe("Message v2 styles", () => {
       const el = container.querySelector(`[data-slot="${slot}"]`) as HTMLElement;
       expect(el.className).toContain("text-xs");
       expect(el.className).toContain("text-muted-foreground");
-      expect(el.className).toContain("px-(--control-px)");
-      expect(el.className).toContain("[:where(&)]:[--control-px:0.75rem]");
+      expect(el.className).toContain("px-[var(--control-px,0.75rem)]");
+      expect(el.className).not.toContain("[:where(&)]:[--control");
     }
   });
 

@@ -13,7 +13,7 @@ const attachmentVariants = cva(
     "group/attachment relative flex w-fit max-w-full min-w-0 shrink-0 flex-wrap rounded-2xl border border-hairline bg-surface-panel text-card-foreground transition-colors motion-reduce:transition-none has-[>a,>button]:hover:bg-[color-mix(in_oklch,var(--surface-panel,var(--card)),var(--foreground)_4%)] data-[state=error]:border-destructive/30 data-[state=idle]:border-dashed data-[state=idle]:border-hairline-strong",
     // The trigger covers the tile, so the tile carries its focus ring;
     // the actions keep their own.
-    "has-[>[data-slot=attachment-trigger]:focus-visible]:focus-ring [:where(&)]:[--focus-width:1.5px] [:where(&)]:[--focus-gap:2px]",
+    "has-[>[data-slot=attachment-trigger]:focus-visible]:focus-ring",
   ],
   {
     variants: {
