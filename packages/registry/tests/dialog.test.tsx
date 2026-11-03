@@ -125,30 +125,74 @@ describe("Dialog v2 styles", () => {
     return screen.findByRole("dialog");
   }
 
-  it("renders the popup as a tray with an overlay shadow", async () => {
+  it("paints the popup as the panel and draws the tray around it", async () => {
     const popup = await renderOpen();
-    expect(popup.className).toContain("bg-surface-tray");
-    expect(popup.className).toContain("p-1");
-    expect(popup.className).toContain("shadow-overlay");
+    expect(popup.className).toContain("bg-surface-panel");
+    expect(popup.className).toContain("p-[var(--panel-pad,1.125rem)]");
+    expect(popup.className.split(" ")).toContain("grid");
+    expect(popup.className.split(" ")).toContain("gap-4");
+    expect(popup.className).toContain(
+      "0_0_0_4px_var(--surface-tray,var(--muted))",
+    );
+    expect(popup.className).toContain("var(--elevation-overlay,");
     expect(popup.className).not.toContain("ring-3");
   });
 
-  it("holds a padded panel for everything but the footer", async () => {
+  it("parents the consumer's children directly, with no wrapper", async () => {
     const popup = await renderOpen();
-    const panel = popup.querySelector('[data-slot="dialog-panel"]');
-    expect(panel?.className).toContain("bg-surface-panel");
-    expect(panel?.className).toContain("p-[var(--panel-pad,1.125rem)]");
-    expect(panel?.querySelector('[data-slot="dialog-header"]')).toBeTruthy();
+    const header = popup.querySelector('[data-slot="dialog-header"]');
     const footer = popup.querySelector('[data-slot="dialog-footer"]');
+    expect(header?.parentElement).toBe(popup);
     expect(footer?.parentElement).toBe(popup);
+    expect(popup.querySelector('[data-slot="dialog-panel"]')).toBeNull();
   });
 
-  it("keeps the panel radius valid when the theme radius is 0", async () => {
-    const popup = await renderOpen();
-    const panel = popup.querySelector('[data-slot="dialog-panel"]');
-    expect(panel?.className).toContain(
-      "rounded-[max(0px,calc(--theme(--radius-xl)_-_4px))]",
+  it("puts consumer layout classes on the element that parents the children", async () => {
+    render(
+      <Dialog open>
+        <DialogContent className="max-h-80 grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden p-0">
+          <DialogHeader>
+            <DialogTitle>Layout</DialogTitle>
+          </DialogHeader>
+          <p>Body</p>
+          <DialogFooter className="m-0">Footer</DialogFooter>
+        </DialogContent>
+      </Dialog>,
     );
+    const popup = await screen.findByRole("dialog");
+    expect(screen.getByText("Body").parentElement).toBe(popup);
+    for (const cls of [
+      "p-0",
+      "gap-0",
+      "grid-rows-[auto_minmax(0,1fr)_auto]",
+      "overflow-hidden",
+    ]) {
+      expect(popup.className.split(" ")).toContain(cls);
+    }
+    // p-0 / gap-0 replace the defaults instead of fighting them.
+    expect(popup.className).not.toContain("p-[var(--panel-pad,1.125rem)]");
+    expect(popup.className.split(" ")).not.toContain("gap-4");
+    // m-0 cancels the footer's bleed margins for full-bleed consumers.
+    const footer = screen.getByText("Footer");
+    expect(footer.className.split(" ")).toContain("m-0");
+    expect(footer.className).not.toContain("-mx-[");
+    expect(footer.className).not.toContain("-mb-[");
+  });
+
+  it("renders the footer as a tray bar bleeding to the panel edges", async () => {
+    const popup = await renderOpen();
+    const footer = popup.querySelector('[data-slot="dialog-footer"]');
+    for (const cls of [
+      "-mx-[var(--panel-pad,1.125rem)]",
+      "-mb-[var(--panel-pad,1.125rem)]",
+      "bg-surface-tray",
+      "border-t",
+      "border-hairline",
+      "rounded-b-xl",
+      "px-[var(--panel-pad,1.125rem)]",
+    ]) {
+      expect(footer?.className.split(" ")).toContain(cls);
+    }
   });
 
   it("scales in with a reduced-motion fallback", async () => {
