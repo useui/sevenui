@@ -130,3 +130,49 @@ describe("Slider", () => {
     expect(onValueChange).not.toHaveBeenCalled();
   });
 });
+
+describe("Slider v2 styles", () => {
+  function parts() {
+    const { container } = render(
+      <Slider defaultValue={[40]} aria-label="Volume" />,
+    );
+    const q = (slot: string) =>
+      container.querySelector(`[data-slot=${slot}]`)!;
+    return {
+      root: q("slider"),
+      track: q("slider-track"),
+      range: q("slider-range"),
+      thumb: q("slider-thumb"),
+    };
+  }
+
+  it("puts the offset focus ring on the thumb when its range input has focus", () => {
+    const { thumb } = parts();
+    // Base UI focuses the nested <input type="range">, not the thumb <div>.
+    expect(thumb.className).toContain("has-focus-visible:focus-ring");
+    expect(thumb.className).not.toContain("ring-3");
+    expect(thumb.className).not.toContain("ring-ring");
+  });
+
+  it("uses hairline-strong for the track and brand for the range", () => {
+    const { track, range } = parts();
+    expect(track.className).toContain("bg-hairline-strong");
+    expect(range.className).toContain("bg-brand");
+    expect(range.className).not.toContain("bg-primary");
+  });
+
+  it("gives the thumb a white raised surface", () => {
+    const { thumb } = parts();
+    expect(thumb.className).toContain("bg-white");
+    expect(thumb.className).toContain("shadow-raised");
+  });
+
+  it("steps the thumb size with density", () => {
+    const { root, thumb } = parts();
+    expect(root.className).toContain("[--slider-thumb:0.875rem]");
+    expect(root.className).toContain(
+      "[[data-density=compact]_&]:[--slider-thumb:0.75rem]",
+    );
+    expect(thumb.className).toContain("size-(--slider-thumb)");
+  });
+});
