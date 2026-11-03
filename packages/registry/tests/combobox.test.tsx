@@ -8,7 +8,12 @@ import {
   ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
   ComboboxList,
+  ComboboxValue,
+  useComboboxAnchor,
 } from "@/registry/base/ui/combobox";
 
 const fruits = ["Apple", "Banana", "Cherry", "Grape"];
@@ -140,5 +145,96 @@ describe("Combobox", () => {
     await waitFor(() => {
       expect(screen.queryByRole("listbox")).toBeNull();
     });
+  });
+});
+
+describe("Combobox v2 styles", () => {
+  async function openPopup() {
+    const user = userEvent.setup();
+    render(<FruitCombobox defaultValue="Cherry" />);
+    await user.click(getInput());
+    await user.keyboard("{ArrowDown}");
+    await screen.findByRole("listbox");
+  }
+
+  it("gives the input wrapper the inset field surface, density height and offset focus ring", () => {
+    render(<FruitCombobox />);
+    const group = getInput().closest("[data-slot=input-group]") as HTMLElement;
+    expect(group.className).toContain("bg-surface-inset");
+    expect(group.className).toContain(
+      "shadow-[inset_0_0_0_1px_var(--hairline-strong),var(--elevation-inset)]",
+    );
+    expect(group.className).toContain("h-[var(--control-h,2.125rem)]");
+    expect(group.className).toContain(
+      "has-[[data-slot=input-group-control]:focus-visible]:focus-ring",
+    );
+    expect(group.className).not.toContain("ring-3");
+  });
+
+  it("keeps the className on the input-group root", () => {
+    render(
+      <Combobox items={fruits}>
+        <ComboboxInput placeholder="Search fruit" className="w-64" />
+      </Combobox>,
+    );
+    const group = getInput().closest("[data-slot=input-group]") as HTMLElement;
+    expect(group.className).toContain("w-64");
+  });
+
+  it("renders the popup as a raised overlay with a reduced-motion-safe entry", async () => {
+    await openPopup();
+    const popup = document.querySelector(
+      "[data-slot=combobox-content]",
+    ) as HTMLElement;
+    expect(popup.className).toContain("bg-surface-raised");
+    expect(popup.className).toContain("shadow-overlay");
+    expect(popup.className).toContain("rounded-lg");
+    expect(popup.className).toContain("data-starting-style:opacity-0");
+    expect(popup.className).toContain("data-starting-style:scale-[0.98]");
+    expect(popup.className).toContain("motion-reduce:transition-none");
+    expect(popup.className).not.toContain("ring-3");
+    expect(popup.className).not.toContain("zoom-in-95");
+  });
+
+  it("sizes items by --item-h, highlights on the panel surface and marks the selection in brand", async () => {
+    await openPopup();
+    const option = screen.getByRole("option", { name: "Cherry" });
+    expect(option.className).toContain("min-h-[var(--item-h,2rem)]");
+    expect(option.className).toContain("data-highlighted:bg-surface-panel");
+    expect(option.className).not.toContain("bg-accent");
+    const indicator = option.querySelector("svg")?.parentElement as HTMLElement;
+    expect(indicator.className).toContain("text-brand");
+  });
+
+  it("gives chips the inset field surface and a focus-within ring", () => {
+    function Chips() {
+      const anchor = useComboboxAnchor();
+      return (
+        <Combobox items={fruits} multiple defaultValue={["Apple"]}>
+          <ComboboxChips ref={anchor}>
+            <ComboboxValue>
+              {(values: string[]) =>
+                values.map((value) => (
+                  <ComboboxChip key={value}>{value}</ComboboxChip>
+                ))
+              }
+            </ComboboxValue>
+            <ComboboxChipsInput placeholder="Add fruit" />
+          </ComboboxChips>
+        </Combobox>
+      );
+    }
+    render(<Chips />);
+    const chips = document.querySelector(
+      "[data-slot=combobox-chips]",
+    ) as HTMLElement;
+    expect(chips.className).toContain("bg-surface-inset");
+    expect(chips.className).toContain("focus-within:focus-ring");
+    expect(chips.className).toContain("min-h-[var(--control-h,2.125rem)]");
+    expect(chips.className).not.toContain("ring-3");
+    const chip = document.querySelector(
+      "[data-slot=combobox-chip]",
+    ) as HTMLElement;
+    expect(chip.className).toContain("bg-surface-raised");
   });
 });
