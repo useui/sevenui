@@ -65,3 +65,19 @@ site. Primitive-level regressions were fixed on the branch instead.
 - `progress`: the indeterminate state shows an empty track (pre-existing).
 - Dark theme: OTP empty-slot hairlines, the resizable grip and the range-middle tint are faint.
 - `api-freeze`: importing `calendar` sits close to the 5s test timeout under load.
+- `table`: muted cells on a hovered row are 4.29:1 (the row hover is the
+  hairline); lift muted descendants on hover as menu rows do.
+- `toast`: the action button's default size moved from `sm` to `xs`.
+- `badge`: text went from 12px to 11px and the destructive badge gained a dot;
+  controls now use 13px text. Check gallery items that sized around the old values.
+- Dark theme: `text-brand` links on raised surfaces are 4.33:1, under AA.
+- Derived surface tokens (`--surface-*`, `--hairline*`) are declared on
+  `:root`/`.dark`, so a shadcn theme scoped to a wrapper class (for example
+  `.theme-rose`) recolours the shadcn variables but not the derived surfaces.
+  Redeclaring the derivations on the wrapper, or deriving them in place, fixes it.
+- `test:smoke` checks CSS text only: it installs the tokens into a stock shadcn
+  project and inspects the stylesheet, but never compiles Tailwind or renders.
+- Other `shadow-[var(...)]` classes (for example the empty icon, the outline
+  button highlight, sidebar floating panel) are not read as shadows by `cn`, so a
+  consumer `shadow-*` stacks beside them instead of replacing them. Card and the
+  fields now prefix `0_0_#0000,` for that reason; apply the same where it matters.

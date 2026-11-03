@@ -19,7 +19,7 @@
 - Never restructure `packages/registry` (byte-parity contract for `/r/*.json`, `/r/demo/*.json`, `/r/component/*.json`).
 - Accent: dark `#4d7cff` (ring, switch, checkbox, indicators, links), dark filled-accent fill `#3a68f0`; light `#2f5ce8` for all uses. White text on accent fills.
 - Focus: offset ring — control border unchanged, 2px gap, 1.5px accent ring. Replaces every `ring-3 ring-ring/50` halo.
-- WCAG AA: text ≥ 4.5:1, focus ring and other non-text indicators ≥ 3:1, in both themes.
+- WCAG AA: text ≥ 4.5:1 and focus ring ≥ 3:1 in both themes; off-state control boundaries follow shadcn parity (the spec binds AA for text and focus ring only).
 - Anti-goals: no gradients-for-decoration, glows, blooms, glassmorphism, emoji. Calm enough to adopt.
 - Motion respects `prefers-reduced-motion` (`motion-reduce:` variants).
 - Tailwind v4 traps (from layer-card, as settled in the v2 restyle): density variables are read with inline fallbacks (`h-[var(--control-h,2.125rem)]`), never declared on elements — a `[:where(&)]:[--x:…]` default on the element shadows a `[data-density=compact]` ancestor; radius via `--theme(--radius-*)` not `var(--radius-*)`, and inside `calc()`/`min()`/`max()` (`rounded-[max(0px,calc(--theme(--radius-lg)-2px))]`) or a plain `rounded-*` step, never `rounded-(--theme(--radius-*))`; neutral base first in `color-mix()`; files using `useRender` need `"use client"`.
