@@ -20,7 +20,7 @@ function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
     >
       <CheckboxPrimitive.Indicator
         data-slot="checkbox-indicator"
-        className="grid size-full place-content-center text-current transition-opacity duration-100 motion-reduce:transition-none data-starting-style:opacity-0 data-ending-style:opacity-0 [&>svg]:size-3/4 [&>svg]:stroke-[2.5] data-indeterminate:[&>svg:first-child]:hidden not-data-indeterminate:[&>svg:last-child]:hidden"
+        className="flex size-full items-center justify-center text-current transition-opacity duration-100 motion-reduce:transition-none data-starting-style:opacity-0 data-ending-style:opacity-0 [&>svg]:size-3/4 [&>svg]:stroke-[2.5] data-indeterminate:[&>svg:first-child]:hidden not-data-indeterminate:[&>svg:last-child]:hidden"
       >
         <CheckIcon />
         <MinusIcon />
