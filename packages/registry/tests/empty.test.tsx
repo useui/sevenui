@@ -91,6 +91,13 @@ describe("Empty", () => {
       expect(cls).toContain("var(--hairline-strong,");
     });
 
+    it("gives inline description links the offset focus ring", () => {
+      render(<EmptyDescription>See <a href="#docs">docs</a></EmptyDescription>);
+      const cls = screen.getByText(/See/).className;
+      expect(cls).toContain("[&>a]:outline-none");
+      expect(cls).toContain("[&>a]:focus-visible:focus-ring");
+    });
+
     it("sets title and description on the type scale", () => {
       render(
         <>
