@@ -130,3 +130,57 @@ describe("AlertDialog", () => {
     expect(dialog.getAttribute("data-size")).toBe("sm");
   });
 });
+
+describe("AlertDialog v2 styles", () => {
+  async function renderOpen() {
+    render(<ExampleAlertDialog open />);
+    return screen.findByRole("alertdialog");
+  }
+
+  it("renders the popup as a tray with an overlay shadow", async () => {
+    const popup = await renderOpen();
+    expect(popup.className).toContain("bg-surface-tray");
+    expect(popup.className).toContain("p-1");
+    expect(popup.className).toContain("shadow-overlay");
+    expect(popup.className).not.toContain("ring-3");
+  });
+
+  it("holds a padded panel for everything but the footer", async () => {
+    const popup = await renderOpen();
+    const panel = popup.querySelector('[data-slot="alert-dialog-panel"]');
+    expect(panel?.className).toContain("bg-surface-panel");
+    expect(panel?.className).toContain("p-(--panel-pad)");
+    expect(
+      panel?.className.includes("rounded-[max(0px,calc(--theme(--radius-xl)_-_4px))]"),
+    ).toBe(true);
+    expect(
+      panel?.querySelector('[data-slot="alert-dialog-header"]'),
+    ).toBeTruthy();
+    const footer = popup.querySelector('[data-slot="alert-dialog-footer"]');
+    expect(footer?.parentElement).toBe(popup);
+  });
+
+  it("scales in with a reduced-motion fallback", async () => {
+    const popup = await renderOpen();
+    expect(popup.className).toContain("data-starting-style:scale-[0.98]");
+    expect(popup.className).toContain("ease-snappy");
+    expect(popup.className).toContain("motion-reduce:scale-100!");
+  });
+
+  it("uses a plain dimmed backdrop without blur", async () => {
+    await renderOpen();
+    const overlay = document.querySelector(
+      '[data-slot="alert-dialog-overlay"]',
+    );
+    expect(overlay?.className).toContain("bg-black/40");
+    expect(overlay?.className).toContain("dark:bg-black/60");
+    expect(overlay?.className).not.toContain("backdrop-blur");
+  });
+
+  it("sets the title in semibold with tight tracking", async () => {
+    await renderOpen();
+    const title = screen.getByText("Are you absolutely sure?");
+    expect(title.className).toContain("font-semibold");
+    expect(title.className).toContain("tracking-[-0.01em]");
+  });
+});

@@ -22,6 +22,31 @@ function AlertDialogPortal({ ...props }: AlertDialogPrimitive.Portal.Props) {
   );
 }
 
+const alertDialogPanelClassName =
+  "grid gap-4 rounded-[max(0px,calc(--theme(--radius-xl)_-_4px))] bg-surface-panel p-(--panel-pad) shadow-[inset_0_0_0_1px_var(--hairline,transparent)] [:where(&)]:[--panel-pad:1.125rem]";
+
+/**
+ * Splits AlertDialogContent's children so footers render in the tray, below
+ * the panel. Only direct AlertDialogFooter children move; anything else
+ * (including a footer wrapped in a fragment or another component) stays in the
+ * panel, where the footer drops its tray-bar padding.
+ */
+function splitFooter(
+  children: React.ReactNode,
+  Footer: React.ElementType,
+): { body: React.ReactNode[]; footer: React.ReactNode[] } {
+  const body: React.ReactNode[] = [];
+  const footer: React.ReactNode[] = [];
+  for (const child of React.Children.toArray(children)) {
+    if (React.isValidElement(child) && child.type === Footer) {
+      footer.push(child);
+    } else {
+      body.push(child);
+    }
+  }
+  return { body, footer };
+}
+
 function AlertDialogOverlay({
   className,
   ...props
@@ -30,7 +55,7 @@ function AlertDialogOverlay({
     <AlertDialogPrimitive.Backdrop
       data-slot="alert-dialog-overlay"
       className={cn(
-        "fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        "fixed inset-0 isolate z-50 bg-black/40 transition-opacity duration-150 ease-snappy data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-opacity dark:bg-black/60",
         className,
       )}
       {...props}
@@ -40,11 +65,13 @@ function AlertDialogOverlay({
 
 function AlertDialogContent({
   className,
+  children,
   size = "default",
   ...props
 }: AlertDialogPrimitive.Popup.Props & {
   size?: "default" | "sm";
 }) {
+  const { body, footer } = splitFooter(children, AlertDialogFooter);
   return (
     <AlertDialogPortal>
       <AlertDialogOverlay />
@@ -52,11 +79,22 @@ function AlertDialogContent({
         data-slot="alert-dialog-content"
         data-size={size}
         className={cn(
-          "group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          // Tray: the popup itself. The panel and the footer bar sit inside it.
+          "group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 rounded-xl bg-surface-tray p-1 text-foreground shadow-overlay outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-sm",
+          // Open/close: fade + scale 0.98 -> 1. Reduced motion keeps the fade only.
+          "transition-[scale,opacity] duration-150 ease-snappy data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0 motion-reduce:transition-opacity motion-reduce:scale-100!",
           className,
         )}
         {...props}
-      />
+      >
+        <div
+          data-slot="alert-dialog-panel"
+          className={alertDialogPanelClassName}
+        >
+          {body}
+        </div>
+        {footer}
+      </AlertDialogPrimitive.Popup>
     </AlertDialogPortal>
   );
 }
@@ -85,7 +123,7 @@ function AlertDialogFooter({
     <div
       data-slot="alert-dialog-footer"
       className={cn(
-        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end",
+        "flex flex-col-reverse gap-2 px-(--panel-pad) pt-2.5 pb-1.5 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end in-data-[slot=alert-dialog-panel]:px-0 in-data-[slot=alert-dialog-panel]:pt-0 in-data-[slot=alert-dialog-panel]:pb-0 [:where(&)]:[--panel-pad:1.125rem]",
         className,
       )}
       {...props}
@@ -117,7 +155,7 @@ function AlertDialogTitle({
     <AlertDialogPrimitive.Title
       data-slot="alert-dialog-title"
       className={cn(
-        "cn-font-heading text-base font-medium sm:group-data-[size=default]/alert-dialog-content:group-has-data-[slot=alert-dialog-media]/alert-dialog-content:col-start-2",
+        "cn-font-heading text-base font-semibold tracking-[-0.01em] sm:group-data-[size=default]/alert-dialog-content:group-has-data-[slot=alert-dialog-media]/alert-dialog-content:col-start-2",
         className,
       )}
       {...props}
