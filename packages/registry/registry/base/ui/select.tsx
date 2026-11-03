@@ -21,7 +21,7 @@ function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
   return (
     <SelectPrimitive.Value
       data-slot="select-value"
-      className={cn("flex flex-1 text-left", className)}
+      className={cn("flex min-w-0 flex-1 truncate text-left not-has-[*]:block", className)}
       {...props}
     />
   );
@@ -42,8 +42,9 @@ function SelectTrigger({
       className={cn(
         // Raised, like an outline button. Control-scale variables fall back
         // inline: a :where() default on this element would shadow a
-        // [data-density=compact] ancestor.
-        "flex w-fit items-center justify-between gap-[var(--control-gap,0.5rem)] rounded-lg bg-surface-raised pr-[calc(var(--control-px,0.75rem)-0.25rem)] pl-[var(--control-px,0.75rem)] text-[length:var(--control-text,0.8125rem)] whitespace-nowrap shadow-[var(--elevation-highlight,0_0_transparent),0_0_0_1px_var(--hairline-strong,var(--input))] transition-colors outline-none select-none motion-reduce:transition-none focus-visible:focus-ring disabled:cursor-not-allowed disabled:opacity-50 data-disabled:cursor-not-allowed data-disabled:opacity-50 aria-invalid:shadow-[var(--elevation-highlight,0_0_transparent),0_0_0_1px_var(--destructive)] aria-invalid:[--focus-color:var(--destructive)] data-placeholder:text-muted-foreground data-[size=default]:h-[var(--control-h,2.125rem)] data-[size=sm]:h-[calc(var(--control-h,2.125rem)-0.25rem)] data-[size=sm]:rounded-md *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        // [data-density=compact] ancestor. A plain-text value switches to block
+        // so it can ellipsize; a value with elements stays flex.
+        "flex w-fit items-center justify-between gap-[var(--control-gap,0.5rem)] rounded-lg bg-surface-raised pr-[calc(var(--control-px,0.75rem)-0.25rem)] pl-[var(--control-px,0.75rem)] text-[length:var(--control-text,0.8125rem)] whitespace-nowrap shadow-[var(--elevation-highlight,0_0_transparent),0_0_0_1px_var(--hairline-strong,var(--input))] transition-colors outline-none select-none motion-reduce:transition-none focus-visible:focus-ring disabled:cursor-not-allowed disabled:opacity-50 data-disabled:cursor-not-allowed data-disabled:opacity-50 aria-invalid:shadow-[var(--elevation-highlight,0_0_transparent),0_0_0_1px_var(--destructive)] aria-invalid:[--focus-color:var(--destructive)] data-placeholder:text-muted-foreground data-[size=default]:h-[var(--control-h,2.125rem)] data-[size=sm]:h-[calc(var(--control-h,2.125rem)-0.25rem)] data-[size=sm]:rounded-md *:data-[slot=select-value]:flex *:data-[slot=select-value]:min-w-0 *:data-[slot=select-value]:truncate *:data-[slot=select-value]:not-has-[*]:block *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
@@ -127,7 +128,7 @@ function SelectItem({
       )}
       {...props}
     >
-      <SelectPrimitive.ItemText className="flex flex-1 shrink-0 gap-2 whitespace-nowrap">
+      <SelectPrimitive.ItemText className="flex min-w-0 flex-1 gap-2 truncate not-has-[*]:block">
         {children}
       </SelectPrimitive.ItemText>
       <SelectPrimitive.ItemIndicator

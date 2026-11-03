@@ -247,4 +247,28 @@ describe("Select v2 styles", () => {
     const check = item.querySelector("[data-slot=select-item-indicator]")!;
     expect(check.className).toContain("text-brand");
   });
+
+  it("ellipsizes a long trigger value and long item text instead of hard-clipping", async () => {
+    const user = userEvent.setup();
+    render(<FruitSelect defaultValue="banana" />);
+    const trigger = screen.getByRole("combobox");
+    // line-clamp loses to the flex display, which clips with no ellipsis.
+    expect(trigger.className).not.toContain("line-clamp-1");
+    expect(trigger.className).toContain("*:data-[slot=select-value]:min-w-0");
+    expect(trigger.className).toContain("*:data-[slot=select-value]:truncate");
+    // Plain-text values switch to block so text-overflow can apply; rich
+    // values (icon plus label) stay flex.
+    expect(trigger.className).toContain("*:data-[slot=select-value]:not-has-[*]:block");
+    const value = trigger.querySelector("[data-slot=select-value]")!;
+    for (const c of ["min-w-0", "truncate", "not-has-[*]:block"]) {
+      expect(value.classList.contains(c)).toBe(true);
+    }
+    await user.click(trigger);
+    const item = await screen.findByRole("option", { name: "Banana" });
+    const text = item.firstElementChild as HTMLElement;
+    for (const c of ["min-w-0", "truncate", "not-has-[*]:block"]) {
+      expect(text.classList.contains(c)).toBe(true);
+    }
+    expect(text.classList.contains("shrink-0")).toBe(false);
+  });
 });
