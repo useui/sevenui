@@ -13,7 +13,7 @@ const statusTone =
   "bg-[color:color-mix(in_oklch,transparent_90%,var(--badge-tone))] border-[color:color-mix(in_oklch,transparent_75%,var(--badge-tone))] before:size-1.5 before:shrink-0 before:rounded-full before:bg-(--badge-tone) has-[>svg]:before:hidden [a]:hover:bg-[color:color-mix(in_oklch,transparent_84%,var(--badge-tone))]";
 
 const badgeVariants = cva(
-  "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-transparent px-2 py-0.5 text-[11px] font-medium whitespace-nowrap transition-colors outline-none focus-visible:focus-ring motion-reduce:transition-none has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:[--focus-color:var(--destructive)] [&>svg]:pointer-events-none [&>svg]:size-3!",
+  "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-transparent px-2 py-0.5 text-[11px] font-medium whitespace-nowrap transition-[color,background-color,border-color] outline-none focus-visible:focus-ring motion-reduce:transition-none has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:[--focus-color:var(--destructive)] [&>svg]:pointer-events-none [&>svg]:size-3!",
   {
     variants: {
       variant: {
