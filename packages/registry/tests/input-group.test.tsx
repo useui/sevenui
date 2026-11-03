@@ -158,7 +158,9 @@ describe("InputGroup v2 styles", () => {
     expect(group).not.toContain("ring-3");
     expect(group).toContain("h-[var(--control-h,");
     expect(group).toContain("bg-surface-inset");
-    expect(group).toContain("inset_0_0_0_1px_var(--hairline-strong");
+    // The edge is a real border so consumer border-* classes merge against it.
+    expect(group.split(" ")).toEqual(expect.arrayContaining(["border", "border-hairline-strong"]));
+    expect(group).not.toContain("0_0_0_1px_var(--hairline");
     expect(group).toContain(
       "has-[[data-slot][aria-invalid=true]]:[--focus-color:var(--destructive)]",
     );
@@ -167,6 +169,10 @@ describe("InputGroup v2 styles", () => {
     const control = screen.getByPlaceholderText("Styled").className;
     expect(control).toContain("bg-transparent");
     expect(control).toContain("shadow-none");
+    // The inner control stays borderless; the wrapper owns the edge.
+    expect(control.split(" ")).toContain("border-0");
+    expect(control.split(" ")).not.toContain("border");
+    expect(control).not.toContain("--elevation-inset");
     expect(control).toContain("[--focus-width:0px]");
     expect(control).not.toContain("bg-surface-inset");
 

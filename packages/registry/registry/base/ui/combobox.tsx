@@ -65,9 +65,9 @@ function ComboboxInput({
   return (
     <InputGroup
       className={cn(
-        // Field look (B2 input row). Token fallbacks sit inside var() so a
-        // density scope above still wins over the default.
-        "h-[var(--control-h,2.125rem)] w-auto border-0 bg-surface-inset text-[length:var(--control-text,0.8125rem)] shadow-[inset_0_0_0_1px_var(--hairline-strong),var(--elevation-inset)] has-[[data-slot=input-group-control]:focus-visible]:focus-ring has-[[data-slot][aria-invalid=true]]:shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--destructive)_60%,transparent),var(--elevation-inset)] has-[[data-slot][aria-invalid=true]]:[--focus-color:var(--destructive)]",
+        // InputGroup draws the field (surface, border edge, focus ring, invalid
+        // state); a consumer border or shadow class merges against it.
+        "w-auto text-[length:var(--control-text,0.8125rem)]",
         className,
       )}
     >
@@ -233,7 +233,7 @@ function ComboboxChips({
     <ComboboxPrimitive.Chips
       data-slot="combobox-chips"
       className={cn(
-        "flex min-h-[var(--control-h,2.125rem)] flex-wrap items-center gap-1 rounded-lg bg-surface-inset px-[var(--control-px,0.75rem)] py-1 text-[length:var(--control-text,0.8125rem)] shadow-[inset_0_0_0_1px_var(--hairline-strong),var(--elevation-inset)] outline-none focus-within:focus-ring has-aria-invalid:shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--destructive)_60%,transparent),var(--elevation-inset)] has-aria-invalid:[--focus-color:var(--destructive)] has-data-[slot=combobox-chip]:px-1",
+        "flex min-h-[var(--control-h,2.125rem)] flex-wrap items-center gap-1 rounded-lg bg-surface-inset px-[var(--control-px,0.75rem)] py-1 text-[length:var(--control-text,0.8125rem)] border border-hairline-strong shadow-[0_0_#0000,var(--elevation-inset,0_0_#0000)] outline-none focus-within:focus-ring has-aria-invalid:border-destructive/60 has-aria-invalid:[--focus-color:var(--destructive)] has-data-[slot=combobox-chip]:px-1",
         className,
       )}
       {...props}

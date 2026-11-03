@@ -161,9 +161,11 @@ describe("Combobox v2 styles", () => {
     render(<FruitCombobox />);
     const group = getInput().closest("[data-slot=input-group]") as HTMLElement;
     expect(group.className).toContain("bg-surface-inset");
-    expect(group.className).toContain(
-      "shadow-[inset_0_0_0_1px_var(--hairline-strong),var(--elevation-inset)]",
-    );
+    // InputGroup's border edge, not a combobox-only shadow ring over border-0.
+    const classes = group.className.split(" ");
+    expect(classes).toEqual(expect.arrayContaining(["border", "border-hairline-strong"]));
+    expect(classes).not.toContain("border-0");
+    expect(group.className).not.toContain("0_0_0_1px_var(--hairline");
     expect(group.className).toContain("h-[var(--control-h,2.125rem)]");
     expect(group.className).toContain(
       "has-[[data-slot=input-group-control]:focus-visible]:focus-ring",

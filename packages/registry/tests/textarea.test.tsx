@@ -67,7 +67,9 @@ describe("Textarea v2 styles", () => {
     expect(cls).toContain("min-h-[calc(var(--control-h,2.125rem)*2.5)]");
     expect(cls).toContain("py-[calc(var(--control-px,0.75rem)*0.66)]");
     expect(cls).toContain("bg-surface-inset");
-    expect(cls).toContain("inset_0_0_0_1px_var(--hairline-strong");
+    // The edge is a real border so consumer border-* classes merge against it.
+    expect(cls.split(" ")).toEqual(expect.arrayContaining(["border", "border-hairline-strong"]));
+    expect(cls).not.toContain("0_0_0_1px_var(--hairline");
     // Full-strength placeholder: an alpha-reduced muted tone drops below 4.5:1.
     expect(cls).toContain("placeholder:text-muted-foreground");
     expect(cls).not.toContain("placeholder:text-muted-foreground/");

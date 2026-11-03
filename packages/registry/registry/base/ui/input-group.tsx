@@ -14,11 +14,11 @@ function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="input-group"
       role="group"
       className={cn(
-        "group/input-group relative flex h-[var(--control-h,2.125rem)] w-full min-w-0 items-center rounded-lg bg-surface-inset text-foreground shadow-[inset_0_0_0_1px_var(--hairline-strong,var(--input)),var(--elevation-inset,0_0_transparent)] transition-shadow duration-150 outline-none motion-reduce:transition-none",
+        "group/input-group relative flex h-[var(--control-h,2.125rem)] w-full min-w-0 items-center rounded-lg bg-surface-inset text-foreground border border-hairline-strong shadow-[0_0_#0000,var(--elevation-inset,0_0_#0000)] transition-[border-color,box-shadow] duration-150 outline-none motion-reduce:transition-none",
         // The ring sits on the wrapper; inside a combobox popup the popup owns focus.
         "has-[[data-slot=input-group-control]:focus-visible]:focus-ring in-data-[slot=combobox-content]:[--focus-width:0px]",
         "has-disabled:opacity-50",
-        "has-[[data-slot][aria-invalid=true]]:shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--destructive)_60%,transparent),var(--elevation-inset,0_0_transparent)] has-[[data-slot][aria-invalid=true]]:[--focus-color:var(--destructive)]",
+        "has-[[data-slot][aria-invalid=true]]:border-destructive/60 has-[[data-slot][aria-invalid=true]]:[--focus-color:var(--destructive)]",
         "has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>textarea]:h-auto has-[>[data-align=block-end]]:[&>input]:pt-3 has-[>[data-align=block-start]]:[&>input]:pb-3 has-[>[data-align=inline-end]]:[&>input]:pr-1.5 has-[>[data-align=inline-start]]:[&>input]:pl-1.5",
         className,
       )}

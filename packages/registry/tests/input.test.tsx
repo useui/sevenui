@@ -76,11 +76,42 @@ describe("Input v2 styles", () => {
     expect(cls).toContain("px-[var(--control-px,");
     expect(cls).toContain("--control-text");
     expect(cls).toContain("bg-surface-inset");
-    expect(cls).toContain("inset_0_0_0_1px_var(--hairline-strong");
+    // The edge is a real border so consumer border-* classes merge against it.
+    expect(cls.split(" ")).toEqual(expect.arrayContaining(["border", "border-hairline-strong"]));
+    expect(cls).not.toContain("0_0_0_1px_var(--hairline");
     // Full-strength placeholder: an alpha-reduced muted tone drops below 4.5:1.
     expect(cls).toContain("placeholder:text-muted-foreground");
     expect(cls).not.toContain("placeholder:text-muted-foreground/");
     expect(cls).toContain("aria-invalid:[--focus-color:var(--destructive)]");
     expect(cls).toContain("motion-reduce:transition-none");
+  });
+});
+
+describe("Input className contract", () => {
+  const classes = (className: string) => {
+    render(<Input placeholder={className} className={className} />);
+    return screen.getByPlaceholderText(className).className.split(" ");
+  };
+
+  it("lets border-0 border-b drop the box edge for an underline", () => {
+    const cls = classes("border-0 border-b");
+    expect(cls).toEqual(expect.arrayContaining(["border-0", "border-b"]));
+    expect(cls).not.toContain("border");
+  });
+
+  it("keeps the edge when a consumer replaces the shadow", () => {
+    for (const shadow of ["shadow-none", "shadow-md", "dark:shadow-none"]) {
+      const cls = classes(shadow);
+      expect(cls).toEqual(expect.arrayContaining(["border", "border-hairline-strong", shadow]));
+      // The shadow utility is merged away, not left to fight in the cascade.
+      if (!shadow.startsWith("dark:")) expect(cls.join(" ")).not.toContain("--elevation-inset");
+    }
+  });
+
+  it("lets a consumer border colour replace the hairline", () => {
+    const cls = classes("border-transparent");
+    expect(cls).toContain("border");
+    expect(cls).toContain("border-transparent");
+    expect(cls).not.toContain("border-hairline-strong");
   });
 });
