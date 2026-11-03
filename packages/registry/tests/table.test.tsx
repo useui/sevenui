@@ -124,11 +124,14 @@ describe("Table", () => {
 });
 
 describe("Table v2 styling", () => {
-  it("uses hairline dividers, a panel hover and density-driven cell padding", () => {
+  it("uses hairline dividers and hover, a tray footer and density-driven cell padding", () => {
     renderFullTable();
     const row = screen.getByTestId("row");
     expect(row.className).toContain("border-hairline");
-    expect(row.className).toContain("hover:bg-surface-panel/60");
+    expect(row.className).toContain("hover:bg-hairline");
+    expect(row.className).toContain("has-aria-expanded:bg-hairline");
+    expect(row.className).not.toContain("surface-panel");
+    expect(screen.getByTestId("tfoot").className).toContain("bg-surface-tray");
     expect(row.className).toContain("motion-reduce:transition-none");
     const cell = screen.getByText("INV-001");
     expect(cell.className).toContain("py-[calc(var(--control-h");
