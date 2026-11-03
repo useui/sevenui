@@ -114,3 +114,44 @@ describe("Menubar", () => {
     });
   });
 });
+
+describe("Menubar v2 styles", () => {
+  const cls = (el: Element | null) => el?.getAttribute("class") ?? "";
+
+  it("renders the bar as a hairline toolbar tray sized from --control-h", () => {
+    render(<BasicMenubar />);
+    const bar = cls(screen.getByRole("menubar"));
+    expect(bar).toContain("bg-surface-tray");
+    expect(bar).toContain("ring-hairline");
+    expect(bar).toContain("p-0.5");
+    expect(bar).toContain("h-(--control-h");
+    expect(bar).not.toMatch(/(^|\s)border(\s|$)/);
+  });
+
+  it("styles triggers as ghost toggles with the offset focus ring", () => {
+    render(<BasicMenubar />);
+    const trigger = cls(screen.getByRole("menuitem", { name: "File" }));
+    expect(trigger).toContain("focus-visible:focus-ring");
+    expect(trigger).not.toContain("ring-3");
+    expect(trigger).toContain("hover:bg-surface-panel");
+    expect(trigger).toContain("data-popup-open:bg-surface-raised");
+    expect(trigger).toContain("px-(--control-px");
+    expect(trigger).toContain("motion-reduce:transition-none");
+  });
+
+  it("renders menus with the dropdown popup, items and hairline separators", async () => {
+    const user = userEvent.setup();
+    render(<BasicMenubar />);
+    await user.click(screen.getByRole("menuitem", { name: "File" }));
+    const menu = await screen.findByRole("menu");
+    expect(cls(menu)).toContain("bg-surface-raised");
+    expect(cls(menu)).toContain("shadow-overlay");
+    const item = screen.getByRole("menuitem", { name: /New Tab/ });
+    expect(cls(item)).toContain("min-h-(--item-h");
+    expect(cls(item)).toContain("data-highlighted:bg-surface-panel");
+    expect(cls(document.querySelector('[data-slot="menubar-separator"]'))).toContain(
+      "bg-hairline",
+    );
+    expect(cls(document.querySelector('[data-slot="menubar-shortcut"]'))).toContain("font-mono");
+  });
+});
