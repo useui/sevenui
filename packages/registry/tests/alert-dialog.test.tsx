@@ -149,7 +149,7 @@ describe("AlertDialog v2 styles", () => {
     const popup = await renderOpen();
     const panel = popup.querySelector('[data-slot="alert-dialog-panel"]');
     expect(panel?.className).toContain("bg-surface-panel");
-    expect(panel?.className).toContain("p-(--panel-pad)");
+    expect(panel?.className).toContain("p-[var(--panel-pad,1.125rem)]");
     expect(
       panel?.className.includes("rounded-[max(0px,calc(--theme(--radius-xl)_-_4px))]"),
     ).toBe(true);

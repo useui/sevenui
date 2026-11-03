@@ -41,7 +41,7 @@ function OpenAlertDialog({
     >
       <DialogPrimitive.Root open modal={false}>
         <DialogPrimitive.Portal container={ref}>
-          <AlertDialogContent size={size}>{children}</AlertDialogContent>
+          <AlertDialogContent size={size} initialFocus={false}>{children}</AlertDialogContent>
         </DialogPrimitive.Portal>
       </DialogPrimitive.Root>
     </div>

@@ -23,7 +23,7 @@ function AlertDialogPortal({ ...props }: AlertDialogPrimitive.Portal.Props) {
 }
 
 const alertDialogPanelClassName =
-  "grid gap-4 rounded-[max(0px,calc(--theme(--radius-xl)_-_4px))] bg-surface-panel p-(--panel-pad) shadow-[inset_0_0_0_1px_var(--hairline,transparent)] [:where(&)]:[--panel-pad:1.125rem]";
+  "grid gap-4 rounded-[max(0px,calc(--theme(--radius-xl)_-_4px))] bg-surface-panel p-[var(--panel-pad,1.125rem)] shadow-[inset_0_0_0_1px_var(--hairline,transparent)]";
 
 /**
  * Splits AlertDialogContent's children so footers render in the tray, below
@@ -123,7 +123,7 @@ function AlertDialogFooter({
     <div
       data-slot="alert-dialog-footer"
       className={cn(
-        "flex flex-col-reverse gap-2 px-(--panel-pad) pt-2.5 pb-1.5 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end in-data-[slot=alert-dialog-panel]:px-0 in-data-[slot=alert-dialog-panel]:pt-0 in-data-[slot=alert-dialog-panel]:pb-0 [:where(&)]:[--panel-pad:1.125rem]",
+        "flex flex-col-reverse gap-2 px-[var(--panel-pad,1.125rem)] pt-2.5 pb-1.5 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end in-data-[slot=alert-dialog-panel]:px-0 in-data-[slot=alert-dialog-panel]:pt-0 in-data-[slot=alert-dialog-panel]:pb-0",
         className,
       )}
       {...props}
