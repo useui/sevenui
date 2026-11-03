@@ -92,7 +92,7 @@ function CommandInput({
         <AutocompletePrimitive.Input
           data-slot="command-input"
           className={cn(
-            "w-full bg-transparent text-[length:var(--control-text,0.8125rem)] outline-hidden placeholder:text-muted-foreground/70 disabled:cursor-not-allowed disabled:opacity-50",
+            "w-full bg-transparent text-[length:var(--control-text,0.8125rem)] outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
             className,
           )}
           {...props}

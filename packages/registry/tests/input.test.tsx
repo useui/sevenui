@@ -77,7 +77,9 @@ describe("Input v2 styles", () => {
     expect(cls).toContain("--control-text");
     expect(cls).toContain("bg-surface-inset");
     expect(cls).toContain("inset_0_0_0_1px_var(--hairline-strong");
-    expect(cls).toContain("placeholder:text-muted-foreground/70");
+    // Full-strength placeholder: an alpha-reduced muted tone drops below 4.5:1.
+    expect(cls).toContain("placeholder:text-muted-foreground");
+    expect(cls).not.toContain("placeholder:text-muted-foreground/");
     expect(cls).toContain("aria-invalid:[--focus-color:var(--destructive)]");
     expect(cls).toContain("motion-reduce:transition-none");
   });

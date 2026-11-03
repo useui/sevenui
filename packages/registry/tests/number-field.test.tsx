@@ -155,6 +155,8 @@ describe("NumberField v2 styles", () => {
     expect(group).toContain("inset_0_0_0_1px_var(--hairline-strong");
     expect(group).toContain("motion-reduce:transition-none");
     expect(getInput().className).toContain("tabular-nums");
+    expect(getInput().className).toContain("placeholder:text-muted-foreground");
+    expect(getInput().className).not.toContain("placeholder:text-muted-foreground/");
     expect(getInput().className).toContain("--control-text");
     const increment = screen.getByLabelText("Increase").className;
     expect(increment).toContain("hover:bg-surface-raised");

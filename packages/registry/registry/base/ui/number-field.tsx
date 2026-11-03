@@ -71,7 +71,7 @@ function NumberFieldInput({
   return (
     <NumberFieldPrimitive.Input
       className={cn(
-        "h-full w-16 min-w-0 bg-transparent text-center text-[length:var(--control-text,0.8125rem)] text-foreground tabular-nums outline-none placeholder:text-muted-foreground/70 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+        "h-full w-16 min-w-0 bg-transparent text-center text-[length:var(--control-text,0.8125rem)] text-foreground tabular-nums outline-none placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
       {...props}

@@ -181,6 +181,13 @@ describe("Command v2 styles", () => {
     expect(wrapper.className).toContain("border-hairline");
   });
 
+  it("renders the placeholder in full-strength muted text", () => {
+    render(<ShortcutPalette />);
+    const input = screen.getByPlaceholderText("Type a command or search...");
+    expect(input.className).toContain("placeholder:text-muted-foreground");
+    expect(input.className).not.toContain("placeholder:text-muted-foreground/");
+  });
+
   it("sizes items by --item-h and highlights them with the hairline", () => {
     render(<ShortcutPalette />);
     const item = screen.getByText("Calendar").closest(
