@@ -83,3 +83,24 @@ export function contrastOn(text: Oklch, surface: Oklch, tint?: { color: Oklch; a
 }
 
 export const AA = 4.5;
+
+const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+
+/**
+ * Reads N from `<prefix>text-[color:color-mix(in_oklch,var(--foreground)_N%,var(--destructive))]`
+ * in a class list; NaN when the class is missing.
+ */
+export function destructivePull(classes: string, prefix = ""): number {
+  const m = classes.match(
+    new RegExp(
+      `(?:^|\\s)${escape(prefix)}text-\\[color:color-mix\\(in_oklch,var\\(--foreground\\)_(\\d+)%,var\\(--destructive\\)\\)\\](?:\\s|$)`,
+    ),
+  );
+  return m ? Number(m[1]) : Number.NaN;
+}
+
+/** Reads the alpha of `<prefix>bg-destructive/N` in a class list; NaN when missing. */
+export function destructiveTint(classes: string, prefix = ""): number {
+  const m = classes.match(new RegExp(`(?:^|\\s)${escape(prefix)}bg-destructive\\/(\\d+)(?:\\s|$)`));
+  return m ? Number(m[1]) / 100 : Number.NaN;
+}

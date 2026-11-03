@@ -16,6 +16,7 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger,
 } from "@/registry/base/ui/context-menu";
+import { AA, contrastOn, destructivePull, destructiveTint, mix, palette } from "./helpers/palette";
 
 function BasicContextMenu({
   onBack = () => {},
@@ -203,6 +204,29 @@ describe("ContextMenu v2 styles", () => {
   }
   const slot = (name: string) =>
     document.querySelector(`[data-slot="${name}"]`)?.getAttribute("class") ?? "";
+
+  it.each(["light", "dark"] as const)("keeps destructive item text at AA at rest and highlighted in %s", async (mode) => {
+    render(<StyledMenu />);
+    await openContextMenu();
+    const classes = document.querySelector('[data-slot="context-menu-item"][data-variant="destructive"]')!.className;
+    const rest = destructivePull(classes, "data-[variant=destructive]:");
+    const highlighted = destructivePull(classes, "data-[variant=destructive]:data-highlighted:");
+    const alpha = destructiveTint(
+      classes,
+      `${mode === "dark" ? "dark:" : ""}data-[variant=destructive]:data-highlighted:`,
+    );
+    for (const n of [rest, highlighted, alpha]) expect(n).not.toBeNaN();
+    const p = palette(mode);
+    const ratios = {
+      rest: contrastOn(mix(p.foreground, rest, p.destructive), p.surfaces.raised),
+      highlighted: contrastOn(mix(p.foreground, highlighted, p.destructive), p.surfaces.raised, {
+        color: p.destructive,
+        alpha,
+      }),
+    };
+    const report = Object.entries(ratios).map(([k, r]) => `${k} ${r.toFixed(2)}`).join(", ");
+    expect(Math.min(...Object.values(ratios)), `${mode}: ${report}`).toBeGreaterThanOrEqual(AA);
+  });
 
   it("lifts muted descendants to the foreground on a highlighted row", async () => {
     render(<StyledMenu />);

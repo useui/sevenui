@@ -3,7 +3,8 @@ import userEvent from "@testing-library/user-event";
 import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 
-import { Button } from "@/registry/base/ui/button";
+import { Button, buttonVariants } from "@/registry/base/ui/button";
+import { AA, contrastOn, destructivePull, destructiveTint, mix, palette } from "./helpers/palette";
 
 function tokens(element: HTMLElement) {
   return element.className.split(/\s+/);
@@ -28,7 +29,7 @@ describe("Button", () => {
     ["outline", "bg-surface-raised"],
     ["secondary", "bg-surface-panel"],
     ["ghost", "hover:bg-[color-mix(in_oklch,var(--surface-panel,var(--muted)),var(--foreground)_5%)]"],
-    ["destructive", "text-destructive"],
+    ["destructive", "text-[color:color-mix(in_oklch,var(--foreground)_25%,var(--destructive))]"],
     ["link", "underline-offset-4"],
     ["accent", "bg-brand-strong"],
   ] as const)("applies the %s variant token", (variant, token) => {
@@ -162,5 +163,32 @@ describe("Button", () => {
     expect(link.getAttribute("href")).toBe("/docs");
     expect(link.getAttribute("data-slot")).toBe("button");
     expect(tokens(link)).toContain("bg-primary");
+  });
+});
+
+// --- Contrast -------------------------------------------------------------
+// The destructive button's text is the destructive tone pulled towards the
+// foreground; it must reach AA on its rest and hover tints over every surface
+// a button sits on, in both themes.
+
+describe("Destructive button contrast (AA)", () => {
+  const classes = buttonVariants({ variant: "destructive" });
+  const cases = (["light", "dark"] as const).flatMap((mode) =>
+    (["rest", "hover"] as const).map((state) => ({ mode, state })),
+  );
+
+  it.each(cases)("text reaches AA on the $state tint in $mode", ({ mode, state }) => {
+    const prefix = `${mode === "dark" ? "dark:" : ""}${state === "hover" ? "hover:" : ""}`;
+    const alpha = destructiveTint(classes, prefix);
+    const pull = destructivePull(classes);
+    expect(alpha).not.toBeNaN();
+    expect(pull).toBeGreaterThan(0);
+    const p = palette(mode);
+    const text = mix(p.foreground, pull, p.destructive);
+    const ratios = Object.entries(p.surfaces).map(
+      ([name, s]) => [name, contrastOn(text, s, { color: p.destructive, alpha })] as const,
+    );
+    const report = ratios.map(([n, r]) => `${n} ${r.toFixed(2)}`).join(", ");
+    expect(Math.min(...ratios.map(([, r]) => r)), `${mode} ${state}: ${report}`).toBeGreaterThanOrEqual(AA);
   });
 });
