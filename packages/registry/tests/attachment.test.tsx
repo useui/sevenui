@@ -213,6 +213,15 @@ describe("Attachment v2 styles", () => {
     expect(cls).not.toContain("bg-card");
   });
 
+  it("does not fade the focus ring in from the text colour", () => {
+    // transition-colors animates outline-color, so the ring started as the
+    // foreground and faded to brand over the transition.
+    render(<FileAttachment data-testid="attachment" />);
+    const cls = screen.getByTestId("attachment").className.split(/\s+/);
+    expect(cls).not.toContain("transition-colors");
+    expect(cls).toContain("transition-[background-color,border-color]");
+  });
+
   it("rounds the media concentrically inside the tile padding", () => {
     const { container } = render(<FileAttachment />);
     const cls = (
