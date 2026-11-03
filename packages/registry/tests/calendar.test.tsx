@@ -5,6 +5,8 @@ import type { DateRange } from "react-day-picker";
 import { describe, expect, it, vi } from "vitest";
 
 import { Calendar } from "@/registry/base/ui/calendar";
+import registry from "../registry.json";
+import { contrastRatio } from "./helpers/contrast";
 
 // react-day-picker's initial month is month || defaultMonth || today (never
 // derived from `selected`), so every test pins defaultMonth for determinism.
@@ -246,17 +248,31 @@ describe("Calendar v2 styles", () => {
     }
   });
 
-  it("fills the selected day and range ends with brand, tints the range middle", () => {
+  it("fills the selected day and range ends with brand-strong, tints the range middle", () => {
     render(<Calendar mode="single" defaultMonth={june2026} />);
-    const day = dayButton("Friday, June 12th, 2026");
-    expect(day.className).toContain("data-[selected-single=true]:bg-brand");
-    expect(day.className).toContain(
-      "data-[selected-single=true]:text-brand-foreground",
-    );
-    expect(day.className).toContain("data-[range-start=true]:bg-brand");
-    expect(day.className).toContain("data-[range-end=true]:bg-brand");
-    expect(day.className).toContain("data-[range-middle=true]:bg-brand/12");
-    expect(day.className).not.toContain("bg-primary");
+    const classes = dayButton("Friday, June 12th, 2026").className.split(" ");
+    // brand-strong, not brand: white on the dark brand is only 3.72:1.
+    for (const state of ["selected-single", "range-start", "range-end"]) {
+      expect(classes).toContain(`data-[${state}=true]:bg-brand-strong`);
+      expect(classes).toContain(`data-[${state}=true]:text-brand-foreground`);
+      expect(classes).not.toContain(`data-[${state}=true]:bg-brand`);
+    }
+    expect(classes).toContain("data-[range-middle=true]:bg-brand/12");
+    expect(classes.join(" ")).not.toContain("bg-primary");
+  });
+
+  it("keeps the filled day text at AA in both themes", () => {
+    const vars = registry.items.find((i) => i.name === "sevenui-tokens")?.cssVars as
+      | Record<"light" | "dark", Record<string, string>>
+      | undefined;
+    expect(vars).toBeDefined();
+    for (const theme of ["light", "dark"] as const) {
+      const ratio = contrastRatio(
+        vars![theme]["brand-foreground"],
+        vars![theme]["brand-strong"],
+      );
+      expect(ratio).toBeGreaterThanOrEqual(4.5);
+    }
   });
 
   it("marks today with a hairline ring instead of a fill", () => {
