@@ -202,7 +202,9 @@ describe("Select v2 styles", () => {
     expect(cls).not.toContain("ring-ring");
     expect(cls).not.toContain("focus-visible:border-ring");
     expect(cls).toContain("bg-surface-raised");
-    expect(cls).toContain("var(--hairline-strong");
+    // The edge is a real border so consumer border-* classes merge against it.
+    expect(cls.split(" ")).toEqual(expect.arrayContaining(["border", "border-hairline-strong"]));
+    expect(cls).not.toContain("0_0_0_1px_var(--hairline");
     expect(cls).toContain("data-[size=default]:h-[var(--control-h,2.125rem)]");
     expect(cls).toContain(
       "data-[size=sm]:h-[calc(var(--control-h,2.125rem)-0.25rem)]",
