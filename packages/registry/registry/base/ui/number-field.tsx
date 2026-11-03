@@ -48,7 +48,7 @@ function NumberFieldGroup({
 }
 
 const stepperClasses =
-  "flex size-[calc(var(--control-h,2.125rem)-6px)] shrink-0 items-center justify-center rounded-[max(0px,calc(--theme(--radius-lg)-3px))] text-muted-foreground transition-colors duration-150 outline-none select-none motion-reduce:transition-none hover:bg-surface-raised hover:text-foreground focus-visible:focus-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-3.5";
+  "flex size-[calc(var(--control-h,2.125rem)-6px)] shrink-0 items-center justify-center rounded-[max(0px,calc(--theme(--radius-lg)-3px))] text-muted-foreground transition-[color,background-color,border-color] duration-150 outline-none select-none motion-reduce:transition-none hover:bg-surface-raised hover:text-foreground focus-visible:focus-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-3.5";
 
 function NumberFieldDecrement({
   className,
