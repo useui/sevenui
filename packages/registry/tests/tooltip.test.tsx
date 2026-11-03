@@ -89,3 +89,38 @@ describe("Tooltip", () => {
     });
   });
 });
+
+describe("Tooltip v2 styles", () => {
+  it("renders an inverted, compact bubble", async () => {
+    render(<ExampleTooltip open />);
+    const popup = await screen.findByText("Add to library");
+    for (const cls of [
+      "bg-foreground",
+      "text-background",
+      "text-xs",
+      "px-2",
+      "py-1",
+      "rounded-md",
+    ]) {
+      expect(popup.className).toContain(cls);
+    }
+    expect(popup.className).not.toContain("bg-primary");
+  });
+
+  it("fades in over 100ms without scaling", async () => {
+    render(<ExampleTooltip open />);
+    const popup = await screen.findByText("Add to library");
+    expect(popup.className).toContain("transition-opacity");
+    expect(popup.className).toContain("duration-100");
+    expect(popup.className).not.toContain("scale-95");
+    expect(popup.className).toContain("motion-reduce:transition-none");
+  });
+
+  it("matches the arrow to the bubble without a shadow", async () => {
+    render(<ExampleTooltip open />);
+    const popup = await screen.findByText("Add to library");
+    const arrow = popup.lastElementChild;
+    expect(arrow?.className).toContain("bg-foreground");
+    expect(arrow?.className).not.toContain("shadow");
+  });
+});
