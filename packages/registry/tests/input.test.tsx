@@ -64,3 +64,21 @@ describe("Input", () => {
     ).toBe("true");
   });
 });
+
+describe("Input v2 styles", () => {
+  it("uses the offset focus ring, inset surface and density tokens", () => {
+    render(<Input placeholder="Styled" />);
+    const cls = screen.getByPlaceholderText("Styled").className;
+    expect(cls).toContain("focus-visible:focus-ring");
+    expect(cls).not.toContain("ring-3");
+    expect(cls).not.toContain("focus-visible:border-ring");
+    expect(cls).toContain("h-[var(--control-h,");
+    expect(cls).toContain("px-[var(--control-px,");
+    expect(cls).toContain("--control-text");
+    expect(cls).toContain("bg-surface-inset");
+    expect(cls).toContain("inset_0_0_0_1px_var(--hairline-strong");
+    expect(cls).toContain("placeholder:text-muted-foreground/70");
+    expect(cls).toContain("aria-invalid:[--focus-color:var(--destructive)]");
+    expect(cls).toContain("motion-reduce:transition-none");
+  });
+});
