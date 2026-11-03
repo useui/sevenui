@@ -169,6 +169,9 @@ describe("Combobox v2 styles", () => {
       "has-[[data-slot=input-group-control]:focus-visible]:focus-ring",
     );
     expect(group.className).not.toContain("ring-3");
+    // InputGroup carries no halo or dark fill any more, so no shims displace them.
+    expect(group.className).not.toContain("ring-0");
+    expect(group.className).not.toContain("dark:bg-surface-inset");
   });
 
   it("keeps the className on the input-group root", () => {

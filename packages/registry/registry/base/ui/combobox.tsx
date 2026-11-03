@@ -66,10 +66,8 @@ function ComboboxInput({
     <InputGroup
       className={cn(
         // Field look (B2 input row). Token fallbacks sit inside var() so a
-        // density scope above still wins over the default. The ring-0 and
-        // dark: entries only displace an older input-group's halo and dark
-        // fill when cn merges the two class lists.
-        "h-[var(--control-h,2.125rem)] w-auto border-0 bg-surface-inset text-[length:var(--control-text,0.8125rem)] shadow-[inset_0_0_0_1px_var(--hairline-strong),var(--elevation-inset)] dark:bg-surface-inset has-[[data-slot=input-group-control]:focus-visible]:ring-0 has-[[data-slot=input-group-control]:focus-visible]:focus-ring has-[[data-slot][aria-invalid=true]]:ring-0 has-[[data-slot][aria-invalid=true]]:shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--destructive)_60%,transparent),var(--elevation-inset)] has-[[data-slot][aria-invalid=true]]:[--focus-color:var(--destructive)]",
+        // density scope above still wins over the default.
+        "h-[var(--control-h,2.125rem)] w-auto border-0 bg-surface-inset text-[length:var(--control-text,0.8125rem)] shadow-[inset_0_0_0_1px_var(--hairline-strong),var(--elevation-inset)] has-[[data-slot=input-group-control]:focus-visible]:focus-ring has-[[data-slot][aria-invalid=true]]:shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--destructive)_60%,transparent),var(--elevation-inset)] has-[[data-slot][aria-invalid=true]]:[--focus-color:var(--destructive)]",
         className,
       )}
     >
