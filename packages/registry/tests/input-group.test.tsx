@@ -137,3 +137,45 @@ describe("InputGroup", () => {
     expect(textarea.getAttribute("data-slot")).toBe("input-group-control");
   });
 });
+
+describe("InputGroup v2 styles", () => {
+  it("puts the surface and the focus ring on the wrapper, not the control", () => {
+    render(
+      <InputGroup data-testid="group">
+        <InputGroupAddon data-testid="addon">
+          <InputGroupText>@</InputGroupText>
+        </InputGroupAddon>
+        <InputGroupInput placeholder="Styled" />
+        <InputGroupAddon align="inline-end">
+          <InputGroupButton>Go</InputGroupButton>
+        </InputGroupAddon>
+      </InputGroup>,
+    );
+    const group = screen.getByTestId("group").className;
+    expect(group).toContain(
+      "has-[[data-slot=input-group-control]:focus-visible]:focus-ring",
+    );
+    expect(group).not.toContain("ring-3");
+    expect(group).toContain("h-[var(--control-h,");
+    expect(group).toContain("bg-surface-inset");
+    expect(group).toContain("inset_0_0_0_1px_var(--hairline-strong");
+    expect(group).toContain(
+      "has-[[data-slot][aria-invalid=true]]:[--focus-color:var(--destructive)]",
+    );
+    expect(group).toContain("motion-reduce:transition-none");
+
+    const control = screen.getByPlaceholderText("Styled").className;
+    expect(control).toContain("bg-transparent");
+    expect(control).toContain("shadow-none");
+    expect(control).toContain("[--focus-width:0px]");
+    expect(control).not.toContain("bg-surface-inset");
+
+    expect(screen.getByTestId("addon").className).toContain(
+      "text-muted-foreground",
+    );
+    const button = screen.getByRole("button", { name: "Go" });
+    expect(button.className).toContain(
+      "h-[calc(var(--control-h,2.125rem)-0.5rem)]",
+    );
+  });
+});
