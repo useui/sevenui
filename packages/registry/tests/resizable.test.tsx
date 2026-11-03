@@ -306,3 +306,23 @@ describe("ResizablePanel", () => {
     );
   });
 });
+
+describe("ResizableHandle v2 styling", () => {
+  it("draws a hairline handle with the offset focus ring", () => {
+    const { separator } = renderGroup();
+    const classes = separator.className.split(" ");
+    expect(classes).toContain("bg-hairline");
+    expect(classes).toContain("focus-visible:focus-ring");
+    expect(classes).not.toContain("bg-border");
+    expect(separator.className).not.toContain("ring-ring");
+    expect(separator.className).not.toContain("ring-3");
+  });
+
+  it("renders the grip on the raised surface with a hairline edge", () => {
+    const { separator } = renderGroup();
+    const grip = separator.firstElementChild!;
+    expect(grip.className).toContain("bg-surface-raised");
+    expect(grip.className).toContain("ring-hairline-strong");
+    expect(grip.className).not.toContain("bg-border");
+  });
+});
