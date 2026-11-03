@@ -8,6 +8,8 @@ import {
   createToastManager,
   useToastManager,
 } from "@/registry/base/ui/toast";
+import { buttonVariants } from "@/registry/base/ui/button";
+import { cn } from "cn";
 
 function getToasts() {
   return document.querySelectorAll('[data-slot="toast"]');
@@ -135,5 +137,76 @@ describe("Toaster", () => {
     });
     expect(screen.queryByText("Uploading")).toBeNull();
     expect(getToasts().length).toBe(1);
+  });
+});
+
+describe("Toast v2 styling", () => {
+  it("renders on the raised overlay surface with an offset focus ring", async () => {
+    const manager = createToastManager();
+    render(<Toaster toastManager={manager} />);
+    act(() => {
+      manager.add({ title: "Styled" });
+    });
+    await screen.findByText("Styled");
+    const root = getToasts()[0] as HTMLElement;
+    expect(root.className).toContain("bg-surface-raised");
+    expect(root.className).toContain("shadow-overlay");
+    expect(root.className).toContain("focus-visible:focus-ring");
+    expect(root.className).not.toContain("ring-3");
+    expect(root.className).not.toContain("ring-[3px]");
+    expect(root.className).not.toContain("focus-visible:border-ring");
+  });
+
+  it("pads the content with the panel density token", async () => {
+    const manager = createToastManager();
+    render(<Toaster toastManager={manager} />);
+    act(() => {
+      manager.add({ title: "Padded" });
+    });
+    await screen.findByText("Padded");
+    const content = document.querySelector('[data-slot="toast-content"]')!;
+    expect(content.className).toContain("p-[var(--panel-pad");
+    expect(content.className.split(" ")).not.toContain("p-4");
+  });
+
+  it("fades instead of sliding when reduced motion is requested", async () => {
+    const manager = createToastManager();
+    render(<Toaster toastManager={manager} />);
+    act(() => {
+      manager.add({ title: "Calm" });
+    });
+    await screen.findByText("Calm");
+    const root = getToasts()[0] as HTMLElement;
+    expect(root.className).toContain("motion-reduce:[transition:opacity_200ms]");
+    expect(root.className).toContain("motion-reduce:data-starting-style:opacity-0");
+    expect(root.className).toContain("motion-reduce:data-ending-style:opacity-0");
+  });
+
+  it("renders the action as an outline xs button", async () => {
+    const manager = createToastManager();
+    render(<Toaster toastManager={manager} />);
+    act(() => {
+      manager.add({ title: "Deleted", actionProps: { children: "Undo" } });
+    });
+    const action = await screen.findByRole("button", { name: "Undo" });
+    const want = cn(
+      buttonVariants({ variant: "outline", size: "xs", className: "shrink-0" }),
+    );
+    expect(action.className.split(" ").sort()).toEqual(want.split(" ").sort());
+  });
+
+  it("tones the status icons", async () => {
+    const manager = createToastManager();
+    render(<Toaster toastManager={manager} />);
+    act(() => {
+      manager.add({ title: "Ok", type: "success" });
+      manager.add({ title: "Careful", type: "warning" });
+    });
+    await screen.findByText("Careful");
+    const icons = Array.from(
+      document.querySelectorAll('[data-slot="toast-icon"] svg'),
+    ).map((svg) => svg.getAttribute("class") ?? "");
+    expect(icons.some((c) => c.includes("text-success"))).toBe(true);
+    expect(icons.some((c) => c.includes("text-warning"))).toBe(true);
   });
 });
