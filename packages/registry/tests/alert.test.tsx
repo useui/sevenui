@@ -81,4 +81,35 @@ describe("Alert", () => {
     render(<Alert id="billing-alert">X</Alert>);
     expect(screen.getByRole("alert").id).toBe("billing-alert");
   });
+
+  describe("v2 design language", () => {
+    it("pads from --panel-pad, read with a fallback so density inherits", () => {
+      render(<Alert>P</Alert>);
+      const cls = screen.getByRole("alert").className;
+      expect(cls).toContain("p-[var(--panel-pad,1.125rem)]");
+      expect(cls).not.toContain("[:where(&)]:[--panel-pad");
+      expect(cls.split(" ")).not.toContain("px-2.5");
+    });
+
+    it("sits on the panel surface behind a hairline by default", () => {
+      render(<Alert>D</Alert>);
+      const classes = screen.getByRole("alert").className.split(" ");
+      expect(classes).toContain("bg-surface-panel");
+      expect(classes).toContain("border-hairline-strong");
+    });
+
+    it("tints the destructive tone into the panel, neutral base first, with a tone hairline", () => {
+      render(<Alert variant="destructive">X</Alert>);
+      const cls = screen.getByRole("alert").className;
+      // 92% panel + 8% tone == color-mix(tone 8%, panel). The base comes first
+      // because Tailwind's no-color-mix() fallback is the first colour.
+      expect(cls).toContain(
+        "bg-[color:color-mix(in_oklch,var(--surface-panel,var(--card))_92%,var(--destructive))]",
+      );
+      expect(cls).toContain(
+        "border-[color:color-mix(in_oklch,transparent_70%,var(--destructive))]",
+      );
+      expect(cls.split(" ")).not.toContain("bg-card");
+    });
+  });
 });

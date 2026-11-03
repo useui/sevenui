@@ -3,13 +3,17 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
 const alertVariants = cva(
-  "group/alert relative grid w-full gap-0.5 rounded-lg border px-2.5 py-2 text-left text-sm has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pr-18 has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2 *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg]:text-current *:[svg:not([class*='size-'])]:size-4",
+  // A tinted panel per tone. --panel-pad falls back inside var(), so an
+  // ancestor's data-density still reaches it.
+  "group/alert relative grid w-full gap-0.5 rounded-xl border p-[var(--panel-pad,1.125rem)] text-left text-sm has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pr-18 has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2.5 *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg]:text-current *:[svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: "bg-card text-card-foreground",
+        default: "border-hairline-strong bg-surface-panel text-card-foreground",
+        // 8% tone into the panel. The panel comes first because Tailwind's
+        // no-color-mix() fallback is the first colour.
         destructive:
-          "bg-card text-destructive *:data-[slot=alert-description]:text-destructive/90 *:[svg]:text-current",
+          "border-[color:color-mix(in_oklch,transparent_70%,var(--destructive))] bg-[color:color-mix(in_oklch,var(--surface-panel,var(--card))_92%,var(--destructive))] text-destructive *:data-[slot=alert-description]:text-destructive/90 *:[svg]:text-current",
       },
     },
     defaultVariants: {
@@ -66,7 +70,10 @@ function AlertAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="alert-action"
-      className={cn("absolute top-2 right-2", className)}
+      className={cn(
+        "absolute top-[calc(var(--panel-pad,1.125rem)-0.375rem)] right-[calc(var(--panel-pad,1.125rem)-0.375rem)]",
+        className,
+      )}
       {...props}
     />
   );
