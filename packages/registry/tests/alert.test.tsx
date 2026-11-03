@@ -98,6 +98,20 @@ describe("Alert", () => {
       expect(cls.split(" ")).not.toContain("px-2.5");
     });
 
+    it("gives inline links in title and description the offset focus ring", () => {
+      render(
+        <Alert>
+          <AlertTitle>Title</AlertTitle>
+          <AlertDescription>Description</AlertDescription>
+        </Alert>,
+      );
+      for (const text of ["Title", "Description"]) {
+        const cls = screen.getByText(text).className;
+        expect(cls).toContain("[&_a]:outline-none");
+        expect(cls).toContain("[&_a]:focus-visible:focus-ring");
+      }
+    });
+
     it("sits on the panel surface behind a hairline by default", () => {
       render(<Alert>D</Alert>);
       const classes = screen.getByRole("alert").className.split(" ");
