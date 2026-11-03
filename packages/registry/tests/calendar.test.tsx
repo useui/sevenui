@@ -213,6 +213,8 @@ describe("Calendar v2 styles", () => {
     const day = dayButton("Friday, June 12th, 2026");
     expect(day.className).toContain("focus-visible:focus-ring");
     expect(day.className).not.toContain("ring-[3px]");
+    // Button has no ring halo left to cancel.
+    expect(day.className).not.toContain("focus-visible:ring-0");
     // the old focus halo on the day cell is gone; Button's own halo is B1's
     expect(day.className).not.toContain("group-data-[focused=true]/day:ring");
     expect(day.className).not.toContain("focus-visible:ring-3");
@@ -263,5 +265,6 @@ describe("Calendar v2 styles", () => {
     const next = screen.getByRole("button", { name: "Go to the Next Month" });
     expect(next.className).toContain("focus-visible:focus-ring");
     expect(next.className).toContain("size-(--cell-size)");
+    expect(next.className).not.toContain("focus-visible:ring-0");
   });
 });
