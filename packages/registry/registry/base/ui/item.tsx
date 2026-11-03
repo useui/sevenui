@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
@@ -25,20 +27,22 @@ function ItemSeparator({
     <Separator
       data-slot="item-separator"
       orientation="horizontal"
-      className={cn("my-2", className)}
+      className={cn("my-2 bg-hairline", className)}
       {...props}
     />
   );
 }
 
+// Rows never drop below --item-h. Its fallback sits inside var(): a :where()
+// default on the row would shadow an ancestor's data-density value.
 const itemVariants = cva(
-  "group/item flex w-full flex-wrap items-center rounded-lg border text-sm transition-colors duration-100 outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 [a]:transition-colors [a]:hover:bg-muted",
+  "group/item flex min-h-[var(--item-h,2rem)] w-full flex-wrap items-center rounded-lg border text-sm transition-colors duration-100 outline-none focus-visible:focus-ring motion-reduce:transition-none [a]:transition-colors [a]:hover:bg-muted [a]:motion-reduce:transition-none",
   {
     variants: {
       variant: {
         default: "border-transparent",
-        outline: "border-border",
-        muted: "border-transparent bg-muted/50",
+        outline: "border-hairline-strong",
+        muted: "border-transparent bg-surface-tray",
       },
       size: {
         default: "gap-2.5 px-3 py-2.5",
@@ -83,9 +87,10 @@ const itemMediaVariants = cva(
     variants: {
       variant: {
         default: "bg-transparent",
-        icon: "[&_svg:not([class*='size-'])]:size-4",
+        icon: "text-muted-foreground [&_svg:not([class*='size-'])]:size-4",
+        // The hairline is an inset outline so it paints over the image edge.
         image:
-          "size-10 overflow-hidden rounded-sm group-data-[size=sm]/item:size-8 group-data-[size=xs]/item:size-6 [&_img]:size-full [&_img]:object-cover",
+          "size-10 overflow-hidden rounded-md outline-1 -outline-offset-1 outline-hairline group-data-[size=sm]/item:size-8 group-data-[size=xs]/item:size-6 [&_img]:size-full [&_img]:object-cover",
       },
     },
     defaultVariants: {

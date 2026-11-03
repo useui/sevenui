@@ -49,7 +49,7 @@ describe("Item", () => {
     );
     let item = screen.getByTestId("item");
     expect(item.getAttribute("data-variant")).toBe("outline");
-    expect(item.classList.contains("border-border")).toBe(true);
+    expect(item.classList.contains("border-hairline-strong")).toBe(true);
     rerender(
       <Item data-testid="item" variant="muted">
         V
@@ -57,7 +57,57 @@ describe("Item", () => {
     );
     item = screen.getByTestId("item");
     expect(item.getAttribute("data-variant")).toBe("muted");
-    expect(item.classList.contains("bg-muted/50")).toBe(true);
+    expect(item.classList.contains("bg-surface-tray")).toBe(true);
+  });
+
+  describe("v2 design language", () => {
+    it("draws the offset focus ring instead of the halo", () => {
+      render(<Item data-testid="item">F</Item>);
+      const cls = screen.getByTestId("item").className;
+      expect(cls).toContain("focus-visible:focus-ring");
+      expect(cls).toContain("outline-none");
+      expect(cls).not.toContain("ring-3");
+      expect(cls).not.toContain("ring-[3px]");
+      expect(cls).not.toContain("focus-visible:border-ring");
+      // The ring geometry is inherited from the tokens, never declared here.
+      expect(cls).not.toContain("[:where(&)]:[--focus-");
+    });
+
+    it("keeps rows at least --item-h tall, read with a fallback so density inherits", () => {
+      for (const size of ["default", "sm", "xs"] as const) {
+        render(
+          <Item data-testid={`item-${size}`} size={size}>
+            R
+          </Item>,
+        );
+        expect(screen.getByTestId(`item-${size}`).className).toContain(
+          "min-h-[var(--item-h,2rem)]",
+        );
+      }
+      render(<Item data-testid="item">R</Item>);
+      expect(screen.getByTestId("item").className).not.toContain("[:where(&)]:[--item-h");
+    });
+
+    it("drops transitions under reduced motion", () => {
+      render(<Item data-testid="item">M</Item>);
+      expect(screen.getByTestId("item").className).toContain("motion-reduce:transition-none");
+    });
+
+    it("frames image media with a hairline and mutes icon media", () => {
+      render(
+        <Item>
+          <ItemMedia data-testid="image" variant="image" />
+          <ItemMedia data-testid="icon" variant="icon" />
+        </Item>,
+      );
+      expect(screen.getByTestId("image").className).toContain("outline-hairline");
+      expect(screen.getByTestId("icon").className).toContain("text-muted-foreground");
+    });
+
+    it("separates items with a hairline", () => {
+      render(<ItemSeparator data-testid="sep" />);
+      expect(screen.getByTestId("sep").className).toContain("bg-hairline");
+    });
   });
 
   it("reflects the size prop as data-size", () => {
