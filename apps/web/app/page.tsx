@@ -6,7 +6,6 @@ import { ProductFrame } from "../components/home/product-frame";
 import { componentCount, primitiveCount } from "../components/home/registry-data";
 import { CAPTION, SizeFigures } from "../components/home/size-figures";
 import { JsonLd } from "../components/json-ld";
-import { getNavTree, resolvePrimitivesHref } from "../lib/docs/nav";
 import { pageMetadata, RootUrlTags } from "../lib/metadata";
 import { requirePageMeta } from "../lib/page-meta";
 import { packageManagerCommands } from "../lib/package-manager";
@@ -68,12 +67,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return pageMetadata("/", meta.title, meta.description);
 }
 
-export default async function Home() {
-  const primitivesHref = resolvePrimitivesHref(await getNavTree());
-  if (!primitivesHref) {
-    throw new Error("app/page.tsx: nav tree has no Primitives group with a resolvable href");
-  }
-
+export default function Home() {
   return (
     <main className="sv-page" id="content">
       <section aria-labelledby="home-title">
@@ -145,7 +139,7 @@ export default async function Home() {
               it. The code is the same at every size, and so is the command.
             </span>
           </div>
-          <SizeFigures componentLabel={componentLabel} primitiveCount={primitiveCount} primitivesHref={primitivesHref} />
+          <SizeFigures componentLabel={componentLabel} primitiveCount={primitiveCount} />
         </div>
       </section>
 

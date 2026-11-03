@@ -24,11 +24,9 @@ type Size = {
 export function SizeFigures({
   primitiveCount,
   componentLabel,
-  primitivesHref,
 }: {
   primitiveCount: number;
   componentLabel: string;
-  primitivesHref: string;
 }) {
   const sizes: Size[] = [
     {
@@ -37,7 +35,7 @@ export function SizeFigures({
       terms: `${primitiveCount} · free, MIT`,
       body: "Accessible building blocks on Base UI. Every state and every keyboard path, tested.",
       item: "switch",
-      href: primitivesHref,
+      href: "/docs/components",
       linkLabel: `Browse ${primitiveCount} primitives`,
       render: <PrimitiveRender />,
     },
