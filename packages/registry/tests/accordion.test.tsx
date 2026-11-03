@@ -111,3 +111,36 @@ describe("Accordion", () => {
     expect(screen.queryByText("Hidden content.")).toBeNull();
   });
 });
+
+describe("Accordion v2 style", () => {
+  it("separates rows with a hairline", () => {
+    const { container } = render(<BasicAccordion />);
+    const item = container.querySelector('[data-slot="accordion-item"]');
+    expect(item?.className).toContain("not-last:border-hairline");
+  });
+
+  it("sizes triggers to the item height and focuses with the offset ring", () => {
+    render(<BasicAccordion />);
+    for (const trigger of screen.getAllByRole("button")) {
+      expect(trigger.className).toContain("min-h-(--item-h)");
+      expect(trigger.className).toContain("focus-visible:focus-ring");
+      expect(trigger.className).not.toContain("ring-3");
+      expect(trigger.className).not.toContain("ring-ring");
+      expect(trigger.className).not.toContain("focus-visible:border-ring");
+    }
+  });
+
+  it("mutes the chevron", () => {
+    render(<BasicAccordion />);
+    expect(screen.getAllByRole("button")[0].className).toContain(
+      "**:data-[slot=accordion-trigger-icon]:text-muted-foreground",
+    );
+  });
+
+  it("keeps the panel keyframes and drops them for reduced motion", () => {
+    const { container } = render(<BasicAccordion defaultValue={["shipping"]} />);
+    const panel = container.querySelector('[data-slot="accordion-content"]');
+    expect(panel?.className).toContain("data-open:animate-accordion-down");
+    expect(panel?.className).toContain("motion-reduce:animate-none");
+  });
+});
