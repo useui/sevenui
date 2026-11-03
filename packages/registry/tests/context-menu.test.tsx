@@ -13,6 +13,7 @@ import {
   ContextMenuRadioGroup,
   ContextMenuRadioItem,
   ContextMenuSeparator,
+  ContextMenuShortcut,
   ContextMenuTrigger,
 } from "@/registry/base/ui/context-menu";
 
@@ -174,5 +175,72 @@ describe("ContextMenu", () => {
         screen.getByRole("menuitemradio", { name: "Colm Tuite" }).getAttribute("aria-checked"),
       ).toBe("true");
     });
+  });
+});
+
+describe("ContextMenu v2 styles", () => {
+  function StyledMenu() {
+    return (
+      <ContextMenu>
+        <ContextMenuTrigger>Right click here</ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuGroup>
+            <ContextMenuLabel>Actions</ContextMenuLabel>
+            <ContextMenuItem>
+              Back
+              <ContextMenuShortcut>⌘[</ContextMenuShortcut>
+            </ContextMenuItem>
+          </ContextMenuGroup>
+          <ContextMenuSeparator />
+          <ContextMenuCheckboxItem checked>Bookmarks</ContextMenuCheckboxItem>
+          <ContextMenuRadioGroup value="a">
+            <ContextMenuRadioItem value="a">Person A</ContextMenuRadioItem>
+          </ContextMenuRadioGroup>
+          <ContextMenuItem variant="destructive">Delete</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    );
+  }
+  const slot = (name: string) =>
+    document.querySelector(`[data-slot="${name}"]`)?.getAttribute("class") ?? "";
+
+  it("renders the popup as a raised overlay with a reduced-motion fallback", async () => {
+    render(<StyledMenu />);
+    await openContextMenu();
+    const popup = slot("context-menu-content");
+    expect(popup).toContain("bg-surface-raised");
+    expect(popup).toContain("shadow-overlay");
+    expect(popup).toContain("p-1");
+    expect(popup).toContain("data-starting-style:opacity-0");
+    expect(popup).toContain("data-starting-style:scale-[0.98]");
+    expect(popup).toContain("motion-reduce:transition-none");
+  });
+
+  it("sizes items from --item-h, highlights with surface-panel and carries the focus ring", async () => {
+    render(<StyledMenu />);
+    await openContextMenu();
+    for (const name of [
+      "context-menu-item",
+      "context-menu-checkbox-item",
+      "context-menu-radio-item",
+    ]) {
+      const cls = slot(name);
+      expect(cls).toContain("min-h-(--item-h");
+      expect(cls).toContain("data-highlighted:bg-surface-panel");
+      expect(cls).toContain("focus-visible:focus-ring");
+      expect(cls).not.toContain("ring-3");
+      expect(cls).not.toContain("bg-accent");
+    }
+  });
+
+  it("uses brand indicators, mono shortcuts and hairline separators", async () => {
+    render(<StyledMenu />);
+    await openContextMenu();
+    for (const name of ["context-menu-checkbox-item", "context-menu-radio-item"]) {
+      const indicator = document.querySelector(`[data-slot="${name}"] > span`);
+      expect(indicator?.getAttribute("class")).toContain("text-brand");
+    }
+    expect(slot("context-menu-shortcut")).toContain("font-mono");
+    expect(slot("context-menu-separator")).toContain("bg-hairline");
   });
 });
