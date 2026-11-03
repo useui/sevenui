@@ -128,3 +128,18 @@ describe("InputOTP", () => {
     expect(slots.map((slot) => slot.value).join("")).toBe("1234");
   });
 });
+
+describe("InputOTP v2 styles", () => {
+  it("renders each slot as a control-height inset cell with the focus ring", () => {
+    const { container } = render(<OTP />);
+    const cls = getSlots(container)[0].className;
+    expect(cls).toContain("focus-visible:focus-ring");
+    expect(cls).not.toContain("ring-3");
+    expect(cls).toContain("size-[var(--control-h,2.125rem)]");
+    expect(cls).toContain("bg-surface-inset");
+    expect(cls).toContain("inset_0_0_0_1px_var(--hairline-strong");
+    expect(cls).toContain("caret-foreground");
+    expect(cls).toContain("aria-invalid:[--focus-color:var(--destructive)]");
+    expect(cls).toContain("motion-reduce:transition-none");
+  });
+});

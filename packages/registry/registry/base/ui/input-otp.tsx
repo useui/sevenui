@@ -13,7 +13,7 @@ function InputOTP({
     <OTPFieldPrimitive.Root
       data-slot="input-otp"
       className={cn(
-        "cn-input-otp flex items-center has-disabled:opacity-50",
+        "cn-input-otp flex items-center gap-1.5 has-disabled:opacity-50",
         className,
       )}
       {...props}
@@ -26,7 +26,7 @@ function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="input-otp-group"
       className={cn(
-        "flex items-center rounded-lg has-aria-invalid:border-destructive has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 dark:has-aria-invalid:ring-destructive/40",
+        "flex items-center gap-1.5",
         className,
       )}
       {...props}
@@ -42,7 +42,9 @@ function InputOTPSlot({
     <OTPFieldPrimitive.Input
       data-slot="input-otp-slot"
       className={cn(
-        "relative size-8 border-y border-r border-input text-center text-sm transition-all outline-none first:rounded-l-lg first:border-l last:rounded-r-lg aria-invalid:border-destructive focus:z-10 focus:border-ring focus:ring-3 focus:ring-ring/50 focus:aria-invalid:border-destructive focus:aria-invalid:ring-destructive/20 dark:bg-input/30 dark:focus:aria-invalid:ring-destructive/40",
+        "relative size-[var(--control-h,2.125rem)] rounded-lg bg-surface-inset text-center text-[length:var(--control-text,0.8125rem)] text-foreground tabular-nums caret-foreground shadow-[inset_0_0_0_1px_var(--hairline-strong,var(--input)),var(--elevation-inset,0_0_transparent)] transition-shadow duration-150 outline-none motion-reduce:transition-none",
+        "focus:z-10 focus-visible:focus-ring",
+        "aria-invalid:shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--destructive)_60%,transparent),var(--elevation-inset,0_0_transparent)] aria-invalid:[--focus-color:var(--destructive)]",
         className,
       )}
       {...props}
@@ -58,7 +60,7 @@ function InputOTPSeparator({
     <OTPFieldPrimitive.Separator
       data-slot="input-otp-separator"
       className={cn(
-        "flex items-center [&_svg:not([class*='size-'])]:size-4",
+        "flex items-center px-0.5 text-muted-foreground [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
