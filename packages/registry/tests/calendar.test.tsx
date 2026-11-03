@@ -234,6 +234,18 @@ describe("Calendar v2 styles", () => {
     }
   });
 
+  it("keeps the week object off the week number cell", () => {
+    const { container } = render(
+      <Calendar mode="single" showWeekNumber defaultMonth={june2026} />,
+    );
+    const cells = container.querySelectorAll(".rdp-week_number");
+    expect(cells.length).toBeGreaterThan(0);
+    for (const cell of cells) {
+      expect(cell.hasAttribute("week")).toBe(false);
+      expect(cell.textContent).toMatch(/^\d+$/);
+    }
+  });
+
   it("fills the selected day and range ends with brand, tints the range middle", () => {
     render(<Calendar mode="single" defaultMonth={june2026} />);
     const day = dayButton("Friday, June 12th, 2026");

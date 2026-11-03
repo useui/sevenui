@@ -174,7 +174,8 @@ function Calendar({
         DayButton: ({ ...props }) => (
           <CalendarDayButton locale={locale} {...props} />
         ),
-        WeekNumber: ({ children, ...props }) => {
+        // \`week\` is data for custom renderers, not a DOM attribute.
+        WeekNumber: ({ children, week: _week, ...props }) => {
           return (
             <td {...props}>
               <div className="flex size-(--cell-size) items-center justify-center text-center">
