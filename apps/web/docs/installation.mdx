@@ -50,6 +50,15 @@ If you copy primitive source manually instead of using the CLI, copy the
 global stylesheet too — the accordion additionally ships its own
 `accordion-down` / `accordion-up` keyframes in its item the same way.
 
+Every primitive also depends on the `sevenui-tokens` item, which the CLI
+merges the same way. When copying manually, take both parts of
+`https://sevenui.dev/r/sevenui-tokens.json`: its `cssVars` (the `light`
+values under `:root`, the `dark` values under `.dark`, and the `theme`
+entries inside `@theme inline`) and its `css` block — the
+`@utility focus-ring` definition plus the `:root` and
+`[data-density=compact]` density rules. The tokens add new variables
+only; none of your shadcn variables are overwritten.
+
 ## Registry layout
 
 The registry is namespaced by kind, one namespace per tier: primitives at
