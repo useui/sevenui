@@ -126,6 +126,19 @@ describe("Toggle", () => {
       expect(list).toContain("aria-pressed:shadow-[var(--elevation-highlight,0_0_#0000)]");
     });
 
+    it("marks the default variant invalid with a destructive inset hairline", () => {
+      // The default variant has no border, so border-destructive alone shows nothing.
+      const list = classes({ "aria-invalid": true });
+      expect(list).toContain("aria-invalid:[--focus-color:var(--destructive)]");
+      expect(list).toContain(
+        "aria-invalid:shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--destructive)_60%,transparent)]",
+      );
+      // Pressed and invalid keeps the raised highlight and swaps only the hairline.
+      expect(list).toContain(
+        "aria-invalid:aria-pressed:shadow-[var(--elevation-highlight,0_0_#0000),inset_0_0_0_1px_color-mix(in_oklch,var(--destructive)_60%,transparent)]",
+      );
+    });
+
     it("presses like a button, with a reduced-motion counterpart", () => {
       const list = classes();
       expect(list).toContain("active:scale-[0.985]");

@@ -10,7 +10,7 @@ const toggleVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-transparent aria-pressed:shadow-[var(--elevation-highlight,0_0_#0000),inset_0_0_0_1px_var(--hairline-strong,var(--border))]",
+          "bg-transparent aria-pressed:shadow-[var(--elevation-highlight,0_0_#0000),inset_0_0_0_1px_var(--hairline-strong,var(--border))] aria-invalid:shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--destructive)_60%,transparent)] aria-invalid:aria-pressed:shadow-[var(--elevation-highlight,0_0_#0000),inset_0_0_0_1px_color-mix(in_oklch,var(--destructive)_60%,transparent)]",
         outline:
           "border border-hairline-strong bg-transparent aria-pressed:bg-[color-mix(in_oklch,var(--surface-raised,var(--background)),var(--foreground)_7%)] aria-pressed:shadow-[var(--elevation-highlight,0_0_#0000)] aria-pressed:hover:bg-[color-mix(in_oklch,var(--surface-raised,var(--background)),var(--foreground)_7%)]",
       },
