@@ -11,9 +11,11 @@ const alertVariants = cva(
       variant: {
         default: "border-hairline-strong bg-surface-panel text-card-foreground",
         // 8% tone into the panel. The panel comes first because Tailwind's
-        // no-color-mix() fallback is the first colour.
+        // no-color-mix() fallback is the first colour. Title and description
+        // pull the tone towards the foreground so both read at AA on the
+        // tint; alert.test.tsx measures them against the theme values.
         destructive:
-          "border-[color:color-mix(in_oklch,transparent_70%,var(--destructive))] bg-[color:color-mix(in_oklch,var(--surface-panel,var(--card))_92%,var(--destructive))] text-destructive *:data-[slot=alert-description]:text-destructive/90 *:[svg]:text-current",
+          "border-[color:color-mix(in_oklch,transparent_70%,var(--destructive))] bg-[color:color-mix(in_oklch,var(--surface-panel,var(--card))_92%,var(--destructive))] text-[color:color-mix(in_oklch,var(--foreground)_15%,var(--destructive))] *:data-[slot=alert-description]:text-[color:color-mix(in_oklch,var(--foreground)_25%,var(--destructive))] *:[svg]:text-current",
       },
     },
     defaultVariants: {
