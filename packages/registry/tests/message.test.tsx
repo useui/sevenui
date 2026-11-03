@@ -115,3 +115,41 @@ describe("MessageGroup", () => {
     expect(group.className).toContain("flex-col");
   });
 });
+
+describe("Message v2 styles", () => {
+  it("spaces the row and group with the density gap token", () => {
+    const { container } = render(
+      <MessageGroup>
+        <FullMessage />
+      </MessageGroup>,
+    );
+    for (const slot of ["message", "message-group"]) {
+      const el = container.querySelector(`[data-slot="${slot}"]`) as HTMLElement;
+      expect(el.className).toContain("gap-(--control-gap)");
+      expect(el.className).toContain("[:where(&)]:[--control-gap:0.5rem]");
+    }
+  });
+
+  it("keeps header and footer meta small and muted, aligned to the bubble padding", () => {
+    const { container } = render(<FullMessage />);
+    for (const slot of ["message-header", "message-footer"]) {
+      const el = container.querySelector(`[data-slot="${slot}"]`) as HTMLElement;
+      expect(el.className).toContain("text-xs");
+      expect(el.className).toContain("text-muted-foreground");
+      expect(el.className).toContain("px-(--control-px)");
+      expect(el.className).toContain("[:where(&)]:[--control-px:0.75rem]");
+    }
+  });
+
+  it("draws the avatar with a hairline ring on a panel fallback", () => {
+    const { container } = render(<FullMessage />);
+    const avatar = container.querySelector(
+      '[data-slot="message-avatar"]',
+    ) as HTMLElement;
+    expect(avatar.className).toContain("ring-1");
+    expect(avatar.className).toContain("ring-hairline");
+    expect(avatar.className).toContain("bg-surface-panel");
+    expect(avatar.className).toContain("text-muted-foreground");
+    expect(avatar.className).not.toContain("bg-muted");
+  });
+});
