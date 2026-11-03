@@ -22,31 +22,6 @@ function AlertDialogPortal({ ...props }: AlertDialogPrimitive.Portal.Props) {
   );
 }
 
-const alertDialogPanelClassName =
-  "grid gap-4 rounded-[max(0px,calc(--theme(--radius-xl)_-_4px))] bg-surface-panel p-[var(--panel-pad,1.125rem)] shadow-[inset_0_0_0_1px_var(--hairline,transparent)]";
-
-/**
- * Splits AlertDialogContent's children so footers render in the tray, below
- * the panel. Only direct AlertDialogFooter children move; anything else
- * (including a footer wrapped in a fragment or another component) stays in the
- * panel, where the footer drops its tray-bar padding.
- */
-function splitFooter(
-  children: React.ReactNode,
-  Footer: React.ElementType,
-): { body: React.ReactNode[]; footer: React.ReactNode[] } {
-  const body: React.ReactNode[] = [];
-  const footer: React.ReactNode[] = [];
-  for (const child of React.Children.toArray(children)) {
-    if (React.isValidElement(child) && child.type === Footer) {
-      footer.push(child);
-    } else {
-      body.push(child);
-    }
-  }
-  return { body, footer };
-}
-
 function AlertDialogOverlay({
   className,
   ...props
@@ -65,13 +40,11 @@ function AlertDialogOverlay({
 
 function AlertDialogContent({
   className,
-  children,
   size = "default",
   ...props
 }: AlertDialogPrimitive.Popup.Props & {
   size?: "default" | "sm";
 }) {
-  const { body, footer } = splitFooter(children, AlertDialogFooter);
   return (
     <AlertDialogPortal>
       <AlertDialogOverlay />
@@ -79,22 +52,17 @@ function AlertDialogContent({
         data-slot="alert-dialog-content"
         data-size={size}
         className={cn(
-          // Tray: the popup itself. The panel and the footer bar sit inside it.
-          "group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 rounded-xl bg-surface-tray p-1 text-foreground shadow-overlay outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-sm",
+          // The popup is the panel and parents the consumer's children; the
+          // tray is drawn around it with spread shadows (hairline, 4px tray,
+          // strong hairline, overlay elevation).
+          "group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-surface-panel p-[var(--panel-pad,1.125rem)] text-foreground outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-sm",
+          "shadow-[inset_0_0_0_1px_var(--hairline,transparent),0_0_0_4px_var(--surface-tray,var(--muted)),0_0_0_5px_var(--hairline-strong,var(--border)),var(--elevation-overlay,0_10px_30px_-10px_rgb(0_0_0/0.4))]",
           // Open/close: fade + scale 0.98 -> 1. Reduced motion keeps the fade only.
           "transition-[scale,opacity] duration-150 ease-snappy data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0 motion-reduce:transition-opacity motion-reduce:scale-100!",
           className,
         )}
         {...props}
-      >
-        <div
-          data-slot="alert-dialog-panel"
-          className={alertDialogPanelClassName}
-        >
-          {body}
-        </div>
-        {footer}
-      </AlertDialogPrimitive.Popup>
+      />
     </AlertDialogPortal>
   );
 }
@@ -123,7 +91,8 @@ function AlertDialogFooter({
     <div
       data-slot="alert-dialog-footer"
       className={cn(
-        "flex flex-col-reverse gap-2 px-[var(--panel-pad,1.125rem)] pt-2.5 pb-1.5 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end in-data-[slot=alert-dialog-panel]:px-0 in-data-[slot=alert-dialog-panel]:pt-0 in-data-[slot=alert-dialog-panel]:pb-0",
+        // The tray bar: bleeds to the panel edges and shows the tray colour.
+        "flex flex-col-reverse gap-2 -mx-[var(--panel-pad,1.125rem)] -mb-[var(--panel-pad,1.125rem)] rounded-b-xl border-t border-hairline bg-surface-tray px-[var(--panel-pad,1.125rem)] pt-2.5 pb-1.5 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end",
         className,
       )}
       {...props}
