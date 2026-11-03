@@ -22,7 +22,7 @@ const styles = [
     name: "Underline",
     description: "A single rule for editorial, low-chrome layouts.",
     className:
-      "rounded-none border-0 border-b bg-transparent px-0 focus-visible:ring-0 focus-visible:shadow-[0_1px_0_0_var(--ring)] dark:bg-transparent",
+      "rounded-none border-0 border-b bg-transparent px-0 shadow-none [--focus-width:0px] focus-visible:shadow-[0_1px_0_0_var(--ring)] dark:bg-transparent",
   },
 ] as const;
 

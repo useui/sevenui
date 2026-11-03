@@ -69,7 +69,7 @@ export default function Textarea03() {
           rows={6}
           value={recoveryCodes}
           aria-describedby={`${id}-hint`}
-          className="flex-1 cursor-default resize-none rounded-none border-0 bg-transparent px-3 py-3 shadow-none focus-visible:ring-0 dark:bg-transparent font-mono text-sm leading-6 tracking-wider tabular-nums"
+          className="flex-1 cursor-default resize-none rounded-none border-0 bg-transparent px-3 py-3 shadow-none [--focus-width:0px] dark:bg-transparent font-mono text-sm leading-6 tracking-wider tabular-nums"
         />
       </InputGroup>
       <p id={`${id}-hint`} className="text-xs text-muted-foreground">
