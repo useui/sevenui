@@ -93,6 +93,50 @@ describe("Checkbox", () => {
     expect(input!.checked).toBe(false);
   });
 
+  describe("v2 styles", () => {
+    it("uses the offset focus ring, never the old halo", () => {
+      render(<Checkbox />);
+      const cls = screen.getByRole("checkbox").className;
+      expect(cls).toContain("focus-visible:focus-ring");
+      expect(cls).not.toContain("ring-3");
+      expect(cls).not.toContain("ring-ring");
+      expect(cls).not.toContain("focus-visible:border-ring");
+    });
+
+    it("sizes the box from the density scale with a 14px floor", () => {
+      render(<Checkbox />);
+      expect(screen.getByRole("checkbox").className).toContain(
+        "size-[max(0.875rem,calc(var(--control-h,2.125rem)*0.47))]",
+      );
+    });
+
+    it("sits on the inset surface with a hairline-strong edge when off", () => {
+      render(<Checkbox />);
+      const cls = screen.getByRole("checkbox").className;
+      expect(cls).toContain("bg-surface-inset");
+      expect(cls).toContain("var(--hairline-strong");
+    });
+
+    it("fills with the brand accent when checked or indeterminate", () => {
+      render(<Checkbox defaultChecked />);
+      const cls = screen.getByRole("checkbox").className;
+      expect(cls).toContain("data-checked:bg-brand");
+      expect(cls).toContain("data-checked:text-brand-foreground");
+      expect(cls).toContain("data-checked:shadow-none");
+      expect(cls).toContain("data-indeterminate:bg-brand");
+      expect(cls).not.toContain("bg-primary");
+    });
+
+    it("fades the check icon with a reduced-motion counterpart", () => {
+      const { container } = render(<Checkbox defaultChecked />);
+      const indicator = container.querySelector(
+        "[data-slot=checkbox-indicator]",
+      )!;
+      expect(indicator.className).toContain("transition-opacity");
+      expect(indicator.className).toContain("motion-reduce:transition-none");
+    });
+  });
+
   it("is labeled automatically inside a Field with FieldLabel", async () => {
     const user = userEvent.setup();
     render(

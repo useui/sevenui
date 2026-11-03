@@ -2,23 +2,28 @@
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox";
 import { cn } from "cn";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, MinusIcon } from "lucide-react";
 
+// The box size follows the density scale (16px comfortable, 14px compact).
+// `--control-h` falls back inline rather than through a `:where()` default:
+// a default declared on the element itself would shadow the value inherited
+// from a `[data-density=compact]` ancestor.
 function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
   return (
     <CheckboxPrimitive.Root
       data-slot="checkbox"
       className={cn(
-        "peer relative flex size-4 shrink-0 items-center justify-center rounded-[4px] border border-input transition-colors outline-none group-has-disabled/field:opacity-50 group-has-[:focus-visible]/field-label:ring-0 group-has-[:focus-visible]/field-label:not-data-checked:border-input after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 aria-invalid:aria-checked:border-primary dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 data-checked:border-primary data-checked:bg-primary data-checked:text-primary-foreground group-has-[:focus-visible]/field-label:data-checked:border-primary dark:data-checked:bg-primary",
+        "peer relative flex size-[max(0.875rem,calc(var(--control-h,2.125rem)*0.47))] shrink-0 items-center justify-center rounded-[5px] bg-surface-inset shadow-[inset_0_0_0_1px_var(--hairline-strong,var(--input))] transition-[background-color,box-shadow] duration-150 outline-none motion-reduce:transition-none [:where(&)]:[--focus-gap:2px] [:where(&)]:[--focus-width:1.5px] after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:focus-ring group-has-disabled/field:opacity-50 group-has-[:focus-visible]/field-label:focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-disabled:cursor-not-allowed aria-invalid:shadow-[inset_0_0_0_1px_var(--destructive)] aria-invalid:[--focus-color:var(--destructive)] data-checked:bg-brand data-checked:text-brand-foreground data-checked:shadow-none data-indeterminate:bg-brand data-indeterminate:text-brand-foreground data-indeterminate:shadow-none",
         className,
       )}
       {...props}
     >
       <CheckboxPrimitive.Indicator
         data-slot="checkbox-indicator"
-        className="grid place-content-center text-current transition-none [&>svg]:size-3.5"
+        className="grid size-full place-content-center text-current transition-opacity duration-100 motion-reduce:transition-none data-starting-style:opacity-0 data-ending-style:opacity-0 [&>svg]:size-3/4 [&>svg]:stroke-[2.5] data-indeterminate:[&>svg:first-child]:hidden not-data-indeterminate:[&>svg:last-child]:hidden"
       >
         <CheckIcon />
+        <MinusIcon />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   );
