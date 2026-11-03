@@ -12,12 +12,19 @@ function Meter({
 }: React.ComponentProps<typeof MeterPrimitive.Root>) {
   return (
     <MeterPrimitive.Root
+      data-slot="meter"
       className={cn("grid w-full gap-2", className)}
       {...props}
     >
       {children}
-      <MeterPrimitive.Track className="col-span-full h-2 w-full overflow-hidden rounded-full bg-primary/20">
-        <MeterPrimitive.Indicator className="h-full bg-primary transition-[width] duration-500" />
+      <MeterPrimitive.Track
+        data-slot="meter-track"
+        className="col-span-full h-1 w-full overflow-hidden rounded-full bg-hairline-strong in-data-[density=compact]:h-[3px]"
+      >
+        <MeterPrimitive.Indicator
+          data-slot="meter-indicator"
+          className="h-full bg-foreground transition-[width] duration-300 ease-snappy motion-reduce:transition-none"
+        />
       </MeterPrimitive.Track>
     </MeterPrimitive.Root>
   );
@@ -29,6 +36,7 @@ function MeterLabel({
 }: React.ComponentProps<typeof MeterPrimitive.Label>) {
   return (
     <MeterPrimitive.Label
+      data-slot="meter-label"
       className={cn("text-sm font-medium", className)}
       {...props}
     />
@@ -41,7 +49,8 @@ function MeterValue({
 }: React.ComponentProps<typeof MeterPrimitive.Value>) {
   return (
     <MeterPrimitive.Value
-      className={cn("text-sm text-muted-foreground", className)}
+      data-slot="meter-value"
+      className={cn("text-sm text-muted-foreground tabular-nums", className)}
       {...props}
     />
   );

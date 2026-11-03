@@ -57,3 +57,17 @@ describe("Meter", () => {
     expect(track!.firstElementChild).not.toBeNull();
   });
 });
+
+describe("Meter v2 styling", () => {
+  it("uses a hairline track and a neutral foreground indicator", () => {
+    const { container } = render(<Meter value={40} aria-label="Storage" />);
+    const track = container.querySelector('[data-slot="meter-track"]')!;
+    const indicator = container.querySelector('[data-slot="meter-indicator"]')!;
+    expect(track.className).toContain("bg-hairline-strong");
+    expect(track.className).toContain("h-1");
+    expect(track.className).toContain("in-data-[density=compact]:h-[3px]");
+    expect(indicator.className).toContain("bg-foreground");
+    expect(indicator.className).not.toContain("bg-brand");
+    expect(indicator.className).toContain("motion-reduce:transition-none");
+  });
+});
