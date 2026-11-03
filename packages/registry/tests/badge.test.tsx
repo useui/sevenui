@@ -42,7 +42,9 @@ describe("Badge", () => {
     render(<Badge variant="outline">Outline</Badge>);
     const badge = screen.getByText("Outline");
     expect(badge.getAttribute("data-variant")).toBe("outline");
-    expect(badge.className).toContain("border-border");
+    // v2: a hairline only, no fill.
+    expect(badge.className).toContain("border-hairline-strong");
+    expect(badge.className).toContain("bg-transparent");
   });
 
   it("applies the ghost variant", () => {
@@ -113,6 +115,31 @@ describe("Badge", () => {
         "text-[color:color-mix(in_oklch,var(--foreground)_16%,var(--brand))]",
       );
       expect(badge.className).toContain("border-brand/30");
+    });
+
+    it("tells the neutral badges apart by surface while keeping the text neutral", () => {
+      const cls = (variant: "default" | "secondary" | "outline") =>
+        badgeVariants({ variant }).split(" ");
+      expect(cls("default")).toEqual(
+        expect.arrayContaining([
+          "bg-surface-raised",
+          "border-hairline-strong",
+          "shadow-[var(--elevation-highlight,0_0_#0000)]",
+          "text-foreground",
+        ]),
+      );
+      expect(cls("secondary")).toEqual(
+        expect.arrayContaining(["bg-surface-panel", "border-hairline", "text-foreground"]),
+      );
+      expect(cls("outline")).toEqual(
+        expect.arrayContaining(["bg-transparent", "border-hairline-strong", "text-foreground"]),
+      );
+      expect(cls("secondary")).not.toContain("text-secondary-foreground");
+      // No two of the three share a surface.
+      const surfaces = (["default", "secondary", "outline"] as const).map((v) =>
+        cls(v).filter((c) => /^(bg-|border-|shadow-)/.test(c)).sort().join(" "),
+      );
+      expect(new Set(surfaces).size).toBe(3);
     });
 
     it("keeps the accent out of every other variant", () => {

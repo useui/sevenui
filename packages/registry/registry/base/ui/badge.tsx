@@ -17,10 +17,13 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
+        // The three neutral badges differ by surface, not colour: default is a
+        // raised chip with a top highlight, secondary a flat panel fill, and
+        // outline only a hairline.
         default:
-          "border-hairline-strong text-foreground [a]:hover:bg-muted",
+          "border-hairline-strong bg-surface-raised text-foreground shadow-[var(--elevation-highlight,0_0_#0000)] [a]:hover:bg-muted",
         secondary:
-          "border-hairline bg-surface-panel text-secondary-foreground [a]:hover:bg-surface-raised",
+          "border-hairline bg-surface-panel text-foreground [a]:hover:bg-surface-raised",
         // Tinted text is pulled towards the foreground, darker in light and
         // lighter in dark, until it reads at AA (4.5:1) on its own tint over
         // any surface; the dot keeps the pure tone. badge.test.tsx measures
@@ -30,7 +33,7 @@ const badgeVariants = cva(
           statusTone,
         ),
         outline:
-          "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
+          "border-hairline-strong bg-transparent text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
         ghost:
           "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
         link: "text-brand underline-offset-4 hover:underline",
