@@ -4,7 +4,15 @@ import { PlusIcon } from "lucide-react";
 import { Button } from "@/registry/base/ui/button";
 import { LabSection } from "../lab-frame";
 
-const VARIANTS = ["default", "outline", "secondary", "ghost", "destructive", "link"] as const;
+const VARIANTS = [
+  "default",
+  "accent",
+  "outline",
+  "secondary",
+  "ghost",
+  "destructive",
+  "link",
+] as const;
 const SIZES = ["xs", "sm", "default", "lg"] as const;
 const ICON_SIZES = ["icon-xs", "icon-sm", "icon", "icon-lg"] as const;
 
@@ -26,6 +34,10 @@ export default function ButtonMatrix() {
           </Button>
           <Button variant={variant} aria-expanded>
             open
+          </Button>
+          {/* Static stand-in for the :active press (scale + 1px drop). */}
+          <Button variant={variant} className="translate-y-px scale-[0.985]">
+            pressed
           </Button>
           <Button variant={variant}>
             <PlusIcon data-icon="inline-start" />
