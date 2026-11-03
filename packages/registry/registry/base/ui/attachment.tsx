@@ -52,7 +52,7 @@ function Attachment({
 }
 
 const attachmentMediaVariants = cva(
-  "relative flex aspect-square w-10 shrink-0 items-center justify-center overflow-hidden rounded-[max(0px,calc(--theme(--radius-2xl)-0.5rem))] bg-muted text-foreground group-data-[orientation=vertical]/attachment:w-full group-data-[size=sm]/attachment:w-8 group-data-[size=sm]/attachment:rounded-[max(0px,calc(--theme(--radius-2xl)-0.375rem))] group-data-[size=xs]/attachment:w-7 group-data-[size=xs]/attachment:rounded-[max(0px,calc(--theme(--radius-xl)-0.25rem))] group-data-[state=error]/attachment:bg-destructive/10 group-data-[state=error]/attachment:text-destructive group-data-[orientation=vertical]/attachment:*:data-[slot=spinner]:size-6! [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 group-data-[orientation=vertical]/attachment:[&_svg:not([class*='size-'])]:size-6 group-data-[size=xs]/attachment:[&_svg:not([class*='size-'])]:size-3.5",
+  "relative flex aspect-square w-10 shrink-0 items-center justify-center overflow-hidden rounded-[max(0px,calc(--theme(--radius-2xl)-0.5rem))] bg-muted text-foreground group-data-[orientation=vertical]/attachment:w-full group-data-[size=sm]/attachment:w-8 group-data-[size=sm]/attachment:rounded-[max(0px,calc(--theme(--radius-2xl)-0.375rem))] group-data-[size=xs]/attachment:w-7 group-data-[size=xs]/attachment:rounded-[max(0px,calc(--theme(--radius-xl)-0.25rem))] group-data-[state=error]/attachment:bg-destructive/10 group-data-[state=error]/attachment:text-[color:color-mix(in_oklch,var(--foreground)_15%,var(--destructive))] group-data-[orientation=vertical]/attachment:*:data-[slot=spinner]:size-6! [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 group-data-[orientation=vertical]/attachment:[&_svg:not([class*='size-'])]:size-6 group-data-[size=xs]/attachment:[&_svg:not([class*='size-'])]:size-3.5",
   {
     variants: {
       variant: {
@@ -122,7 +122,7 @@ function AttachmentDescription({
     <span
       data-slot="attachment-description"
       className={cn(
-        "mt-0.5 block min-w-0 truncate text-xs text-muted-foreground group-data-[state=error]/attachment:text-destructive/80",
+        "mt-0.5 block min-w-0 truncate text-xs text-muted-foreground group-data-[state=error]/attachment:text-[color:color-mix(in_oklch,var(--foreground)_15%,var(--destructive))]",
         "max-w-full",
         className,
       )}

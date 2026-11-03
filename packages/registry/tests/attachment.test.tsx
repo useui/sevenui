@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { cn } from "cn";
 import { describe, expect, it, vi } from "vitest";
+import { AA, contrastOn, destructivePull, destructiveTint, mix, palette } from "./helpers/palette";
 
 import {
   Attachment,
@@ -254,5 +255,41 @@ describe("Attachment v2 styles", () => {
     for (const c of expected) {
       expect(action.classList.contains(c)).toBe(true);
     }
+  });
+});
+
+// --- Contrast -------------------------------------------------------------
+// A failed attachment tints its media destructive and recolours the media and
+// description text. Both must reach AA on the panel tile, at rest and on the
+// interactive tile's hover (panel pulled 4% towards the foreground).
+
+describe("Failed attachment contrast (AA)", () => {
+  it.each(["light", "dark"] as const)("media and description text reach AA in %s", (mode) => {
+    render(
+      <Attachment data-testid="attachment" state="error">
+        <AttachmentMedia data-testid="media">PDF</AttachmentMedia>
+        <AttachmentContent>
+          <AttachmentTitle>report.pdf</AttachmentTitle>
+          <AttachmentDescription data-testid="description">Upload failed</AttachmentDescription>
+        </AttachmentContent>
+      </Attachment>,
+    );
+    const error = "group-data-[state=error]/attachment:";
+    const media = screen.getByTestId("media").className;
+    const description = screen.getByTestId("description").className;
+    const tint = destructiveTint(media, error);
+    const mediaPull = destructivePull(media, error);
+    const descriptionPull = destructivePull(description, error);
+    for (const n of [tint, mediaPull, descriptionPull]) expect(n).not.toBeNaN();
+    expect(description).not.toContain("text-destructive/");
+
+    const p = palette(mode);
+    const tiles = { rest: p.surfaces.panel, hover: mix(p.surfaces.panel, 96, p.foreground) };
+    const ratios = Object.entries(tiles).flatMap(([state, tile]) => [
+      [`media ${state}`, contrastOn(mix(p.foreground, mediaPull, p.destructive), tile, { color: p.destructive, alpha: tint })],
+      [`description ${state}`, contrastOn(mix(p.foreground, descriptionPull, p.destructive), tile)],
+    ] as const);
+    const report = ratios.map(([n, r]) => `${n} ${r.toFixed(2)}`).join(", ");
+    expect(Math.min(...ratios.map(([, r]) => r)), `${mode}: ${report}`).toBeGreaterThanOrEqual(AA);
   });
 });
