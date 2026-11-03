@@ -6,6 +6,7 @@ import {
   Field,
   FieldDescription,
   FieldError,
+  FieldGroup,
   FieldLabel,
 } from "@/registry/base/ui/field";
 import { Input } from "@/registry/base/ui/input";
@@ -105,5 +106,58 @@ describe("FieldError", () => {
       </Field>,
     );
     expect(screen.getByText("Custom message")).not.toBeNull();
+  });
+});
+
+describe("Field v2 styles", () => {
+  it("spaces label, control and description with the control gap", () => {
+    render(<Field data-testid="field-root" />);
+    const cls = screen.getByTestId("field-root").className;
+    expect(cls).toContain("gap-[var(--control-gap,0.5rem)]");
+    expect(cls.split(" ")).not.toContain("gap-2");
+  });
+
+  it("sets descriptions and errors in small type", () => {
+    render(
+      <Field invalid>
+        <FieldDescription>Help text.</FieldDescription>
+        <FieldError>Broken.</FieldError>
+      </Field>,
+    );
+    const description = screen.getByText("Help text.").className.split(" ");
+    expect(description).toContain("text-xs");
+    expect(description).toContain("text-muted-foreground");
+    expect(description).not.toContain("text-sm");
+    const error = screen.getByText("Broken.").className.split(" ");
+    expect(error).toContain("text-xs");
+    expect(error).toContain("text-destructive");
+    expect(error).not.toContain("text-sm");
+  });
+
+  it("divides consecutive horizontal field rows with a hairline", () => {
+    render(<FieldGroup data-testid="group" />);
+    const cls = screen.getByTestId("group").className;
+    const row =
+      "[&>[data-slot=field][data-orientation=horizontal]+[data-slot=field][data-orientation=horizontal]]";
+    expect(cls).toContain(`${row}:border-t`);
+    expect(cls).toContain(`${row}:border-hairline`);
+  });
+
+  it("uses the offset focus ring on choice-card labels, never the old halo", () => {
+    render(
+      <Field>
+        <FieldLabel data-testid="label">Card</FieldLabel>
+      </Field>,
+    );
+    const cls = screen.getByTestId("label").className;
+    expect(cls).toContain(
+      "has-[>[data-slot=field]]:has-[:focus-visible]:focus-ring",
+    );
+    expect(cls).toContain(
+      "has-[>[data-slot=field]]:not-has-data-checked:bg-surface-panel",
+    );
+    expect(cls).not.toContain("ring-3");
+    expect(cls).not.toContain("ring-ring");
+    expect(cls).not.toContain("border-ring");
   });
 });
