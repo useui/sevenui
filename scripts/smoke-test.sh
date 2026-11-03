@@ -107,6 +107,48 @@ cat > "$APP/components.json" <<'EOF'
 EOF
 (cd "$APP" && npm install --silent)
 
+# 2b. Stock-shadcn token proof: a second project seeded with a stock shadcn
+# theme. Snapshot it before installing so we can prove v2 tokens are additive.
+TOK="$WORK/app-tokens"
+cp -R "$APP" "$TOK"
+cat > "$TOK/src/styles.css" <<'EOF'
+@import "tailwindcss";
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --border: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --ring: oklch(0.556 0 0);
+}
+EOF
+# Stock variable declarations as "<block> <name>: <value>;" lines so :root and
+# .dark values are compared separately. Only the stock names are extracted.
+STOCK_NAMES='background|foreground|primary|primary-foreground|border|ring|radius'
+stock_decls() {
+  awk -v names="^(${STOCK_NAMES})$" '
+    /^[^ ].*\{/ { block=$1 }
+    /^}/ { block="" }
+    block != "" && /^  --[a-z-]+: .*;$/ {
+      n=$1; sub(/^--/, "", n); sub(/:$/, "", n)
+      if (n ~ names) print block " " $0
+    }' "$1" | sort
+}
+stock_decls "$TOK/src/styles.css" > "$WORK/tokens-before.txt"
+test "$(wc -l < "$WORK/tokens-before.txt" | tr -d ' ')" -eq 13 \
+  || { echo "stock baseline should hold 13 declarations" >&2; cat "$WORK/tokens-before.txt" >&2; exit 1; }
+
 # 3. Install representative items through the CLI
 # Pinned to the repo's own installed binary instead of `npx --yes shadcn@latest`:
 # `@latest` would re-resolve to whatever the registry serves at run time, which
@@ -122,6 +164,24 @@ SHADCN_BIN="$ROOT/apps/web/node_modules/.bin/shadcn"
   "http://localhost:$PORT/accordion.json" \
   "http://localhost:$PORT/demo/accordion-demo.json" \
   "http://localhost:$PORT/component/accordion-01.json")
+
+# v2 token contract: installing one primitive pulls sevenui-tokens into a
+# stock shadcn project's global CSS without disturbing existing variables.
+TOK_CSS="$TOK/src/styles.css"
+(cd "$TOK" && "$SHADCN_BIN" add --yes --overwrite "http://localhost:$PORT/button.json")
+grep -q -- '--brand:' "$TOK_CSS" || { echo "--brand: missing after button install" >&2; exit 1; }
+grep -q '@utility focus-ring' "$TOK_CSS" || { echo "@utility focus-ring missing after button install" >&2; exit 1; }
+(cd "$TOK" && "$SHADCN_BIN" add --yes --overwrite \
+  "http://localhost:$PORT/select.json" "http://localhost:$PORT/dialog.json")
+# Each shared dependency installs once: --brand is declared once per theme
+# block (:root and .dark), never duplicated by the second install.
+test "$(grep -c -- '--brand:' "$TOK_CSS")" -eq 2 \
+  || { echo "--brand: should be declared exactly twice (:root + .dark) after select+dialog" >&2; exit 1; }
+test "$(grep -c '@utility focus-ring' "$TOK_CSS")" -eq 1 \
+  || { echo "@utility focus-ring should appear exactly once" >&2; exit 1; }
+stock_decls "$TOK_CSS" > "$WORK/tokens-after.txt"
+diff "$WORK/tokens-before.txt" "$WORK/tokens-after.txt" \
+  || { echo "stock shadcn variables changed by the v2 token install" >&2; exit 1; }
 
 # Wave 5 contracts: multi-file item lands the hook under the hooks alias,
 # third-party deps land in the consumer package.json.
