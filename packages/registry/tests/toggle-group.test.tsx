@@ -148,8 +148,8 @@ describe("ToggleGroup", () => {
     expect(item.getAttribute("data-variant")).toBe("outline");
     expect(item.getAttribute("data-size")).toBe("sm");
     const classes = item.className.split(/\s+/);
-    expect(classes).toContain("border-input");
-    expect(classes).toContain("h-7");
+    expect(classes).toContain("border-hairline-strong");
+    expect(classes).toContain("h-[calc(var(--control-h,2.125rem)-0.25rem)]");
   });
 
   it("sets vertical orientation data on the group", () => {
@@ -159,5 +159,60 @@ describe("ToggleGroup", () => {
         .getByRole("group", { name: "Formatting" })
         .getAttribute("data-orientation"),
     ).toBe("vertical");
+  });
+
+  describe("v2 design language", () => {
+    it("renders the default variant as a segmented tray", () => {
+      render(<Formatting />);
+      const classes = screen
+        .getByRole("group", { name: "Formatting" })
+        .className.split(/\s+/);
+      expect(classes).toContain("not-data-[variant=outline]:bg-surface-tray");
+      expect(classes).toContain("not-data-[variant=outline]:p-0.5");
+      expect(classes).toContain(
+        "not-data-[variant=outline]:shadow-[inset_0_0_0_1px_var(--hairline,var(--border)),var(--elevation-inset,0_0_#0000)]",
+      );
+    });
+
+    it("fits items 4px inside the tray at every size", () => {
+      render(<Formatting />);
+      const classes = screen
+        .getByRole("button", { name: "Bold" })
+        .className.split(/\s+/);
+      expect(classes).toContain(
+        "data-[variant=default]:data-[size=default]:h-[calc(var(--control-h,2.125rem)-4px)]",
+      );
+      expect(classes).toContain(
+        "data-[variant=default]:data-[size=sm]:h-[calc(var(--control-h,2.125rem)-0.25rem-4px)]",
+      );
+      expect(classes).toContain(
+        "data-[variant=default]:data-[size=lg]:h-[calc(var(--control-h,2.125rem)+0.25rem-4px)]",
+      );
+    });
+
+    it("styles items like toggles: offset focus ring, neutral raised selection", () => {
+      render(<Formatting />);
+      const classes = screen
+        .getByRole("button", { name: "Bold" })
+        .className.split(/\s+/);
+      expect(classes).toContain("focus-visible:focus-ring");
+      expect(classes).toContain("focus-visible:z-10");
+      expect(classes).toContain("aria-pressed:bg-surface-raised");
+      expect(classes.some((c) => c.includes("brand"))).toBe(false);
+    });
+
+    it("keeps the joined outline segments without a tray", () => {
+      render(
+        <ToggleGroup aria-label="Outline" variant="outline" spacing={0}>
+          <ToggleGroupItem value="a" aria-label="A" />
+        </ToggleGroup>,
+      );
+      const group = screen.getByRole("group", { name: "Outline" });
+      expect(group.getAttribute("data-variant")).toBe("outline");
+      const item = screen.getByRole("button", { name: "A" }).className.split(/\s+/);
+      expect(item).toContain(
+        "group-data-[spacing=0]/toggle-group:data-[variant=outline]:rounded-none",
+      );
+    });
   });
 });
