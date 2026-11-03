@@ -137,7 +137,7 @@ describe("Dialog v2 styles", () => {
     const popup = await renderOpen();
     const panel = popup.querySelector('[data-slot="dialog-panel"]');
     expect(panel?.className).toContain("bg-surface-panel");
-    expect(panel?.className).toContain("p-(--panel-pad)");
+    expect(panel?.className).toContain("p-[var(--panel-pad,1.125rem)]");
     expect(panel?.querySelector('[data-slot="dialog-header"]')).toBeTruthy();
     const footer = popup.querySelector('[data-slot="dialog-footer"]');
     expect(footer?.parentElement).toBe(popup);

@@ -55,7 +55,7 @@ function OpenDialog({
       {(container) => (
         <Dialog open modal={false}>
           <DialogPortal container={container}>
-            <DialogContent showCloseButton={showCloseButton}>
+            <DialogContent showCloseButton={showCloseButton} initialFocus={false}>
               {children}
             </DialogContent>
           </DialogPortal>
