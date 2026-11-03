@@ -42,9 +42,9 @@ function InputOTPSlot({
     <OTPFieldPrimitive.Input
       data-slot="input-otp-slot"
       className={cn(
-        "relative size-[var(--control-h,2.125rem)] rounded-lg bg-surface-inset text-center text-[length:var(--control-text,0.8125rem)] text-foreground tabular-nums caret-foreground shadow-[inset_0_0_0_1px_var(--hairline-strong,var(--input)),var(--elevation-inset,0_0_transparent)] transition-shadow duration-150 outline-none motion-reduce:transition-none",
+        "relative size-[var(--control-h,2.125rem)] rounded-lg bg-surface-inset text-center text-[length:var(--control-text,0.8125rem)] text-foreground tabular-nums caret-foreground border border-hairline-strong shadow-[0_0_#0000,var(--elevation-inset,0_0_#0000)] transition-[border-color,box-shadow] duration-150 outline-none motion-reduce:transition-none",
         "focus:z-10 focus-visible:focus-ring",
-        "aria-invalid:shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--destructive)_60%,transparent),var(--elevation-inset,0_0_transparent)] aria-invalid:[--focus-color:var(--destructive)]",
+        "aria-invalid:border-destructive/60 aria-invalid:[--focus-color:var(--destructive)]",
         className,
       )}
       {...props}

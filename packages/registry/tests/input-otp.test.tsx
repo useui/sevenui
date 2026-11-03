@@ -137,7 +137,9 @@ describe("InputOTP v2 styles", () => {
     expect(cls).not.toContain("ring-3");
     expect(cls).toContain("size-[var(--control-h,2.125rem)]");
     expect(cls).toContain("bg-surface-inset");
-    expect(cls).toContain("inset_0_0_0_1px_var(--hairline-strong");
+    // The edge is a real border so consumer border-* classes merge against it.
+    expect(cls.split(" ")).toEqual(expect.arrayContaining(["border", "border-hairline-strong"]));
+    expect(cls).not.toContain("0_0_0_1px_var(--hairline");
     expect(cls).toContain("caret-foreground");
     expect(cls).toContain("aria-invalid:[--focus-color:var(--destructive)]");
     expect(cls).toContain("motion-reduce:transition-none");
