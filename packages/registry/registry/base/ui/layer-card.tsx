@@ -25,7 +25,8 @@ const layerCardVariants = cva(
     "[:where(&)]:[--layer-card-pad-x:var(--layer-card-inset)] [:where(&)]:[--layer-card-pad-y:var(--layer-card-inset)] [:where(&)]:[--layer-card-fill:var(--layer-card-bg)] [:where(&)]:[--layer-card-shadow:var(--elevation-highlight,0_0_#0000)]",
     // Surfaces, hairline and lift come from the SevenUI tokens; each keeps its
     // pre-token value as the fallback for a file copied without them.
-    "[:where(&)]:[--layer-card-border-color:var(--hairline,color-mix(in_oklch,var(--foreground)_10%,transparent))]",    // Concentric: the panel is inset by the tray padding plus the tray border,
+    "[:where(&)]:[--layer-card-border-color:var(--hairline,color-mix(in_oklch,var(--foreground)_10%,transparent))]",
+    // Concentric: the panel is inset by the tray padding plus the tray border,
     // so subtracting exactly that keeps both arcs parallel. Clamped, because
     // the radius-none preset leaves --radius-xl at 4px.
     "[:where(&)]:[--layer-card-panel-radius:max(0px,calc(var(--layer-card-radius)_-_var(--layer-card-inset)_-_var(--layer-card-border-width)))]",
