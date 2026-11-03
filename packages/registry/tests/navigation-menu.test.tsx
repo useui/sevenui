@@ -89,3 +89,40 @@ describe("NavigationMenu", () => {
     expect(onValueChange.mock.calls[0][0]).toBe("products");
   });
 });
+
+describe("NavigationMenu v2 styles", () => {
+  const cls = (el: Element | null | undefined) => el?.getAttribute("class") ?? "";
+
+  it("styles triggers as ghost controls sized from --control-h with the focus ring", () => {
+    render(<BasicMenu />);
+    const trigger = cls(screen.getByRole("button", { name: "Products" }));
+    expect(trigger).toContain("h-(--control-h");
+    expect(trigger).toContain("px-(--control-px");
+    expect(trigger).toContain("hover:bg-surface-panel");
+    expect(trigger).toContain("focus-visible:focus-ring");
+    expect(trigger).not.toContain("ring-3");
+    expect(trigger).toContain("motion-reduce:transition-none");
+  });
+
+  it("styles links with the md radius, a surface-panel active state and the focus ring", () => {
+    render(<BasicMenu />);
+    const link = cls(screen.getByRole("link", { name: "Docs" }));
+    expect(link).toContain("rounded-md");
+    expect(link).toContain("data-active:bg-surface-panel");
+    expect(link).toContain("focus-visible:focus-ring");
+    expect(link).not.toContain("ring-3");
+  });
+
+  it("renders the viewport popup as an overlay surface with a reduced-motion fallback", async () => {
+    const user = userEvent.setup();
+    render(<BasicMenu />);
+    await user.click(screen.getByRole("button", { name: "Products" }));
+    const viewport = screen.getByRole("link", { name: "Analytics" }).closest(
+      '[data-slot="navigation-menu-content"]',
+    )?.parentElement;
+    const surface = viewport?.parentElement;
+    expect(cls(surface)).toContain("bg-surface-raised");
+    expect(cls(surface)).toContain("shadow-overlay");
+    expect(cls(surface)).toContain("motion-reduce:transition-none");
+  });
+});
