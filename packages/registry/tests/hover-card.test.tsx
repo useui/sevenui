@@ -24,6 +24,20 @@ function getContent() {
 }
 
 describe("HoverCard", () => {
+  it("rings the focused trigger and keeps consumer classes", () => {
+    render(
+      <HoverCard>
+        <HoverCardTrigger href="#" className="custom-x">
+          @sevenui
+        </HoverCardTrigger>
+      </HoverCard>,
+    );
+    const cls = screen.getByText("@sevenui").className;
+    expect(cls).toContain("focus-visible:focus-ring");
+    expect(cls).toContain("outline-none");
+    expect(cls).toContain("custom-x");
+  });
+
   it("stays closed initially", () => {
     render(<ExampleHoverCard />);
     expect(getContent()).toBeNull();

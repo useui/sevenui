@@ -7,9 +7,19 @@ function HoverCard({ ...props }: PreviewCardPrimitive.Root.Props) {
   return <PreviewCardPrimitive.Root data-slot="hover-card" {...props} />;
 }
 
-function HoverCardTrigger({ ...props }: PreviewCardPrimitive.Trigger.Props) {
+function HoverCardTrigger({
+  className,
+  ...props
+}: PreviewCardPrimitive.Trigger.Props) {
   return (
-    <PreviewCardPrimitive.Trigger data-slot="hover-card-trigger" {...props} />
+    <PreviewCardPrimitive.Trigger
+      data-slot="hover-card-trigger"
+      className={cn(
+        "rounded-sm outline-none focus-visible:focus-ring",
+        className,
+      )}
+      {...props}
+    />
   );
 }
 
