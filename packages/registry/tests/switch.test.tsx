@@ -111,3 +111,52 @@ describe("Switch", () => {
     );
   });
 });
+
+describe("Switch v2 styles", () => {
+  function parts(props: React.ComponentProps<typeof Switch> = {}) {
+    const { container } = render(<Switch aria-label="Wi-Fi" {...props} />);
+    return {
+      root: screen.getByRole("switch"),
+      thumb: container.querySelector("[data-slot=switch-thumb]")!,
+    };
+  }
+
+  it("uses the offset focus ring, never the old halo", () => {
+    const { root } = parts();
+    expect(root.className).toContain("focus-visible:focus-ring");
+    expect(root.className).not.toContain("ring-3");
+    expect(root.className).not.toContain("ring-ring");
+    expect(root.className).not.toContain("focus-visible:border-ring");
+  });
+
+  it("sizes the track from --switch-* variables with a compact override", () => {
+    const { root } = parts();
+    expect(root.className).toContain("[--switch-h:19px]");
+    expect(root.className).toContain("[--switch-w:2rem]");
+    expect(root.className).toContain(
+      "[[data-density=compact]_&]:[--switch-h:1rem]",
+    );
+    expect(root.className).toContain(
+      "[[data-density=compact]_&]:[--switch-w:1.75rem]",
+    );
+    expect(root.className).toContain("h-(--switch-h)");
+    expect(root.className).toContain("w-(--switch-w)");
+  });
+
+  it("uses hairline-strong off and brand on", () => {
+    const { root } = parts();
+    expect(root.className).toContain("data-unchecked:bg-hairline-strong");
+    expect(root.className).toContain("data-checked:bg-brand");
+    expect(root.className).not.toContain("bg-primary");
+  });
+
+  it("gives the thumb a white raised surface and a spring with a reduced-motion counterpart", () => {
+    const { thumb } = parts();
+    expect(thumb.className).toContain("bg-white");
+    expect(thumb.className).toContain("shadow-raised");
+    expect(thumb.className).toContain("transition-transform");
+    expect(thumb.className).toContain("duration-200");
+    expect(thumb.className).toContain("ease-spring");
+    expect(thumb.className).toContain("motion-reduce:transition-none");
+  });
+});

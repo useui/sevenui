@@ -15,14 +15,19 @@ function Switch({
       data-slot="switch"
       data-size={size}
       className={cn(
-        "peer group/switch relative inline-flex shrink-0 items-center rounded-full border border-transparent transition-all outline-none group-has-[:focus-visible]/field-label:border-transparent group-has-[:focus-visible]/field-label:ring-0 after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-[size=default]:h-[18.4px] data-[size=default]:w-[32px] data-[size=sm]:h-[14px] data-[size=sm]:w-[24px] dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 data-checked:bg-primary data-unchecked:bg-input dark:data-unchecked:bg-input/80 data-disabled:cursor-not-allowed data-disabled:opacity-50",
+        // Track geometry lives in two variables set here: --switch-h and
+        // --switch-w. A [data-density=compact] ancestor and size="sm" each
+        // step them down; the thumb is --switch-h minus the 2px inset on each
+        // side, and travels --switch-w minus --switch-h.
+        "[--switch-h:19px] [--switch-w:2rem] [[data-density=compact]_&]:[--switch-h:1rem] [[data-density=compact]_&]:[--switch-w:1.75rem] data-[size=sm]:[--switch-h:1rem] data-[size=sm]:[--switch-w:1.75rem] [[data-density=compact]_&]:data-[size=sm]:[--switch-h:14px] [[data-density=compact]_&]:data-[size=sm]:[--switch-w:1.5rem]",
+        "peer group/switch relative inline-flex h-(--switch-h) w-(--switch-w) shrink-0 items-center rounded-full p-[2px] transition-colors duration-200 outline-none motion-reduce:transition-none [:where(&)]:[--focus-gap:2px] [:where(&)]:[--focus-width:1.5px] after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:focus-ring group-has-[:focus-visible]/field-label:focus-visible:outline-none aria-invalid:shadow-[inset_0_0_0_1px_var(--destructive)] aria-invalid:[--focus-color:var(--destructive)] data-checked:bg-brand data-unchecked:bg-hairline-strong data-disabled:cursor-not-allowed data-disabled:opacity-50",
         className,
       )}
       {...props}
     >
       <SwitchPrimitive.Thumb
         data-slot="switch-thumb"
-        className="pointer-events-none block rounded-full bg-background ring-0 transition-transform group-data-[size=default]/switch:size-4 group-data-[size=sm]/switch:size-3 group-data-[size=default]/switch:data-checked:translate-x-[calc(100%-2px)] group-data-[size=sm]/switch:data-checked:translate-x-[calc(100%-2px)] dark:data-checked:bg-primary-foreground group-data-[size=default]/switch:data-unchecked:translate-x-0 group-data-[size=sm]/switch:data-unchecked:translate-x-0 dark:data-unchecked:bg-foreground"
+        className="pointer-events-none block size-[calc(var(--switch-h)-4px)] rounded-full bg-white shadow-raised transition-transform duration-200 ease-spring motion-reduce:transition-none data-checked:translate-x-[calc(var(--switch-w)-var(--switch-h))] data-unchecked:translate-x-0"
       />
     </SwitchPrimitive.Root>
   );
