@@ -99,3 +99,39 @@ describe("NativeSelect", () => {
     expect(screen.getByRole("group", { name: "Fruits" })).not.toBeNull();
   });
 });
+
+describe("NativeSelect v2 styles", () => {
+  it("uses the offset focus ring, never the old halo", () => {
+    render(<Fruits />);
+    const cls = screen.getByLabelText("Fruit").className;
+    expect(cls).toContain("focus-visible:focus-ring");
+    expect(cls).not.toContain("ring-3");
+    expect(cls).not.toContain("ring-ring");
+    expect(cls).not.toContain("focus-visible:border-ring");
+  });
+
+  it("reads its height, padding and text size from the control scale", () => {
+    render(<Fruits />);
+    const cls = screen.getByLabelText("Fruit").className;
+    expect(cls).toContain("h-[var(--control-h,2.125rem)]");
+    expect(cls).toContain("pl-[var(--control-px,0.75rem)]");
+    expect(cls).toContain("text-[length:var(--control-text,0.8125rem)]");
+    expect(cls).toContain(
+      "data-[size=sm]:h-[calc(var(--control-h,2.125rem)-0.25rem)]",
+    );
+  });
+
+  it("sits on the inset field surface", () => {
+    render(<Fruits />);
+    const cls = screen.getByLabelText("Fruit").className;
+    expect(cls).toContain("bg-surface-inset");
+    expect(cls).toContain("var(--hairline-strong");
+    expect(cls).not.toContain("bg-transparent");
+  });
+
+  it("keeps the chevron muted", () => {
+    const { container } = render(<Fruits />);
+    const icon = container.querySelector("[data-slot=native-select-icon]")!;
+    expect(icon.getAttribute("class")).toContain("text-muted-foreground");
+  });
+});

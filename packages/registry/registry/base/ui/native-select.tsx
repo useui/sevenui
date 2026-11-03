@@ -23,11 +23,13 @@ function NativeSelect({
       <select
         data-slot="native-select"
         data-size={size}
-        className="h-8 w-full min-w-0 appearance-none rounded-lg border border-input bg-transparent py-1 pr-8 pl-2.5 text-sm transition-colors outline-none select-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] data-[size=sm]:py-0.5 dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
+        // Control-scale variables fall back inline: a :where() default on
+        // this element would shadow a [data-density=compact] ancestor.
+        className="h-[var(--control-h,2.125rem)] w-full min-w-0 appearance-none rounded-lg bg-surface-inset py-0 pr-8 pl-[var(--control-px,0.75rem)] text-[length:var(--control-text,0.8125rem)] shadow-[inset_0_0_0_1px_var(--hairline-strong,var(--input)),var(--elevation-inset,0_0_transparent)] transition-shadow outline-none select-none motion-reduce:transition-none [:where(&)]:[--focus-gap:2px] [:where(&)]:[--focus-width:1.5px] selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:focus-ring disabled:pointer-events-none disabled:cursor-not-allowed aria-invalid:shadow-[inset_0_0_0_1px_var(--destructive),var(--elevation-inset,0_0_transparent)] aria-invalid:[--focus-color:var(--destructive)] data-[size=sm]:h-[calc(var(--control-h,2.125rem)-0.25rem)] data-[size=sm]:rounded-md"
         {...props}
       />
       <ChevronDownIcon
-        className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted-foreground select-none"
+        className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted-foreground select-none group-data-[size=sm]/native-select:right-2 group-data-[size=sm]/native-select:size-3.5"
         aria-hidden="true"
         data-slot="native-select-icon"
       />
