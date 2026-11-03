@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/registry/base/ui/select";
+import { must } from "./helpers/must";
 
 const fruits = [
   { label: "Apple", value: "apple" },
@@ -216,7 +217,7 @@ describe("Select v2 styles", () => {
     render(<FruitSelect defaultValue="banana" />);
     await user.click(screen.getByRole("combobox"));
     const listbox = await screen.findByRole("listbox");
-    const popup = listbox.closest("[data-slot=select-content]")!;
+    const popup = must(listbox.closest("[data-slot=select-content]"));
     const cls = popup.className;
     expect(cls).toContain("bg-surface-raised");
     expect(cls).toContain("shadow-overlay");
@@ -228,7 +229,7 @@ describe("Select v2 styles", () => {
     // Base UI positioning classes stay.
     expect(cls).toContain("max-h-(--available-height)");
     expect(cls).toContain("origin-(--transform-origin)");
-    expect(popup.parentElement!.className).toContain("isolate z-50");
+    expect(must(popup.parentElement).className).toContain("isolate z-50");
   });
 
   it("sizes items from --item-h, highlights with the hairline and checks in brand", async () => {
@@ -247,7 +248,7 @@ describe("Select v2 styles", () => {
     expect(item.className).toContain("focus-visible:focus-ring");
     // Disabled rows keep the inset keyboard focus ring.
     expect(item.className).not.toContain("data-disabled:focus-visible:outline-none");
-    const check = item.querySelector("[data-slot=select-item-indicator]")!;
+    const check = must(item.querySelector("[data-slot=select-item-indicator]"));
     expect(check.className).toContain("text-brand");
     // Muted descendants lift to the foreground on the highlight (AA), the
     // brand check keeps its colour.

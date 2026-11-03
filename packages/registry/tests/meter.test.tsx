@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { Meter, MeterLabel, MeterValue } from "@/registry/base/ui/meter";
+import { must } from "./helpers/must";
 
 describe("Meter", () => {
   it("renders a meter role with aria value attributes", () => {
@@ -61,8 +62,8 @@ describe("Meter", () => {
 describe("Meter v2 styling", () => {
   it("uses a hairline track and a neutral foreground indicator", () => {
     const { container } = render(<Meter value={40} aria-label="Storage" />);
-    const track = container.querySelector('[data-slot="meter-track"]')!;
-    const indicator = container.querySelector('[data-slot="meter-indicator"]')!;
+    const track = must(container.querySelector('[data-slot="meter-track"]'));
+    const indicator = must(container.querySelector('[data-slot="meter-indicator"]'));
     expect(track.className).toContain("bg-hairline-strong");
     expect(track.className).toContain("h-1");
     expect(track.className).toContain("in-data-[density=compact]:h-[3px]");

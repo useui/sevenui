@@ -19,6 +19,7 @@ import {
   QuestionnaireSubmit,
   QuestionnaireTitle,
 } from "@/registry/base/ui/questionnaire";
+import { must } from "./helpers/must";
 
 type WizardProps = {
   item?: string;
@@ -357,7 +358,7 @@ describe("Questionnaire", () => {
 
 describe("Questionnaire v2 styles", () => {
   function slot(container: HTMLElement, name: string) {
-    return container.querySelector<HTMLElement>(`[data-slot="${name}"]`)!;
+    return must(container.querySelector<HTMLElement>(`[data-slot="${name}"]`));
   }
 
   it("draws the step as a tray-and-panel with panel padding and a reduced-motion fade", () => {

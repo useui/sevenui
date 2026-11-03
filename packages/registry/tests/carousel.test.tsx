@@ -13,6 +13,7 @@ import {
 } from "@/registry/base/ui/carousel";
 import { buttonVariants } from "@/registry/base/ui/button";
 import { cn } from "cn";
+import { must } from "./helpers/must";
 
 // Embla needs browser APIs jsdom lacks: matchMedia and IntersectionObserver.
 window.matchMedia ??= ((query: string) => ({
@@ -218,7 +219,7 @@ describe("Carousel", () => {
       "carousel-next": "inset-y-0 -right-12 my-auto",
     };
     for (const [slot, position] of Object.entries(expected)) {
-      const button = container.querySelector(`[data-slot=${slot}]`)!;
+      const button = must(container.querySelector(`[data-slot=${slot}]`));
       const want = cn(
         buttonVariants({
           variant: "outline",

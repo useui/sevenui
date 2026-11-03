@@ -8,6 +8,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/registry/base/ui/resizable";
+import { must } from "./helpers/must";
 
 // react-resizable-panels v4 measures groups and panels via offsetWidth /
 // offsetHeight, which are 0 in jsdom; seed a 400x300 layout so the library
@@ -320,7 +321,7 @@ describe("ResizableHandle v2 styling", () => {
 
   it("renders the grip on the raised surface with a hairline edge", () => {
     const { separator } = renderGroup();
-    const grip = separator.firstElementChild!;
+    const grip = must(separator.firstElementChild);
     expect(grip.className).toContain("bg-surface-raised");
     expect(grip.className).toContain("ring-hairline-strong");
     expect(grip.className).not.toContain("bg-border");

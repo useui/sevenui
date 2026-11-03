@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { RadioGroup, RadioGroupItem } from "@/registry/base/ui/radio-group";
+import { must } from "./helpers/must";
 
 function Sizes(props: React.ComponentProps<typeof RadioGroup>) {
   return (
@@ -141,9 +142,9 @@ describe("RadioGroup v2 styles", () => {
 
   it("draws the indicator dot in brand-foreground", () => {
     const { container } = render(<Sizes defaultValue="md" />);
-    const dot = container.querySelector(
-      "[data-slot=radio-group-indicator] > span",
-    )!;
+    const dot = must(
+      container.querySelector("[data-slot=radio-group-indicator] > span"),
+    );
     expect(dot.className).toContain("bg-brand-foreground");
   });
 });

@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { Switch } from "@/registry/base/ui/switch";
+import { must } from "./helpers/must";
 
 describe("Switch", () => {
   it("renders a switch role, unchecked by default", () => {
@@ -117,7 +118,7 @@ describe("Switch v2 styles", () => {
     const { container } = render(<Switch aria-label="Wi-Fi" {...props} />);
     return {
       root: screen.getByRole("switch"),
-      thumb: container.querySelector("[data-slot=switch-thumb]")!,
+      thumb: must(container.querySelector("[data-slot=switch-thumb]")),
     };
   }
 

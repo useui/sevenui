@@ -10,6 +10,7 @@ import {
 } from "@/registry/base/ui/toast";
 import { buttonVariants } from "@/registry/base/ui/button";
 import { cn } from "cn";
+import { must } from "./helpers/must";
 
 function getToasts() {
   return document.querySelectorAll('[data-slot="toast"]');
@@ -164,7 +165,7 @@ describe("Toast v2 styling", () => {
       manager.add({ title: "Padded" });
     });
     await screen.findByText("Padded");
-    const content = document.querySelector('[data-slot="toast-content"]')!;
+    const content = must(document.querySelector('[data-slot="toast-content"]'));
     expect(content.className).toContain("p-[var(--panel-pad");
     expect(content.className.split(" ")).not.toContain("p-4");
   });

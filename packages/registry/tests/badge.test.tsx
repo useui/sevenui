@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { Badge, badgeVariants } from "@/registry/base/ui/badge";
 import registry from "../registry.json";
 import { contrastRatio, parseColor } from "./helpers/contrast";
+import { must } from "./helpers/must";
 
 describe("Badge", () => {
   it("renders a span with data-slot and children", () => {
@@ -235,7 +236,7 @@ const hex = (rgb: Rgb) =>
 
 type CssVars = Record<string, Record<string, string>>;
 const cssVarsOf = (name: string) =>
-  registry.items.find((i) => i.name === name)!.cssVars as unknown as CssVars;
+  must(registry.items.find((i) => i.name === name)).cssVars as unknown as CssVars;
 const themeVars = cssVarsOf("theme");
 const tokenVars = cssVarsOf("sevenui-tokens");
 

@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { Checkbox } from "@/registry/base/ui/checkbox";
 import { Field, FieldLabel } from "@/registry/base/ui/field";
+import { must } from "./helpers/must";
 
 describe("Checkbox", () => {
   it("renders an unchecked checkbox role by default", () => {
@@ -129,9 +130,9 @@ describe("Checkbox", () => {
 
     it("fades the check icon with a reduced-motion counterpart", () => {
       const { container } = render(<Checkbox defaultChecked />);
-      const indicator = container.querySelector(
-        "[data-slot=checkbox-indicator]",
-      )!;
+      const indicator = must(
+        container.querySelector("[data-slot=checkbox-indicator]"),
+      );
       expect(indicator.className).toContain("transition-opacity");
       expect(indicator.className).toContain("motion-reduce:transition-none");
     });

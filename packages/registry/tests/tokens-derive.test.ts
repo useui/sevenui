@@ -1,17 +1,18 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { must } from "./helpers/must";
 
 const registry = JSON.parse(
   readFileSync(path.resolve(import.meta.dirname, "../registry.json"), "utf8"),
 ) as { items: { name: string; cssVars?: Record<string, Record<string, string>> }[] };
 
 const tokens = registry.items.find((i) => i.name === "sevenui-tokens");
-const theme = registry.items.find((i) => i.name === "theme")!;
+const theme = must(registry.items.find((i) => i.name === "theme"));
 
 describe("sevenui-tokens derivation", () => {
   it("derives every surface and hairline token from shadcn variables", () => {
-    const shadcnKeys = new Set(Object.keys(theme.cssVars!.light));
+    const shadcnKeys = new Set(Object.keys(must(theme.cssVars).light));
     for (const mode of ["light", "dark"] as const) {
       const vars = tokens?.cssVars?.[mode] ?? {};
       const derived = Object.entries(vars).filter(([key]) => /^(surface-|hairline)/.test(key));

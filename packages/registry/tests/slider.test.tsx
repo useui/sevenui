@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { Slider } from "@/registry/base/ui/slider";
+import { must } from "./helpers/must";
 
 // The wrapper sets thumbAlignment="edge", which positions thumbs from layout
 // measurements. jsdom has no layout, so thumbs keep their initial
@@ -137,7 +138,7 @@ describe("Slider v2 styles", () => {
       <Slider defaultValue={[40]} aria-label="Volume" />,
     );
     const q = (slot: string) =>
-      container.querySelector(`[data-slot=${slot}]`)!;
+      must(container.querySelector(`[data-slot=${slot}]`));
     return {
       root: q("slider"),
       track: q("slider-track"),

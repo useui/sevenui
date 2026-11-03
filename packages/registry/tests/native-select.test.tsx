@@ -7,6 +7,7 @@ import {
   NativeSelectOptGroup,
   NativeSelectOption,
 } from "@/registry/base/ui/native-select";
+import { must } from "./helpers/must";
 
 function Fruits(props: React.ComponentProps<typeof NativeSelect>) {
   return (
@@ -133,7 +134,7 @@ describe("NativeSelect v2 styles", () => {
 
   it("keeps the chevron muted", () => {
     const { container } = render(<Fruits />);
-    const icon = container.querySelector("[data-slot=native-select-icon]")!;
+    const icon = must(container.querySelector("[data-slot=native-select-icon]"));
     expect(icon.getAttribute("class")).toContain("text-muted-foreground");
   });
 });

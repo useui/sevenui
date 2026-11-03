@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { BASE_TOKEN_KEYS } from "../../presets/presets";
 import { contrastRatio } from "./helpers/contrast";
+import { must } from "./helpers/must";
 
 type Item = {
   name: string;
@@ -18,7 +19,8 @@ const registry = JSON.parse(
 ) as { items: Item[] };
 
 const tokens = registry.items.find((i) => i.name === "sevenui-tokens");
-const theme = registry.items.find((i) => i.name === "theme")!;
+const theme = must(registry.items.find((i) => i.name === "theme"));
+const themeVars = must(theme.cssVars);
 const light = tokens?.cssVars?.light ?? {};
 const dark = tokens?.cssVars?.dark ?? {};
 
@@ -26,7 +28,7 @@ describe("sevenui-tokens", () => {
   it("ships a sevenui-tokens item of type registry:theme", () => {
     expect(tokens?.type).toBe("registry:theme");
     expect(tokens?.css).toBeDefined();
-    const css = tokens!.css as Record<string, Record<string, string>>;
+    const css = must(tokens).css as Record<string, Record<string, string>>;
     expect(css["@utility focus-ring"].outline).toBe("var(--focus-width) solid var(--focus-color, var(--brand))");
     expect(css[":root"]).not.toHaveProperty("--focus-color");
     expect(tokens?.cssVars?.theme).toBeDefined();
@@ -56,8 +58,8 @@ describe("sevenui-tokens", () => {
   });
 
   it("meets AA", () => {
-    const lightBg = theme.cssVars!.light!.background;
-    const darkBg = theme.cssVars!.dark!.background;
+    const lightBg = must(themeVars.light).background;
+    const darkBg = must(themeVars.dark).background;
     expect(contrastRatio(light["brand-strong"], light["brand-foreground"])).toBeGreaterThanOrEqual(4.5);
     expect(contrastRatio(dark["brand-strong"], dark["brand-foreground"])).toBeGreaterThanOrEqual(4.5);
     expect(contrastRatio(light.brand, lightBg)).toBeGreaterThanOrEqual(3);
@@ -67,7 +69,7 @@ describe("sevenui-tokens", () => {
 
   it("theme muted-foreground meets 4.5:1 on background in both themes", () => {
     for (const mode of ["light", "dark"] as const) {
-      const vars = theme.cssVars![mode]!;
+      const vars = must(themeVars[mode]);
       expect(contrastRatio(vars["muted-foreground"], vars.background), mode).toBeGreaterThanOrEqual(4.5);
     }
   });

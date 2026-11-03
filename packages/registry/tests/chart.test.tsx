@@ -9,6 +9,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/registry/base/ui/chart";
+import { must } from "./helpers/must";
 
 // ResponsiveContainer unmounts children unless it measures a positive size;
 // jsdom rects are 0x0, so seed a fixed measurement. The ResizeObserver stub in
@@ -140,7 +141,7 @@ describe("Chart v2 styling", () => {
         </BarChart>
       </ChartContainer>,
     );
-    const scope = container.querySelector("[data-slot=chart]")!;
+    const scope = must(container.querySelector("[data-slot=chart]"));
     expect(scope.className).toContain(
       "[&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-hairline-strong",
     );
@@ -172,7 +173,7 @@ describe("Chart v2 styling", () => {
         />
       </ChartContainer>,
     );
-    const tooltip = container.querySelector("[data-slot=chart-tooltip]")!;
+    const tooltip = must(container.querySelector("[data-slot=chart-tooltip]"));
     expect(tooltip.className).toContain("bg-surface-raised");
     expect(tooltip.className).toContain("shadow-overlay");
     expect(tooltip.className).not.toContain("bg-background");

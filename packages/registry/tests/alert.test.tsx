@@ -9,6 +9,7 @@ import {
 } from "@/registry/base/ui/alert";
 import registry from "../registry.json";
 import { contrastRatio } from "./helpers/contrast";
+import { must } from "./helpers/must";
 
 describe("Alert", () => {
   it("exposes role='alert' on the root", () => {
@@ -162,7 +163,7 @@ const css = ([L, C, h]: Oklch) => `oklch(${L.toFixed(6)} ${C.toFixed(6)} ${h.toF
 describe("Alert destructive contrast (AA)", () => {
   type CssVars = Record<string, Record<string, string>>;
   const cssVarsOf = (name: string) =>
-    registry.items.find((i) => i.name === name)!.cssVars as unknown as CssVars;
+    must(registry.items.find((i) => i.name === name)).cssVars as unknown as CssVars;
   const themeVars = cssVarsOf("theme");
   const tokenVars = cssVarsOf("sevenui-tokens");
 

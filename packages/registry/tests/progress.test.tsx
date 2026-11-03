@@ -6,6 +6,7 @@ import {
   ProgressLabel,
   ProgressValue,
 } from "@/registry/base/ui/progress";
+import { must } from "./helpers/must";
 
 describe("Progress", () => {
   it("renders a progressbar with aria value attributes", () => {
@@ -81,10 +82,10 @@ describe("Progress", () => {
 describe("Progress v2 styling", () => {
   it("uses a hairline track and a brand indicator with a reduced-motion counterpart", () => {
     const { container } = render(<Progress value={60} aria-label="Upload" />);
-    const track = container.querySelector('[data-slot="progress-track"]')!;
-    const indicator = container.querySelector(
-      '[data-slot="progress-indicator"]',
-    )!;
+    const track = must(container.querySelector('[data-slot="progress-track"]'));
+    const indicator = must(
+      container.querySelector('[data-slot="progress-indicator"]'),
+    );
     expect(track.className).toContain("bg-hairline-strong");
     expect(track.className).toContain("h-1");
     expect(track.className).toContain("in-data-[density=compact]:h-[3px]");
