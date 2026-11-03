@@ -92,11 +92,32 @@ describe("Card", () => {
   });
 
   describe("v2 design language", () => {
+    it("keeps the hairline edge when a consumer overrides the shadow", () => {
+      // The edge lives in the ring group, the lift in the shadow group, so a
+      // consumer shadow-* or dark:shadow-none merges away only the lift.
+      render(<Card data-testid="md" className="shadow-md" />);
+      const md = screen.getByTestId("md").className.split(" ");
+      expect(md).toEqual(expect.arrayContaining(["ring-1", "ring-hairline", "shadow-md"]));
+      expect(md.join(" ")).not.toContain("var(--elevation-highlight");
+
+      render(<Card data-testid="flat" className="dark:shadow-none" />);
+      const flat = screen.getByTestId("flat").className.split(" ");
+      expect(flat).toEqual(expect.arrayContaining(["ring-1", "ring-hairline", "dark:shadow-none"]));
+
+      // A consumer ring colour replaces the hairline colour, not the width.
+      render(<Card data-testid="ring" className="ring-primary" />);
+      const ring = screen.getByTestId("ring").className.split(" ");
+      expect(ring).toEqual(expect.arrayContaining(["ring-1", "ring-primary"]));
+      expect(ring).not.toContain("ring-hairline");
+    });
+
     it("draws a single panel surface with a hairline and a raised lift", () => {
       render(<Card data-testid="card" />);
       const cls = screen.getByTestId("card").className;
       expect(cls).toContain("bg-surface-panel");
-      expect(cls).toContain("0_0_0_1px_var(--hairline,");
+      // The edge is a ring (main's twMerge group), so a consumer shadow-* keeps it.
+      expect(cls.split(" ")).toEqual(expect.arrayContaining(["ring-1", "ring-hairline"]));
+      expect(cls).not.toContain("0_0_0_1px_var(--hairline");
       expect(cls).toContain("var(--elevation-raised,");
       expect(cls).toContain("var(--elevation-highlight,");
       expect(cls).not.toContain("ring-foreground/10");
