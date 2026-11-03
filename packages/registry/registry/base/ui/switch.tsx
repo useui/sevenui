@@ -20,7 +20,7 @@ function Switch({
         // step them down; the thumb is --switch-h minus the 2px inset on each
         // side, and travels --switch-w minus --switch-h.
         "[--switch-h:19px] [--switch-w:2rem] [[data-density=compact]_&]:[--switch-h:1rem] [[data-density=compact]_&]:[--switch-w:1.75rem] data-[size=sm]:[--switch-h:1rem] data-[size=sm]:[--switch-w:1.75rem] [[data-density=compact]_&]:data-[size=sm]:[--switch-h:14px] [[data-density=compact]_&]:data-[size=sm]:[--switch-w:1.5rem]",
-        "peer group/switch relative inline-flex h-(--switch-h) w-(--switch-w) shrink-0 items-center rounded-full p-[2px] transition-colors duration-200 outline-none motion-reduce:transition-none [:where(&)]:[--focus-gap:2px] [:where(&)]:[--focus-width:1.5px] after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:focus-ring group-has-[:focus-visible]/field-label:focus-visible:outline-none aria-invalid:shadow-[inset_0_0_0_1px_var(--destructive)] aria-invalid:[--focus-color:var(--destructive)] data-checked:bg-brand data-unchecked:bg-hairline-strong data-disabled:cursor-not-allowed data-disabled:opacity-50",
+        "peer group/switch relative inline-flex h-(--switch-h) w-(--switch-w) shrink-0 items-center rounded-full p-[2px] transition-colors duration-200 outline-none motion-reduce:transition-none after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:focus-ring group-has-[:focus-visible]/field-label:focus-visible:outline-none aria-invalid:shadow-[inset_0_0_0_1px_var(--destructive)] aria-invalid:[--focus-color:var(--destructive)] data-checked:bg-brand data-unchecked:bg-hairline-strong data-disabled:cursor-not-allowed data-disabled:opacity-50",
         className,
       )}
       {...props}

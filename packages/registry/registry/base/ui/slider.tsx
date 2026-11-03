@@ -49,7 +49,7 @@ function Slider({
             key={index}
             // Base UI focuses the nested <input type="range">, so the ring
             // follows has-focus-visible on the thumb rather than focus-visible.
-            className="relative block size-(--slider-thumb) shrink-0 rounded-full bg-white shadow-raised ring-1 ring-hairline-strong outline-none select-none [:where(&)]:[--focus-gap:2px] [:where(&)]:[--focus-width:1.5px] after:absolute after:-inset-2 has-focus-visible:focus-ring data-disabled:pointer-events-none disabled:pointer-events-none disabled:opacity-50"
+            className="relative block size-(--slider-thumb) shrink-0 rounded-full bg-white shadow-raised ring-1 ring-hairline-strong outline-none select-none after:absolute after:-inset-2 has-focus-visible:focus-ring data-disabled:pointer-events-none disabled:pointer-events-none disabled:opacity-50"
           />
         ))}
       </SliderPrimitive.Control>
