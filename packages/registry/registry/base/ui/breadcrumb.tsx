@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
@@ -47,7 +49,10 @@ function BreadcrumbLink({
     defaultTagName: "a",
     props: mergeProps<"a">(
       {
-        className: cn("transition-colors hover:text-foreground", className),
+        className: cn(
+          "rounded-sm outline-none transition-colors hover:text-foreground focus-visible:focus-ring motion-reduce:transition-none",
+          className,
+        ),
       },
       props,
     ),
@@ -81,7 +86,7 @@ function BreadcrumbSeparator({
       data-slot="breadcrumb-separator"
       role="presentation"
       aria-hidden="true"
-      className={cn("[&>svg]:size-3.5", className)}
+      className={cn("text-muted-foreground/60 [&>svg]:size-3.5", className)}
       {...props}
     >
       {children ?? <ChevronRightIcon className="cn-rtl-flip" />}

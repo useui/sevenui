@@ -136,3 +136,31 @@ describe("Breadcrumb", () => {
     expect(screen.getByText("Now").classList.contains("page-extra")).toBe(true);
   });
 });
+
+describe("Breadcrumb v2 style", () => {
+  it("mutes the trail and keeps the current page in the foreground", () => {
+    render(<Trail />);
+    expect(screen.getByRole("list").className).toContain(
+      "text-muted-foreground",
+    );
+    expect(screen.getByText("Breadcrumb").className).toContain(
+      "text-foreground",
+    );
+  });
+
+  it("softens separators", () => {
+    const { container } = render(<Trail />);
+    const separator = container.querySelector(
+      '[data-slot="breadcrumb-separator"]',
+    );
+    expect(separator?.className).toContain("text-muted-foreground/60");
+  });
+
+  it("focuses links with the offset ring and respects reduced motion", () => {
+    render(<Trail />);
+    const link = screen.getByRole("link", { name: "Home" });
+    expect(link.className).toContain("focus-visible:focus-ring");
+    expect(link.className).not.toContain("ring-3");
+    expect(link.className).toContain("motion-reduce:transition-none");
+  });
+});
