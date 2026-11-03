@@ -125,7 +125,9 @@ describe("NativeSelect v2 styles", () => {
     render(<Fruits />);
     const cls = screen.getByLabelText("Fruit").className;
     expect(cls).toContain("bg-surface-inset");
-    expect(cls).toContain("var(--hairline-strong");
+    // The edge is a real border so consumer border-* classes merge against it.
+    expect(cls.split(" ")).toEqual(expect.arrayContaining(["border", "border-hairline-strong"]));
+    expect(cls).not.toContain("0_0_0_1px_var(--hairline");
     expect(cls).not.toContain("bg-transparent");
   });
 

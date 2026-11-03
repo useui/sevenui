@@ -25,7 +25,7 @@ function NativeSelect({
         data-size={size}
         // Control-scale variables fall back inline: a :where() default on
         // this element would shadow a [data-density=compact] ancestor.
-        className="h-[var(--control-h,2.125rem)] w-full min-w-0 appearance-none rounded-lg bg-surface-inset py-0 pr-8 pl-[var(--control-px,0.75rem)] text-[length:var(--control-text,0.8125rem)] shadow-[inset_0_0_0_1px_var(--hairline-strong,var(--input)),var(--elevation-inset,0_0_transparent)] transition-shadow outline-none select-none motion-reduce:transition-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:focus-ring disabled:pointer-events-none disabled:cursor-not-allowed aria-invalid:shadow-[inset_0_0_0_1px_var(--destructive),var(--elevation-inset,0_0_transparent)] aria-invalid:[--focus-color:var(--destructive)] data-[size=sm]:h-[calc(var(--control-h,2.125rem)-0.25rem)] data-[size=sm]:rounded-md"
+        className="h-[var(--control-h,2.125rem)] w-full min-w-0 appearance-none rounded-lg bg-surface-inset py-0 pr-8 pl-[var(--control-px,0.75rem)] text-[length:var(--control-text,0.8125rem)] border border-hairline-strong shadow-[0_0_#0000,var(--elevation-inset,0_0_#0000)] transition-[border-color,box-shadow] outline-none select-none motion-reduce:transition-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:focus-ring disabled:pointer-events-none disabled:cursor-not-allowed aria-invalid:border-destructive aria-invalid:[--focus-color:var(--destructive)] data-[size=sm]:h-[calc(var(--control-h,2.125rem)-0.25rem)] data-[size=sm]:rounded-md"
         {...props}
       />
       <ChevronDownIcon
