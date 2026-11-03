@@ -130,3 +130,51 @@ describe("ChartLegendContent", () => {
     expect(screen.getByText("Mobile")).toBeDefined();
   });
 });
+
+describe("Chart v2 styling", () => {
+  it("strokes grid and axes with hairline-strong and fills ticks muted", () => {
+    const { container } = render(
+      <ChartContainer config={config}>
+        <BarChart data={[{ month: "Jan", desktop: 1 }]}>
+          <Bar dataKey="desktop" />
+        </BarChart>
+      </ChartContainer>,
+    );
+    const scope = container.querySelector("[data-slot=chart]")!;
+    expect(scope.className).toContain(
+      "[&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-hairline-strong",
+    );
+    expect(scope.className).toContain(
+      "[&_.recharts-cartesian-axis-line]:stroke-hairline-strong",
+    );
+    expect(scope.className).toContain(
+      "[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground",
+    );
+    expect(scope.className).not.toContain("stroke-border");
+  });
+
+  it("renders the tooltip on the raised overlay surface", () => {
+    const { container } = render(
+      <ChartContainer config={config}>
+        <ChartTooltipContent
+          active
+          payload={[
+            {
+              dataKey: "desktop",
+              name: "desktop",
+              value: 186,
+              color: "var(--color-desktop)",
+              payload: { month: "January", desktop: 186 },
+              graphicalItemId: "bar-desktop",
+            },
+          ]}
+          label="desktop"
+        />
+      </ChartContainer>,
+    );
+    const tooltip = container.querySelector("[data-slot=chart-tooltip]")!;
+    expect(tooltip.className).toContain("bg-surface-raised");
+    expect(tooltip.className).toContain("shadow-overlay");
+    expect(tooltip.className).not.toContain("bg-background");
+  });
+});
