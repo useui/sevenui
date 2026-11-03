@@ -229,19 +229,21 @@ describe("Select v2 styles", () => {
     expect(popup.parentElement!.className).toContain("isolate z-50");
   });
 
-  it("sizes items from --item-h, highlights on the panel surface and checks in brand", async () => {
+  it("sizes items from --item-h, highlights with the hairline and checks in brand", async () => {
     const user = userEvent.setup();
     render(<FruitSelect defaultValue="banana" />);
     await user.click(screen.getByRole("combobox"));
     const item = await screen.findByRole("option", { name: "Banana" });
     expect(item.className).toContain("min-h-[var(--item-h,2rem)]");
-    expect(item.className).toContain("data-highlighted:bg-surface-panel");
-    expect(item.className).toContain(
-      "data-highlighted:shadow-[inset_0_0_0_1px_var(--hairline",
-    );
+    expect(item.className).toContain("data-highlighted:bg-hairline");
+    expect(item.className).toContain("data-highlighted:text-foreground");
+    expect(item.className).not.toContain("surface-panel");
+    expect(item.className).not.toContain("data-highlighted:shadow-");
+    expect(item.className).toContain("data-disabled:data-highlighted:bg-transparent");
     // Inset ring so the scrolling popup's overflow does not clip it.
     expect(item.className).toContain("[--focus-gap:-1.5px]");
     expect(item.className).toContain("focus-visible:focus-ring");
+    expect(item.className).toContain("data-disabled:focus-visible:outline-none");
     const check = item.querySelector("[data-slot=select-item-indicator]")!;
     expect(check.className).toContain("text-brand");
   });

@@ -247,7 +247,7 @@ describe("DropdownMenu v2 styles", () => {
     expect(popup).not.toContain("ring-3");
   });
 
-  it("sizes items from --item-h, highlights with surface-panel and carries the focus ring", async () => {
+  it("sizes items from --item-h, highlights with the hairline and carries the focus ring except when disabled", async () => {
     render(<StyledMenu />);
     await screen.findByRole("menu");
     for (const name of [
@@ -257,8 +257,19 @@ describe("DropdownMenu v2 styles", () => {
     ]) {
       const cls = slot(name);
       expect(cls).toContain("min-h-[var(--item-h,2rem)]");
-      expect(cls).toContain("data-highlighted:bg-surface-panel");
+      expect(cls).toContain("data-highlighted:bg-hairline");
+      expect(cls).toContain("data-highlighted:text-foreground");
+      expect(cls).not.toContain("surface-panel");
+      expect(cls).not.toContain("data-highlighted:shadow-");
+      expect(cls).toContain("data-disabled:data-highlighted:bg-transparent");
       expect(cls).toContain("focus-visible:focus-ring");
+      expect(cls).toContain("data-disabled:focus-visible:outline-none");
+      if (name === "dropdown-menu-item") {
+        // The destructive highlight outranks the generic guard, so it needs its own.
+        expect(cls).toContain(
+          "data-[variant=destructive]:data-disabled:data-highlighted:bg-transparent",
+        );
+      }
       expect(cls).not.toContain("ring-3");
       expect(cls).not.toContain("bg-accent");
     }

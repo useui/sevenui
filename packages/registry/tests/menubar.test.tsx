@@ -148,7 +148,10 @@ describe("Menubar v2 styles", () => {
     expect(cls(menu)).toContain("shadow-overlay");
     const item = screen.getByRole("menuitem", { name: /New Tab/ });
     expect(cls(item)).toContain("min-h-[var(--item-h,2rem)]");
-    expect(cls(item)).toContain("data-highlighted:bg-surface-panel");
+    expect(cls(item)).toContain("data-highlighted:bg-hairline");
+    expect(cls(item)).not.toContain("surface-panel");
+    expect(cls(item)).toContain("data-disabled:data-highlighted:bg-transparent");
+    expect(cls(item)).toContain("data-disabled:focus-visible:outline-none");
     expect(cls(document.querySelector('[data-slot="menubar-separator"]'))).toContain(
       "bg-hairline",
     );

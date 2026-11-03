@@ -196,14 +196,15 @@ describe("Combobox v2 styles", () => {
     expect(popup.className).not.toContain("zoom-in-95");
   });
 
-  it("sizes items by --item-h, highlights on the panel surface and marks the selection in brand", async () => {
+  it("sizes items by --item-h, highlights with the hairline and marks the selection in brand", async () => {
     await openPopup();
     const option = screen.getByRole("option", { name: "Cherry" });
     expect(option.className).toContain("min-h-[var(--item-h,2rem)]");
-    expect(option.className).toContain("data-highlighted:bg-surface-panel");
-    expect(option.className).toContain(
-      "data-highlighted:shadow-[inset_0_0_0_1px_var(--hairline)]",
-    );
+    expect(option.className).toContain("data-highlighted:bg-hairline");
+    expect(option.className).toContain("data-highlighted:text-foreground");
+    expect(option.className).not.toContain("surface-panel");
+    expect(option.className).not.toContain("data-highlighted:shadow-");
+    expect(option.className).toContain("data-disabled:data-highlighted:bg-transparent");
     expect(option.className).not.toContain("bg-accent");
     const indicator = option.querySelector("svg")?.parentElement as HTMLElement;
     expect(indicator.className).toContain("text-brand");
