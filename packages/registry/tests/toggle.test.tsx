@@ -74,8 +74,8 @@ describe("Toggle", () => {
     const classes = screen
       .getByRole("button", { name: "Bold" })
       .className.split(/\s+/);
-    expect(classes).toContain("border-input");
-    expect(classes).toContain("h-7");
+    expect(classes).toContain("border-hairline-strong");
+    expect(classes).toContain("h-[calc(var(--control-h,2.125rem)-0.25rem)]");
   });
 
   it("merges a custom className with variant classes", () => {
@@ -85,5 +85,55 @@ describe("Toggle", () => {
       .className.split(/\s+/);
     expect(classes).toContain("custom-class");
     expect(classes).toContain("bg-transparent");
+  });
+
+  describe("v2 design language", () => {
+    function classes(props: React.ComponentProps<typeof Toggle> = {}) {
+      render(<Toggle aria-label="Bold" {...props} />);
+      return screen.getByRole("button", { name: "Bold" }).className.split(/\s+/);
+    }
+
+    it("uses the offset focus ring, never the ring halo", () => {
+      const list = classes();
+      expect(list).toContain("outline-none");
+      expect(list).toContain("focus-visible:focus-ring");
+      expect(list.join(" ")).not.toMatch(/ring-3|ring-\[3px\]|ring-ring|focus-visible:border-ring/);
+    });
+
+    it("sizes from the density tokens", () => {
+      const list = classes();
+      expect(list).toContain("h-[var(--control-h,2.125rem)]");
+      expect(list).toContain("min-w-[var(--control-h,2.125rem)]");
+      expect(list).toContain("text-[length:var(--control-text,0.8125rem)]");
+    });
+
+    it("lifts the pressed state onto a raised, neutral surface", () => {
+      const list = classes();
+      expect(list).toContain("aria-pressed:bg-surface-raised");
+      expect(list).toContain("aria-pressed:text-foreground");
+      expect(list).toContain(
+        "aria-pressed:shadow-[var(--elevation-highlight,0_0_#0000),inset_0_0_0_1px_var(--hairline-strong,var(--border))]",
+      );
+      expect(list.some((c) => c.includes("brand"))).toBe(false);
+    });
+
+    it("keeps the outline pressed state on its own border", () => {
+      const list = classes({ variant: "outline" });
+      expect(list).toContain(
+        "aria-pressed:bg-[color-mix(in_oklch,var(--surface-raised,var(--background)),var(--foreground)_7%)]",
+      );
+      expect(list).not.toContain("aria-pressed:bg-surface-raised");
+      expect(list).toContain("aria-pressed:shadow-[var(--elevation-highlight,0_0_#0000)]");
+    });
+
+    it("presses like a button, with a reduced-motion counterpart", () => {
+      const list = classes();
+      expect(list).toContain("active:scale-[0.985]");
+      expect(list).toContain("active:translate-y-px");
+      expect(list).toContain("motion-reduce:transform-none");
+      expect(list).toContain("motion-reduce:transition-none");
+      expect(list).toContain("motion-reduce:active:scale-none");
+      expect(list).toContain("motion-reduce:active:translate-none");
+    });
   });
 });

@@ -5,18 +5,20 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
 const toggleVariants = cva(
-  "group/toggle inline-flex items-center justify-center gap-1 rounded-lg text-sm font-medium whitespace-nowrap transition-all outline-none hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 aria-pressed:bg-muted data-[state=on]:bg-muted dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/toggle inline-flex items-center justify-center gap-1 rounded-lg text-[length:var(--control-text,0.8125rem)] font-medium whitespace-nowrap transition-[transform,translate,scale,box-shadow,background-color] duration-100 ease-snappy outline-none hover:bg-[color-mix(in_oklch,var(--surface-panel,var(--muted)),var(--foreground)_5%)] hover:text-foreground focus-visible:focus-ring active:translate-y-px active:scale-[0.985] motion-reduce:transform-none motion-reduce:transition-none motion-reduce:active:translate-none motion-reduce:active:scale-none disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:[--focus-color:var(--destructive)] aria-pressed:bg-surface-raised aria-pressed:text-foreground aria-pressed:hover:bg-surface-raised [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: "bg-transparent",
-        outline: "border border-input bg-transparent hover:bg-muted",
+        default:
+          "bg-transparent aria-pressed:shadow-[var(--elevation-highlight,0_0_#0000),inset_0_0_0_1px_var(--hairline-strong,var(--border))]",
+        outline:
+          "border border-hairline-strong bg-transparent aria-pressed:bg-[color-mix(in_oklch,var(--surface-raised,var(--background)),var(--foreground)_7%)] aria-pressed:shadow-[var(--elevation-highlight,0_0_#0000)] aria-pressed:hover:bg-[color-mix(in_oklch,var(--surface-raised,var(--background)),var(--foreground)_7%)]",
       },
       size: {
         default:
-          "h-8 min-w-8 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        sm: "h-7 min-w-7 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-9 min-w-9 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+          "h-[var(--control-h,2.125rem)] min-w-[var(--control-h,2.125rem)] px-[calc(var(--control-px,0.75rem)-0.125rem)] has-data-[icon=inline-end]:pr-[calc(var(--control-px,0.75rem)-0.25rem)] has-data-[icon=inline-start]:pl-[calc(var(--control-px,0.75rem)-0.25rem)]",
+        sm: "h-[calc(var(--control-h,2.125rem)-0.25rem)] min-w-[calc(var(--control-h,2.125rem)-0.25rem)] rounded-[min(--theme(--radius-md),12px)] px-[calc(var(--control-px,0.75rem)-0.25rem)] has-data-[icon=inline-end]:pr-[calc(var(--control-px,0.75rem)-0.375rem)] has-data-[icon=inline-start]:pl-[calc(var(--control-px,0.75rem)-0.375rem)] [&_svg:not([class*='size-'])]:size-3.5",
+        lg: "h-[calc(var(--control-h,2.125rem)+0.25rem)] min-w-[calc(var(--control-h,2.125rem)+0.25rem)] px-[var(--control-px,0.75rem)] has-data-[icon=inline-end]:pr-[calc(var(--control-px,0.75rem)-0.125rem)] has-data-[icon=inline-start]:pl-[calc(var(--control-px,0.75rem)-0.125rem)]",
       },
     },
     defaultVariants: {
