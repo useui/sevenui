@@ -122,3 +122,33 @@ describe("Table", () => {
     );
   });
 });
+
+describe("Table v2 styling", () => {
+  it("uses hairline dividers, a panel hover and density-driven cell padding", () => {
+    renderFullTable();
+    const row = screen.getByTestId("row");
+    expect(row.className).toContain("border-hairline");
+    expect(row.className).toContain("hover:bg-surface-panel/60");
+    expect(row.className).toContain("motion-reduce:transition-none");
+    const cell = screen.getByText("INV-001");
+    expect(cell.className).toContain("py-[calc(var(--control-h");
+    expect(cell.className).toContain("px-[var(--control-px");
+    expect(cell.className.split(" ")).not.toContain("p-2");
+  });
+
+  it("renders muted, small header cells with the same horizontal density", () => {
+    renderFullTable();
+    const head = screen.getByText("Invoice");
+    const classes = head.className.split(" ");
+    expect(classes).toContain("text-muted-foreground");
+    expect(classes).toContain("text-xs");
+    expect(classes).toContain("font-medium");
+    expect(classes).not.toContain("text-foreground");
+    expect(head.className).toContain("px-[var(--control-px");
+  });
+
+  it("sets tabular numerals on the table", () => {
+    renderFullTable();
+    expect(screen.getByTestId("table").className).toContain("tabular-nums");
+  });
+});
