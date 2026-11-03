@@ -196,3 +196,58 @@ describe("Calendar", () => {
     expect(screen.getByRole("grid", { name: "July 2026" })).toBeDefined();
   });
 });
+
+describe("Calendar v2 styles", () => {
+  it("sizes cells from --control-h and rounds them with the theme radius", () => {
+    const { container } = render(
+      <Calendar mode="single" defaultMonth={june2026} />,
+    );
+    const root = container.querySelector("[data-slot=calendar]") as HTMLElement;
+    expect(root.className).toContain("[--cell-size:var(--control-h,2.125rem)]");
+    expect(root.className).toContain("[--cell-radius:max(0px,--theme(--radius-md))]");
+    expect(root.className).not.toContain("--spacing(7)");
+  });
+
+  it("gives day buttons the offset focus ring and no halo", () => {
+    render(<Calendar mode="single" defaultMonth={june2026} />);
+    const day = dayButton("Friday, June 12th, 2026");
+    expect(day.className).toContain("focus-visible:focus-ring");
+    expect(day.className).not.toContain("ring-[3px]");
+    // the old focus halo on the day cell is gone; Button's own halo is B1's
+    expect(day.className).not.toContain("group-data-[focused=true]/day:ring");
+    expect(day.className).not.toContain("focus-visible:ring-3");
+  });
+
+  it("fills the selected day and range ends with brand, tints the range middle", () => {
+    render(<Calendar mode="single" defaultMonth={june2026} />);
+    const day = dayButton("Friday, June 12th, 2026");
+    expect(day.className).toContain("data-[selected-single=true]:bg-brand");
+    expect(day.className).toContain(
+      "data-[selected-single=true]:text-brand-foreground",
+    );
+    expect(day.className).toContain("data-[range-start=true]:bg-brand");
+    expect(day.className).toContain("data-[range-end=true]:bg-brand");
+    expect(day.className).toContain("data-[range-middle=true]:bg-brand/12");
+    expect(day.className).not.toContain("bg-primary");
+  });
+
+  it("marks today with a hairline ring instead of a fill", () => {
+    const { container } = render(
+      <Calendar
+        mode="single"
+        defaultMonth={june2026}
+        today={new Date(2026, 5, 3)}
+      />,
+    );
+    const cell = container.querySelector("td[data-day='2026-06-03']") as HTMLElement;
+    expect(cell.className).toContain("var(--hairline-strong)");
+    expect(cell.className).not.toContain("bg-muted");
+  });
+
+  it("renders the month navigation as ghost buttons with the offset focus ring", () => {
+    render(<Calendar mode="single" defaultMonth={june2026} />);
+    const next = screen.getByRole("button", { name: "Go to the Next Month" });
+    expect(next.className).toContain("focus-visible:focus-ring");
+    expect(next.className).toContain("size-(--cell-size)");
+  });
+});
