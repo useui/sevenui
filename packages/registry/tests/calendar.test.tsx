@@ -265,11 +265,11 @@ describe("Calendar v2 styles", () => {
     const vars = registry.items.find((i) => i.name === "sevenui-tokens")?.cssVars as
       | Record<"light" | "dark", Record<string, string>>
       | undefined;
-    expect(vars).toBeDefined();
+    if (!vars) throw new Error("sevenui-tokens has no cssVars");
     for (const theme of ["light", "dark"] as const) {
       const ratio = contrastRatio(
-        vars![theme]["brand-foreground"],
-        vars![theme]["brand-strong"],
+        vars[theme]["brand-foreground"],
+        vars[theme]["brand-strong"],
       );
       expect(ratio).toBeGreaterThanOrEqual(4.5);
     }

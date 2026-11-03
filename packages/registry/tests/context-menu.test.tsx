@@ -208,7 +208,8 @@ describe("ContextMenu v2 styles", () => {
   it.each(["light", "dark"] as const)("keeps destructive item text at AA at rest and highlighted in %s", async (mode) => {
     render(<StyledMenu />);
     await openContextMenu();
-    const classes = document.querySelector('[data-slot="context-menu-item"][data-variant="destructive"]')!.className;
+    const classes =
+      document.querySelector(`[data-slot="context-menu-item"][data-variant="destructive"]`)?.className ?? "";
     const rest = destructivePull(classes, "data-[variant=destructive]:");
     const highlighted = destructivePull(classes, "data-[variant=destructive]:data-highlighted:");
     const alpha = destructiveTint(

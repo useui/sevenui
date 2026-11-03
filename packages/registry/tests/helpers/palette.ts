@@ -47,8 +47,11 @@ const hex = (rgb: Rgb) =>
   `#${rgb.map((c) => Math.round(Math.min(1, Math.max(0, c)) * 255).toString(16).padStart(2, "0")).join("")}`;
 
 type CssVars = Record<string, Record<string, string>>;
-const cssVarsOf = (name: string) =>
-  registry.items.find((i) => i.name === name)!.cssVars as unknown as CssVars;
+function cssVarsOf(name: string): CssVars {
+  const item = registry.items.find((i) => i.name === name);
+  if (!item?.cssVars) throw new Error(`registry item ${name} has no cssVars`);
+  return item.cssVars as unknown as CssVars;
+}
 
 /** The theme colours plus the derived SevenUI surfaces for one mode. */
 export function palette(mode: Mode) {
@@ -61,7 +64,9 @@ export function palette(mode: Mode) {
   // Light: panel = card, raised = popover. Dark: pulled 4% / 7% toward the foreground.
   const panel = t["surface-panel"] === "var(--card)" ? card : mix(card, 96, foreground);
   const raised = t["surface-raised"] === "var(--popover)" ? popover : mix(popover, 93, foreground);
-  const hairlinePct = Number(t.hairline.match(/var\(--foreground\) (\d+)%/)![1]);
+  const hairline = t.hairline.match(/var\(--foreground\) (\d+)%/);
+  if (!hairline) throw new Error(`unexpected hairline token: ${t.hairline}`);
+  const hairlinePct = Number(hairline[1]);
   return {
     foreground,
     mutedForeground: color("muted-foreground"),
@@ -84,7 +89,7 @@ export function contrastOn(text: Oklch, surface: Oklch, tint?: { color: Oklch; a
 
 export const AA = 4.5;
 
-const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
 
 /**
  * Reads N from `<prefix>text-[color:color-mix(in_oklch,var(--foreground)_N%,var(--destructive))]`
@@ -93,7 +98,7 @@ const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
 export function destructivePull(classes: string, prefix = ""): number {
   const m = classes.match(
     new RegExp(
-      `(?:^|\\s)${escape(prefix)}text-\\[color:color-mix\\(in_oklch,var\\(--foreground\\)_(\\d+)%,var\\(--destructive\\)\\)\\](?:\\s|$)`,
+      `(?:^|\\s)${escapeRegExp(prefix)}text-\\[color:color-mix\\(in_oklch,var\\(--foreground\\)_(\\d+)%,var\\(--destructive\\)\\)\\](?:\\s|$)`,
     ),
   );
   return m ? Number(m[1]) : Number.NaN;
@@ -101,6 +106,6 @@ export function destructivePull(classes: string, prefix = ""): number {
 
 /** Reads the alpha of `<prefix>bg-destructive/N` in a class list; NaN when missing. */
 export function destructiveTint(classes: string, prefix = ""): number {
-  const m = classes.match(new RegExp(`(?:^|\\s)${escape(prefix)}bg-destructive\\/(\\d+)(?:\\s|$)`));
+  const m = classes.match(new RegExp(`(?:^|\\s)${escapeRegExp(prefix)}bg-destructive\\/(\\d+)(?:\\s|$)`));
   return m ? Number(m[1]) / 100 : Number.NaN;
 }
