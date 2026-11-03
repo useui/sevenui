@@ -31,7 +31,12 @@ function Tile({
   return (
     <Attachment size={size} state={state} orientation={orientation}>
       <AttachmentMedia variant={image ? "image" : "icon"}>
-        {image ? <img src="/placeholder.svg" alt="" /> : <FileTextIcon />}
+        {image ? (
+          // biome-ignore lint/performance/noImgElement: dev-only lab renders the static /placeholder.svg, no loader needed
+          <img src="/placeholder.svg" alt="" />
+        ) : (
+          <FileTextIcon />
+        )}
       </AttachmentMedia>
       <AttachmentContent>
         <AttachmentTitle>quarterly-report.pdf</AttachmentTitle>
@@ -68,6 +73,7 @@ export default function AttachmentMatrix() {
         {SIZES.map((size) => (
           <Attachment key={size} size={size}>
             <AttachmentMedia variant="image">
+              {/* biome-ignore lint/performance/noImgElement: dev-only lab renders the static /placeholder.svg, no loader needed */}
               <img src="/placeholder.svg" alt="" />
             </AttachmentMedia>
           </Attachment>

@@ -5,6 +5,8 @@ import { LabSection } from "../lab-frame";
 
 const TAGS = Array.from({ length: 30 }, (_, i) => `v1.2.0-beta.${30 - i}`);
 
+const HERO_TILES = ["a", "b", "c", "d", "e", "f", "g", "h"];
+
 export default function ScrollAreaMatrix() {
   return (
     <div>
@@ -21,8 +23,8 @@ export default function ScrollAreaMatrix() {
         </ScrollArea>
         <ScrollArea orientation="horizontal" className="w-64 rounded-md border border-hairline">
           <div className="flex w-max gap-3 p-3">
-            {Array.from({ length: 8 }, (_, i) => (
-              <div key={i} className="size-24 shrink-0 rounded-md bg-muted" />
+            {HERO_TILES.map((id) => (
+              <div key={id} className="size-24 shrink-0 rounded-md bg-muted" />
             ))}
           </div>
         </ScrollArea>

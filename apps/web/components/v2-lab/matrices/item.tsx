@@ -40,6 +40,7 @@ export default function ItemMatrix() {
           ))}
           <Item variant={variant} className="w-72" render={<a href="#item" />}>
             <ItemMedia variant="image">
+              {/* biome-ignore lint/performance/noImgElement: dev-only lab renders the static /placeholder.svg, no loader needed */}
               <img src="/placeholder.svg" alt="" />
             </ItemMedia>
             <ItemContent>

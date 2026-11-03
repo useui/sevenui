@@ -17,6 +17,7 @@ export default function AspectRatioMatrix() {
         {RATIOS.map(({ label, ratio }) => (
           <div key={label} className="w-40">
             <AspectRatio ratio={ratio} className="overflow-hidden rounded-lg bg-surface-panel">
+              {/* biome-ignore lint/performance/noImgElement: dev-only lab renders the static /placeholder.svg, no loader needed */}
               <img src="/placeholder.svg" alt="" className="size-full object-cover" />
             </AspectRatio>
             <p className="mt-1 font-mono text-xs text-muted-foreground">{label}</p>

@@ -43,6 +43,7 @@ export default function CardMatrix() {
             <CardContent>Content only, no footer.</CardContent>
           </Card>
           <Card size={size} className="w-56">
+            {/* biome-ignore lint/performance/noImgElement: dev-only lab renders the static /placeholder.svg, no loader needed */}
             <img src="/placeholder.svg" alt="" className="aspect-video w-full object-cover" />
             <CardHeader>
               <CardTitle>Image first</CardTitle>
