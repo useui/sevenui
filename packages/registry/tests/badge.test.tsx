@@ -1,7 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { Badge } from "@/registry/base/ui/badge";
+import { Badge, badgeVariants } from "@/registry/base/ui/badge";
+import registry from "../registry.json";
+import { contrastRatio, parseColor } from "./helpers/contrast";
 
 describe("Badge", () => {
   it("renders a span with data-slot and children", () => {
@@ -31,7 +33,9 @@ describe("Badge", () => {
     render(<Badge variant="destructive">Destructive</Badge>);
     const badge = screen.getByText("Destructive");
     expect(badge.getAttribute("data-variant")).toBe("destructive");
-    expect(badge.className).toContain("text-destructive");
+    // v2: the text is the destructive tone pulled towards the foreground for AA.
+    expect(badge.className).toContain("[--badge-tone:var(--destructive)]");
+    expect(badge.className).toContain("var(--badge-tone))]");
   });
 
   it("applies the outline variant", () => {
@@ -104,7 +108,10 @@ describe("Badge", () => {
       const badge = screen.getByText("New");
       expect(badge.getAttribute("data-variant")).toBe("highlight");
       expect(badge.className).toContain("bg-brand/14");
-      expect(badge.className).toContain("text-brand");
+      // The brand pulled towards the foreground, so it reads at AA on its tint.
+      expect(badge.className).toContain(
+        "text-[color:color-mix(in_oklch,var(--foreground)_10%,var(--brand))]",
+      );
       expect(badge.className).toContain("border-brand/30");
     });
 
@@ -146,5 +153,119 @@ describe("Badge", () => {
       render(<Badge>M</Badge>);
       expect(screen.getByText("M").className).toContain("motion-reduce:transition-none");
     });
+  });
+});
+
+// --- Contrast -------------------------------------------------------------
+// Resolves the badge's own color-mix() classes against the theme values in
+// registry.json, the way a browser does: mixes in OKLCH, then composites the
+// translucent tint over the surface in sRGB. Every tone's text must reach AA
+// (4.5:1) on its tint over the page background, a card and a panel.
+
+type Oklch = [number, number, number];
+type Rgb = [number, number, number];
+
+const toLinear = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+
+function hexToOklch(hex: string): Oklch {
+  const n = Number.parseInt(hex.slice(1), 16);
+  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => toLinear(v / 255));
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  const L = 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s;
+  const A = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+  const B = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+  return [L, Math.hypot(A, B), ((Math.atan2(B, A) * 180) / Math.PI + 360) % 360];
+}
+
+function parse(value: string): Oklch {
+  if (value.startsWith("#")) return hexToOklch(value);
+  const m = value.match(/^oklch\(([\d.]+) ([\d.]+) ([\d.]+)\)$/);
+  if (!m) throw new Error(`Unsupported colour: ${value}`);
+  return [Number(m[1]), Number(m[2]), Number(m[3])];
+}
+
+/** color-mix(in oklch, a p%, b): linear L and C, hue along the shorter arc. */
+function mix(a: Oklch, p: number, b: Oklch): Oklch {
+  const t = 1 - p / 100;
+  let dh = b[2] - a[2];
+  if (dh > 180) dh -= 360;
+  if (dh < -180) dh += 360;
+  return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, (a[2] + dh * t + 360) % 360];
+}
+
+const toRgb = ([L, C, h]: Oklch): Rgb => {
+  const c = parseColor(`oklch(${L.toFixed(6)} ${C.toFixed(6)} ${h.toFixed(6)})`);
+  return [c.r, c.g, c.b];
+};
+
+const over = (fg: Rgb, alpha: number, bg: Rgb): Rgb =>
+  fg.map((c, i) => alpha * c + (1 - alpha) * bg[i]) as Rgb;
+
+const hex = (rgb: Rgb) =>
+  `#${rgb.map((c) => Math.round(Math.min(1, Math.max(0, c)) * 255).toString(16).padStart(2, "0")).join("")}`;
+
+type CssVars = Record<string, Record<string, string>>;
+const cssVarsOf = (name: string) =>
+  registry.items.find((i) => i.name === name)!.cssVars as unknown as CssVars;
+const themeVars = cssVarsOf("theme");
+const tokenVars = cssVarsOf("sevenui-tokens");
+
+function palette(mode: "light" | "dark") {
+  const v = themeVars[mode];
+  const color = (name: string) => parse(v[name]);
+  const card = color("card");
+  const foreground = color("foreground");
+  // surface-panel: var(--card) in light, card mixed 4% toward the foreground in dark.
+  const panelMix = tokenVars[mode]["surface-panel"];
+  const panel = panelMix === "var(--card)" ? card : mix(card, 96, foreground);
+  expect(panelMix).toMatch(/^(var\(--card\)|color-mix\(in oklch, var\(--card\), var\(--foreground\) 4%\))$/);
+  return {
+    foreground,
+    brand: parse(tokenVars[mode].brand),
+    tones: { destructive: color("destructive"), success: color("success"), warning: color("warning") },
+    surfaces: { background: color("background"), card, panel },
+  };
+}
+
+/** Reads `color-mix(in_oklch,var(--foreground)_N%,…)` from a class list; 0 when the text is the pure tone. */
+function foregroundPull(classes: string): number {
+  const m = classes.match(
+    /(?:^|\s)text-\[color:color-mix\(in_oklch,var\(--foreground\)_(\d+)%,var\(--(?:badge-tone|brand)\)\)\]/,
+  );
+  return m ? Number(m[1]) : 0;
+}
+
+/** The tint's alpha from `transparent_N%` (status tones) or `bg-brand/N` (highlight). */
+function tintAlpha(classes: string): number {
+  const status = classes.match(/bg-\[color:color-mix\(in_oklch,transparent_(\d+)%,var\(--badge-tone\)\)\]/);
+  if (status) return 1 - Number(status[1]) / 100;
+  const brand = classes.match(/(?:^|\s)bg-brand\/(\d+)(?:\s|$)/);
+  if (brand) return Number(brand[1]) / 100;
+  throw new Error("no tint");
+}
+
+describe("Badge text contrast (AA)", () => {
+  const cases = (["light", "dark"] as const).flatMap((mode) =>
+    (["destructive", "success", "warning", "highlight"] as const).map((variant) => ({ mode, variant })),
+  );
+
+  it.each(cases)("$variant text reaches 4.5:1 on its tint in $mode", ({ mode, variant }) => {
+    const classes = badgeVariants({ variant });
+    const p = palette(mode);
+    const tone = variant === "highlight" ? p.brand : p.tones[variant];
+    const pull = foregroundPull(classes);
+    expect(pull, `${variant} text must be a foreground pull of its tone`).toBeGreaterThan(0);
+    const text = toRgb(pull ? mix(p.foreground, pull, tone) : tone);
+    const tint = toRgb(tone);
+    const ratios = Object.entries(p.surfaces).map(([name, surface]) => {
+      const bg = over(tint, tintAlpha(classes), toRgb(surface));
+      return [name, contrastRatio(hex(text), hex(bg))] as const;
+    });
+    const report = ratios.map(([name, r]) => `${name} ${r.toFixed(2)}`).join(", ");
+    expect(Math.min(...ratios.map(([, r]) => r)), `${variant} ${mode}: ${report}`).toBeGreaterThanOrEqual(
+      Number(process.env.BADGE_AA ?? 4.5),
+    );
   });
 });

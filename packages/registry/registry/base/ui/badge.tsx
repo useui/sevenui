@@ -21,8 +21,12 @@ const badgeVariants = cva(
           "border-hairline-strong text-foreground [a]:hover:bg-muted",
         secondary:
           "border-hairline bg-surface-panel text-secondary-foreground [a]:hover:bg-surface-raised",
+        // Tinted text is pulled towards the foreground, darker in light and
+        // lighter in dark, until it reads at AA (4.5:1) on its own tint over
+        // any surface; the dot keeps the pure tone. badge.test.tsx measures
+        // each pull against the theme values.
         destructive: cn(
-          "text-destructive [--badge-tone:var(--destructive)]",
+          "[--badge-tone:var(--destructive)] text-[color:color-mix(in_oklch,var(--foreground)_15%,var(--badge-tone))]",
           statusTone,
         ),
         outline:
@@ -30,10 +34,8 @@ const badgeVariants = cva(
         ghost:
           "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
         link: "text-brand underline-offset-4 hover:underline",
-        // Text is pulled a quarter towards the foreground so it reads at AA on
-        // its own tint in light; the dot keeps the pure tone.
         success: cn(
-          "[--badge-tone:var(--success,oklch(0.627_0.194_149.214))] text-[color:color-mix(in_oklch,var(--foreground)_25%,var(--badge-tone))]",
+          "[--badge-tone:var(--success,oklch(0.627_0.194_149.214))] text-[color:color-mix(in_oklch,var(--foreground)_35%,var(--badge-tone))]",
           statusTone,
         ),
         warning: cn(
@@ -41,7 +43,7 @@ const badgeVariants = cva(
           statusTone,
         ),
         highlight:
-          "border-brand/30 bg-brand/14 text-brand [a]:hover:bg-brand/20",
+          "border-brand/30 bg-brand/14 text-[color:color-mix(in_oklch,var(--foreground)_10%,var(--brand))] [a]:hover:bg-brand/20",
       },
     },
     defaultVariants: {
