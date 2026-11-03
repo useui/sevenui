@@ -156,7 +156,7 @@ function CommandGroup({
       {...props}
     >
       {heading != null && (
-        <AutocompletePrimitive.GroupLabel className="px-2 pt-2 pb-1 font-mono text-[11px] font-medium tracking-wide text-muted-foreground/80 uppercase">
+        <AutocompletePrimitive.GroupLabel className="px-2 pt-2 pb-1 font-mono text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
           {heading}
         </AutocompletePrimitive.GroupLabel>
       )}

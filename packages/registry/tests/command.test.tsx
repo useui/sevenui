@@ -202,10 +202,12 @@ describe("Command v2 styles", () => {
       "text-[11px]",
       "uppercase",
       "tracking-wide",
-      "text-muted-foreground/80",
+      "text-muted-foreground",
     ]) {
       expect(heading.className).toContain(cls);
     }
+    // full-strength muted text: /80 drops below 4.5:1 on the light tray
+    expect(heading.className).not.toContain("text-muted-foreground/");
   });
 
   it("styles shortcuts as keycaps and the separator as a hairline", () => {
