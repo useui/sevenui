@@ -37,9 +37,9 @@ function NumberFieldGroup({
   return (
     <NumberFieldPrimitive.Group
       className={cn(
-        "flex h-[var(--control-h,2.125rem)] w-fit items-center gap-0.5 rounded-lg bg-surface-inset p-[3px] text-foreground shadow-[inset_0_0_0_1px_var(--hairline-strong,var(--input)),var(--elevation-inset,0_0_transparent)] transition-shadow duration-150 motion-reduce:transition-none",
+        "flex h-[var(--control-h,2.125rem)] w-fit items-center gap-0.5 rounded-lg bg-surface-inset p-[2px] text-foreground border border-hairline-strong shadow-[0_0_#0000,var(--elevation-inset,0_0_#0000)] transition-[border-color,box-shadow] duration-150 motion-reduce:transition-none",
         "has-[input:focus-visible]:focus-ring",
-        "has-[input[aria-invalid=true]]:shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--destructive)_60%,transparent),var(--elevation-inset,0_0_transparent)] has-[input[aria-invalid=true]]:[--focus-color:var(--destructive)]",
+        "has-[input[aria-invalid=true]]:border-destructive/60 has-[input[aria-invalid=true]]:[--focus-color:var(--destructive)]",
         className,
       )}
       {...props}

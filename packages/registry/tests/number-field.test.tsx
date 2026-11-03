@@ -152,7 +152,9 @@ describe("NumberField v2 styles", () => {
     expect(group).not.toContain("focus-within:ring");
     expect(group).toContain("h-[var(--control-h,");
     expect(group).toContain("bg-surface-inset");
-    expect(group).toContain("inset_0_0_0_1px_var(--hairline-strong");
+    // The edge is a real border so consumer border-* classes merge against it.
+    expect(group.split(" ")).toEqual(expect.arrayContaining(["border", "border-hairline-strong"]));
+    expect(group).not.toContain("0_0_0_1px_var(--hairline");
     expect(group).toContain("motion-reduce:transition-none");
     expect(getInput().className).toContain("tabular-nums");
     expect(getInput().className).toContain("placeholder:text-muted-foreground");
