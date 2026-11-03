@@ -143,13 +143,13 @@ describe("Tabs", () => {
       expect(list.className).toContain("bg-surface-tray");
       expect(list.className).toContain("inset_0_0_0_1px_var(--hairline");
       expect(list.className).toContain("p-0.5");
-      expect(list.className).toContain("h-(--control-h)");
+      expect(list.className).toContain("h-[var(--control-h,2.125rem)]");
     });
 
     it("sizes triggers inside the tray and focuses with the offset ring", () => {
       render(<BasicTabs />);
       for (const tab of screen.getAllByRole("tab")) {
-        expect(tab.className).toContain("h-[calc(var(--control-h)-4px)]");
+        expect(tab.className).toContain("h-[calc(var(--control-h,2.125rem)-4px)]");
         expect(tab.className).toContain("focus-visible:focus-ring");
         expect(tab.className).not.toContain("ring-3");
         expect(tab.className).not.toContain("ring-ring");
