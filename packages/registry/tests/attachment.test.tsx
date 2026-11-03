@@ -196,3 +196,44 @@ describe("AttachmentGroup", () => {
     expect(group.className).toContain("overflow-x-auto");
   });
 });
+
+describe("Attachment v2 styles", () => {
+  it("draws the tile as a hairline panel with an offset ring for its trigger", () => {
+    render(<FileAttachment data-testid="attachment" />);
+    const cls = screen.getByTestId("attachment").className;
+    expect(cls).toContain("bg-surface-panel");
+    expect(cls).toContain("border-hairline");
+    expect(cls).toContain(
+      "has-[>[data-slot=attachment-trigger]:focus-visible]:focus-ring",
+    );
+    expect(cls).toContain("[:where(&)]:[--focus-width:1.5px]");
+    expect(cls).not.toContain("ring-ring");
+    expect(cls).not.toContain("bg-card");
+  });
+
+  it("rounds the media concentrically inside the tile padding", () => {
+    const { container } = render(<FileAttachment />);
+    const cls = (
+      container.querySelector('[data-slot="attachment-media"]') as HTMLElement
+    ).className;
+    expect(cls).toContain(
+      "rounded-[max(0px,calc(--theme(--radius-2xl)-0.5rem))]",
+    );
+    expect(cls).toContain(
+      "group-data-[size=xs]/attachment:rounded-[max(0px,calc(--theme(--radius-xl)-0.25rem))]",
+    );
+  });
+
+  it("renders the remove action as a ghost xs icon button", () => {
+    render(
+      <Attachment>
+        <AttachmentActions>
+          <AttachmentAction aria-label="Remove">x</AttachmentAction>
+        </AttachmentActions>
+      </Attachment>,
+    );
+    const cls = screen.getByRole("button", { name: "Remove" }).className;
+    expect(cls).toContain("size-6");
+    expect(cls).toContain("hover:bg-muted");
+  });
+});

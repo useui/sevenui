@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
@@ -7,7 +9,12 @@ import { cn } from "cn";
 import { Button } from "@/registry/base/ui/button";
 
 const attachmentVariants = cva(
-  "group/attachment relative flex w-fit max-w-full min-w-0 shrink-0 flex-wrap rounded-2xl border bg-card text-card-foreground transition-colors focus-within:ring-1 focus-within:ring-ring/30 has-[>a,>button]:hover:bg-muted/50 data-[state=error]:border-destructive/30 data-[state=idle]:border-dashed",
+  [
+    "group/attachment relative flex w-fit max-w-full min-w-0 shrink-0 flex-wrap rounded-2xl border border-hairline bg-surface-panel text-card-foreground transition-colors motion-reduce:transition-none has-[>a,>button]:hover:bg-[color-mix(in_oklch,var(--surface-panel,var(--card)),var(--foreground)_4%)] data-[state=error]:border-destructive/30 data-[state=idle]:border-dashed data-[state=idle]:border-hairline-strong",
+    // The trigger covers the tile, so the tile carries its focus ring;
+    // the actions keep their own.
+    "has-[>[data-slot=attachment-trigger]:focus-visible]:focus-ring [:where(&)]:[--focus-width:1.5px] [:where(&)]:[--focus-gap:2px]",
+  ],
   {
     variants: {
       size: {
@@ -47,7 +54,7 @@ function Attachment({
 }
 
 const attachmentMediaVariants = cva(
-  "relative flex aspect-square w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted text-foreground group-data-[orientation=vertical]/attachment:w-full group-data-[size=sm]/attachment:w-8 group-data-[size=xs]/attachment:w-7 group-data-[size=xs]/attachment:rounded-md group-data-[state=error]/attachment:bg-destructive/10 group-data-[state=error]/attachment:text-destructive group-data-[orientation=vertical]/attachment:*:data-[slot=spinner]:size-6! [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 group-data-[orientation=vertical]/attachment:[&_svg:not([class*='size-'])]:size-6 group-data-[size=xs]/attachment:[&_svg:not([class*='size-'])]:size-3.5",
+  "relative flex aspect-square w-10 shrink-0 items-center justify-center overflow-hidden rounded-[max(0px,calc(--theme(--radius-2xl)-0.5rem))] bg-muted text-foreground group-data-[orientation=vertical]/attachment:w-full group-data-[size=sm]/attachment:w-8 group-data-[size=sm]/attachment:rounded-[max(0px,calc(--theme(--radius-2xl)-0.375rem))] group-data-[size=xs]/attachment:w-7 group-data-[size=xs]/attachment:rounded-[max(0px,calc(--theme(--radius-xl)-0.25rem))] group-data-[state=error]/attachment:bg-destructive/10 group-data-[state=error]/attachment:text-destructive group-data-[orientation=vertical]/attachment:*:data-[slot=spinner]:size-6! [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 group-data-[orientation=vertical]/attachment:[&_svg:not([class*='size-'])]:size-6 group-data-[size=xs]/attachment:[&_svg:not([class*='size-'])]:size-3.5",
   {
     variants: {
       variant: {
