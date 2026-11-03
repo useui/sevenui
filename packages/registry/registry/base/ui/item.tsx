@@ -36,7 +36,7 @@ function ItemSeparator({
 // Rows never drop below --item-h. Its fallback sits inside var(): a :where()
 // default on the row would shadow an ancestor's data-density value.
 const itemVariants = cva(
-  "group/item flex min-h-[var(--item-h,2rem)] w-full flex-wrap items-center rounded-lg border text-sm transition-colors duration-100 outline-none focus-visible:focus-ring motion-reduce:transition-none [a]:transition-colors [a]:hover:bg-muted [a]:motion-reduce:transition-none",
+  "group/item flex min-h-[var(--item-h,2rem)] w-full flex-wrap items-center rounded-lg border text-sm transition-[color,background-color,border-color] duration-100 outline-none focus-visible:focus-ring motion-reduce:transition-none [a]:transition-[color,background-color,border-color] [a]:hover:bg-muted [a]:motion-reduce:transition-none",
   {
     variants: {
       variant: {
