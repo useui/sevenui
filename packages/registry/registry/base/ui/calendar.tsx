@@ -99,15 +99,15 @@ function Calendar({
         ),
         week: cn("mt-2 flex w-full", defaultClassNames.week),
         week_number_header: cn(
-          "w-(--cell-size) select-none",
+          "w-(--cell-size) shrink-0 select-none",
           defaultClassNames.week_number_header,
         ),
         week_number: cn(
-          "text-[0.8rem] text-muted-foreground select-none",
+          "flex w-(--cell-size) shrink-0 items-center justify-center p-0 text-[0.8rem] text-muted-foreground select-none",
           defaultClassNames.week_number,
         ),
         day: cn(
-          "group/day relative aspect-square h-full w-full rounded-(--cell-radius) p-0 text-center select-none [&:last-child[data-selected=true]_button]:rounded-r-(--cell-radius)",
+          "group/day relative aspect-square h-full w-full rounded-(--cell-radius) p-0 text-center select-none has-focus-visible:z-30 [&:last-child[data-selected=true]_button]:rounded-r-(--cell-radius)",
           props.showWeekNumber
             ? "[&:nth-child(2)[data-selected=true]_button]:rounded-l-(--cell-radius)"
             : "[&:first-child[data-selected=true]_button]:rounded-l-(--cell-radius)",

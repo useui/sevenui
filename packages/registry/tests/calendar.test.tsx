@@ -216,6 +216,20 @@ describe("Calendar v2 styles", () => {
     // the old focus halo on the day cell is gone; Button's own halo is B1's
     expect(day.className).not.toContain("group-data-[focused=true]/day:ring");
     expect(day.className).not.toContain("focus-visible:ring-3");
+    // the focused cell rises above its neighbours so the ring is not covered
+    expect(day.closest("td")?.className).toContain("has-focus-visible:z-30");
+  });
+
+  it("gives week numbers their own fixed-width column", () => {
+    const { container } = render(
+      <Calendar mode="single" showWeekNumber defaultMonth={june2026} />,
+    );
+    const header = container.querySelector(".rdp-week_number_header") as HTMLElement;
+    const cell = container.querySelector(".rdp-week_number") as HTMLElement;
+    for (const el of [header, cell]) {
+      expect(el.className).toContain("w-(--cell-size)");
+      expect(el.className).toContain("shrink-0");
+    }
   });
 
   it("fills the selected day and range ends with brand, tints the range middle", () => {
