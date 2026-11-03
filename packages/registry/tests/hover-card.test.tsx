@@ -73,3 +73,30 @@ describe("HoverCard", () => {
     expect(trigger.getAttribute("data-slot")).toBe("hover-card-trigger");
   });
 });
+
+describe("HoverCard v2 styles", () => {
+  it("renders a single raised surface with the panel padding", async () => {
+    render(<ExampleHoverCard open />);
+    await screen.findByText("The Base UI component registry.");
+    const content = getContent();
+    expect(content?.className).toContain("bg-surface-raised");
+    expect(content?.className).toContain("shadow-overlay");
+    expect(content?.className).toContain("p-[var(--panel-pad,1.125rem)]");
+    expect(content?.className).not.toContain("ring-3");
+  });
+
+  it("animates like the select popup and drops motion when reduced", async () => {
+    render(<ExampleHoverCard open />);
+    await screen.findByText("The Base UI component registry.");
+    const content = getContent();
+    expect(content?.className).toContain("data-starting-style:opacity-0");
+    expect(content?.className).toContain("data-starting-style:scale-[0.98]");
+    expect(content?.className).toContain("motion-reduce:transition-none");
+  });
+
+  it("keeps the positioner's stacking context", async () => {
+    render(<ExampleHoverCard open />);
+    await screen.findByText("The Base UI component registry.");
+    expect(getContent()?.parentElement?.className).toContain("isolate z-50");
+  });
+});
