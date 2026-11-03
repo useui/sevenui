@@ -10,6 +10,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandSeparator,
+  CommandShortcut,
 } from "@/registry/base/ui/command";
 
 type Item = { value: string; label: string };
@@ -122,5 +124,101 @@ describe("CommandDialog", () => {
     await user.keyboard("{Escape}");
     expect(onOpenChange).toHaveBeenCalled();
     expect(onOpenChange.mock.calls[0][0]).toBe(false);
+  });
+
+  it("renders the dialog content on the tray surface", () => {
+    render(
+      <CommandDialog open>
+        <Palette />
+      </CommandDialog>,
+    );
+    const content = document.querySelector(
+      "[data-slot=dialog-content]",
+    ) as HTMLElement;
+    expect(content.className).toContain("bg-surface-tray");
+    expect(content.className).toContain("shadow-overlay");
+  });
+});
+
+describe("Command v2 styles", () => {
+  function ShortcutPalette() {
+    return (
+      <Command items={groups}>
+        <CommandInput placeholder="Type a command or search..." />
+        <CommandList>
+          {(group: Group) => (
+            <CommandGroup key={group.value} heading={group.value} items={group.items}>
+              {(item: Item) => (
+                <CommandItem key={item.value} value={item}>
+                  {item.label}
+                  <CommandShortcut>⌘P</CommandShortcut>
+                </CommandItem>
+              )}
+            </CommandGroup>
+          )}
+        </CommandList>
+        <CommandSeparator />
+      </Command>
+    );
+  }
+
+  it("puts the palette on the tray surface with a focus ring while its input has focus", () => {
+    const { container } = render(<ShortcutPalette />);
+    const root = container.querySelector("[data-slot=command]") as HTMLElement;
+    expect(root.className).toContain("bg-surface-tray");
+    expect(root.className).toContain(
+      "[&:not([data-slot=dialog-content]_*):has([data-slot=command-input]:focus-visible)]:focus-ring",
+    );
+    expect(root.className).not.toContain("ring-3");
+  });
+
+  it("separates the search row with a bottom hairline", () => {
+    const { container } = render(<ShortcutPalette />);
+    const wrapper = container.querySelector(
+      "[data-slot=command-input-wrapper]",
+    ) as HTMLElement;
+    expect(wrapper.className).toContain("border-b");
+    expect(wrapper.className).toContain("border-hairline");
+  });
+
+  it("sizes items by --item-h and highlights them as an inner panel", () => {
+    render(<ShortcutPalette />);
+    const item = screen.getByText("Calendar").closest(
+      "[data-slot=command-item]",
+    ) as HTMLElement;
+    expect(item.className).toContain("min-h-[var(--item-h,2rem)]");
+    expect(item.className).toContain("data-highlighted:bg-surface-panel");
+    expect(item.className).not.toContain("data-highlighted:bg-muted");
+  });
+
+  it("renders group headings as mono 11px uppercase labels", () => {
+    render(<ShortcutPalette />);
+    const heading = screen.getByText("Suggestions");
+    for (const cls of [
+      "font-mono",
+      "text-[11px]",
+      "uppercase",
+      "tracking-wide",
+      "text-muted-foreground/80",
+    ]) {
+      expect(heading.className).toContain(cls);
+    }
+  });
+
+  it("styles shortcuts as keycaps and the separator as a hairline", () => {
+    const { container } = render(<ShortcutPalette />);
+    const shortcut = container.querySelector(
+      "[data-slot=command-shortcut]",
+    ) as HTMLElement;
+    expect(shortcut.className).toContain("bg-surface-raised");
+    expect(shortcut.className).toContain(
+      "shadow-[inset_0_0_0_1px_var(--hairline),inset_0_-1px_0_var(--hairline-strong)]",
+    );
+    expect(shortcut.className).toContain("font-mono");
+    expect(shortcut.className).toContain("text-[10.5px]");
+    const separator = container.querySelector(
+      "[data-slot=command-separator]",
+    ) as HTMLElement;
+    expect(separator.className).toContain("bg-hairline");
   });
 });
