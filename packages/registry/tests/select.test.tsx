@@ -236,6 +236,12 @@ describe("Select v2 styles", () => {
     const item = await screen.findByRole("option", { name: "Banana" });
     expect(item.className).toContain("min-h-[var(--item-h,2rem)]");
     expect(item.className).toContain("data-highlighted:bg-surface-panel");
+    expect(item.className).toContain(
+      "data-highlighted:shadow-[inset_0_0_0_1px_var(--hairline",
+    );
+    // Inset ring so the scrolling popup's overflow does not clip it.
+    expect(item.className).toContain("[--focus-gap:-1.5px]");
+    expect(item.className).toContain("focus-visible:focus-ring");
     const check = item.querySelector("[data-slot=select-item-indicator]")!;
     expect(check.className).toContain("text-brand");
   });

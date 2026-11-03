@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+
 import {
   Select,
   SelectContent,
@@ -68,6 +70,30 @@ function Demo({
   );
 }
 
+// Four open popups would stack over the other cells, so only the first cell
+// opens its select.
+function OpenDemo() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const cell = ref.current?.closest("[data-lab-cell]");
+    const first = document.querySelector("[data-lab-cell]");
+    if (cell && cell === first) setOpen(true);
+  }, []);
+  return (
+    <div ref={ref} className="min-h-72">
+      <Select items={FRUITS} defaultValue="banana" open={open} onOpenChange={setOpen} modal={false}>
+        <SelectTrigger className="w-40">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent alignItemWithTrigger={false}>
+          <Items />
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
 export default function SelectMatrix() {
   return (
     <div>
@@ -80,15 +106,8 @@ export default function SelectMatrix() {
           <Demo size={size} defaultValue="dragon" className="w-36" />
         </LabSection>
       ))}
-      <LabSection title="open (popup portals to body: document theme, comfortable density)">
-        <Select items={FRUITS} defaultValue="banana" defaultOpen modal={false}>
-          <SelectTrigger className="w-40">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent alignItemWithTrigger={false}>
-            <Items />
-          </SelectContent>
-        </Select>
+      <LabSection title="open (first cell only; the popup portals to body, so it takes the site theme and comfortable density — toggle the site theme to see it in light)">
+        <OpenDemo />
       </LabSection>
     </div>
   );
