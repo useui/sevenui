@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { cn } from "cn";
 import { describe, expect, it, vi } from "vitest";
 
 import {
@@ -13,6 +14,7 @@ import {
   AttachmentTitle,
   AttachmentTrigger,
 } from "@/registry/base/ui/attachment";
+import { buttonVariants } from "@/registry/base/ui/button";
 
 function FileAttachment(props: React.ComponentProps<typeof Attachment>) {
   return (
@@ -232,8 +234,16 @@ describe("Attachment v2 styles", () => {
         </AttachmentActions>
       </Attachment>,
     );
-    const cls = screen.getByRole("button", { name: "Remove" }).className;
-    expect(cls).toContain("size-6");
-    expect(cls).toContain("hover:bg-muted");
+    // Compare against the button variants themselves so the assertion follows
+    // the button restyle instead of pinning one of its classes (merged through
+    // cn exactly as Button merges them).
+    const expected = cn(buttonVariants({ variant: "ghost", size: "icon-xs" }))
+      .split(/\s+/)
+      .filter(Boolean);
+    expect(expected.length).toBeGreaterThan(0);
+    const action = screen.getByRole("button", { name: "Remove" });
+    for (const c of expected) {
+      expect(action.classList.contains(c)).toBe(true);
+    }
   });
 });
