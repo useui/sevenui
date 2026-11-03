@@ -103,6 +103,14 @@ describe("Marker", () => {
       expect(border).not.toContain("border-border");
     });
 
+    it("gives inline links, and a marker rendered as a link, the offset focus ring", () => {
+      render(<MarkerContent data-testid="content">x</MarkerContent>);
+      const content = screen.getByTestId("content").className;
+      expect(content).toContain("*:[a]:outline-none");
+      expect(content).toContain("*:[a]:focus-visible:focus-ring");
+      expect(markerVariants()).toContain("[a]:focus-visible:focus-ring");
+    });
+
     it("mutes the icon", () => {
       render(<MarkerIcon data-testid="icon" />);
       expect(screen.getByTestId("icon").className).toContain("text-muted-foreground");

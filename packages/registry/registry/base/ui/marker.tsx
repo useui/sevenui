@@ -7,7 +7,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
 const markerVariants = cva(
-  "group/marker relative flex min-h-4 w-full items-center gap-2 text-left text-sm text-muted-foreground [&_svg:not([class*='size-'])]:size-4 [a]:underline [a]:underline-offset-3 [a]:hover:text-foreground",
+  "group/marker relative flex min-h-4 w-full items-center gap-2 text-left text-sm text-muted-foreground [&_svg:not([class*='size-'])]:size-4 [a]:underline [a]:underline-offset-3 [a]:outline-none [a]:focus-visible:focus-ring [a]:hover:text-foreground",
   {
     variants: {
       variant: {
@@ -63,7 +63,7 @@ function MarkerContent({ className, ...props }: React.ComponentProps<"span">) {
       className={cn(
         // Between separator lines the label is a chip, set like a secondary
         // badge.
-        "min-w-0 wrap-break-word group-data-[variant=separator]/marker:flex-none group-data-[variant=separator]/marker:rounded-full group-data-[variant=separator]/marker:border group-data-[variant=separator]/marker:border-hairline group-data-[variant=separator]/marker:bg-surface-panel group-data-[variant=separator]/marker:px-2 group-data-[variant=separator]/marker:py-0.5 group-data-[variant=separator]/marker:text-center group-data-[variant=separator]/marker:text-[11px] group-data-[variant=separator]/marker:font-medium *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
+        "min-w-0 wrap-break-word group-data-[variant=separator]/marker:flex-none group-data-[variant=separator]/marker:rounded-full group-data-[variant=separator]/marker:border group-data-[variant=separator]/marker:border-hairline group-data-[variant=separator]/marker:bg-surface-panel group-data-[variant=separator]/marker:px-2 group-data-[variant=separator]/marker:py-0.5 group-data-[variant=separator]/marker:text-center group-data-[variant=separator]/marker:text-[11px] group-data-[variant=separator]/marker:font-medium *:[a]:underline *:[a]:underline-offset-3 *:[a]:rounded-sm *:[a]:outline-none *:[a]:focus-visible:focus-ring *:[a]:hover:text-foreground",
         className,
       )}
       {...props}
