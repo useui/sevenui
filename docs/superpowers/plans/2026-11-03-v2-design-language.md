@@ -22,7 +22,7 @@
 - WCAG AA: text ≥ 4.5:1, focus ring and other non-text indicators ≥ 3:1, in both themes.
 - Anti-goals: no gradients-for-decoration, glows, blooms, glassmorphism, emoji. Calm enough to adopt.
 - Motion respects `prefers-reduced-motion` (`motion-reduce:` variants).
-- Tailwind v4 traps (from layer-card): defaults via `[:where(&)]:[--x:…]`; radius via `--theme(--radius-*)` not `var(--radius-*)`; neutral base first in `color-mix()`; files using `useRender` need `"use client"`.
+- Tailwind v4 traps (from layer-card, as settled in the v2 restyle): density variables are read with inline fallbacks (`h-[var(--control-h,2.125rem)]`), never declared on elements — a `[:where(&)]:[--x:…]` default on the element shadows a `[data-density=compact]` ancestor; radius via `--theme(--radius-*)` not `var(--radius-*)`, and inside `calc()`/`min()`/`max()` (`rounded-[max(0px,calc(--theme(--radius-lg)-2px))]`) or a plain `rounded-*` step, never `rounded-(--theme(--radius-*))`; neutral base first in `color-mix()`; files using `useRender` need `"use client"`.
 - English everywhere; kebab-case files; Conventional Commits; **no attribution trailers of any kind** in commit messages (AGENTS.md overrides any harness default).
 
 ## Review Focus
@@ -109,12 +109,14 @@ elevation-overlay: 0 0 0 1px var(--hairline-strong), 0 30px 60px -30px rgb(0 0 0
 Size steps derive from `--control-h`: `xs = calc(var(--control-h) - 0.5rem)`, `sm = calc(var(--control-h) - 0.25rem)`, `lg = calc(var(--control-h) + 0.25rem)`; icon sizes are square of the same.
 
 Usage idioms every batch follows:
-- Focus: `outline-none focus-visible:focus-ring` (fields: `focus-within:focus-ring` / `has-focus-visible:` on the wrapper that carries the border). Remove `focus-visible:ring-*`/`focus-visible:border-ring`.
+- Focus: `outline-none focus-visible:focus-ring` (fields: `focus-within:focus-ring` / `has-focus-visible:` on the wrapper that carries the border). Remove `focus-visible:ring-*`/`focus-visible:border-ring`. Recolour the ring per element with `--focus-color` (e.g. `aria-invalid:[--focus-color:var(--destructive)]`); rows inside scrolling popups use the inset ring `[--focus-gap:-1.5px] focus-visible:focus-ring`. Never put `transition-colors` on the element that carries the ring — it animates `outline-color` from the text colour; list the properties instead (`transition-[background-color,border-color]`).
 - Raised controls (buttons, select triggers, menus): `bg-surface-raised shadow-[var(--elevation-highlight),0_0_0_1px_var(--hairline-strong)]` or the `shadow-raised` token; fields: `bg-surface-inset shadow-[inset_0_0_0_1px_var(--hairline-strong),var(--elevation-inset)]`.
 - Overlays (popover, menu, dialog content): tray-and-panel or single raised surface with `shadow-overlay`.
 - Accent appears only where the spec allows (focus, selected indicator, on-state, highlight badge, link, chart emphasis, `variant="accent"`).
-- Heights/padding/gaps: `h-(--control-h)`, `px-(--control-px)`, `gap-(--control-gap)`, `text-(length:--control-text)`, item rows `min-h-(--item-h)`.
-- Every class that reads a token must still work if a hand-copied file lacks the tokens item: add `[:where(&)]:[--x:fallback]` only for the `--focus-*`, `--control-*`, `--panel-pad`, `--item-h` variables it reads (colour tokens fall back via `var(--brand, var(--ring))` where used in arbitrary values).
+- Heights/padding/gaps, always with the inline fallback: `h-[var(--control-h,2.125rem)]`, `px-[var(--control-px,0.75rem)]`, `gap-[var(--control-gap,0.5rem)]`, `text-[length:var(--control-text,0.8125rem)]`, item rows `min-h-[var(--item-h,2rem)]`, panels `p-[var(--panel-pad,1.125rem)]`; size steps as `h-[calc(var(--control-h,2.125rem)-0.25rem)]`.
+- Highlighted and hovered list rows (menus, select, combobox, command): `data-highlighted:bg-hairline data-highlighted:text-foreground`, no inset shadow; disabled rows take neither the highlight nor the focus ring (`data-disabled:data-highlighted:bg-transparent data-disabled:focus-visible:outline-none`).
+- Placeholders: `placeholder:text-muted-foreground` at full strength — an alpha-reduced muted tone falls below 4.5:1.
+- Every class that reads a token must still work if a hand-copied file lacks the tokens item: density variables (`--control-*`, `--panel-pad`, `--item-h`) carry their fallback inside `var()` at the point of use, and are never declared on the element; the `focus-ring` utility and colour tokens fall back inside `var()` too (`var(--brand, var(--ring))`, `var(--hairline-strong,var(--input))`) where used in arbitrary values.
 
 ---
 
