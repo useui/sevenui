@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import { CalculatorIcon, CalendarIcon, CreditCardIcon, UserIcon } from "lucide-react";
 import {
   Command,
@@ -38,19 +39,21 @@ function Palette({ empty = false }: { empty?: boolean }) {
     <Command items={empty ? [] : GROUPS} className="w-72">
       <CommandInput placeholder="Type a command or search..." />
       <CommandList>
-        {(group: Group) => (
-          <CommandGroup key={group.value} heading={group.value} items={group.items}>
-            {(item: Item) => (
-              <CommandItem key={item.value} value={item} disabled={item.disabled}>
-                <item.icon />
-                {item.label}
-                {item.shortcut && <CommandShortcut>{item.shortcut}</CommandShortcut>}
-              </CommandItem>
-            )}
-          </CommandGroup>
+        {(group: Group, index: number) => (
+          <Fragment key={group.value}>
+            {index > 0 && <CommandSeparator />}
+            <CommandGroup heading={group.value} items={group.items}>
+              {(item: Item) => (
+                <CommandItem key={item.value} value={item} disabled={item.disabled}>
+                  <item.icon />
+                  {item.label}
+                  {item.shortcut && <CommandShortcut>{item.shortcut}</CommandShortcut>}
+                </CommandItem>
+              )}
+            </CommandGroup>
+          </Fragment>
         )}
       </CommandList>
-      <CommandSeparator />
       <CommandEmpty>No results found.</CommandEmpty>
     </Command>
   );

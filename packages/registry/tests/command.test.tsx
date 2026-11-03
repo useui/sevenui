@@ -187,6 +187,8 @@ describe("Command v2 styles", () => {
       "[data-slot=command-item]",
     ) as HTMLElement;
     expect(item.className).toContain("min-h-[var(--item-h,2rem)]");
+    // padding small enough that a 20px keycap fits a compact 26px row
+    expect(item.className).toContain("py-0.5");
     expect(item.className).toContain("data-highlighted:bg-surface-panel");
     expect(item.className).toContain(
       "data-highlighted:shadow-[inset_0_0_0_1px_var(--hairline)]",

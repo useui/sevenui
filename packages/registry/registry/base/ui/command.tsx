@@ -188,7 +188,7 @@ function CommandItem({
     <AutocompletePrimitive.Item
       data-slot="command-item"
       className={cn(
-        "group/command-item relative flex min-h-[var(--item-h,2rem)] cursor-default items-center gap-[var(--control-gap,0.5rem)] rounded-md px-2 py-1 text-[length:var(--control-text,0.8125rem)] outline-hidden select-none in-data-[slot=dialog-content]:rounded-lg! data-disabled:pointer-events-none data-disabled:opacity-50 data-highlighted:bg-surface-panel data-highlighted:text-foreground data-highlighted:shadow-[inset_0_0_0_1px_var(--hairline)] [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-highlighted:*:[svg]:text-foreground",
+        "group/command-item relative flex min-h-[var(--item-h,2rem)] cursor-default items-center gap-[var(--control-gap,0.5rem)] rounded-md px-2 py-0.5 text-[length:var(--control-text,0.8125rem)] outline-hidden select-none in-data-[slot=dialog-content]:rounded-lg! data-disabled:pointer-events-none data-disabled:opacity-50 data-highlighted:bg-surface-panel data-highlighted:text-foreground data-highlighted:shadow-[inset_0_0_0_1px_var(--hairline)] [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-highlighted:*:[svg]:text-foreground",
         className,
       )}
       {...props}
