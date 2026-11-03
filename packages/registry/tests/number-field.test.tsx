@@ -142,3 +142,24 @@ describe("NumberField", () => {
     expect(scrub.textContent).toBe("Quantity");
   });
 });
+
+describe("NumberField v2 styles", () => {
+  it("draws the group as an inset field with ghost steppers and tabular digits", () => {
+    render(<Quantity defaultValue={5} />);
+    const group = (getInput().parentElement as HTMLElement).className;
+    expect(group).toContain("has-[input:focus-visible]:focus-ring");
+    expect(group).not.toContain("ring-3");
+    expect(group).not.toContain("focus-within:ring");
+    expect(group).toContain("h-[var(--control-h,");
+    expect(group).toContain("bg-surface-inset");
+    expect(group).toContain("inset_0_0_0_1px_var(--hairline-strong");
+    expect(group).toContain("motion-reduce:transition-none");
+    expect(getInput().className).toContain("tabular-nums");
+    expect(getInput().className).toContain("--control-text");
+    const increment = screen.getByLabelText("Increase").className;
+    expect(increment).toContain("hover:bg-surface-raised");
+    expect(increment).toContain("size-[calc(var(--control-h,2.125rem)-6px)]");
+    expect(increment).toContain("motion-reduce:transition-none");
+    expect(increment).not.toContain("border-l");
+  });
+});
