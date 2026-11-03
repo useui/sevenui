@@ -55,7 +55,7 @@ function NavigationMenuItem({
 }
 
 const navigationMenuTriggerStyle = cva(
-  "group/navigation-menu-trigger inline-flex h-(--control-h,2.125rem) w-max items-center justify-center rounded-md px-(--control-px,0.75rem) text-(length:--control-text,0.8125rem) font-medium transition-[background-color,color] duration-100 outline-none hover:bg-surface-panel focus-visible:focus-ring disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-popup-open:bg-surface-panel data-open:bg-surface-panel motion-reduce:transition-none",
+  "group/navigation-menu-trigger inline-flex h-[var(--control-h,2.125rem)] w-max items-center justify-center rounded-md px-[var(--control-px,0.75rem)] text-[length:var(--control-text,0.8125rem)] font-medium transition-[background-color,color] duration-100 outline-none hover:bg-surface-panel focus-visible:focus-ring disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-popup-open:bg-surface-panel data-open:bg-surface-panel motion-reduce:transition-none",
 );
 
 function NavigationMenuTrigger({

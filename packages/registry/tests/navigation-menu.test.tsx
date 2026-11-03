@@ -96,8 +96,8 @@ describe("NavigationMenu v2 styles", () => {
   it("styles triggers as ghost controls sized from --control-h with the focus ring", () => {
     render(<BasicMenu />);
     const trigger = cls(screen.getByRole("button", { name: "Products" }));
-    expect(trigger).toContain("h-(--control-h");
-    expect(trigger).toContain("px-(--control-px");
+    expect(trigger).toContain("h-[var(--control-h,2.125rem)]");
+    expect(trigger).toContain("px-[var(--control-px,0.75rem)]");
     expect(trigger).toContain("hover:bg-surface-panel");
     expect(trigger).toContain("focus-visible:focus-ring");
     expect(trigger).not.toContain("ring-3");

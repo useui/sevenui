@@ -27,7 +27,7 @@ function Menubar({ className, ...props }: MenubarPrimitive.Props) {
     <MenubarPrimitive
       data-slot="menubar"
       className={cn(
-        "flex h-(--control-h,2.125rem) items-center gap-0.5 rounded-lg bg-surface-tray p-0.5 ring-1 ring-hairline",
+        "flex h-[var(--control-h,2.125rem)] items-center gap-0.5 rounded-lg bg-surface-tray p-0.5 ring-1 ring-hairline",
         className,
       )}
       {...props}
@@ -59,7 +59,7 @@ function MenubarTrigger({
     <DropdownMenuTrigger
       data-slot="menubar-trigger"
       className={cn(
-        "relative flex h-full items-center rounded-[max(0px,calc(--theme(--radius-lg)-2px))] px-(--control-px,0.75rem) text-(length:--control-text,0.8125rem) font-medium text-muted-foreground outline-none select-none transition-[background-color,color,box-shadow] duration-100 hover:bg-surface-panel hover:text-foreground focus-visible:z-10 focus-visible:focus-ring aria-expanded:bg-surface-raised aria-expanded:text-foreground aria-expanded:shadow-[var(--elevation-highlight),0_0_0_1px_var(--hairline-strong)] data-popup-open:bg-surface-raised data-popup-open:text-foreground data-popup-open:shadow-[var(--elevation-highlight),0_0_0_1px_var(--hairline-strong)] data-disabled:pointer-events-none data-disabled:opacity-50 motion-reduce:transition-none",
+        "relative flex h-full items-center rounded-[max(0px,calc(--theme(--radius-lg)-2px))] px-[var(--control-px,0.75rem)] text-[length:var(--control-text,0.8125rem)] font-medium text-muted-foreground outline-none select-none transition-[background-color,color,box-shadow] duration-100 hover:bg-surface-panel hover:text-foreground focus-visible:z-10 focus-visible:focus-ring aria-expanded:bg-surface-raised aria-expanded:text-foreground aria-expanded:shadow-[var(--elevation-highlight),0_0_0_1px_var(--hairline-strong)] data-popup-open:bg-surface-raised data-popup-open:text-foreground data-popup-open:shadow-[var(--elevation-highlight),0_0_0_1px_var(--hairline-strong)] data-disabled:pointer-events-none data-disabled:opacity-50 motion-reduce:transition-none",
         className,
       )}
       {...props}
@@ -123,7 +123,7 @@ function MenubarCheckboxItem({
       data-slot="menubar-checkbox-item"
       data-inset={inset}
       className={cn(
-        "relative flex min-h-(--item-h,2rem) cursor-default items-center gap-2 rounded-sm px-2 text-(length:--control-text,0.8125rem) outline-none select-none [--focus-gap:-1.5px] focus-visible:focus-ring data-highlighted:bg-surface-panel data-highlighted:text-foreground data-highlighted:shadow-[inset_0_0_0_1px_var(--hairline)] data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 pr-2 pl-8",
+        "relative flex min-h-[var(--item-h,2rem)] cursor-default items-center gap-2 rounded-sm px-2 text-[length:var(--control-text,0.8125rem)] outline-none select-none [--focus-gap:-1.5px] focus-visible:focus-ring data-highlighted:bg-surface-panel data-highlighted:text-foreground data-highlighted:shadow-[inset_0_0_0_1px_var(--hairline)] data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 pr-2 pl-8",
         className,
       )}
       checked={checked}
@@ -158,7 +158,7 @@ function MenubarRadioItem({
       data-slot="menubar-radio-item"
       data-inset={inset}
       className={cn(
-        "relative flex min-h-(--item-h,2rem) cursor-default items-center gap-2 rounded-sm px-2 text-(length:--control-text,0.8125rem) outline-none select-none [--focus-gap:-1.5px] focus-visible:focus-ring data-highlighted:bg-surface-panel data-highlighted:text-foreground data-highlighted:shadow-[inset_0_0_0_1px_var(--hairline)] data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 pr-2 pl-8",
+        "relative flex min-h-[var(--item-h,2rem)] cursor-default items-center gap-2 rounded-sm px-2 text-[length:var(--control-text,0.8125rem)] outline-none select-none [--focus-gap:-1.5px] focus-visible:focus-ring data-highlighted:bg-surface-panel data-highlighted:text-foreground data-highlighted:shadow-[inset_0_0_0_1px_var(--hairline)] data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 pr-2 pl-8",
         className,
       )}
       {...props}

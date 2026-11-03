@@ -225,7 +225,7 @@ describe("ContextMenu v2 styles", () => {
       "context-menu-radio-item",
     ]) {
       const cls = slot(name);
-      expect(cls).toContain("min-h-(--item-h");
+      expect(cls).toContain("min-h-[var(--item-h,2rem)]");
       expect(cls).toContain("data-highlighted:bg-surface-panel");
       expect(cls).toContain("focus-visible:focus-ring");
       expect(cls).not.toContain("ring-3");

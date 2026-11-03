@@ -124,7 +124,7 @@ describe("Menubar v2 styles", () => {
     expect(bar).toContain("bg-surface-tray");
     expect(bar).toContain("ring-hairline");
     expect(bar).toContain("p-0.5");
-    expect(bar).toContain("h-(--control-h");
+    expect(bar).toContain("h-[var(--control-h,2.125rem)]");
     expect(bar).not.toMatch(/(^|\s)border(\s|$)/);
   });
 
@@ -135,7 +135,7 @@ describe("Menubar v2 styles", () => {
     expect(trigger).not.toContain("ring-3");
     expect(trigger).toContain("hover:bg-surface-panel");
     expect(trigger).toContain("data-popup-open:bg-surface-raised");
-    expect(trigger).toContain("px-(--control-px");
+    expect(trigger).toContain("px-[var(--control-px,0.75rem)]");
     expect(trigger).toContain("motion-reduce:transition-none");
   });
 
@@ -147,7 +147,7 @@ describe("Menubar v2 styles", () => {
     expect(cls(menu)).toContain("bg-surface-raised");
     expect(cls(menu)).toContain("shadow-overlay");
     const item = screen.getByRole("menuitem", { name: /New Tab/ });
-    expect(cls(item)).toContain("min-h-(--item-h");
+    expect(cls(item)).toContain("min-h-[var(--item-h,2rem)]");
     expect(cls(item)).toContain("data-highlighted:bg-surface-panel");
     expect(cls(document.querySelector('[data-slot="menubar-separator"]'))).toContain(
       "bg-hairline",
