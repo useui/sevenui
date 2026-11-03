@@ -10,6 +10,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/registry/base/ui/pagination";
+import { buttonVariants } from "@/registry/base/ui/button";
 
 function Pager({ activePage = 2 }: { activePage?: number }) {
   return (
@@ -66,17 +67,19 @@ describe("Pagination", () => {
 
   it("styles the active page as outline and inactive pages as ghost", () => {
     render(<Pager activePage={2} />);
-    // "bg-background" is a distinguishing token of the outline button variant.
-    expect(
-      screen.getByRole("link", { name: "2" }).classList.contains(
-        "bg-background",
-      ),
-    ).toBe(true);
-    expect(
-      screen.getByRole("link", { name: "1" }).classList.contains(
-        "bg-background",
-      ),
-    ).toBe(false);
+    // Compare against the button variants themselves so the assertion follows
+    // the button restyle instead of pinning one of its classes.
+    const classes = (value: string) => value.split(/\s+/).filter(Boolean);
+    const outline = classes(buttonVariants({ variant: "outline", size: "icon" }));
+    const ghost = classes(buttonVariants({ variant: "ghost", size: "icon" }));
+    const outlineOnly = outline.filter((c) => !ghost.includes(c));
+    expect(outlineOnly.length).toBeGreaterThan(0);
+    const active = screen.getByRole("link", { name: "2" });
+    const inactive = screen.getByRole("link", { name: "1" });
+    for (const c of outlineOnly) {
+      expect(active.classList.contains(c)).toBe(true);
+      expect(inactive.classList.contains(c)).toBe(false);
+    }
   });
 
   it("labels previous and next controls for screen readers", () => {
@@ -159,5 +162,15 @@ describe("Pagination", () => {
         "link-extra",
       ),
     ).toBe(true);
+  });
+});
+
+describe("Pagination v2 style", () => {
+  it("sizes the ellipsis to the control height", () => {
+    const { container } = render(<PaginationEllipsis />);
+    const ellipsis = container.querySelector(
+      '[data-slot="pagination-ellipsis"]',
+    );
+    expect(ellipsis?.className).toContain("size-(--control-h)");
   });
 });
