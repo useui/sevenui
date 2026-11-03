@@ -144,7 +144,7 @@ function QuestionnaireChoice({
     <QuestionnairePrimitive.Choice
       data-slot="questionnaire-choice"
       className={cn(
-        "group/questionnaire-choice relative flex min-h-11 cursor-pointer items-start gap-2.5 rounded-lg border border-hairline-strong bg-surface-inset px-3 py-2.5 text-start text-sm transition-colors outline-none select-none hover:bg-muted/50 has-[>input:focus-visible]:focus-ring data-invalid:border-destructive data-invalid:[--focus-color:var(--destructive)] data-checked:border-brand/50 data-checked:bg-brand/8 motion-reduce:transition-none",
+        "group/questionnaire-choice relative flex min-h-11 cursor-pointer items-start gap-2.5 rounded-lg border border-hairline-strong bg-surface-inset px-3 py-2.5 text-start text-sm transition-[color,background-color,border-color] outline-none select-none hover:bg-muted/50 has-[>input:focus-visible]:focus-ring data-invalid:border-destructive data-invalid:[--focus-color:var(--destructive)] data-checked:border-brand/50 data-checked:bg-brand/8 motion-reduce:transition-none",
         "data-disabled:pointer-events-none data-disabled:cursor-not-allowed data-disabled:opacity-50",
         className,
       )}
