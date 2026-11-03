@@ -11,6 +11,8 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/registry/base/ui/carousel";
+import { buttonVariants } from "@/registry/base/ui/button";
+import { cn } from "cn";
 
 // Embla needs browser APIs jsdom lacks: matchMedia and IntersectionObserver.
 window.matchMedia ??= ((query: string) => ({
@@ -207,5 +209,26 @@ describe("Carousel", () => {
       "useCarousel must be used within a <Carousel />",
     );
     errorSpy.mockRestore();
+  });
+
+  it("renders the nav controls as outline icon buttons", () => {
+    const { container } = renderCarousel();
+    const expected = {
+      "carousel-previous": "inset-y-0 -left-12 my-auto",
+      "carousel-next": "inset-y-0 -right-12 my-auto",
+    };
+    for (const [slot, position] of Object.entries(expected)) {
+      const button = container.querySelector(`[data-slot=${slot}]`)!;
+      const want = cn(
+        buttonVariants({
+          variant: "outline",
+          size: "icon-sm",
+          className: `absolute touch-manipulation rounded-full ${position}`,
+        }),
+      );
+      expect(button.className.split(" ").sort()).toEqual(
+        want.split(" ").sort(),
+      );
+    }
   });
 });
