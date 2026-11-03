@@ -222,7 +222,7 @@ function LayerCardPanel({
         className: cn(
           "relative min-w-0 rounded-(--layer-card-panel-radius) border border-(color:--layer-card-border-color) bg-(--layer-card-panel-bg) bg-clip-padding px-(--layer-card-panel-px) py-(--layer-card-panel-py) text-card-foreground shadow-[var(--elevation-raised,0_1px_2px_0_rgb(0_0_0/0.05))]",
           !fit && "grow",
-          "[a,button]:text-start [a,button]:no-underline [a,button]:transition-colors [a,button]:outline-none [a,button]:hover:bg-[color-mix(in_oklch,var(--layer-card-panel-bg),var(--foreground)_4%)] [a,button]:focus-visible:z-10 [a,button]:focus-visible:focus-ring [a,button]:motion-reduce:transition-none",
+          "[a,button]:text-start [a,button]:no-underline [a,button]:transition-[color,background-color,border-color] [a,button]:outline-none [a,button]:hover:bg-[color-mix(in_oklch,var(--layer-card-panel-bg),var(--foreground)_4%)] [a,button]:focus-visible:z-10 [a,button]:focus-visible:focus-ring [a,button]:motion-reduce:transition-none",
           className,
         ),
       },
