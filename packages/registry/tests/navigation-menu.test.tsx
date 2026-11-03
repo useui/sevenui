@@ -98,17 +98,23 @@ describe("NavigationMenu v2 styles", () => {
     const trigger = cls(screen.getByRole("button", { name: "Products" }));
     expect(trigger).toContain("h-[var(--control-h,2.125rem)]");
     expect(trigger).toContain("px-[var(--control-px,0.75rem)]");
-    expect(trigger).toContain("hover:bg-surface-panel");
+    // surface-panel equals the page in light, so hover and open use the hairline.
+    expect(trigger).toContain("hover:bg-hairline");
+    expect(trigger).toContain("data-popup-open:bg-hairline");
+    expect(trigger).not.toContain("surface-panel");
     expect(trigger).toContain("focus-visible:focus-ring");
     expect(trigger).not.toContain("ring-3");
     expect(trigger).toContain("motion-reduce:transition-none");
   });
 
-  it("styles links with the md radius, a surface-panel active state and the focus ring", () => {
+  it("styles links with the md radius, a hairline hover and active state and the focus ring", () => {
     render(<BasicMenu />);
     const link = cls(screen.getByRole("link", { name: "Docs" }));
     expect(link).toContain("rounded-md");
-    expect(link).toContain("data-active:bg-surface-panel");
+    // surface-panel equals the raised viewport in light, so it would not show.
+    expect(link).toContain("hover:bg-hairline");
+    expect(link).toContain("data-active:bg-hairline");
+    expect(link).not.toContain("surface-panel");
     expect(link).toContain("focus-visible:focus-ring");
     expect(link).not.toContain("ring-3");
   });
