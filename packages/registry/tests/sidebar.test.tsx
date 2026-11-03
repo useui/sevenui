@@ -191,7 +191,7 @@ describe("Sidebar v2 style", () => {
   it("sizes menu buttons to the item height and focuses with the offset ring", () => {
     render(<Styled />);
     const button = screen.getByRole("button", { name: "Drafts" });
-    expect(button.className).toContain("min-h-(--item-h)");
+    expect(button.className).toContain("min-h-[var(--item-h,2rem)]");
     expect(button.className).toContain("rounded-md");
     expect(button.className).toContain("focus-visible:focus-ring");
     expect(button.className).not.toContain("ring-2");
