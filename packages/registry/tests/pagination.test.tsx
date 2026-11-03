@@ -171,6 +171,6 @@ describe("Pagination v2 style", () => {
     const ellipsis = container.querySelector(
       '[data-slot="pagination-ellipsis"]',
     );
-    expect(ellipsis?.className).toContain("size-(--control-h)");
+    expect(ellipsis?.className).toContain("size-[var(--control-h,2.125rem)]");
   });
 });
