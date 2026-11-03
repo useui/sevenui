@@ -45,3 +45,15 @@ describe("Label", () => {
     expect(screen.getByText("Field").getAttribute("id")).toBe("the-label");
   });
 });
+
+describe("Label v2 styles", () => {
+  it("reads the control text size and dims disabled peers to 60%", () => {
+    render(<Label>Styled</Label>);
+    const cls = screen.getByText("Styled").className;
+    expect(cls).toContain("text-[length:var(--control-text,");
+    expect(cls).toContain("font-medium");
+    expect(cls).toContain("text-foreground");
+    expect(cls).toContain("peer-disabled:opacity-60");
+    expect(cls).not.toContain("opacity-50");
+  });
+});
