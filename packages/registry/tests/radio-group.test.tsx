@@ -112,3 +112,38 @@ describe("RadioGroup", () => {
     expect(large.getAttribute("aria-checked")).toBe("false");
   });
 });
+
+describe("RadioGroup v2 styles", () => {
+  it("uses the offset focus ring, never the old halo", () => {
+    render(<Sizes />);
+    const cls = screen.getAllByRole("radio")[0].className;
+    expect(cls).toContain("focus-visible:focus-ring");
+    expect(cls).not.toContain("ring-3");
+    expect(cls).not.toContain("ring-ring");
+    expect(cls).not.toContain("focus-visible:border-ring");
+  });
+
+  it("sizes the item like the checkbox, from the density scale", () => {
+    render(<Sizes />);
+    expect(screen.getAllByRole("radio")[0].className).toContain(
+      "size-[max(0.875rem,calc(var(--control-h,2.125rem)*0.47))]",
+    );
+  });
+
+  it("sits on the inset surface when off and fills with brand when on", () => {
+    render(<Sizes defaultValue="md" />);
+    const cls = screen.getAllByRole("radio")[0].className;
+    expect(cls).toContain("bg-surface-inset");
+    expect(cls).toContain("var(--hairline-strong");
+    expect(cls).toContain("data-checked:bg-brand");
+    expect(cls).not.toContain("bg-primary");
+  });
+
+  it("draws the indicator dot in brand-foreground", () => {
+    const { container } = render(<Sizes defaultValue="md" />);
+    const dot = container.querySelector(
+      "[data-slot=radio-group-indicator] > span",
+    )!;
+    expect(dot.className).toContain("bg-brand-foreground");
+  });
+});
