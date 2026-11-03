@@ -99,3 +99,13 @@ describe("Form", () => {
     expect(form?.getAttribute("aria-label")).toBe("Checkout");
   });
 });
+
+describe("Form v2 styles", () => {
+  it("carries layout only: no surface, focus, colour or density classes to restyle", () => {
+    const { container } = render(<Form />);
+    const form = container.querySelector("form");
+    // The v2 look lives in the fields and controls inside a form; the form
+    // itself stays a plain grid, so the restyle leaves it untouched.
+    expect(form?.className).toBe("grid gap-4");
+  });
+});
