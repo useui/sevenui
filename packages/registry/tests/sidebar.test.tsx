@@ -24,6 +24,14 @@ Object.defineProperty(window, "matchMedia", {
 import {
   Sidebar,
   SidebarContent,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarProvider,
   SidebarTrigger,
   useSidebar,
@@ -139,5 +147,94 @@ describe("Sidebar (mobile)", () => {
     const dialog = await screen.findByRole("dialog");
     expect(dialog.getAttribute("data-mobile")).toBe("true");
     expect(screen.getByText("Sidebar body")).toBeTruthy();
+  });
+});
+
+describe("Sidebar v2 style", () => {
+  function Styled({ variant }: { variant?: "sidebar" | "floating" | "inset" }) {
+    return (
+      <SidebarProvider>
+        <Sidebar variant={variant}>
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupLabel>Platform</SidebarGroupLabel>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton isActive>Inbox</SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton>Drafts</SidebarMenuButton>
+                  <SidebarMenuSub>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton href="#a" isActive>
+                        Archived
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </SidebarMenuSub>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
+      </SidebarProvider>
+    );
+  }
+
+  it("puts the container on the tray surface with a hairline edge", () => {
+    const { container } = render(<Styled />);
+    const inner = container.querySelector('[data-slot="sidebar-inner"]');
+    const outer = container.querySelector('[data-slot="sidebar-container"]');
+    expect(inner?.className).toContain("bg-surface-tray");
+    expect(outer?.className).toContain("group-data-[side=left]:border-hairline");
+  });
+
+  it("sizes menu buttons to the item height and focuses with the offset ring", () => {
+    render(<Styled />);
+    const button = screen.getByRole("button", { name: "Drafts" });
+    expect(button.className).toContain("min-h-(--item-h)");
+    expect(button.className).toContain("rounded-md");
+    expect(button.className).toContain("focus-visible:focus-ring");
+    expect(button.className).not.toContain("ring-2");
+    expect(button.className).not.toContain("ring-sidebar-ring");
+    expect(button.className).toContain("motion-reduce:transition-none");
+  });
+
+  it("raises the active item on a neutral surface without accent", () => {
+    render(<Styled />);
+    const active = screen.getByRole("button", { name: "Inbox" });
+    expect(active.getAttribute("data-active")).not.toBeNull();
+    expect(active.className).toContain("data-active:bg-surface-raised");
+    expect(active.className).toContain("var(--hairline-strong");
+    expect(active.className).toContain("var(--elevation-highlight");
+    expect(active.className).not.toMatch(/\bbrand\b|bg-brand|text-brand/);
+    const sub = screen.getByRole("link", { name: "Archived" });
+    expect(sub.className).toContain("data-active:bg-surface-raised");
+    expect(sub.className).toContain("focus-visible:focus-ring");
+  });
+
+  it("sets group labels in 11px uppercase mono", () => {
+    render(<Styled />);
+    const label = screen.getByText("Platform");
+    expect(label.className).toContain("font-mono");
+    expect(label.className).toContain("text-[11px]");
+    expect(label.className).toContain("uppercase");
+  });
+
+  it("keeps the collapse width transition with a reduced-motion counterpart", () => {
+    const { container } = render(<Styled />);
+    const gap = container.querySelector('[data-slot="sidebar-gap"]');
+    const outer = container.querySelector('[data-slot="sidebar-container"]');
+    for (const el of [gap, outer]) {
+      expect(el?.className).toContain("duration-200");
+      expect(el?.className).toContain("motion-reduce:transition-none");
+    }
+  });
+
+  it("renders the floating variant as a panel with a hairline", () => {
+    const { container } = render(<Styled variant="floating" />);
+    const inner = container.querySelector('[data-slot="sidebar-inner"]');
+    expect(inner?.className).toContain(
+      "group-data-[variant=floating]:bg-surface-panel",
+    );
   });
 });
