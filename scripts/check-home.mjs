@@ -3,8 +3,10 @@
 //
 // The HTML checks read the server-rendered page (no JS runs, which is the point: a crawler and a no-JS
 // visitor see exactly this) plus the stylesheets it links. `--browser` adds checks in headless Chromium
-// (Playwright: resolved normally, or from the directory in PLAYWRIGHT_DIR). `--controls` breaks the input
-// once per assertion and requires that assertion to fail, so a check that cannot fail is caught.
+// through Playwright, a root devDependency; PLAYWRIGHT_DIR optionally points at another install. Its
+// browser downloads separately, once per machine: `pnpm exec playwright install chromium`. `--controls`
+// breaks the input once per assertion and requires that assertion to fail, so a check that cannot fail is
+// caught.
 
 import { createRequire } from "node:module";
 
@@ -279,12 +281,9 @@ if (args.browser) await browserChecks();
 process.exit(failed ? 1 : 0);
 
 async function loadPlaywright() {
-  try {
-    return await import("playwright");
-  } catch {
-    if (!process.env.PLAYWRIGHT_DIR) throw new Error("--browser needs playwright: install it or set PLAYWRIGHT_DIR");
-    return createRequire(`${process.env.PLAYWRIGHT_DIR.replace(/\/?$/, "/")}`)("playwright");
-  }
+  // An explicit PLAYWRIGHT_DIR wins over the workspace's own copy.
+  if (process.env.PLAYWRIGHT_DIR) return createRequire(`${process.env.PLAYWRIGHT_DIR.replace(/\/?$/, "/")}`)("playwright");
+  return await import("playwright");
 }
 
 // Each browser check gets a fresh page; `sabotage` is the control's way to break the page under test.
