@@ -20,10 +20,12 @@ if (!args.base) {
   process.exit(2);
 }
 
-const H1 = "Interfaces your agents can build. Quality your users can feel.";
-const H1_MUTED = "Quality your users can feel.";
+const H1 = "Base UI components for shadcn/ui";
+const DISPLAY = "Interfaces your agents can build. Quality your users can feel.";
+const DISPLAY_MUTED = "Quality your users can feel.";
 const OUTLINE = [
   `h1 ${H1}`,
+  `h2 ${DISPLAY}`,
   "h2 One registry, three sizes.",
   "h3 Primitive",
   "h3 Component",
@@ -102,23 +104,32 @@ const replaceDoc = (doc, patch) => ({ ...doc, ...patch });
 
 const CHECKS = {
   outline: {
-    name: "the heading outline is exactly the spec's ten lines (one h1)",
+    name: "the heading outline is exactly the spec's eleven lines (one h1)",
     run: ({ html }) => {
       const got = outline(html);
       return JSON.stringify(got) === JSON.stringify(OUTLINE) ? null : `got ${JSON.stringify(got)}`;
     },
     breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace("</main>", "<h1>Stray</h1></main>") }),
   },
-  h1Shape: {
-    name: "the h1 is plain text plus one muted span for the second clause",
+  h1Plain: {
+    name: "the h1 is the SEO phrase as plain text",
     run: ({ html }) => {
       const m = /<h1\b[^>]*>([\s\S]*?)<\/h1>/.exec(html);
       if (!m) return "no h1";
-      const children = [...m[1].matchAll(/<([a-z][a-z0-9-]*)\b[^>]*>([\s\S]*?)<\/\1>/g)];
-      const ok = children.length === 1 && children[0][1] === "span" && text(children[0][2]) === H1_MUTED;
-      return ok && !/<(?!\/?span\b)/.test(m[1]) ? null : `h1 inner: ${m[1].slice(0, 160)}`;
+      return !/</.test(m[1]) && text(m[1]) === H1 ? null : `h1 inner: ${m[1].slice(0, 160)}`;
     },
-    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace(/(<h1\b[^>]*>)/, "$1<em>x</em>") }),
+    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace(/(<h1\b[^>]*>)/, "$1<span>x</span>") }),
+  },
+  displayShape: {
+    name: "the display line is the first h2: plain text plus one muted span for the second clause",
+    run: ({ html }) => {
+      const m = /<h2\b[^>]*>([\s\S]*?)<\/h2>/.exec(mainHtml(html));
+      if (!m) return "no h2";
+      const children = [...m[1].matchAll(/<([a-z][a-z0-9-]*)\b[^>]*>([\s\S]*?)<\/\1>/g)];
+      const ok = children.length === 1 && children[0][1] === "span" && text(children[0][2]) === DISPLAY_MUTED;
+      return ok && !/<(?!\/?span\b)/.test(m[1]) && text(m[1]) === DISPLAY ? null : `h2 inner: ${m[1].slice(0, 160)}`;
+    },
+    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace(DISPLAY_MUTED, "<em>x</em>") }),
   },
   metadata: {
     name: "title, canonical, OG image and JSON-LD are unchanged",

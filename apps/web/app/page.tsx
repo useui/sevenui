@@ -72,23 +72,21 @@ export default function Home() {
     <main className="sv-page" id="content">
       <section aria-labelledby="home-title">
         <div className={`${ROW} pt-16 pb-12 sm:pt-24 sm:pb-16`}>
-          <Link
-            className="inline-flex max-w-full items-center gap-2 rounded-full bg-surface-tray py-1 pr-3 pl-1 text-[0.8125rem] text-foreground/85 shadow-[inset_0_0_0_1px_var(--hairline)] hover:text-foreground"
-            href="/docs"
-          >
+          {/* The h1 states what the site is, in the pill; the display line under it is the h2. */}
+          <div className="inline-flex max-w-full items-center gap-2 rounded-full bg-surface-tray py-1 pr-3 pl-1 text-[0.8125rem] text-foreground/85 shadow-[inset_0_0_0_1px_var(--hairline)]">
             <span className="rounded-full bg-surface-raised px-2 py-0.5 text-[0.6875rem] font-medium text-foreground shadow-[inset_0_0_0_1px_var(--hairline)]">
               v2
             </span>
-            <span className="truncate">Base UI components for shadcn/ui</span>
-            <ArrowRightIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
-          </Link>
+            <h1 className="truncate text-[0.8125rem] font-normal tracking-normal" id="home-title">
+              Base UI components for shadcn/ui
+            </h1>
+          </div>
 
-          <h1
+          <h2
             className={`${DISPLAY} mt-7 max-w-[13ch] text-[2.625rem] leading-[1.04] sm:max-w-[16ch] sm:text-[3.5rem] sm:leading-[1.02] lg:max-w-[21ch] lg:text-[4rem]`}
-            id="home-title"
           >
             Interfaces your agents can build. <span className={MUTED}>Quality your users can feel.</span>
-          </h1>
+          </h2>
 
           <p className="mt-6 max-w-[34rem] text-base leading-relaxed text-pretty text-muted-foreground sm:text-[1.0625rem]">
             <span className="tabular-nums">{primitiveCount}</span> accessible primitives on Base UI, composed

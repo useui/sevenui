@@ -8,7 +8,7 @@ primitives that already carry the new look. Reference: `2026-11-03-v2-design-lan
 
 1. The "Pull Back" scroll story (switch → profile card → account page) is removed entirely. The landing is
    built fresh from the D reference.
-2. The H1 is the D mockup's: "Interfaces your agents can build." followed by "Quality your users can feel."
+2. The display heading is the D mockup's: "Interfaces your agents can build." followed by "Quality your users can feel."
    with the second clause in muted grey.
 3. The product frame under the hero is animated: the agent panel types a message, steps complete one by one,
    the form really changes, and the Comfortable/Compact toggle works live. Under `prefers-reduced-motion` the
@@ -21,11 +21,13 @@ The agent story is shown (the frame, the three agent levels), not claimed.
 
 ## Page outline
 
-- H1 `Interfaces your agents can build. Quality your users can feel.` (one element, plain text, the second
-  clause in a muted span)
+- H1 `Base UI components for shadcn/ui` (plain text, set small inside the hero pill; revised 2026-11-05 by
+  the user so the semantic h1 carries the SEO phrase)
+- H2 `Interfaces your agents can build. Quality your users can feel.` (the display line, 64px two-tone, the
+  second clause in a muted span)
 - H2 `One registry, three sizes.` (two-tone statement paragraph follows)
 - H3 ×3 inside the figure cards: `Primitive`, `Component`, `Block`
-- H2 `Three things an agent does with SevenUI.`
+- H2 `Built for teams and their agents.` (H3 ×3: the three agent levels)
 - H2 `Start with one command.` (closing)
 
 No heading inside the product frame. The frame carries `data-nosnippet`; its sidebar and the scripted agent
@@ -33,7 +35,7 @@ transcript are decorative to a crawler, while the form controls are real and lab
 
 ## Sections
 
-1. **Hero.** Pill `New · v2 design language`. H1 as above. Sub: "66 accessible primitives on Base UI, composed
+1. **Hero.** Pill: a `v2` badge and the h1. The display h2 as above. Sub: "66 accessible primitives on Base UI, composed
    into 900+ components and Pro blocks. Copy the source, or let your agent assemble it." Counts are read from
    `packages/registry` at build time (the component figure is rounded down to the hundred, with `+`). CTA row:
    copyable `npx shadcn add @sevenui/button` box (package-manager aware), `Browse components` (`/components`,
@@ -68,12 +70,12 @@ transcript are decorative to a crawler, while the form controls are real and lab
 
 ## Constraints carried
 
-- Title, meta description, canonical, OG card and JSON-LD for `/` are unchanged. `robots.txt` keeps its
+- Title, canonical, OG card and JSON-LD for `/` are unchanged (the description is revised, below). `robots.txt` keeps its
   Content-Signal line (Pull Back spec §15.6).
-- Exactly one `<h1>`, plain text only (the muted clause is a `<span>`; the h1 holds no animated child).
-  Note: the SEO commit ed2baba made the H1 state what the site is ("Base UI components for shadcn/ui"). The
-  user's decision 2 replaces that text; the descriptive phrase moves to the eyebrow line above the H1 and
-  stays in the `<title>` ("SevenUI — Base UI components for shadcn/ui").
+- Exactly one `<h1>`, plain text: "Base UI components for shadcn/ui", as the SEO commit ed2baba required
+  (the h1 states what the site is). The big two-tone line is an `<h2>` styled as display type.
+- Meta description and the site description (`/llms.txt`, 404 OG) lead with the new positioning: Base UI
+  components for shadcn/ui, built for teams and their agents (revised 2026-11-05).
 - Pro price comes from `PRO_LAUNCH`, never restated.
 - No gradients, glows, glassmorphism or emoji. Accent (`brand`) only on the switch, focus and one link.
 - No horizontal scroll at 375px. At phone width the frame drops the sidebar and stacks the agent panel under
@@ -83,7 +85,7 @@ transcript are decorative to a crawler, while the form controls are real and lab
 
 ## Gate
 
-`scripts/check-home.mjs` asserts this contract on the server HTML (outline, single plain h1, hero copy,
+`scripts/check-home.mjs` asserts this contract on the server HTML (outline, single plain h1, the two-tone display h2, hero copy,
 frame present with `data-nosnippet`, three size cards with their links, no "MCP server is live" claim, the
 reduced-motion rule present in the frame's CSS, links in `<main>`). With `--browser` it also loads the page
 in headless Chromium: no horizontal scroll at 375px, no console errors, and with reduced motion the finished
