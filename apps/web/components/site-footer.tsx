@@ -79,8 +79,8 @@ export function SiteFooter({ primitivesHref }: { primitivesHref: string }) {
           <Logomark className="h-5 w-auto" /> SevenUI
         </span>
         <p className="max-w-xs text-sm text-muted-foreground">
-          <span className="block font-medium text-foreground">Copy it. Own it. Ship it.</span>
-          Base UI powered primitives, distributed through the shadcn registry.
+          <span className="block font-medium text-foreground">Built for teams and their agents.</span>
+          Base UI components for shadcn/ui, distributed through the shadcn registry.
         </p>
       </div>
       <FooterNav label="Primitives" links={primitiveLinks} />

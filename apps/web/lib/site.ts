@@ -1,6 +1,6 @@
 export const site = {
   name: "SevenUI",
-  description: "Copy it. Own it. Ship it. Base UI powered primitives, distributed through the shadcn registry.",
+  description: "Base UI components for shadcn/ui, built for teams and their agents. Copy the source, or let your agent assemble it.",
   url: "https://sevenui.dev",
   github: { owner: "useui", repo: "sevenui" },
 } as const;
