@@ -60,7 +60,7 @@ describe.each(Object.entries(FILES))("%s", (file, openers) => {
       expect(css, key).toContain(`${key}: ${value};`);
     }
     expect(css).toContain("@utility focus-ring");
-    expect(css).toContain("outline: var(--focus-width) solid var(--focus-color, var(--brand));");
+    expect(css).toContain("outline: var(--focus-width) solid var(--focus-color, var(--ring));");
     expect(css).not.toMatch(/^\s*--focus-color:/m);
     expect(css).toMatch(/\[data-density="?compact"?\]/);
     expect(css).toContain("--focus-width: 1.5px;");

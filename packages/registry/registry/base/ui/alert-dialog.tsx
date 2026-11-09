@@ -30,7 +30,7 @@ function AlertDialogOverlay({
     <AlertDialogPrimitive.Backdrop
       data-slot="alert-dialog-overlay"
       className={cn(
-        "fixed inset-0 isolate z-50 bg-black/40 transition-opacity duration-150 ease-snappy data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-opacity dark:bg-black/60",
+        "fixed inset-0 isolate z-50 bg-black/10 supports-backdrop-filter:backdrop-blur-xs transition-opacity duration-150 ease-snappy data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-opacity",
         className,
       )}
       {...props}
@@ -52,11 +52,9 @@ function AlertDialogContent({
         data-slot="alert-dialog-content"
         data-size={size}
         className={cn(
-          // The popup is the panel and parents the consumer's children; the
-          // tray is drawn around it with spread shadows (hairline, 4px tray,
-          // strong hairline, overlay elevation).
-          "group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-surface-panel p-[var(--panel-pad,1.125rem)] text-foreground outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-sm",
-          "shadow-[inset_0_0_0_1px_var(--hairline,transparent),0_0_0_4px_var(--surface-tray,var(--muted)),0_0_0_5px_var(--hairline-strong,var(--border)),var(--elevation-overlay,0_10px_30px_-10px_rgb(0_0_0/0.4))]",
+          // The popup parents the consumer's children directly, so layout
+          // classes passed to AlertDialogContent land on the grid itself.
+          "group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-[var(--panel-pad,1.125rem)] text-popover-foreground shadow-overlay ring-1 ring-foreground/10 outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-sm",
           // Open/close: fade + scale 0.98 -> 1. Reduced motion keeps the fade only.
           "transition-[scale,opacity] duration-150 ease-snappy data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0 motion-reduce:transition-opacity motion-reduce:scale-100!",
           className,
@@ -91,8 +89,7 @@ function AlertDialogFooter({
     <div
       data-slot="alert-dialog-footer"
       className={cn(
-        // The tray bar: bleeds to the panel edges and shows the tray colour.
-        "flex flex-col-reverse gap-2 -mx-[var(--panel-pad,1.125rem)] -mb-[var(--panel-pad,1.125rem)] rounded-b-xl border-t border-hairline bg-surface-tray px-[var(--panel-pad,1.125rem)] pt-2.5 pb-1.5 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end",
+        "-mx-[var(--panel-pad,1.125rem)] -mb-[var(--panel-pad,1.125rem)] flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-[var(--panel-pad,1.125rem)] group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end",
         className,
       )}
       {...props}

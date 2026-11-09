@@ -18,16 +18,16 @@ describe("Badge", () => {
     render(<Badge>Default</Badge>);
     const badge = screen.getByText("Default");
     expect(badge.getAttribute("data-variant")).toBe("default");
-    // v2: the default badge is a hairline outline, not a primary fill.
-    expect(badge.className).toContain("border-hairline-strong");
-    expect(badge.className).not.toContain("bg-primary");
+    expect(badge.className).toContain("bg-primary");
+    expect(badge.className).toContain("text-primary-foreground");
   });
 
   it("applies the secondary variant", () => {
     render(<Badge variant="secondary">Secondary</Badge>);
     const badge = screen.getByText("Secondary");
     expect(badge.getAttribute("data-variant")).toBe("secondary");
-    expect(badge.className).toContain("bg-surface-panel");
+    expect(badge.className).toContain("bg-secondary");
+    expect(badge.className).toContain("text-secondary-foreground");
   });
 
   it("applies the destructive variant", () => {
@@ -43,9 +43,7 @@ describe("Badge", () => {
     render(<Badge variant="outline">Outline</Badge>);
     const badge = screen.getByText("Outline");
     expect(badge.getAttribute("data-variant")).toBe("outline");
-    // v2: a hairline only, no fill.
-    expect(badge.className).toContain("border-hairline-strong");
-    expect(badge.className).toContain("bg-transparent");
+    expect(badge.className).toContain("border-border");
   });
 
   it("applies the ghost variant", () => {
@@ -95,47 +93,36 @@ describe("Badge", () => {
       expect(classes).not.toContain("rounded-4xl");
     });
 
-    it("draws the offset focus ring instead of the halo", () => {
+    it("keeps main's focus halo and aria-invalid ring", () => {
       render(<Badge render={<a href="/x" />}>Focus</Badge>);
-      const cls = screen.getByText("Focus").className;
-      expect(cls).toContain("focus-visible:focus-ring");
-      expect(cls).not.toContain("ring-3");
-      expect(cls).not.toContain("ring-[3px]");
-      expect(cls).not.toContain("focus-visible:border-ring");
-      // The ring geometry is inherited from the tokens, never declared here.
-      expect(cls).not.toContain("[:where(&)]:[--focus-");
-    });
-
-    it("adds an accent highlight variant", () => {
-      render(<Badge variant="highlight">New</Badge>);
-      const badge = screen.getByText("New");
-      expect(badge.getAttribute("data-variant")).toBe("highlight");
-      expect(badge.className).toContain("bg-brand/14");
-      // The brand pulled towards the foreground, so it reads at AA on its tint.
-      expect(badge.className).toContain(
-        "text-[color:color-mix(in_oklch,var(--foreground)_16%,var(--brand))]",
+      const cls = screen.getByText("Focus").className.split(" ");
+      expect(cls).toEqual(
+        expect.arrayContaining([
+          "focus-visible:border-ring",
+          "focus-visible:ring-[3px]",
+          "focus-visible:ring-ring/50",
+          "aria-invalid:border-destructive",
+          "aria-invalid:ring-destructive/20",
+          "dark:aria-invalid:ring-destructive/40",
+        ]),
       );
-      expect(badge.className).toContain("border-brand/30");
+      expect(cls.join(" ")).not.toContain("focus-ring");
+      expect(cls.join(" ")).not.toContain("--focus-color");
     });
 
-    it("tells the neutral badges apart by surface while keeping the text neutral", () => {
+    it("fills default with primary and keeps main's neutral badges", () => {
       const cls = (variant: "default" | "secondary" | "outline") =>
         badgeVariants({ variant }).split(" ");
       expect(cls("default")).toEqual(
-        expect.arrayContaining([
-          "bg-surface-raised",
-          "border-hairline-strong",
-          "shadow-[var(--elevation-highlight,0_0_#0000)]",
-          "text-foreground",
-        ]),
+        expect.arrayContaining(["bg-primary", "text-primary-foreground"]),
       );
       expect(cls("secondary")).toEqual(
-        expect.arrayContaining(["bg-surface-panel", "border-hairline", "text-foreground"]),
+        expect.arrayContaining(["bg-secondary", "text-secondary-foreground"]),
       );
-      expect(cls("outline")).toEqual(
-        expect.arrayContaining(["bg-transparent", "border-hairline-strong", "text-foreground"]),
-      );
-      expect(cls("secondary")).not.toContain("text-secondary-foreground");
+      expect(cls("outline")).toEqual(expect.arrayContaining(["border-border", "text-foreground"]));
+      for (const variant of ["default", "secondary", "outline"] as const) {
+        expect(cls(variant).join(" "), variant).not.toMatch(/hairline|surface-/);
+      }
       // No two of the three share a surface.
       const surfaces = (["default", "secondary", "outline"] as const).map((v) =>
         cls(v).filter((c) => /^(bg-|border-|shadow-)/.test(c)).sort().join(" "),
@@ -143,11 +130,19 @@ describe("Badge", () => {
       expect(new Set(surfaces).size).toBe(3);
     });
 
-    it("keeps the accent out of every other variant", () => {
-      for (const variant of ["default", "secondary", "destructive", "outline", "ghost"] as const) {
-        render(<Badge variant={variant}>{variant}</Badge>);
-        expect(screen.getByText(variant).className).not.toMatch(/(bg|border)-brand/);
+    it("draws secondary as a flat fill with no visible edge", () => {
+      const cls = badgeVariants({ variant: "secondary" }).split(" ");
+      // The base border stays transparent; secondary adds no colour to it.
+      expect(cls).toContain("border-transparent");
+      expect(cls.filter((c) => /^border-/.test(c) && c !== "border-transparent")).toEqual([]);
+      expect(cls.filter((c) => /^(ring-|inset-ring|shadow-)/.test(c))).toEqual([]);
+    });
+
+    it("paints no variant with a brand token", () => {
+      for (const variant of ["default", "secondary", "destructive", "outline", "ghost", "link", "success", "warning"] as const) {
+        expect(badgeVariants({ variant }), variant).not.toMatch(/brand/);
       }
+      expect(badgeVariants({ variant: "link" })).toContain("text-primary");
     });
 
     it.each(["destructive", "success", "warning"] as const)(
@@ -251,7 +246,6 @@ function palette(mode: "light" | "dark") {
   expect(panelMix).toMatch(/^(var\(--card\)|color-mix\(in oklch, var\(--card\), var\(--foreground\) 4%\))$/);
   return {
     foreground,
-    brand: parse(tokenVars[mode].brand),
     tones: { destructive: color("destructive"), success: color("success"), warning: color("warning") },
     surfaces: { background: color("background"), card, panel },
   };
@@ -260,14 +254,14 @@ function palette(mode: "light" | "dark") {
 /** Reads `color-mix(in_oklch,var(--foreground)_N%,…)` from a class list; 0 when the text is the pure tone. */
 function foregroundPull(classes: string): number {
   const m = classes.match(
-    /(?:^|\s)text-\[color:color-mix\(in_oklch,var\(--foreground\)_(\d+)%,var\(--(?:badge-tone|brand)\)\)\]/,
+    /(?:^|\s)text-\[color:color-mix\(in_oklch,var\(--foreground\)_(\d+)%,var\(--badge-tone\)\)\]/,
   );
   return m ? Number(m[1]) : 0;
 }
 
 /**
  * The tint's alpha at rest, or on a linked badge's hover (`[a]:hover:`), from
- * `transparent_N%` (status tones) or `bg-brand/N` (highlight).
+ * `transparent_N%`.
  */
 function tintAlpha(classes: string, state: "rest" | "hover"): number {
   const prefix = state === "hover" ? "\\[a\\]:hover:" : "";
@@ -275,8 +269,6 @@ function tintAlpha(classes: string, state: "rest" | "hover"): number {
     new RegExp(`(?:^|\\s)${prefix}bg-\\[color:color-mix\\(in_oklch,transparent_(\\d+)%,var\\(--badge-tone\\)\\)\\]`),
   );
   if (status) return 1 - Number(status[1]) / 100;
-  const brand = classes.match(new RegExp(`(?:^|\\s)${prefix}bg-brand\\/(\\d+)(?:\\s|$)`));
-  if (brand) return Number(brand[1]) / 100;
   throw new Error(`no ${state} tint`);
 }
 
@@ -284,7 +276,7 @@ const AA = 4.5;
 
 describe("Badge text contrast (WCAG AA)", () => {
   const cases = (["light", "dark"] as const).flatMap((mode) =>
-    (["destructive", "success", "warning", "highlight"] as const).flatMap((variant) =>
+    (["destructive", "success", "warning"] as const).flatMap((variant) =>
       (["rest", "hover"] as const).map((state) => ({ mode, variant, state })),
     ),
   );
@@ -292,7 +284,7 @@ describe("Badge text contrast (WCAG AA)", () => {
   it.each(cases)("$variant text reaches AA on its $state tint in $mode", ({ mode, variant, state }) => {
     const classes = badgeVariants({ variant });
     const p = palette(mode);
-    const tone = variant === "highlight" ? p.brand : p.tones[variant];
+    const tone = p.tones[variant];
     const pull = foregroundPull(classes);
     expect(pull, `${variant} text must be a foreground pull of its tone`).toBeGreaterThan(0);
     const text = toRgb(mix(p.foreground, pull, tone));

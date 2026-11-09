@@ -114,14 +114,16 @@ describe("RadioGroup", () => {
   });
 });
 
-describe("RadioGroup v2 styles", () => {
-  it("uses the offset focus ring, never the old halo", () => {
+describe("RadioGroup styles", () => {
+  it("uses the ring-3 focus halo, not the offset focus ring", () => {
     render(<Sizes />);
     const cls = screen.getAllByRole("radio")[0].className;
-    expect(cls).toContain("focus-visible:focus-ring");
-    expect(cls).not.toContain("ring-3");
-    expect(cls).not.toContain("ring-ring");
-    expect(cls).not.toContain("focus-visible:border-ring");
+    expect(cls).toContain("focus-visible:border-ring");
+    expect(cls).toContain("focus-visible:ring-3");
+    expect(cls).toContain("focus-visible:ring-ring/50");
+    expect(cls).not.toMatch(/:focus-ring(\s|$)/);
+    expect(cls).not.toContain("--focus-color");
+    expect(cls).toContain("aria-invalid:ring-destructive/20");
   });
 
   it("sizes the item like the checkbox, from the density scale", () => {
@@ -131,20 +133,20 @@ describe("RadioGroup v2 styles", () => {
     );
   });
 
-  it("sits on the inset surface when off and fills with brand when on", () => {
+  it("draws a plain input border when off and fills with primary when on", () => {
     render(<Sizes defaultValue="md" />);
     const cls = screen.getAllByRole("radio")[0].className;
-    expect(cls).toContain("bg-surface-inset");
-    expect(cls).toContain("var(--hairline-strong");
-    expect(cls).toContain("data-checked:bg-brand");
-    expect(cls).not.toContain("bg-primary");
+    expect(cls.split(/\s+/)).toEqual(expect.arrayContaining(["border", "border-input"]));
+    expect(cls).not.toMatch(/surface-|hairline|shadow-inset|elevation-inset/);
+    expect(cls).toContain("data-checked:bg-primary");
+    expect(cls).not.toContain("brand");
   });
 
-  it("draws the indicator dot in brand-foreground", () => {
+  it("draws the indicator dot in primary-foreground", () => {
     const { container } = render(<Sizes defaultValue="md" />);
     const dot = must(
       container.querySelector("[data-slot=radio-group-indicator] > span"),
     );
-    expect(dot.className).toContain("bg-brand-foreground");
+    expect(dot.className).toContain("bg-primary-foreground");
   });
 });

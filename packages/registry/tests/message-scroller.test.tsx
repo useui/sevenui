@@ -420,25 +420,24 @@ describe("MessageScrollerButton v2 styles", () => {
     const button = screen.getByTestId("scroll-button");
     expect(button.getAttribute("data-variant")).toBe("outline");
     expect(button.getAttribute("data-size")).toBe("icon-sm");
-    expect(button.className).toContain("bg-surface-raised");
-    // The outline variant is opaque in both themes, so no dark: override is needed.
-    expect(button.className).not.toContain("dark:bg-surface-raised");
-    expect(button.className).not.toContain("dark:border-hairline-strong");
-    expect(button.className).not.toContain("dark:hover:");
-    expect(button.className).toContain("border-hairline-strong");
-    expect(button.className).toContain("shadow-[");
+    const cls = button.className.split(" ");
+    // main's opaque fill and border, plus the raised lift.
+    expect(cls).toEqual(
+      expect.arrayContaining(["border-border", "bg-background", "hover:bg-muted"]),
+    );
     expect(button.className).toContain("var(--elevation-raised");
+    expect(button.className).not.toContain("elevation-highlight");
+    expect(button.className).not.toContain("elevation-inset");
+    expect(button.className).not.toMatch(/hairline|surface-/);
     expect(button.className).toContain("motion-reduce:transition-none");
-    expect(button.className).toContain("focus-visible:focus-ring");
-    // The rest of the base (focus halo, outline fill) belongs to Button.
+    // Focus belongs to Button; the scroller adds no focus style of its own.
   });
 
-  it("rings the focused viewport inset", () => {
+  it("adds no focus style to the viewport, as main does", () => {
     render(<Chat />);
     const cls = screen.getByTestId("viewport").className;
-    expect(cls).toContain("focus-visible:focus-ring");
-    expect(cls).toContain("outline-none");
-    expect(cls).toContain("[--focus-gap:-1.5px]");
+    expect(cls).not.toContain("focus-ring");
+    expect(cls).not.toContain("--focus-gap");
   });
 
   it("keeps the viewport plain", () => {

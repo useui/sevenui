@@ -24,7 +24,7 @@ function getContent() {
 }
 
 describe("HoverCard", () => {
-  it("rings the focused trigger and keeps consumer classes", () => {
+  it("passes consumer classes to the trigger without adding a focus style", () => {
     render(
       <HoverCard>
         <HoverCardTrigger href="#" className="custom-x">
@@ -33,9 +33,9 @@ describe("HoverCard", () => {
       </HoverCard>,
     );
     const cls = screen.getByText("@sevenui").className;
-    expect(cls).toContain("focus-visible:focus-ring");
-    expect(cls).toContain("outline-none");
     expect(cls).toContain("custom-x");
+    expect(cls).not.toContain("focus-ring");
+    expect(cls).not.toContain("outline-none");
   });
 
   it("stays closed initially", () => {
@@ -89,13 +89,21 @@ describe("HoverCard", () => {
 });
 
 describe("HoverCard v2 styles", () => {
-  it("renders a single raised surface with the panel padding", async () => {
+  it("renders the popover surface with a ring edge and the panel padding", async () => {
     render(<ExampleHoverCard open />);
     await screen.findByText("The Base UI component registry.");
     const content = getContent();
-    expect(content?.className).toContain("bg-surface-raised");
-    expect(content?.className).toContain("shadow-overlay");
-    expect(content?.className).toContain("p-[var(--panel-pad,1.125rem)]");
+    const classes = content?.className.split(" ") ?? [];
+    for (const cls of [
+      "bg-popover",
+      "ring-1",
+      "ring-foreground/10",
+      "shadow-overlay",
+      "p-[var(--panel-pad,1.125rem)]",
+    ]) {
+      expect(classes).toContain(cls);
+    }
+    expect(content?.className).not.toContain("surface-");
     expect(content?.className).not.toContain("ring-3");
   });
 

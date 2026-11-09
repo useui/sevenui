@@ -26,12 +26,11 @@ describe("Button", () => {
   });
 
   it.each([
-    ["outline", "bg-surface-raised"],
-    ["secondary", "bg-surface-panel"],
-    ["ghost", "hover:bg-[color-mix(in_oklch,var(--surface-panel,var(--muted)),var(--foreground)_5%)]"],
-    ["destructive", "text-[color:color-mix(in_oklch,var(--foreground)_25%,var(--destructive))]"],
+    ["outline", "bg-background"],
+    ["secondary", "bg-secondary"],
+    ["ghost", "hover:bg-muted"],
+    ["destructive", "text-[color:color-mix(in_oklch,var(--foreground)_30%,var(--destructive))]"],
     ["link", "underline-offset-4"],
-    ["accent", "bg-brand-strong"],
   ] as const)("applies the %s variant token", (variant, token) => {
     render(<Button variant={variant}>Save</Button>);
     expect(tokens(screen.getByRole("button", { name: "Save" }))).toContain(
@@ -52,21 +51,28 @@ describe("Button", () => {
     );
   });
 
-  describe("v2 design language", () => {
+  describe("styles", () => {
     function classes(props: React.ComponentProps<typeof Button> = {}) {
       render(<Button {...props}>Save</Button>);
       return tokens(screen.getByRole("button", { name: "Save" }));
     }
 
-    it("uses the offset focus ring, never the ring-3 halo", () => {
+    it("uses the ring-3 focus halo, not the offset focus ring", () => {
       const list = classes();
       expect(list).toContain("outline-none");
-      expect(list).toContain("focus-visible:focus-ring");
-      expect(list.join(" ")).not.toMatch(/ring-3|ring-ring|focus-visible:border-ring/);
+      expect(list).toContain("focus-visible:border-ring");
+      expect(list).toContain("focus-visible:ring-3");
+      expect(list).toContain("focus-visible:ring-ring/50");
+      expect(list).not.toContain("focus-visible:focus-ring");
     });
 
-    it("turns the focus ring destructive when invalid", () => {
-      expect(classes()).toContain("aria-invalid:[--focus-color:var(--destructive)]");
+    it("draws a destructive ring when invalid", () => {
+      const list = classes();
+      expect(list).toContain("aria-invalid:border-destructive");
+      expect(list).toContain("aria-invalid:ring-3");
+      expect(list).toContain("aria-invalid:ring-destructive/20");
+      expect(list).toContain("dark:aria-invalid:ring-destructive/40");
+      expect(list.join(" ")).not.toContain("--focus-color");
     });
 
     it("reads the density tokens with fallbacks", () => {
@@ -87,31 +93,38 @@ describe("Button", () => {
       expect(list).toContain("motion-reduce:active:not-aria-[haspopup]:translate-none");
     });
 
-    it("layers the default variant with a top highlight", () => {
-      expect(classes()).toContain("shadow-highlight");
+    it("adds no top highlight, inset, surface or hairline to any variant", () => {
+      for (const variant of ["default", "outline", "secondary", "ghost", "destructive", "link"] as const) {
+        const { unmount } = render(<Button variant={variant}>Plain</Button>);
+        const list = tokens(screen.getByRole("button", { name: "Plain" }));
+        expect(list.some((c) => /highlight|shadow-inset|elevation-inset|surface-|hairline/.test(c))).toBe(false);
+        unmount();
+      }
     });
 
-    it("draws the outline variant as a raised surface with a strong hairline", () => {
+    it("draws the outline variant with the plain border on the background", () => {
       const list = classes({ variant: "outline" });
-      expect(list).toContain("bg-surface-raised");
-      expect(list).toContain("border-hairline-strong");
-      expect(list).toContain("shadow-highlight");
+      expect(list).toContain("bg-background");
+      expect(list).toContain("border-border");
+      expect(list).toContain("dark:border-input");
     });
 
-    it("fills the accent variant with the brand", () => {
-      const list = classes({ variant: "accent" });
-      expect(list).toContain("bg-brand-strong");
-      expect(list).toContain("text-brand-foreground");
+    it("gives the secondary variant no edge: no border colour, ring or inset", () => {
+      const list = classes({ variant: "secondary" });
+      expect(list).toContain("bg-secondary");
+      // The base border stays transparent; secondary sets no border colour.
+      expect(list).toContain("border-transparent");
+      expect(list.some((c) => /^(hover:|aria-expanded:|dark:)*border-(?!transparent)/.test(c))).toBe(false);
+      expect(list.some((c) => /^(hover:|aria-expanded:|dark:)*(ring-|shadow-)/.test(c))).toBe(false);
     });
 
-    it("colours the link variant with the brand", () => {
+    it("colours the link variant with primary", () => {
       const list = classes({ variant: "link" });
-      expect(list).toContain("text-brand");
-      expect(list).toContain("decoration-brand/40");
+      expect(list).toContain("text-primary");
     });
 
-    it("keeps brand colour out of the neutral variants", () => {
-      for (const variant of ["default", "outline", "secondary", "ghost", "destructive"] as const) {
+    it("paints no variant with a brand token", () => {
+      for (const variant of ["default", "outline", "secondary", "ghost", "destructive", "link"] as const) {
         const { unmount } = render(<Button variant={variant}>Neutral</Button>);
         const list = tokens(screen.getByRole("button", { name: "Neutral" }));
         expect(list.some((c) => /(^|:)(bg|text|border)-brand/.test(c))).toBe(false);

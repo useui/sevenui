@@ -92,36 +92,37 @@ describe("Card", () => {
   });
 
   describe("v2 design language", () => {
-    it("keeps the hairline edge when a consumer overrides the shadow", () => {
+    it("keeps the ring edge when a consumer overrides the shadow", () => {
       // The edge lives in the ring group, the lift in the shadow group, so a
       // consumer shadow-* or dark:shadow-none merges away only the lift.
       render(<Card data-testid="md" className="shadow-md" />);
       const md = screen.getByTestId("md").className.split(" ");
-      expect(md).toEqual(expect.arrayContaining(["ring-1", "ring-hairline", "shadow-md"]));
-      expect(md.join(" ")).not.toContain("var(--elevation-highlight");
+      expect(md).toEqual(expect.arrayContaining(["ring-1", "ring-foreground/10", "shadow-md"]));
 
       render(<Card data-testid="flat" className="dark:shadow-none" />);
       const flat = screen.getByTestId("flat").className.split(" ");
-      expect(flat).toEqual(expect.arrayContaining(["ring-1", "ring-hairline", "dark:shadow-none"]));
+      expect(flat).toEqual(
+        expect.arrayContaining(["ring-1", "ring-foreground/10", "dark:shadow-none"]),
+      );
 
-      // A consumer ring colour replaces the hairline colour, not the width.
+      // A consumer ring colour replaces the edge colour, not the width.
       render(<Card data-testid="ring" className="ring-primary" />);
       const ring = screen.getByTestId("ring").className.split(" ");
       expect(ring).toEqual(expect.arrayContaining(["ring-1", "ring-primary"]));
-      expect(ring).not.toContain("ring-hairline");
+      expect(ring).not.toContain("ring-foreground/10");
     });
 
-    it("draws a single panel surface with a hairline and a raised lift", () => {
+    it("draws main's card surface and ring with a raised lift, no highlight or inset", () => {
       render(<Card data-testid="card" />);
       const cls = screen.getByTestId("card").className;
-      expect(cls).toContain("bg-surface-panel");
-      // The edge is a ring (main's twMerge group), so a consumer shadow-* keeps it.
-      expect(cls.split(" ")).toEqual(expect.arrayContaining(["ring-1", "ring-hairline"]));
-      expect(cls).not.toContain("0_0_0_1px_var(--hairline");
+      expect(cls.split(" ")).toEqual(
+        expect.arrayContaining(["bg-card", "ring-1", "ring-foreground/10"]),
+      );
       expect(cls).toContain("var(--elevation-raised,");
-      expect(cls).toContain("var(--elevation-highlight,");
-      expect(cls).not.toContain("ring-foreground/10");
-      expect(cls.split(" ")).not.toContain("bg-card");
+      expect(cls).not.toContain("elevation-highlight");
+      expect(cls).not.toContain("elevation-inset");
+      expect(cls).not.toContain("hairline");
+      expect(cls).not.toContain("surface-");
     });
 
     it("spaces its parts from --panel-pad, read with a fallback so density inherits", () => {
@@ -136,11 +137,12 @@ describe("Card", () => {
       expect(cls).not.toContain("[:where(&)]:[--panel-pad");
     });
 
-    it("sets the footer on the tray behind a hairline", () => {
+    it("sets the footer on main's muted band behind a top border", () => {
       render(<CardFooter data-testid="footer" />);
-      const cls = screen.getByTestId("footer").className;
-      expect(cls).toContain("bg-surface-tray");
-      expect(cls).toContain("border-hairline");
+      const cls = screen.getByTestId("footer").className.split(" ");
+      expect(cls).toEqual(expect.arrayContaining(["border-t", "bg-muted/50"]));
+      expect(cls.join(" ")).not.toContain("hairline");
+      expect(cls.join(" ")).not.toContain("surface-");
     });
   });
 });

@@ -93,33 +93,33 @@ describe("NavigationMenu", () => {
 describe("NavigationMenu v2 styles", () => {
   const cls = (el: Element | null | undefined) => el?.getAttribute("class") ?? "";
 
-  it("styles triggers as ghost controls sized from --control-h with the focus ring", () => {
+  it("styles triggers as ghost controls sized from --control-h with main's focus ring", () => {
     render(<BasicMenu />);
     const trigger = cls(screen.getByRole("button", { name: "Products" }));
     expect(trigger).toContain("h-[var(--control-h,2.125rem)]");
     expect(trigger).toContain("px-[var(--control-px,0.75rem)]");
-    // surface-panel equals the page in light, so hover and open use the hairline.
-    expect(trigger).toContain("hover:bg-hairline");
-    expect(trigger).toContain("data-popup-open:bg-hairline");
+    expect(trigger).toContain("hover:bg-muted");
+    expect(trigger).toContain("data-popup-open:bg-muted/50");
     expect(trigger).not.toContain("surface-panel");
-    expect(trigger).toContain("focus-visible:focus-ring");
-    expect(trigger).not.toContain("ring-3");
+    expect(trigger).not.toContain("hairline");
+    expect(trigger).toContain("focus-visible:ring-3 focus-visible:ring-ring/50");
+    expect(trigger).not.toContain("focus-ring");
     expect(trigger).toContain("motion-reduce:transition-none");
   });
 
-  it("styles links with the md radius, a hairline hover and active state and the focus ring", () => {
+  it("styles links with the md radius, a muted hover and active state and main's focus ring", () => {
     render(<BasicMenu />);
     const link = cls(screen.getByRole("link", { name: "Docs" }));
     expect(link).toContain("rounded-md");
-    // surface-panel equals the raised viewport in light, so it would not show.
-    expect(link).toContain("hover:bg-hairline");
-    expect(link).toContain("data-active:bg-hairline");
+    expect(link).toContain("hover:bg-muted");
+    expect(link).toContain("data-active:bg-muted/50");
     expect(link).not.toContain("surface-panel");
-    expect(link).toContain("focus-visible:focus-ring");
-    expect(link).not.toContain("ring-3");
+    expect(link).not.toContain("hairline");
+    expect(link).toContain("focus-visible:ring-3 focus-visible:ring-ring/50");
+    expect(link).not.toContain("focus-ring");
   });
 
-  it("renders the viewport popup as an overlay surface with a reduced-motion fallback", async () => {
+  it("renders the viewport popup on the popover with a ring edge, the overlay shadow and a reduced-motion fallback", async () => {
     const user = userEvent.setup();
     render(<BasicMenu />);
     await user.click(screen.getByRole("button", { name: "Products" }));
@@ -127,7 +127,8 @@ describe("NavigationMenu v2 styles", () => {
       '[data-slot="navigation-menu-content"]',
     )?.parentElement;
     const surface = viewport?.parentElement;
-    expect(cls(surface)).toContain("bg-surface-raised");
+    expect(cls(surface)).toContain("bg-popover");
+    expect(cls(surface)).toContain("ring-1 ring-foreground/10");
     expect(cls(surface)).toContain("shadow-overlay");
     expect(cls(surface)).toContain("motion-reduce:transition-none");
   });

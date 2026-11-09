@@ -142,7 +142,7 @@ describe("Toaster", () => {
 });
 
 describe("Toast v2 styling", () => {
-  it("renders on the raised overlay surface with an offset focus ring", async () => {
+  it("renders on the popover surface with a border and the default focus ring", async () => {
     const manager = createToastManager();
     render(<Toaster toastManager={manager} />);
     act(() => {
@@ -150,12 +150,19 @@ describe("Toast v2 styling", () => {
     });
     await screen.findByText("Styled");
     const root = getToasts()[0] as HTMLElement;
-    expect(root.className).toContain("bg-surface-raised");
-    expect(root.className).toContain("shadow-overlay");
-    expect(root.className).toContain("focus-visible:focus-ring");
-    expect(root.className).not.toContain("ring-3");
-    expect(root.className).not.toContain("ring-[3px]");
-    expect(root.className).not.toContain("focus-visible:border-ring");
+    const classes = root.className.split(" ");
+    for (const cls of [
+      "bg-popover",
+      "border",
+      "shadow-overlay",
+      "focus-visible:border-ring",
+      "focus-visible:ring-[3px]",
+      "focus-visible:ring-ring/50",
+    ]) {
+      expect(classes).toContain(cls);
+    }
+    expect(root.className).not.toContain("surface-");
+    expect(root.className).not.toContain("focus-ring");
   });
 
   it("pads the content with the panel density token", async () => {

@@ -132,7 +132,7 @@ describe("Slider", () => {
   });
 });
 
-describe("Slider v2 styles", () => {
+describe("Slider styles", () => {
   function parts() {
     const { container } = render(
       <Slider defaultValue={[40]} aria-label="Volume" />,
@@ -147,19 +147,23 @@ describe("Slider v2 styles", () => {
     };
   }
 
-  it("puts the offset focus ring on the thumb when its range input has focus", () => {
+  it("puts the ring-3 halo on the thumb when its range input has focus", () => {
     const { thumb } = parts();
     // Base UI focuses the nested <input type="range">, not the thumb <div>.
-    expect(thumb.className).toContain("has-focus-visible:focus-ring");
-    expect(thumb.className).not.toContain("ring-3");
-    expect(thumb.className).not.toContain("ring-ring");
+    expect(thumb.className).toContain("has-focus-visible:ring-3");
+    expect(thumb.className).toContain("focus-visible:ring-3");
+    expect(thumb.className).toContain("ring-ring/50");
+    expect(thumb.className).toContain("border-ring");
+    expect(thumb.className).not.toMatch(/:focus-ring(\s|$)/);
+    expect(thumb.className).not.toContain("hairline");
   });
 
-  it("uses hairline-strong for the track and brand for the range", () => {
+  it("uses muted for the track and primary for the range", () => {
     const { track, range } = parts();
-    expect(track.className).toContain("bg-hairline-strong");
-    expect(range.className).toContain("bg-brand");
-    expect(range.className).not.toContain("bg-primary");
+    expect(track.className).toContain("bg-muted");
+    expect(track.className).not.toContain("hairline");
+    expect(range.className).toContain("bg-primary");
+    expect(range.className).not.toContain("brand");
   });
 
   it("gives the thumb a white raised surface", () => {

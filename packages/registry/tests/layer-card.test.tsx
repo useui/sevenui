@@ -129,9 +129,9 @@ describe("LayerCard", () => {
     const link = screen.getByRole("link", { name: "Docs" });
     expect(link.getAttribute("href")).toBe("/docs");
     expect(link.getAttribute("data-slot")).toBe("layer-card-panel");
-    expect(link.className).toContain("[a,button]:focus-visible:focus-ring");
-    expect(link.className).not.toContain("ring-3");
-    expect(link.className).not.toContain("focus-visible:border-ring");
+    expect(link.className).toContain("[a,button]:focus-visible:ring-3");
+    expect(link.className).toContain("[a,button]:focus-visible:border-ring");
+    expect(link.className).not.toContain("focus-ring");
   });
 
   it("keeps the panel slot when another component passes its own data-slot", () => {
@@ -210,9 +210,8 @@ describe("LayerCard", () => {
   });
 
   it("insets the focus ring of panels under dense, where the root clips", () => {
-    // A negative gap draws the offset ring inside the panel's own edge.
     expect(layerCardVariants({ dense: true })).toContain(
-      "[&>[data-slot=layer-card-panel]]:focus-visible:[--focus-gap:calc(var(--focus-width)*-2)]",
+      "[&>[data-slot=layer-card-panel]]:focus-visible:ring-inset",
     );
   });
 
@@ -260,7 +259,7 @@ describe("LayerCard", () => {
 
   it("gives inverse panels an opaque background so a tone never shows through", () => {
     expect(layerCardVariants({ variant: "inverse" })).toContain(
-      "[--layer-card-panel-bg:var(--surface-tray,color-mix(in_oklch,var(--muted)_50%,var(--card)))]",
+      "[--layer-card-panel-bg:color-mix(in_oklch,var(--muted)_50%,var(--card))]",
     );
   });
 
@@ -325,29 +324,31 @@ describe("LayerCard", () => {
     expect(classes.some((c) => /^shadow-.*layer-card/.test(c))).toBe(false);
   });
 
-  it("lifts panels off the tray through the panel token, without a dark: override", () => {
-    // --surface-panel is color-mix(card, foreground 4%) in dark, which is
-    // what the old dark: override wrote by hand.
-    for (const variant of ["default", "ghost"] as const) {
-      const classes = layerCardVariants({ variant });
-      expect(classes).toContain("[--layer-card-panel-bg:var(--surface-panel,var(--card))]");
-      expect(classes).not.toContain("dark:[--layer-card-panel-bg");
-    }
+  it("lifts panels off the tray in dark mode", () => {
+    expect(layerCardVariants({ variant: "default" })).toContain(
+      "dark:[--layer-card-panel-bg:color-mix(in_oklch,var(--card),var(--foreground)_4%)]",
+    );
+    expect(layerCardVariants({ variant: "ghost" })).toContain(
+      "dark:[--layer-card-panel-bg:color-mix(in_oklch,var(--card),var(--foreground)_4%)]",
+    );
   });
 
   describe("v2 design language", () => {
-    it("points the tray, panel and hairline at the surface tokens, with the old values as fallbacks", () => {
+    it("keeps main's tray, panel and edge colours, without surface or hairline tokens", () => {
       const classes = layerCardVariants();
       expect(classes).toContain(
-        "[--layer-card-bg:var(--surface-tray,color-mix(in_oklch,var(--muted)_50%,transparent))]",
+        "[--layer-card-bg:color-mix(in_oklch,var(--muted)_50%,transparent)]",
       );
-      expect(classes).toContain("[--layer-card-panel-bg:var(--surface-panel,var(--card))]");
+      expect(classes).toContain("[--layer-card-panel-bg:var(--card)]");
       expect(classes).toContain(
-        "[:where(&)]:[--layer-card-border-color:var(--hairline,color-mix(in_oklch,var(--foreground)_10%,transparent))]",
+        "[:where(&)]:[--layer-card-border-color:color-mix(in_oklch,var(--foreground)_10%,transparent)]",
       );
-      expect(layerCardVariants({ variant: "inverse" })).toContain(
-        "[--layer-card-bg:var(--surface-panel,var(--card))]",
-      );
+      expect(layerCardVariants({ variant: "inverse" })).toContain("[--layer-card-bg:var(--card)]");
+      for (const variant of ["default", "inverse", "ghost"] as const) {
+        const v = layerCardVariants({ variant });
+        expect(v).not.toContain("--surface-");
+        expect(v).not.toContain("--hairline");
+      }
     });
 
     it("keeps every variable default at zero specificity", () => {
@@ -369,10 +370,13 @@ describe("LayerCard", () => {
       expect(classes).not.toMatch(/\[:where\(&\)\]:\[--(focus|control|panel|item)-/);
     });
 
-    it("raises the tray with the top highlight and panels with the raised elevation", () => {
+    it("raises panels with the raised elevation, without a highlight or inset", () => {
+      expect(layerCardVariants()).toContain("[:where(&)]:[--layer-card-shadow:0_0_#0000]");
       expect(layerCardVariants()).toContain(
-        "[:where(&)]:[--layer-card-shadow:var(--elevation-highlight,0_0_#0000)]",
+        "[--layer-card-shadow:var(--elevation-raised,0_1px_2px_0_rgb(0_0_0/0.05))]",
       );
+      expect(layerCardVariants()).not.toContain("elevation-highlight");
+      expect(layerCardVariants()).not.toContain("elevation-inset");
       render(
         <LayerCard>
           <LayerCardPanel data-testid="panel">P</LayerCardPanel>

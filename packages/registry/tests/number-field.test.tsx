@@ -144,26 +144,42 @@ describe("NumberField", () => {
 });
 
 describe("NumberField v2 styles", () => {
-  it("draws the group as an inset field with ghost steppers and tabular digits", () => {
+  it("draws the group with bordered steppers, density height and tabular digits", () => {
     render(<Quantity defaultValue={5} />);
     const group = (getInput().parentElement as HTMLElement).className;
-    expect(group).toContain("has-[input:focus-visible]:focus-ring");
-    expect(group).not.toContain("ring-3");
-    expect(group).not.toContain("focus-within:ring");
+    const groupClasses = group.split(" ");
+    for (const c of [
+      "border",
+      "border-input",
+      "shadow-xs",
+      "focus-within:ring-2",
+      "focus-within:ring-ring/50",
+      "motion-reduce:transition-none",
+    ]) {
+      expect(groupClasses).toContain(c);
+    }
     expect(group).toContain("h-[var(--control-h,");
-    expect(group).toContain("bg-surface-inset");
-    // The edge is a real border so consumer border-* classes merge against it.
-    expect(group.split(" ")).toEqual(expect.arrayContaining(["border", "border-hairline-strong"]));
-    expect(group).not.toContain("0_0_0_1px_var(--hairline");
-    expect(group).toContain("motion-reduce:transition-none");
+    expect(group).not.toContain("focus-ring");
+    expect(group).not.toContain("surface-");
+    expect(group).not.toContain("hairline");
+    expect(group).not.toContain("--elevation-inset");
     expect(getInput().className).toContain("tabular-nums");
     expect(getInput().className).toContain("placeholder:text-muted-foreground");
     expect(getInput().className).not.toContain("placeholder:text-muted-foreground/");
     expect(getInput().className).toContain("--control-text");
-    const increment = screen.getByLabelText("Increase").className;
-    expect(increment).toContain("hover:bg-surface-raised");
-    expect(increment).toContain("size-[calc(var(--control-h,2.125rem)-6px)]");
-    expect(increment).toContain("motion-reduce:transition-none");
-    expect(increment).not.toContain("border-l");
+    const increment = screen.getByLabelText("Increase").className.split(" ");
+    for (const c of [
+      "bg-muted/50",
+      "hover:bg-muted",
+      "border-l",
+      "border-input",
+      "w-[var(--control-h,2.125rem)]",
+      "motion-reduce:transition-none",
+    ]) {
+      expect(increment).toContain(c);
+    }
+    expect(screen.getByLabelText("Decrease").className.split(" ")).toContain(
+      "border-r",
+    );
   });
 });

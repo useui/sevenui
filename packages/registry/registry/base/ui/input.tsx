@@ -13,14 +13,11 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
       type={type}
       data-slot="input"
       className={cn(
-        // The edge is a border and the inset is the only shadow, so consumer
-        // border-* and shadow-* classes merge against them. The leading
-        // 0_0_#0000 lets cn read the arbitrary value as a shadow.
-        "h-[var(--control-h,2.125rem)] w-full min-w-0 rounded-lg bg-surface-inset px-[var(--control-px,0.75rem)] py-1 text-base text-foreground border border-hairline-strong shadow-[0_0_#0000,var(--elevation-inset,0_0_#0000)] transition-[border-color,box-shadow] duration-150 outline-none motion-reduce:transition-none md:text-[length:var(--control-text,0.8125rem)]",
+        "h-[var(--control-h,2.125rem)] w-full min-w-0 rounded-lg border border-input bg-transparent px-[var(--control-px,0.75rem)] py-1 text-base transition-[color,border-color,box-shadow] duration-150 outline-none motion-reduce:transition-none md:text-[length:var(--control-text,0.8125rem)] dark:bg-input/30",
         "file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-[length:var(--control-text,0.8125rem)] file:font-medium file:text-foreground placeholder:text-muted-foreground",
-        "focus-visible:focus-ring",
-        "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
-        "aria-invalid:border-destructive/60 aria-invalid:[--focus-color:var(--destructive)]",
+        "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
+        "disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 dark:disabled:bg-input/80",
+        "aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
         className,
       )}
       {...props}

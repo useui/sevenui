@@ -126,52 +126,54 @@ describe("Menubar v2 styles", () => {
     const item = screen.getByRole("menuitem", { name: /New Tab/ });
     expect(cls(item).split(" ")).toContain("group/menubar-item");
     expect(cls(item).split(" ")).toContain(
-      "not-data-[variant=destructive]:data-highlighted:**:text-foreground",
+      "not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground",
     );
     expect(cls(document.querySelector('[data-slot="menubar-shortcut"]')).split(" ")).toContain(
-      "group-data-highlighted/menubar-item:text-foreground",
+      "group-data-highlighted/menubar-item:text-accent-foreground",
     );
   });
 
-  it("renders the bar as a hairline toolbar tray sized from --control-h", () => {
+  it("renders the bar with a border edge sized from --control-h", () => {
     render(<BasicMenubar />);
     const bar = cls(screen.getByRole("menubar"));
-    expect(bar).toContain("bg-surface-tray");
-    expect(bar).toContain("ring-hairline");
+    expect(bar).toMatch(/(^|\s)border(\s|$)/);
     expect(bar).toContain("p-0.5");
     expect(bar).toContain("h-[var(--control-h,2.125rem)]");
-    expect(bar).not.toMatch(/(^|\s)border(\s|$)/);
+    expect(bar).not.toContain("surface-");
+    expect(bar).not.toContain("hairline");
   });
 
-  it("styles triggers as ghost toggles with the offset focus ring", () => {
+  it("styles triggers as ghost toggles with a hidden outline", () => {
     render(<BasicMenubar />);
     const trigger = cls(screen.getByRole("menuitem", { name: "File" }));
-    expect(trigger).toContain("focus-visible:focus-ring");
+    expect(trigger).toContain("outline-hidden");
+    expect(trigger).not.toContain("focus-ring");
     expect(trigger).not.toContain("ring-3");
     // Hover darkens the tray like a list row; the open state stays raised.
-    expect(trigger).toContain("hover:bg-hairline");
+    expect(trigger).toContain("hover:bg-accent");
     expect(trigger).not.toContain("surface-panel");
-    expect(trigger).toContain("data-popup-open:bg-surface-raised");
+    expect(trigger).toContain("data-popup-open:bg-accent");
     expect(trigger).toContain("px-[var(--control-px,0.75rem)]");
     expect(trigger).toContain("motion-reduce:transition-none");
   });
 
-  it("renders menus with the dropdown popup, items and hairline separators", async () => {
+  it("renders menus with the dropdown popup, items and border separators", async () => {
     const user = userEvent.setup();
     render(<BasicMenubar />);
     await user.click(screen.getByRole("menuitem", { name: "File" }));
     const menu = await screen.findByRole("menu");
-    expect(cls(menu)).toContain("bg-surface-raised");
+    expect(cls(menu)).toContain("bg-popover");
+    expect(cls(menu)).toContain("ring-1 ring-foreground/10");
     expect(cls(menu)).toContain("shadow-overlay");
     const item = screen.getByRole("menuitem", { name: /New Tab/ });
     expect(cls(item)).toContain("min-h-[var(--item-h,2rem)]");
-    expect(cls(item)).toContain("data-highlighted:bg-hairline");
+    expect(cls(item)).toContain("data-highlighted:bg-accent");
     expect(cls(item)).not.toContain("surface-panel");
     expect(cls(item)).toContain("data-disabled:data-highlighted:bg-transparent");
-    // Disabled rows keep the inset keyboard focus ring (ruling: focus stays visible).
-    expect(cls(item)).not.toContain("data-disabled:focus-visible:outline-none");
+    expect(cls(item)).toContain("outline-hidden");
+    expect(cls(item)).not.toContain("focus-ring");
     expect(cls(document.querySelector('[data-slot="menubar-separator"]'))).toContain(
-      "bg-hairline",
+      "bg-border",
     );
     expect(cls(document.querySelector('[data-slot="menubar-shortcut"]'))).toContain("font-mono");
   });

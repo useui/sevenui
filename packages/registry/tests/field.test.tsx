@@ -134,30 +134,30 @@ describe("Field v2 styles", () => {
     expect(error).not.toContain("text-sm");
   });
 
-  it("divides consecutive horizontal field rows with a hairline", () => {
+  it("adds no divider between consecutive horizontal field rows", () => {
     render(<FieldGroup data-testid="group" />);
     const cls = screen.getByTestId("group").className;
-    const row =
-      "[&>[data-slot=field][data-orientation=horizontal]+[data-slot=field][data-orientation=horizontal]]";
-    expect(cls).toContain(`${row}:border-t`);
-    expect(cls).toContain(`${row}:border-hairline`);
+    expect(cls).not.toContain("border-t");
+    expect(cls).not.toContain("hairline");
   });
 
-  it("uses the offset focus ring on choice-card labels, never the old halo", () => {
+  it("uses the halo focus ring on choice-card labels", () => {
     render(
       <Field>
         <FieldLabel data-testid="label">Card</FieldLabel>
       </Field>,
     );
-    const cls = screen.getByTestId("label").className;
-    expect(cls).toContain(
-      "has-[>[data-slot=field]]:has-[:focus-visible]:focus-ring",
-    );
-    expect(cls).toContain(
-      "has-[>[data-slot=field]]:not-has-data-checked:bg-surface-panel",
-    );
-    expect(cls).not.toContain("ring-3");
-    expect(cls).not.toContain("ring-ring");
-    expect(cls).not.toContain("border-ring");
+    const cls = screen.getByTestId("label").className.split(" ");
+    for (const c of [
+      "has-[>[data-slot=field]]:has-[:focus-visible]:border-ring",
+      "has-[>[data-slot=field]]:has-[:focus-visible]:ring-3",
+      "has-[>[data-slot=field]]:has-[:focus-visible]:ring-ring/50",
+    ]) {
+      expect(cls).toContain(c);
+    }
+    const joined = cls.join(" ");
+    expect(joined).not.toContain("focus-ring");
+    expect(joined).not.toContain("surface-");
+    expect(joined).not.toContain("hairline");
   });
 });

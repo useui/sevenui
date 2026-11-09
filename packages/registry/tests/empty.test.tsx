@@ -59,8 +59,7 @@ describe("Empty", () => {
     render(<EmptyMedia data-testid="media" variant="icon" />);
     const media = screen.getByTestId("media");
     expect(media.getAttribute("data-variant")).toBe("icon");
-    expect(media.classList.contains("bg-surface-raised")).toBe(true);
-    expect(media.classList.contains("bg-muted")).toBe(false);
+    expect(media.classList.contains("bg-muted")).toBe(true);
     expect(media.classList.contains("bg-transparent")).toBe(false);
   });
 
@@ -73,29 +72,33 @@ describe("Empty", () => {
       expect(cls.split(" ")).not.toContain("p-6");
     });
 
-    it("keeps the dashed border optional and draws it as a hairline", () => {
+    it("keeps the dashed border optional, in main's border colour", () => {
       render(<Empty data-testid="root" />);
       const classes = screen.getByTestId("root").className.split(" ");
       expect(classes).toContain("border-dashed");
-      expect(classes).toContain("border-hairline-strong");
+      expect(classes.join(" ")).not.toContain("hairline");
       // No border width of its own: a consumer adds `border` to show it.
       expect(classes).not.toContain("border");
     });
 
-    it("raises the icon tile as a small square with a top highlight and hairline", () => {
+    it("draws the icon tile flat on muted, as main does", () => {
       render(<EmptyMedia data-testid="media" variant="icon" />);
       const cls = screen.getByTestId("media").className;
       expect(cls).toContain("size-8");
       expect(cls).toContain("rounded-lg");
-      expect(cls).toContain("var(--elevation-highlight,");
-      expect(cls).toContain("var(--hairline-strong,");
+      expect(cls).toContain("bg-muted");
+      expect(cls).not.toContain("shadow");
+      expect(cls).not.toContain("elevation-highlight");
+      expect(cls).not.toContain("elevation-inset");
+      expect(cls).not.toContain("hairline");
+      expect(cls).not.toContain("surface-");
     });
 
-    it("gives inline description links the offset focus ring", () => {
+    it("leaves inline description links without a focus style of their own, as main does", () => {
       render(<EmptyDescription>See <a href="#docs">docs</a></EmptyDescription>);
       const cls = screen.getByText(/See/).className;
-      expect(cls).toContain("[&>a]:outline-none");
-      expect(cls).toContain("[&>a]:focus-visible:focus-ring");
+      expect(cls).not.toContain("focus-ring");
+      expect(cls).not.toContain("focus-visible");
     });
 
     it("sets title and description on the type scale", () => {

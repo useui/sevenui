@@ -89,6 +89,20 @@ Properties of the look:
 
 ## Brand accent — decided
 
+> **Superseded 2026-11-10: there is no brand colour.** The `--brand` token family,
+> the button `accent` variant and the badge `highlight` variant were removed.
+> Colour comes only from shadcn's own tokens, as before v2: "on" states
+> (checkbox, radio, switch, slider, progress, calendar, questionnaire) use
+> `--primary`, tab indicators use `--foreground`, and the offset focus ring
+> reads `var(--focus-color, var(--ring))`. `--ring` is neutral grey
+> (`oklch(0.556 0 0)` in both themes, at least 3:1 on the background). The rest
+> of this section is kept as history.
+>
+> **Also 2026-11-10:** the shadcn theme colours are main's, unchanged (the v2
+> neutral retune was reverted), `--ring` is main's grey, and `--accent` keeps
+> its shadcn job: highlighted and hovered rows in menus, select, combobox,
+> menubar and toolbar paint with `--accent`, the sidebar with `--sidebar-accent`.
+
 **Electric blue.** Dark theme `#4d7cff`, light theme `#2f5ce8`. Chosen by the
 user over Electric Lime after side-by-side comparison in both themes.
 

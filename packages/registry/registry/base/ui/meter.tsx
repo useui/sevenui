@@ -19,11 +19,11 @@ function Meter({
       {children}
       <MeterPrimitive.Track
         data-slot="meter-track"
-        className="col-span-full h-1 w-full overflow-hidden rounded-full bg-hairline-strong in-data-[density=compact]:h-[3px]"
+        className="col-span-full h-1 w-full overflow-hidden rounded-full bg-primary/20 in-data-[density=compact]:h-[3px]"
       >
         <MeterPrimitive.Indicator
           data-slot="meter-indicator"
-          className="h-full bg-foreground transition-[width] duration-300 ease-snappy motion-reduce:transition-none"
+          className="h-full bg-primary transition-[width] duration-300 ease-snappy motion-reduce:transition-none"
         />
       </MeterPrimitive.Track>
     </MeterPrimitive.Root>

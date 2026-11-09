@@ -137,34 +137,40 @@ describe("Tabs", () => {
   });
 
   describe("v2 style", () => {
-    it("renders the default list as a segmented tray at control height", () => {
+    it("renders the default list as a muted track at control height", () => {
       render(<BasicTabs />);
       const list = screen.getByRole("tablist");
-      expect(list.className).toContain("bg-surface-tray");
-      expect(list.className).toContain("inset_0_0_0_1px_var(--hairline");
+      expect(list.className.split(" ")).toContain("bg-muted");
+      expect(list.className).not.toContain("surface");
+      expect(list.className).not.toContain("hairline");
+      expect(list.className).not.toContain("elevation-inset");
       expect(list.className).toContain("p-0.5");
       expect(list.className).toContain("h-[var(--control-h,2.125rem)]");
     });
 
-    it("sizes triggers inside the tray and focuses with the offset ring", () => {
+    it("sizes triggers inside the list and focuses with the ring", () => {
       render(<BasicTabs />);
       for (const tab of screen.getAllByRole("tab")) {
         expect(tab.className).toContain("h-[calc(var(--control-h,2.125rem)-4px)]");
-        expect(tab.className).toContain("focus-visible:focus-ring");
-        expect(tab.className).not.toContain("ring-3");
-        expect(tab.className).not.toContain("ring-ring");
-        expect(tab.className).not.toContain("focus-visible:border-ring");
+        expect(tab.className).toContain("focus-visible:border-ring");
+        expect(tab.className).toContain("focus-visible:ring-[3px]");
+        expect(tab.className).toContain("focus-visible:ring-ring/50");
+        expect(tab.className).toContain("focus-visible:outline-ring");
+        expect(tab.className).not.toContain("focus-ring");
       }
     });
 
-    it("raises the active tab with a brand bottom indicator", () => {
+    it("lifts the active tab onto the background with a foreground bottom indicator", () => {
       render(<BasicTabs />);
       const tab = screen.getByRole("tab", { name: "Account" });
-      expect(tab.className).toContain("data-active:bg-surface-raised");
-      expect(tab.className).toContain("inset_0_-2px_0_var(--brand");
+      expect(tab.className).toContain("data-active:bg-background");
+      expect(tab.className).toContain("inset_0_-2px_0_var(--foreground)");
+      expect(tab.className).not.toContain("surface");
+      expect(tab.className).not.toContain("hairline");
+      expect(tab.className).not.toContain("highlight");
     });
 
-    it("draws the line variant on a hairline with a 2px brand bar", () => {
+    it("draws the line variant without a hairline, with a 2px foreground bar", () => {
       render(
         <Tabs defaultValue="one">
           <TabsList variant="line">
@@ -172,11 +178,11 @@ describe("Tabs", () => {
           </TabsList>
         </Tabs>,
       );
-      expect(screen.getByRole("tablist").className).toContain(
-        "var(--hairline",
+      expect(screen.getByRole("tablist").className).not.toContain(
+        "hairline",
       );
       const tab = screen.getByRole("tab");
-      expect(tab.className).toContain("after:bg-brand");
+      expect(tab.className).toContain("after:bg-foreground");
       expect(tab.className).toContain("after:h-0.5");
     });
 

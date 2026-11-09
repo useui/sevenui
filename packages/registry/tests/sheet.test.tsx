@@ -135,19 +135,22 @@ describe("Sheet", () => {
 });
 
 describe("Sheet v2 styles", () => {
-  it("renders a single raised panel with an overlay shadow", async () => {
+  it("renders a popover panel with an overlay shadow", async () => {
     render(<ExampleSheet open />);
     const sheet = await screen.findByRole("dialog");
-    expect(sheet.className).toContain("bg-surface-raised");
-    expect(sheet.className).toContain("shadow-overlay");
+    const classes = sheet.className.split(" ");
+    expect(classes).toContain("bg-popover");
+    expect(classes).toContain("text-popover-foreground");
+    expect(classes).toContain("shadow-overlay");
+    expect(sheet.className).not.toContain("surface-");
     expect(sheet.className).not.toContain("ring-3");
   });
 
-  it("draws a hairline on the inner edge", async () => {
+  it("draws a default border on the inner edge", async () => {
     render(<ExampleSheet open />);
     const sheet = await screen.findByRole("dialog");
-    expect(sheet.className).toContain("border-hairline");
     expect(sheet.className).toContain("data-[side=right]:border-l");
+    expect(sheet.className).not.toContain("hairline");
   });
 
   it("pads the header and footer with the panel padding", async () => {
@@ -167,11 +170,12 @@ describe("Sheet v2 styles", () => {
     expect(sheet.className).toContain("motion-reduce:translate-none!");
   });
 
-  it("uses a plain dimmed backdrop without blur", async () => {
+  it("dims and blurs the backdrop as main does", async () => {
     render(<ExampleSheet open />);
     await screen.findByRole("dialog");
     const overlay = document.querySelector('[data-slot="sheet-overlay"]');
-    expect(overlay?.className).toContain("bg-black/40");
-    expect(overlay?.className).not.toContain("backdrop-blur");
+    expect(overlay?.className).toContain("bg-black/10");
+    expect(overlay?.className).not.toContain("dark:bg-black");
+    expect(overlay?.className).toContain("supports-backdrop-filter:backdrop-blur-xs");
   });
 });

@@ -156,11 +156,11 @@ describe("Breadcrumb v2 style", () => {
     expect(separator?.className).toContain("text-muted-foreground/60");
   });
 
-  it("focuses links with the offset ring and respects reduced motion", () => {
+  it("keeps the browser focus outline on links and respects reduced motion", () => {
     render(<Trail />);
     const link = screen.getByRole("link", { name: "Home" });
-    expect(link.className).toContain("focus-visible:focus-ring");
-    expect(link.className).not.toContain("ring-3");
+    expect(link.className).not.toContain("focus-ring");
+    expect(link.className).not.toContain("outline-none");
     expect(link.className).toContain("motion-reduce:transition-none");
   });
 });

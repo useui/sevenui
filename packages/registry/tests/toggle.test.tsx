@@ -74,7 +74,7 @@ describe("Toggle", () => {
     const classes = screen
       .getByRole("button", { name: "Bold" })
       .className.split(/\s+/);
-    expect(classes).toContain("border-hairline-strong");
+    expect(classes).toContain("border-input");
     expect(classes).toContain("h-[calc(var(--control-h,2.125rem)-0.25rem)]");
   });
 
@@ -87,17 +87,19 @@ describe("Toggle", () => {
     expect(classes).toContain("bg-transparent");
   });
 
-  describe("v2 design language", () => {
+  describe("styles", () => {
     function classes(props: React.ComponentProps<typeof Toggle> = {}) {
       render(<Toggle aria-label="Bold" {...props} />);
       return screen.getByRole("button", { name: "Bold" }).className.split(/\s+/);
     }
 
-    it("uses the offset focus ring, never the ring halo", () => {
+    it("uses the 3px focus halo, not the offset focus ring", () => {
       const list = classes();
       expect(list).toContain("outline-none");
-      expect(list).toContain("focus-visible:focus-ring");
-      expect(list.join(" ")).not.toMatch(/ring-3|ring-\[3px\]|ring-ring|focus-visible:border-ring/);
+      expect(list).toContain("focus-visible:border-ring");
+      expect(list).toContain("focus-visible:ring-[3px]");
+      expect(list).toContain("focus-visible:ring-ring/50");
+      expect(list).not.toContain("focus-visible:focus-ring");
     });
 
     it("sizes from the density tokens", () => {
@@ -107,36 +109,27 @@ describe("Toggle", () => {
       expect(list).toContain("text-[length:var(--control-text,0.8125rem)]");
     });
 
-    it("lifts the pressed state onto a raised, neutral surface", () => {
+    it("fills the pressed state with muted and no edge", () => {
       const list = classes();
-      expect(list).toContain("aria-pressed:bg-surface-raised");
-      expect(list).toContain("aria-pressed:text-foreground");
-      expect(list).toContain(
-        "aria-pressed:shadow-[var(--elevation-highlight,0_0_#0000),inset_0_0_0_1px_var(--hairline-strong,var(--border))]",
-      );
-      expect(list.some((c) => c.includes("brand"))).toBe(false);
+      expect(list).toContain("aria-pressed:bg-muted");
+      expect(list).toContain("data-[state=on]:bg-muted");
+      // The muted fill carries no border, ring, inset or highlight.
+      expect(list.some((c) => /^aria-pressed:(border|ring|shadow)/.test(c))).toBe(false);
+      expect(list.some((c) => /highlight|surface-|hairline|elevation-inset|brand/.test(c))).toBe(false);
     });
 
-    it("keeps the outline pressed state on its own border", () => {
+    it("keeps the outline variant on the plain input border", () => {
       const list = classes({ variant: "outline" });
-      expect(list).toContain(
-        "aria-pressed:bg-[color-mix(in_oklch,var(--surface-raised,var(--background)),var(--foreground)_7%)]",
-      );
-      expect(list).not.toContain("aria-pressed:bg-surface-raised");
-      expect(list).toContain("aria-pressed:shadow-[var(--elevation-highlight,0_0_#0000)]");
+      expect(list).toEqual(expect.arrayContaining(["border", "border-input", "hover:bg-muted"]));
+      expect(list.some((c) => /highlight|surface-|hairline|elevation-inset/.test(c))).toBe(false);
     });
 
-    it("marks the default variant invalid with a destructive inset hairline", () => {
-      // The default variant has no border, so border-destructive alone shows nothing.
+    it("marks the invalid state with the destructive border and ring tone", () => {
       const list = classes({ "aria-invalid": true });
-      expect(list).toContain("aria-invalid:[--focus-color:var(--destructive)]");
-      expect(list).toContain(
-        "aria-invalid:shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--destructive)_60%,transparent)]",
-      );
-      // Pressed and invalid keeps the raised highlight and swaps only the hairline.
-      expect(list).toContain(
-        "aria-invalid:aria-pressed:shadow-[var(--elevation-highlight,0_0_#0000),inset_0_0_0_1px_color-mix(in_oklch,var(--destructive)_60%,transparent)]",
-      );
+      expect(list).toContain("aria-invalid:border-destructive");
+      expect(list).toContain("aria-invalid:ring-destructive/20");
+      expect(list).toContain("dark:aria-invalid:ring-destructive/40");
+      expect(list.join(" ")).not.toContain("--focus-color");
     });
 
     it("presses like a button, with a reduced-motion counterpart", () => {

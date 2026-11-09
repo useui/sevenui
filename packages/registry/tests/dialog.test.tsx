@@ -125,16 +125,24 @@ describe("Dialog v2 styles", () => {
     return screen.findByRole("dialog");
   }
 
-  it("paints the popup as the panel and draws the tray around it", async () => {
+  it("paints the popup on the popover surface with a ring edge and overlay elevation", async () => {
     const popup = await renderOpen();
-    expect(popup.className).toContain("bg-surface-panel");
-    expect(popup.className).toContain("p-[var(--panel-pad,1.125rem)]");
-    expect(popup.className.split(" ")).toContain("grid");
-    expect(popup.className.split(" ")).toContain("gap-4");
-    expect(popup.className).toContain(
-      "0_0_0_4px_var(--surface-tray,var(--muted))",
-    );
-    expect(popup.className).toContain("var(--elevation-overlay,");
+    const classes = popup.className.split(" ");
+    for (const cls of [
+      "bg-popover",
+      "text-popover-foreground",
+      "ring-1",
+      "ring-foreground/10",
+      "shadow-overlay",
+      "grid",
+      "gap-4",
+      "p-[var(--panel-pad,1.125rem)]",
+    ]) {
+      expect(classes).toContain(cls);
+    }
+    expect(popup.className).not.toContain("surface-");
+    expect(popup.className).not.toContain("hairline");
+    expect(popup.className).not.toContain("highlight");
     expect(popup.className).not.toContain("ring-3");
   });
 
@@ -179,20 +187,21 @@ describe("Dialog v2 styles", () => {
     expect(footer.className).not.toContain("-mb-[");
   });
 
-  it("renders the footer as a tray bar bleeding to the panel edges", async () => {
+  it("renders the footer as a muted bar bleeding to the panel edges", async () => {
     const popup = await renderOpen();
     const footer = popup.querySelector('[data-slot="dialog-footer"]');
     for (const cls of [
       "-mx-[var(--panel-pad,1.125rem)]",
       "-mb-[var(--panel-pad,1.125rem)]",
-      "bg-surface-tray",
+      "bg-muted/50",
       "border-t",
-      "border-hairline",
       "rounded-b-xl",
-      "px-[var(--panel-pad,1.125rem)]",
+      "p-[var(--panel-pad,1.125rem)]",
     ]) {
       expect(footer?.className.split(" ")).toContain(cls);
     }
+    expect(footer?.className).not.toContain("surface-");
+    expect(footer?.className).not.toContain("hairline");
   });
 
   it("scales in with a reduced-motion fallback", async () => {
@@ -203,12 +212,12 @@ describe("Dialog v2 styles", () => {
     expect(popup.className).toContain("motion-reduce:scale-100!");
   });
 
-  it("uses a plain dimmed backdrop without blur", async () => {
+  it("dims and blurs the backdrop as main does", async () => {
     await renderOpen();
     const overlay = document.querySelector('[data-slot="dialog-overlay"]');
-    expect(overlay?.className).toContain("bg-black/40");
-    expect(overlay?.className).toContain("dark:bg-black/60");
-    expect(overlay?.className).not.toContain("backdrop-blur");
+    expect(overlay?.className).toContain("bg-black/10");
+    expect(overlay?.className).not.toContain("dark:bg-black");
+    expect(overlay?.className).toContain("supports-backdrop-filter:backdrop-blur-xs");
   });
 
   it("sets the title in semibold with tight tracking", async () => {

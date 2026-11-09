@@ -161,13 +161,12 @@ describe("BubbleGroup", () => {
 describe("Bubble v2 styles", () => {
   const contentSel = "*:data-[slot=bubble-content]:";
 
-  it("draws the default (user) bubble on a raised surface with a hairline", () => {
+  it("fills the default (user) bubble with primary", () => {
     render(<Bubble data-testid="bubble" />);
     const cls = screen.getByTestId("bubble").className;
-    expect(cls).toContain(`${contentSel}bg-surface-raised`);
-    expect(cls).toContain(`${contentSel}text-foreground`);
-    expect(cls).toContain(`${contentSel}shadow-[inset_0_0_0_1px_var(--hairline`);
-    expect(cls).not.toContain("bg-primary");
+    expect(cls).toContain(`${contentSel}bg-primary`);
+    expect(cls).toContain(`${contentSel}text-primary-foreground`);
+    expect(cls).not.toContain("bg-surface-raised");
   });
 
   it("keeps the ghost (assistant) bubble as plain text", () => {
@@ -178,7 +177,7 @@ describe("Bubble v2 styles", () => {
     expect(cls).toContain(`${contentSel}shadow-none`);
   });
 
-  it("pads the content from the density tokens and uses the offset focus ring", () => {
+  it("pads the content from the density tokens and keeps main's focus halo", () => {
     const { container } = render(
       <Bubble>
         <BubbleContent>Hello</BubbleContent>
@@ -191,22 +190,50 @@ describe("Bubble v2 styles", () => {
     expect(cls).toContain("py-[calc(var(--control-px,0.75rem)*0.66)]");
     // Declaring density vars on the element would shadow a compact ancestor.
     expect(cls).not.toMatch(/\[:where\(&\)\]:\[--(control|focus)/);
-    expect(cls).toContain("[button,a]:focus-visible:focus-ring");
-    expect(cls).not.toContain("ring-3");
-    expect(cls).not.toContain("ring-ring");
-    expect(cls).not.toContain("focus-visible:border-ring");
+    expect(cls.split(" ")).toEqual(
+      expect.arrayContaining([
+        "[button,a]:focus-visible:border-ring",
+        "[button,a]:focus-visible:ring-3",
+        "[button,a]:focus-visible:ring-ring/30",
+      ]),
+    );
+    expect(cls).not.toContain("focus-ring");
   });
 
-  it("separates reactions with a hairline instead of a ring-3 cutout", () => {
+  it.each(["secondary", "muted", "tinted"] as const)(
+    "fills the %s bubble with no visible edge",
+    (variant) => {
+      render(
+        <Bubble data-testid="bubble" variant={variant}>
+          <BubbleContent data-testid="content">Hi</BubbleContent>
+        </Bubble>,
+      );
+      const root = screen.getByTestId("bubble").className;
+      expect(root).not.toMatch(/border-(?!none)|ring-|shadow-|hairline/);
+      // The content's own border stays transparent.
+      const content = screen.getByTestId("content").className.split(" ");
+      expect(content).toContain("border-transparent");
+      expect(content.filter((c) => /^border-/.test(c) && c !== "border-transparent")).toEqual([]);
+    },
+  );
+
+  it("draws the outline bubble with main's border colour", () => {
+    render(<Bubble data-testid="bubble" variant="outline" />);
+    const cls = screen.getByTestId("bubble").className;
+    expect(cls).toContain(`${contentSel}border-border`);
+    expect(cls).not.toContain("hairline");
+  });
+
+  it("cuts reactions out of the bubble with main's ring-3 ring-card", () => {
     render(
       <Bubble>
         <BubbleReactions data-testid="reactions">1</BubbleReactions>
       </Bubble>,
     );
     const cls = screen.getByTestId("reactions").className;
-    expect(cls).toContain("bg-surface-raised");
-    expect(cls).toContain("var(--hairline-strong");
-    expect(cls).not.toContain("ring-3");
+    expect(cls.split(" ")).toEqual(expect.arrayContaining(["bg-muted", "ring-3", "ring-card"]));
+    expect(cls).not.toContain("hairline");
+    expect(cls).not.toContain("surface-");
   });
 });
 

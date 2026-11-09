@@ -28,14 +28,14 @@ describe("Separator", () => {
     render(<Separator className="custom-separator" data-testid="separator" />);
     const separator = screen.getByTestId("separator");
     expect(separator.className).toContain("custom-separator");
-    expect(separator.className).toContain("bg-hairline");
+    expect(separator.className).toContain("bg-border");
   });
 
-  it("draws a hairline instead of the border colour (v2)", () => {
+  it("draws the border colour, not a hairline", () => {
     render(<Separator data-testid="separator" />);
     const classes = screen.getByTestId("separator").className.split(" ");
-    expect(classes).toContain("bg-hairline");
-    expect(classes).not.toContain("bg-border");
+    expect(classes).toContain("bg-border");
+    expect(classes.join(" ")).not.toContain("hairline");
   });
 
   it("passes through arbitrary props", () => {

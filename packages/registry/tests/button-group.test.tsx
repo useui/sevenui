@@ -75,7 +75,7 @@ describe("ButtonGroupText", () => {
     render(<ButtonGroupText className="custom-class">kg</ButtonGroupText>);
     const text = screen.getByText("kg");
     expect(text.className.split(/\s+/)).toContain("custom-class");
-    expect(text.className.split(/\s+/)).toContain("bg-surface-tray");
+    expect(text.className.split(/\s+/)).toContain("bg-muted");
   });
 });
 
@@ -100,7 +100,7 @@ describe("ButtonGroupSeparator", () => {
   });
 });
 
-describe("ButtonGroup v2 design language", () => {
+describe("ButtonGroup styles", () => {
   it("lifts a focused child above its siblings so the offset ring is not clipped", () => {
     render(
       <ButtonGroup>
@@ -112,19 +112,19 @@ describe("ButtonGroup v2 design language", () => {
     expect(classes).toContain("*:focus-visible:z-10");
   });
 
-  it("draws separators with the strong hairline", () => {
+  it("draws separators with the input colour", () => {
     render(<ButtonGroupSeparator />);
     const classes = screen.getByRole("separator").className.split(/\s+/);
-    expect(classes).toContain("bg-hairline-strong");
-    expect(classes).not.toContain("bg-input");
-    expect(classes).not.toContain("bg-border");
+    expect(classes).toContain("bg-input");
+    expect(classes.some((c) => c.includes("hairline"))).toBe(false);
   });
 
-  it("renders text addons as a recessed tray with a hairline edge, sized by density", () => {
+  it("renders text addons on the muted surface with a plain border, sized by density", () => {
     render(<ButtonGroupText>https://</ButtonGroupText>);
     const classes = screen.getByText("https://").className.split(/\s+/);
-    expect(classes).toContain("bg-surface-tray");
-    expect(classes).toContain("border-hairline-strong");
+    expect(classes).toContain("bg-muted");
+    expect(classes).toContain("border");
+    expect(classes.some((c) => /surface-|hairline|shadow-/.test(c))).toBe(false);
     expect(classes).toContain("px-[var(--control-px,0.75rem)]");
     expect(classes).toContain("text-[length:var(--control-text,0.8125rem)]");
   });

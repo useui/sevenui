@@ -11,7 +11,6 @@ const VARIANTS = [
   "outline",
   "ghost",
   "link",
-  "highlight",
   "destructive",
   "success",
   "warning",

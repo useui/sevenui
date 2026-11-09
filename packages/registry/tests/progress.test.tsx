@@ -80,18 +80,19 @@ describe("Progress", () => {
 });
 
 describe("Progress v2 styling", () => {
-  it("uses a hairline track and a brand indicator with a reduced-motion counterpart", () => {
+  it("uses a muted track and a primary indicator with a reduced-motion counterpart", () => {
     const { container } = render(<Progress value={60} aria-label="Upload" />);
     const track = must(container.querySelector('[data-slot="progress-track"]'));
     const indicator = must(
       container.querySelector('[data-slot="progress-indicator"]'),
     );
-    expect(track.className).toContain("bg-hairline-strong");
+    expect(track.className).toContain("bg-muted");
+    expect(track.className).not.toContain("hairline");
     expect(track.className).toContain("h-1");
     expect(track.className).toContain("in-data-[density=compact]:h-[3px]");
-    expect(indicator.className).toContain("bg-brand");
+    expect(indicator.className).toContain("bg-primary");
     expect(indicator.className).toContain("transition-[width]");
     expect(indicator.className).toContain("motion-reduce:transition-none");
-    expect(indicator.className).not.toContain("bg-primary");
+    expect(indicator.className).not.toContain("brand");
   });
 });

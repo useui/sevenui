@@ -133,7 +133,7 @@ describe("ChartLegendContent", () => {
 });
 
 describe("Chart v2 styling", () => {
-  it("strokes grid and axes with hairline-strong and fills ticks muted", () => {
+  it("strokes the grid with the border colour and fills ticks muted", () => {
     const { container } = render(
       <ChartContainer config={config}>
         <BarChart data={[{ month: "Jan", desktop: 1 }]}>
@@ -143,18 +143,18 @@ describe("Chart v2 styling", () => {
     );
     const scope = must(container.querySelector("[data-slot=chart]"));
     expect(scope.className).toContain(
-      "[&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-hairline-strong",
+      "[&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50",
     );
     expect(scope.className).toContain(
-      "[&_.recharts-cartesian-axis-line]:stroke-hairline-strong",
+      "[&_.recharts-curve.recharts-tooltip-cursor]:stroke-border",
     );
     expect(scope.className).toContain(
       "[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground",
     );
-    expect(scope.className).not.toContain("stroke-border");
+    expect(scope.className).not.toContain("hairline");
   });
 
-  it("renders the tooltip on the raised overlay surface", () => {
+  it("renders the tooltip on the background with the overlay shadow", () => {
     const { container } = render(
       <ChartContainer config={config}>
         <ChartTooltipContent
@@ -174,8 +174,9 @@ describe("Chart v2 styling", () => {
       </ChartContainer>,
     );
     const tooltip = must(container.querySelector("[data-slot=chart-tooltip]"));
-    expect(tooltip.className).toContain("bg-surface-raised");
+    expect(tooltip.className).toContain("bg-background");
+    expect(tooltip.className).toContain("border-border/50");
     expect(tooltip.className).toContain("shadow-overlay");
-    expect(tooltip.className).not.toContain("bg-background");
+    expect(tooltip.className).not.toContain("surface");
   });
 });

@@ -37,9 +37,7 @@ function NumberFieldGroup({
   return (
     <NumberFieldPrimitive.Group
       className={cn(
-        "flex h-[var(--control-h,2.125rem)] w-fit items-center gap-0.5 rounded-lg bg-surface-inset p-[2px] text-foreground border border-hairline-strong shadow-[0_0_#0000,var(--elevation-inset,0_0_#0000)] transition-[border-color,box-shadow] duration-150 motion-reduce:transition-none",
-        "has-[input:focus-visible]:focus-ring",
-        "has-[input[aria-invalid=true]]:border-destructive/60 has-[input[aria-invalid=true]]:[--focus-color:var(--destructive)]",
+        "flex h-[var(--control-h,2.125rem)] w-fit items-stretch overflow-hidden rounded-md border border-input shadow-xs transition-shadow duration-150 motion-reduce:transition-none focus-within:ring-2 focus-within:ring-ring/50",
         className,
       )}
       {...props}
@@ -48,7 +46,7 @@ function NumberFieldGroup({
 }
 
 const stepperClasses =
-  "flex size-[calc(var(--control-h,2.125rem)-6px)] shrink-0 items-center justify-center rounded-[max(0px,calc(--theme(--radius-lg)-3px))] text-muted-foreground transition-[color,background-color,border-color] duration-150 outline-none select-none motion-reduce:transition-none hover:bg-surface-raised hover:text-foreground focus-visible:focus-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-3.5";
+  "flex w-[var(--control-h,2.125rem)] shrink-0 items-center justify-center bg-muted/50 text-muted-foreground transition-[color,background-color] duration-150 select-none motion-reduce:transition-none hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4";
 
 function NumberFieldDecrement({
   className,
@@ -56,7 +54,7 @@ function NumberFieldDecrement({
 }: React.ComponentProps<typeof NumberFieldPrimitive.Decrement>) {
   return (
     <NumberFieldPrimitive.Decrement
-      className={cn(stepperClasses, className)}
+      className={cn(stepperClasses, "border-r border-input", className)}
       {...props}
     >
       <MinusIcon />
@@ -85,7 +83,7 @@ function NumberFieldIncrement({
 }: React.ComponentProps<typeof NumberFieldPrimitive.Increment>) {
   return (
     <NumberFieldPrimitive.Increment
-      className={cn(stepperClasses, className)}
+      className={cn(stepperClasses, "border-l border-input", className)}
       {...props}
     >
       <PlusIcon />

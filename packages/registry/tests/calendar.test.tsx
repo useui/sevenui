@@ -210,16 +210,18 @@ describe("Calendar v2 styles", () => {
     expect(root.className).not.toContain("--spacing(7)");
   });
 
-  it("gives day buttons the offset focus ring and no halo", () => {
+  it("rings the focused day with the halo", () => {
     render(<Calendar mode="single" defaultMonth={june2026} />);
     const day = dayButton("Friday, June 12th, 2026");
-    expect(day.className).toContain("focus-visible:focus-ring");
-    expect(day.className).not.toContain("ring-[3px]");
-    // Button has no ring halo left to cancel.
-    expect(day.className).not.toContain("focus-visible:ring-0");
-    // the old focus halo on the day cell is gone; Button's own halo is B1's
-    expect(day.className).not.toContain("group-data-[focused=true]/day:ring");
-    expect(day.className).not.toContain("focus-visible:ring-3");
+    const classes = day.className.split(" ");
+    for (const c of [
+      "group-data-[focused=true]/day:border-ring",
+      "group-data-[focused=true]/day:ring-[3px]",
+      "group-data-[focused=true]/day:ring-ring/50",
+    ]) {
+      expect(classes).toContain(c);
+    }
+    expect(day.className).not.toContain("focus-ring");
     // the focused cell rises above its neighbours so the ring is not covered
     expect(day.closest("td")?.className).toContain("has-focus-visible:z-30");
   });
@@ -248,34 +250,32 @@ describe("Calendar v2 styles", () => {
     }
   });
 
-  it("fills the selected day and range ends with brand-strong, tints the range middle", () => {
+  it("fills the selected day and range ends with primary, tints the range middle", () => {
     render(<Calendar mode="single" defaultMonth={june2026} />);
     const classes = dayButton("Friday, June 12th, 2026").className.split(" ");
-    // brand-strong, not brand: white on the dark brand is only 3.72:1.
     for (const state of ["selected-single", "range-start", "range-end"]) {
-      expect(classes).toContain(`data-[${state}=true]:bg-brand-strong`);
-      expect(classes).toContain(`data-[${state}=true]:text-brand-foreground`);
-      expect(classes).not.toContain(`data-[${state}=true]:bg-brand`);
+      expect(classes).toContain(`data-[${state}=true]:bg-primary`);
+      expect(classes).toContain(`data-[${state}=true]:text-primary-foreground`);
     }
-    expect(classes).toContain("data-[range-middle=true]:bg-brand/12");
-    expect(classes.join(" ")).not.toContain("bg-primary");
+    expect(classes).toContain("data-[range-middle=true]:bg-muted");
+    expect(classes.join(" ")).not.toContain("brand");
   });
 
   it("keeps the filled day text at AA in both themes", () => {
-    const vars = registry.items.find((i) => i.name === "sevenui-tokens")?.cssVars as
+    const vars = registry.items.find((i) => i.name === "theme")?.cssVars as
       | Record<"light" | "dark", Record<string, string>>
       | undefined;
-    if (!vars) throw new Error("sevenui-tokens has no cssVars");
+    if (!vars) throw new Error("theme has no cssVars");
     for (const theme of ["light", "dark"] as const) {
       const ratio = contrastRatio(
-        vars[theme]["brand-foreground"],
-        vars[theme]["brand-strong"],
+        vars[theme]["primary-foreground"],
+        vars[theme].primary,
       );
       expect(ratio).toBeGreaterThanOrEqual(4.5);
     }
   });
 
-  it("marks today with a hairline ring instead of a fill", () => {
+  it("marks today with a muted fill", () => {
     const { container } = render(
       <Calendar
         mode="single"
@@ -284,15 +284,15 @@ describe("Calendar v2 styles", () => {
       />,
     );
     const cell = container.querySelector("td[data-day='2026-06-03']") as HTMLElement;
-    expect(cell.className).toContain("var(--hairline-strong)");
-    expect(cell.className).not.toContain("bg-muted");
+    expect(cell.className.split(" ")).toContain("bg-muted");
+    expect(cell.className).not.toContain("hairline");
   });
 
-  it("renders the month navigation as ghost buttons with the offset focus ring", () => {
+  it("renders the month navigation without its own focus ring override", () => {
     render(<Calendar mode="single" defaultMonth={june2026} />);
     const next = screen.getByRole("button", { name: "Go to the Next Month" });
-    expect(next.className).toContain("focus-visible:focus-ring");
     expect(next.className).toContain("size-(--cell-size)");
+    expect(next.className).not.toContain("focus-visible:focus-ring");
     expect(next.className).not.toContain("focus-visible:ring-0");
   });
 });

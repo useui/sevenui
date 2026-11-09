@@ -36,13 +36,13 @@ function TooltipContent({
         <TooltipPrimitive.Popup
           className={cn(
             // Inverted bubble, fixed size; a 100ms fade, instant under reduced motion.
-            "w-fit max-w-xs origin-[var(--transform-origin)] rounded-md bg-foreground px-2 py-1 text-xs text-balance text-background transition-opacity duration-100 data-[ending-style]:opacity-0 data-[instant]:transition-none data-[starting-style]:opacity-0 motion-reduce:transition-none",
+            "w-fit max-w-xs origin-[var(--transform-origin)] rounded-md bg-primary px-2 py-1 text-xs text-balance text-primary-foreground transition-opacity duration-100 data-[ending-style]:opacity-0 data-[instant]:transition-none data-[starting-style]:opacity-0 motion-reduce:transition-none",
             className,
           )}
           {...props}
         >
           {children}
-          <TooltipPrimitive.Arrow className="z-50 size-2.5 rotate-45 rounded-[2px] bg-foreground data-[side=bottom]:-top-[5px] data-[side=left]:-right-[5px] data-[side=right]:-left-[5px] data-[side=top]:-bottom-[5px]" />
+          <TooltipPrimitive.Arrow className="z-50 size-2.5 rotate-45 rounded-[2px] bg-primary data-[side=bottom]:-top-[5px] data-[side=left]:-right-[5px] data-[side=right]:-left-[5px] data-[side=top]:-bottom-[5px]" />
         </TooltipPrimitive.Popup>
       </TooltipPrimitive.Positioner>
     </TooltipPrimitive.Portal>

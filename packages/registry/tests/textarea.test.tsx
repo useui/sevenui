@@ -57,23 +57,28 @@ describe("Textarea", () => {
   });
 });
 
-describe("Textarea v2 styles", () => {
-  it("uses the offset focus ring, inset surface and density tokens", () => {
+describe("Textarea styles", () => {
+  it("uses the ring-3 focus halo, the input border and density tokens", () => {
     render(<Textarea placeholder="Styled" />);
     const cls = screen.getByPlaceholderText("Styled").className;
-    expect(cls).toContain("focus-visible:focus-ring");
-    expect(cls).not.toContain("ring-3");
-    expect(cls).not.toContain("focus-visible:border-ring");
+    expect(cls).toContain("focus-visible:border-ring");
+    expect(cls).toContain("focus-visible:ring-3");
+    expect(cls).toContain("focus-visible:ring-ring/50");
+    expect(cls).not.toMatch(/:focus-ring(\s|$)/);
     expect(cls).toContain("min-h-[calc(var(--control-h,2.125rem)*2.5)]");
     expect(cls).toContain("py-[calc(var(--control-px,0.75rem)*0.66)]");
-    expect(cls).toContain("bg-surface-inset");
     // The edge is a real border so consumer border-* classes merge against it.
-    expect(cls.split(" ")).toEqual(expect.arrayContaining(["border", "border-hairline-strong"]));
-    expect(cls).not.toContain("0_0_0_1px_var(--hairline");
+    expect(cls.split(" ")).toEqual(
+      expect.arrayContaining(["border", "border-input", "bg-transparent", "dark:bg-input/30"]),
+    );
+    expect(cls).not.toMatch(/surface-|hairline|elevation-inset|shadow-/);
     // Full-strength placeholder: an alpha-reduced muted tone drops below 4.5:1.
     expect(cls).toContain("placeholder:text-muted-foreground");
     expect(cls).not.toContain("placeholder:text-muted-foreground/");
-    expect(cls).toContain("aria-invalid:[--focus-color:var(--destructive)]");
+    expect(cls).toContain("aria-invalid:border-destructive");
+    expect(cls).toContain("aria-invalid:ring-3");
+    expect(cls).toContain("aria-invalid:ring-destructive/20");
+    expect(cls).not.toContain("--focus-color");
     expect(cls).toContain("motion-reduce:transition-none");
   });
 });

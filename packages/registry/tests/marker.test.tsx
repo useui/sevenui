@@ -93,22 +93,23 @@ describe("Marker", () => {
   });
 
   describe("v2 design language", () => {
-    it("draws the separator lines and the border as hairlines", () => {
+    it("draws the separator lines and the border in main's border colour", () => {
       const separator = markerVariants({ variant: "separator" }).split(" ");
-      expect(separator).toContain("before:bg-hairline");
-      expect(separator).toContain("after:bg-hairline");
-      expect(separator).not.toContain("before:bg-border");
+      expect(separator).toContain("before:bg-border");
+      expect(separator).toContain("after:bg-border");
       const border = markerVariants({ variant: "border" }).split(" ");
-      expect(border).toContain("border-hairline");
-      expect(border).not.toContain("border-border");
+      expect(border).toContain("border-border");
+      for (const variant of ["default", "separator", "border"] as const) {
+        expect(markerVariants({ variant })).not.toContain("hairline");
+      }
     });
 
-    it("gives inline links, and a marker rendered as a link, the offset focus ring", () => {
+    it("leaves inline links, and a marker rendered as a link, without a focus style of their own, as main does", () => {
       render(<MarkerContent data-testid="content">x</MarkerContent>);
       const content = screen.getByTestId("content").className;
-      expect(content).toContain("*:[a]:outline-none");
-      expect(content).toContain("*:[a]:focus-visible:focus-ring");
-      expect(markerVariants()).toContain("[a]:focus-visible:focus-ring");
+      expect(content).not.toContain("focus-ring");
+      expect(content).not.toContain("focus-visible");
+      expect(markerVariants()).not.toContain("focus-visible");
     });
 
     it("mutes the icon", () => {
@@ -116,18 +117,11 @@ describe("Marker", () => {
       expect(screen.getByTestId("icon").className).toContain("text-muted-foreground");
     });
 
-    it("sets the separator label as a secondary badge chip", () => {
+    it("leaves the separator label as main's plain centred text", () => {
       render(<MarkerContent data-testid="content">Today</MarkerContent>);
       const cls = screen.getByTestId("content").className;
-      for (const c of [
-        "group-data-[variant=separator]/marker:rounded-full",
-        "group-data-[variant=separator]/marker:bg-surface-panel",
-        "group-data-[variant=separator]/marker:border-hairline",
-        "group-data-[variant=separator]/marker:px-2",
-        "group-data-[variant=separator]/marker:text-[11px]",
-      ]) {
-        expect(cls).toContain(c);
-      }
+      expect(cls).toContain("group-data-[variant=separator]/marker:text-center");
+      expect(cls).not.toMatch(/marker:(rounded|bg-|px-|py-|border|ring|shadow)/);
     });
   });
 });

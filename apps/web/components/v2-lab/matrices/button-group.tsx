@@ -9,7 +9,7 @@ import {
 } from "@/registry/base/ui/button-group";
 import { LabSection } from "../lab-frame";
 
-const VARIANTS = ["outline", "secondary", "default", "accent"] as const;
+const VARIANTS = ["outline", "secondary", "default"] as const;
 const SIZES = ["xs", "sm", "default", "lg"] as const;
 
 export default function ButtonGroupMatrix() {

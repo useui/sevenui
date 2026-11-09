@@ -42,7 +42,7 @@ function MessageScrollerViewport({
     <MessageScrollerPrimitive.Viewport
       data-slot="message-scroller-viewport"
       className={cn(
-        "size-full min-h-0 min-w-0 outline-none [--focus-gap:-1.5px] focus-visible:focus-ring scroll-fade-b scrollbar-thin scrollbar-gutter-stable overflow-y-auto overscroll-contain contain-content data-autoscrolling:scrollbar-thumb-transparent data-autoscrolling:scrollbar-track-transparent data-pending-scroll:invisible",
+        "size-full min-h-0 min-w-0 scroll-fade-b scrollbar-thin scrollbar-gutter-stable overflow-y-auto overscroll-contain contain-content data-autoscrolling:scrollbar-thumb-transparent data-autoscrolling:scrollbar-track-transparent data-pending-scroll:invisible",
         className,
       )}
       {...props}
@@ -100,7 +100,8 @@ function MessageScrollerButton({
       direction={direction}
       className={cn(
         // A raised outline icon button floating over the log; it stays opaque.
-        "border-hairline-strong bg-surface-raised text-foreground shadow-[var(--elevation-highlight,0_0_#0000),var(--elevation-raised,0_1px_2px_rgb(0_0_0/0.06))] hover:bg-[color-mix(in_oklch,var(--surface-raised,var(--popover)),var(--foreground)_5%)] hover:text-foreground outline-none focus-visible:focus-ring",
+        // The leading 0_0_#0000 lets cn read the arbitrary value as a shadow.
+        "border-border bg-background text-foreground shadow-[0_0_#0000,var(--elevation-raised,0_1px_2px_rgb(0_0_0/0.06))] hover:bg-muted hover:text-foreground",
         "absolute inset-s-1/2 -translate-x-1/2 transition-[translate,scale,opacity] duration-200 motion-reduce:transition-none data-[active=false]:pointer-events-none data-[active=false]:scale-95 data-[active=false]:opacity-0 data-[active=false]:duration-400 data-[active=false]:ease-[cubic-bezier(0.7,0,0.84,0)] data-[active=true]:translate-y-0 data-[active=true]:scale-100 data-[active=true]:opacity-100 data-[active=true]:ease-[cubic-bezier(0.23,1,0.32,1)] data-[direction=end]:bottom-4 data-[direction=end]:data-[active=false]:translate-y-full data-[direction=start]:top-4 data-[direction=start]:data-[active=false]:-translate-y-full rtl:translate-x-1/2 data-[direction=start]:[&_svg]:rotate-180",
         className,
       )}

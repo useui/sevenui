@@ -49,7 +49,7 @@ describe("Item", () => {
     );
     let item = screen.getByTestId("item");
     expect(item.getAttribute("data-variant")).toBe("outline");
-    expect(item.classList.contains("border-hairline-strong")).toBe(true);
+    expect(item.classList.contains("border-border")).toBe(true);
     rerender(
       <Item data-testid="item" variant="muted">
         V
@@ -57,19 +57,25 @@ describe("Item", () => {
     );
     item = screen.getByTestId("item");
     expect(item.getAttribute("data-variant")).toBe("muted");
-    expect(item.classList.contains("bg-surface-tray")).toBe(true);
+    expect(item.classList.contains("bg-muted/50")).toBe(true);
+    // A filled neutral row draws no visible edge.
+    expect(item.classList.contains("border-transparent")).toBe(true);
+    expect(item.className).not.toMatch(/hairline|surface-|(^|\s)ring-|inset-ring|shadow-/);
   });
 
   describe("v2 design language", () => {
-    it("draws the offset focus ring instead of the halo", () => {
+    it("keeps main's focus halo", () => {
       render(<Item data-testid="item">F</Item>);
       const cls = screen.getByTestId("item").className;
-      expect(cls).toContain("focus-visible:focus-ring");
-      expect(cls).toContain("outline-none");
-      expect(cls).not.toContain("ring-3");
-      expect(cls).not.toContain("ring-[3px]");
-      expect(cls).not.toContain("focus-visible:border-ring");
-      // The ring geometry is inherited from the tokens, never declared here.
+      expect(cls.split(" ")).toEqual(
+        expect.arrayContaining([
+          "outline-none",
+          "focus-visible:border-ring",
+          "focus-visible:ring-[3px]",
+          "focus-visible:ring-ring/50",
+        ]),
+      );
+      expect(cls).not.toContain("focus-ring");
       expect(cls).not.toContain("[:where(&)]:[--focus-");
     });
 
@@ -123,20 +129,20 @@ describe("Item", () => {
       expect(screen.getByTestId("item").className).toContain("motion-reduce:transition-none");
     });
 
-    it("frames image media with a hairline and mutes icon media", () => {
+    it("leaves image media unframed and mutes icon media", () => {
       render(
         <Item>
           <ItemMedia data-testid="image" variant="image" />
           <ItemMedia data-testid="icon" variant="icon" />
         </Item>,
       );
-      expect(screen.getByTestId("image").className).toContain("outline-hairline");
+      expect(screen.getByTestId("image").className).not.toMatch(/outline-|hairline/);
       expect(screen.getByTestId("icon").className).toContain("text-muted-foreground");
     });
 
-    it("separates items with a hairline", () => {
+    it("separates items with the separator's own colour, no hairline override", () => {
       render(<ItemSeparator data-testid="sep" />);
-      expect(screen.getByTestId("sep").className).toContain("bg-hairline");
+      expect(screen.getByTestId("sep").className).not.toContain("hairline");
     });
   });
 

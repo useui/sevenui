@@ -9,13 +9,13 @@ const alertVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-hairline-strong bg-surface-panel text-card-foreground",
-        // 8% tone into the panel. The panel comes first because Tailwind's
+        default: "bg-card text-card-foreground",
+        // 8% tone into the card. The card comes first because Tailwind's
         // no-color-mix() fallback is the first colour. Title and description
         // pull the tone towards the foreground so both read at AA on the
         // tint; alert.test.tsx measures them against the theme values.
         destructive:
-          "border-[color:color-mix(in_oklch,transparent_70%,var(--destructive))] bg-[color:color-mix(in_oklch,var(--surface-panel,var(--card))_92%,var(--destructive))] text-[color:color-mix(in_oklch,var(--foreground)_15%,var(--destructive))] *:data-[slot=alert-description]:text-[color:color-mix(in_oklch,var(--foreground)_25%,var(--destructive))] *:[svg]:text-current",
+          "border-[color:color-mix(in_oklch,transparent_70%,var(--destructive))] bg-[color:color-mix(in_oklch,var(--card)_92%,var(--destructive))] text-[color:color-mix(in_oklch,var(--foreground)_15%,var(--destructive))] *:data-[slot=alert-description]:text-[color:color-mix(in_oklch,var(--foreground)_25%,var(--destructive))] *:[svg]:text-current",
       },
     },
     defaultVariants: {
@@ -44,7 +44,7 @@ function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="alert-title"
       className={cn(
-        "font-medium group-has-[>svg]/alert:col-start-2 [&_a]:underline [&_a]:underline-offset-3 [&_a]:rounded-sm [&_a]:outline-none [&_a]:focus-visible:focus-ring [&_a]:hover:text-foreground",
+        "font-medium group-has-[>svg]/alert:col-start-2 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground",
         className,
       )}
       {...props}
@@ -60,7 +60,7 @@ function AlertDescription({
     <div
       data-slot="alert-description"
       className={cn(
-        "text-sm text-balance text-muted-foreground md:text-pretty [&_a]:underline [&_a]:underline-offset-3 [&_a]:rounded-sm [&_a]:outline-none [&_a]:focus-visible:focus-ring [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
+        "text-sm text-balance text-muted-foreground md:text-pretty [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
         className,
       )}
       {...props}

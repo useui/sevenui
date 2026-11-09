@@ -70,6 +70,8 @@ export function palette(mode: Mode) {
   return {
     foreground,
     mutedForeground: color("muted-foreground"),
+    accent: color("accent"),
+    accentForeground: color("accent-foreground"),
     destructive: color("destructive"),
     hairlineAlpha: hairlinePct / 100,
     surfaces: { background: color("background"), card, panel, popover, raised },

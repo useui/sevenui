@@ -6,7 +6,6 @@ import { LabSection } from "../lab-frame";
 
 const VARIANTS = [
   "default",
-  "accent",
   "outline",
   "secondary",
   "ghost",

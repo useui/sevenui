@@ -169,14 +169,14 @@ SHADCN_BIN="$ROOT/apps/web/node_modules/.bin/shadcn"
 # stock shadcn project's global CSS without disturbing existing variables.
 TOK_CSS="$TOK/src/styles.css"
 (cd "$TOK" && "$SHADCN_BIN" add --yes --overwrite "http://localhost:$PORT/button.json")
-grep -q -- '--brand:' "$TOK_CSS" || { echo "--brand: missing after button install" >&2; exit 1; }
+grep -q -- '--surface-tray:' "$TOK_CSS" || { echo "--surface-tray: missing after button install" >&2; exit 1; }
 grep -q '@utility focus-ring' "$TOK_CSS" || { echo "@utility focus-ring missing after button install" >&2; exit 1; }
 (cd "$TOK" && "$SHADCN_BIN" add --yes --overwrite \
   "http://localhost:$PORT/select.json" "http://localhost:$PORT/dialog.json")
-# Each shared dependency installs once: --brand is declared once per theme
+# Each shared dependency installs once: --surface-tray is declared once per theme
 # block (:root and .dark), never duplicated by the second install.
-test "$(grep -c -- '--brand:' "$TOK_CSS")" -eq 2 \
-  || { echo "--brand: should be declared exactly twice (:root + .dark) after select+dialog" >&2; exit 1; }
+test "$(grep -c -- '--surface-tray:' "$TOK_CSS")" -eq 2 \
+  || { echo "--surface-tray: should be declared exactly twice (:root + .dark) after select+dialog" >&2; exit 1; }
 test "$(grep -c '@utility focus-ring' "$TOK_CSS")" -eq 1 \
   || { echo "@utility focus-ring should appear exactly once" >&2; exit 1; }
 stock_decls "$TOK_CSS" > "$WORK/tokens-after.txt"

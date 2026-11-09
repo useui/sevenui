@@ -130,18 +130,31 @@ describe("InputOTP", () => {
 });
 
 describe("InputOTP v2 styles", () => {
-  it("renders each slot as a control-height inset cell with the focus ring", () => {
+  it("renders joined control-height slots with the halo focus ring", () => {
     const { container } = render(<OTP />);
     const cls = getSlots(container)[0].className;
-    expect(cls).toContain("focus-visible:focus-ring");
-    expect(cls).not.toContain("ring-3");
+    const classes = cls.split(" ");
+    for (const c of [
+      "border-y",
+      "border-r",
+      "border-input",
+      "first:border-l",
+      "first:rounded-l-lg",
+      "last:rounded-r-lg",
+      "focus:border-ring",
+      "focus:ring-3",
+      "focus:ring-ring/50",
+      "aria-invalid:border-destructive",
+      "dark:bg-input/30",
+      "caret-foreground",
+      "motion-reduce:transition-none",
+    ]) {
+      expect(classes).toContain(c);
+    }
     expect(cls).toContain("size-[var(--control-h,2.125rem)]");
-    expect(cls).toContain("bg-surface-inset");
-    // The edge is a real border so consumer border-* classes merge against it.
-    expect(cls.split(" ")).toEqual(expect.arrayContaining(["border", "border-hairline-strong"]));
-    expect(cls).not.toContain("0_0_0_1px_var(--hairline");
-    expect(cls).toContain("caret-foreground");
-    expect(cls).toContain("aria-invalid:[--focus-color:var(--destructive)]");
-    expect(cls).toContain("motion-reduce:transition-none");
+    expect(cls).not.toContain("focus-ring");
+    expect(cls).not.toContain("surface-");
+    expect(cls).not.toContain("hairline");
+    expect(cls).not.toContain("--elevation-inset");
   });
 });

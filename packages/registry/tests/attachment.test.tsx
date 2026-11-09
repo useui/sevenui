@@ -2,7 +2,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { cn } from "cn";
 import { describe, expect, it, vi } from "vitest";
-import { AA, contrastOn, destructivePull, destructiveTint, mix, palette } from "./helpers/palette";
+import registry from "../registry.json";
+import { AA, contrastOn, destructivePull, destructiveTint, mix, type Oklch, palette } from "./helpers/palette";
 
 import {
   Attachment,
@@ -201,26 +202,30 @@ describe("AttachmentGroup", () => {
 });
 
 describe("Attachment v2 styles", () => {
-  it("draws the tile as a hairline panel with an offset ring for its trigger", () => {
+  it("draws the tile as main's bordered card with its focus-within ring", () => {
     render(<FileAttachment data-testid="attachment" />);
     const cls = screen.getByTestId("attachment").className;
-    expect(cls).toContain("bg-surface-panel");
-    expect(cls).toContain("border-hairline");
-    expect(cls).toContain(
-      "has-[>[data-slot=attachment-trigger]:focus-visible]:focus-ring",
+    expect(cls.split(" ")).toEqual(
+      expect.arrayContaining([
+        "border",
+        "bg-card",
+        "has-[>a,>button]:hover:bg-muted/50",
+        "focus-within:ring-1",
+        "focus-within:ring-ring/30",
+      ]),
     );
     expect(cls).not.toMatch(/\[:where\(&\)\]:\[--(control|focus)/);
-    expect(cls).not.toContain("ring-ring");
-    expect(cls).not.toContain("bg-card");
+    expect(cls).not.toContain("focus-ring");
+    expect(cls).not.toContain("hairline");
+    expect(cls).not.toContain("surface-");
   });
 
-  it("does not fade the focus ring in from the text colour", () => {
-    // transition-colors animates outline-color, so the ring started as the
-    // foreground and faded to brand over the transition.
+  it("transitions only background and border colours, and not under reduced motion", () => {
     render(<FileAttachment data-testid="attachment" />);
     const cls = screen.getByTestId("attachment").className.split(/\s+/);
     expect(cls).not.toContain("transition-colors");
     expect(cls).toContain("transition-[background-color,border-color]");
+    expect(cls).toContain("motion-reduce:transition-none");
   });
 
   it("rounds the media concentrically inside the tile padding", () => {
@@ -260,8 +265,19 @@ describe("Attachment v2 styles", () => {
 
 // --- Contrast -------------------------------------------------------------
 // A failed attachment tints its media destructive and recolours the media and
-// description text. Both must reach AA on the panel tile, at rest and on the
-// interactive tile's hover (panel pulled 4% towards the foreground).
+// description text. Both must reach AA on the card tile, at rest and on the
+// interactive tile's hover (muted at 50% over the card). The hover tile lies
+// between card and muted, so passing on both bounds it.
+
+function mutedOf(mode: "light" | "dark"): Oklch {
+  const theme = registry.items.find((i) => i.name === "theme")?.cssVars as unknown as Record<
+    string,
+    Record<string, string>
+  >;
+  const m = theme[mode].muted.match(/^oklch\(([\d.]+) ([\d.]+) ([\d.]+)\)$/);
+  if (!m) throw new Error(`Unsupported colour: ${theme[mode].muted}`);
+  return [Number(m[1]), Number(m[2]), Number(m[3])];
+}
 
 describe("Failed attachment contrast (AA)", () => {
   it.each(["light", "dark"] as const)("media and description text reach AA in %s", (mode) => {
@@ -284,7 +300,8 @@ describe("Failed attachment contrast (AA)", () => {
     expect(description).not.toContain("text-destructive/");
 
     const p = palette(mode);
-    const tiles = { rest: p.surfaces.panel, hover: mix(p.surfaces.panel, 96, p.foreground) };
+    const muted = mutedOf(mode);
+    const tiles = { rest: p.surfaces.card, "hover bound": muted };
     const ratios = Object.entries(tiles).flatMap(([state, tile]) => [
       [`media ${state}`, contrastOn(mix(p.foreground, mediaPull, p.destructive), tile, { color: p.destructive, alpha: tint })],
       [`description ${state}`, contrastOn(mix(p.foreground, descriptionPull, p.destructive), tile)],

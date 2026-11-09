@@ -11,12 +11,12 @@ function Card({
       data-slot="card"
       data-size={size}
       className={cn(
-        // One panel: a hairline ring, a top highlight and a soft lift. The edge
-        // stays in the ring group so a consumer shadow-* keeps it; the leading
-        // 0_0_#0000 lets cn read the arbitrary value as a shadow. Spacing
-        // follows --panel-pad, read with a fallback rather than a :where()
-        // default so an ancestor's data-density still reaches it.
-        "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-surface-panel py-(--card-spacing) text-sm text-card-foreground shadow-[0_0_#0000,var(--elevation-highlight,0_0_#0000),var(--elevation-raised,0_0_#0000)] ring-1 ring-hairline [--card-spacing:var(--panel-pad,1.125rem)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:calc(var(--panel-pad,1.125rem)*0.75)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        // One panel: a faint ring and a soft lift. The edge stays in the ring
+        // group so a consumer shadow-* keeps it; the leading 0_0_#0000 lets cn
+        // read the arbitrary value as a shadow. Spacing follows --panel-pad,
+        // read with a fallback rather than a :where() default so an
+        // ancestor's data-density still reaches it.
+        "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-card py-(--card-spacing) text-sm text-card-foreground shadow-[0_0_#0000,var(--elevation-raised,0_0_#0000)] ring-1 ring-foreground/10 [--card-spacing:var(--panel-pad,1.125rem)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:calc(var(--panel-pad,1.125rem)*0.75)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
         className,
       )}
       {...props}
@@ -88,7 +88,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-footer"
       className={cn(
-        "flex items-center rounded-b-xl border-t border-hairline bg-surface-tray p-(--card-spacing)",
+        "flex items-center rounded-b-xl border-t bg-muted/50 p-(--card-spacing)",
         className,
       )}
       {...props}

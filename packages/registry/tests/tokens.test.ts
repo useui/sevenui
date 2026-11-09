@@ -29,7 +29,7 @@ describe("sevenui-tokens", () => {
     expect(tokens?.type).toBe("registry:theme");
     expect(tokens?.css).toBeDefined();
     const css = must(tokens).css as Record<string, Record<string, string>>;
-    expect(css["@utility focus-ring"].outline).toBe("var(--focus-width) solid var(--focus-color, var(--brand))");
+    expect(css["@utility focus-ring"].outline).toBe("var(--focus-width) solid var(--focus-color, var(--ring))");
     expect(css[":root"]).not.toHaveProperty("--focus-color");
     expect(tokens?.cssVars?.theme).toBeDefined();
   });
@@ -57,15 +57,13 @@ describe("sevenui-tokens", () => {
     }
   });
 
-  it("meets AA", () => {
-    const lightBg = must(themeVars.light).background;
-    const darkBg = must(themeVars.dark).background;
-    expect(contrastRatio(light["brand-strong"], light["brand-foreground"])).toBeGreaterThanOrEqual(4.5);
-    expect(contrastRatio(dark["brand-strong"], dark["brand-foreground"])).toBeGreaterThanOrEqual(4.5);
-    expect(contrastRatio(light.brand, lightBg)).toBeGreaterThanOrEqual(3);
-    expect(contrastRatio(dark.brand, darkBg)).toBeGreaterThanOrEqual(3);
-    expect(contrastRatio(dark.brand, darkBg)).toBeGreaterThanOrEqual(4.5);
+  it("declares no brand colour", () => {
+    // Colour comes from shadcn's --primary and --ring only.
+    for (const vars of [light, dark, tokens?.cssVars?.theme ?? {}]) {
+      expect(Object.keys(vars).filter((key) => key.includes("brand"))).toEqual([]);
+    }
   });
+
 
   it("theme muted-foreground meets 4.5:1 on background in both themes", () => {
     for (const mode of ["light", "dark"] as const) {

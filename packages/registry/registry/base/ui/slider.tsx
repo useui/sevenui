@@ -36,20 +36,20 @@ function Slider({
       <SliderPrimitive.Control className="relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-40 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col">
         <SliderPrimitive.Track
           data-slot="slider-track"
-          className="relative grow overflow-hidden rounded-full bg-hairline-strong select-none data-[orientation=horizontal]:h-1 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1"
+          className="relative grow overflow-hidden rounded-full bg-muted select-none data-[orientation=horizontal]:h-1 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1"
         >
           <SliderPrimitive.Indicator
             data-slot="slider-range"
-            className="bg-brand select-none data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
+            className="bg-primary select-none data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
           />
         </SliderPrimitive.Track>
         {Array.from({ length: _values.length }, (_, index) => (
           <SliderPrimitive.Thumb
             data-slot="slider-thumb"
             key={index}
-            // Base UI focuses the nested <input type="range">, so the ring
-            // follows has-focus-visible on the thumb rather than focus-visible.
-            className="relative block size-(--slider-thumb) shrink-0 rounded-full bg-white shadow-raised ring-1 ring-hairline-strong outline-none select-none after:absolute after:-inset-2 has-focus-visible:focus-ring data-disabled:pointer-events-none disabled:pointer-events-none disabled:opacity-50"
+            // Base UI focuses the nested <input type="range">, so the focus
+            // ring also follows has-focus-visible on the thumb.
+            className="relative block size-(--slider-thumb) shrink-0 rounded-full border border-ring bg-white shadow-raised ring-ring/50 transition-[color,box-shadow] select-none after:absolute after:-inset-2 hover:ring-3 focus-visible:ring-3 focus-visible:outline-hidden has-focus-visible:ring-3 active:ring-3 data-disabled:pointer-events-none disabled:pointer-events-none disabled:opacity-50"
           />
         ))}
       </SliderPrimitive.Control>

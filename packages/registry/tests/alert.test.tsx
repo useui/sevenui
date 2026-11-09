@@ -99,7 +99,7 @@ describe("Alert", () => {
       expect(cls.split(" ")).not.toContain("px-2.5");
     });
 
-    it("gives inline links in title and description the offset focus ring", () => {
+    it("leaves inline links in title and description without a focus style of their own, as main does", () => {
       render(
         <Alert>
           <AlertTitle>Title</AlertTitle>
@@ -108,26 +108,28 @@ describe("Alert", () => {
       );
       for (const text of ["Title", "Description"]) {
         const cls = screen.getByText(text).className;
-        expect(cls).toContain("[&_a]:outline-none");
-        expect(cls).toContain("[&_a]:focus-visible:focus-ring");
+        expect(cls).not.toContain("focus-ring");
+        expect(cls).not.toContain("focus-visible");
       }
     });
 
-    it("sits on the panel surface behind a hairline by default", () => {
+    it("sits on main's card surface and plain border by default", () => {
       render(<Alert>D</Alert>);
-      const classes = screen.getByRole("alert").className.split(" ");
-      expect(classes).toContain("bg-surface-panel");
-      expect(classes).toContain("border-hairline-strong");
+      const cls = screen.getByRole("alert").className;
+      expect(cls.split(" ")).toEqual(expect.arrayContaining(["bg-card", "border"]));
+      expect(cls).not.toContain("hairline");
+      expect(cls).not.toContain("surface-");
     });
 
-    it("tints the destructive tone into the panel, neutral base first, with a tone hairline", () => {
+    it("tints the destructive tone into the card, neutral base first, with a tone edge", () => {
       render(<Alert variant="destructive">X</Alert>);
       const cls = screen.getByRole("alert").className;
-      // 92% panel + 8% tone == color-mix(tone 8%, panel). The base comes first
+      // 92% card + 8% tone == color-mix(tone 8%, card). The base comes first
       // because Tailwind's no-color-mix() fallback is the first colour.
       expect(cls).toContain(
-        "bg-[color:color-mix(in_oklch,var(--surface-panel,var(--card))_92%,var(--destructive))]",
+        "bg-[color:color-mix(in_oklch,var(--card)_92%,var(--destructive))]",
       );
+      expect(cls).not.toContain("surface-");
       expect(cls).toContain(
         "border-[color:color-mix(in_oklch,transparent_70%,var(--destructive))]",
       );
@@ -139,7 +141,7 @@ describe("Alert", () => {
 // --- Contrast -------------------------------------------------------------
 // Resolves the destructive alert's own color-mix() classes against the theme
 // values in registry.json, mixing in OKLCH as the browser does. Title and
-// description must reach AA (4.5:1) on the tinted panel in both themes.
+// description must reach AA (4.5:1) on the tinted card in both themes.
 
 type Oklch = [number, number, number];
 
@@ -165,7 +167,6 @@ describe("Alert destructive contrast (AA)", () => {
   const cssVarsOf = (name: string) =>
     must(registry.items.find((i) => i.name === name)).cssVars as unknown as CssVars;
   const themeVars = cssVarsOf("theme");
-  const tokenVars = cssVarsOf("sevenui-tokens");
 
   it.each(["light", "dark"] as const)("title and description reach AA (4.5:1) on the tint in %s", (mode) => {
     render(
@@ -176,7 +177,7 @@ describe("Alert destructive contrast (AA)", () => {
     );
     const cls = screen.getByRole("alert").className;
     const pct = (re: RegExp) => Number(cls.match(re)?.[1] ?? Number.NaN);
-    const tint = pct(/var\(--surface-panel,var\(--card\)\)_(\d+)%,var\(--destructive\)/);
+    const tint = pct(/var\(--card\)_(\d+)%,var\(--destructive\)/);
     const title = pct(/(?:^|\s)text-\[color:color-mix\(in_oklch,var\(--foreground\)_(\d+)%,var\(--destructive\)\)\]/);
     const description = pct(
       /\*:data-\[slot=alert-description\]:text-\[color:color-mix\(in_oklch,var\(--foreground\)_(\d+)%,var\(--destructive\)\)\]/,
@@ -187,9 +188,7 @@ describe("Alert destructive contrast (AA)", () => {
     const card = parseOklch(vars.card);
     const foreground = parseOklch(vars.foreground);
     const destructive = parseOklch(vars.destructive);
-    const panelMix = tokenVars[mode]["surface-panel"];
-    const panel = panelMix === "var(--card)" ? card : mix(card, 96, foreground);
-    const bg = css(mix(panel, tint, destructive));
+    const bg = css(mix(card, tint, destructive));
 
     const ratios = {
       title: contrastRatio(css(mix(foreground, title, destructive)), bg),

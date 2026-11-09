@@ -113,7 +113,7 @@ describe("Switch", () => {
   });
 });
 
-describe("Switch v2 styles", () => {
+describe("Switch styles", () => {
   function parts(props: React.ComponentProps<typeof Switch> = {}) {
     const { container } = render(<Switch aria-label="Wi-Fi" {...props} />);
     return {
@@ -122,12 +122,15 @@ describe("Switch v2 styles", () => {
     };
   }
 
-  it("uses the offset focus ring, never the old halo", () => {
+  it("uses the ring-3 focus halo, not the offset focus ring", () => {
     const { root } = parts();
-    expect(root.className).toContain("focus-visible:focus-ring");
-    expect(root.className).not.toContain("ring-3");
-    expect(root.className).not.toContain("ring-ring");
-    expect(root.className).not.toContain("focus-visible:border-ring");
+    const cls = root.className;
+    expect(cls).toContain("focus-visible:border-ring");
+    expect(cls).toContain("focus-visible:ring-3");
+    expect(cls).toContain("focus-visible:ring-ring/50");
+    expect(cls).not.toMatch(/:focus-ring(\s|$)/);
+    expect(cls).not.toContain("--focus-color");
+    expect(cls).toContain("aria-invalid:ring-destructive/20");
   });
 
   it("sizes the track from --switch-* variables with a compact override", () => {
@@ -144,11 +147,12 @@ describe("Switch v2 styles", () => {
     expect(root.className).toContain("w-(--switch-w)");
   });
 
-  it("uses hairline-strong off and brand on", () => {
+  it("uses the input colour off and primary on", () => {
     const { root } = parts();
-    expect(root.className).toContain("data-unchecked:bg-hairline-strong");
-    expect(root.className).toContain("data-checked:bg-brand");
-    expect(root.className).not.toContain("bg-primary");
+    expect(root.className).toContain("data-unchecked:bg-input");
+    expect(root.className).not.toContain("hairline");
+    expect(root.className).toContain("data-checked:bg-primary");
+    expect(root.className).not.toContain("brand");
   });
 
   it("gives the thumb a white raised surface and a spring with a reduced-motion counterpart", () => {

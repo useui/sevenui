@@ -139,7 +139,7 @@ describe("InputGroup", () => {
 });
 
 describe("InputGroup v2 styles", () => {
-  it("puts the surface and the focus ring on the wrapper, not the control", () => {
+  it("puts the edge and the focus ring on the wrapper, not the control", () => {
     render(
       <InputGroup data-testid="group">
         <InputGroupAddon data-testid="addon">
@@ -152,29 +152,39 @@ describe("InputGroup v2 styles", () => {
       </InputGroup>,
     );
     const group = screen.getByTestId("group").className;
-    expect(group).toContain(
-      "has-[[data-slot=input-group-control]:focus-visible]:focus-ring",
-    );
-    expect(group).not.toContain("ring-3");
+    const groupClasses = group.split(" ");
+    for (const c of [
+      "border",
+      "border-input",
+      "dark:bg-input/30",
+      "has-[[data-slot=input-group-control]:focus-visible]:border-ring",
+      "has-[[data-slot=input-group-control]:focus-visible]:ring-3",
+      "has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50",
+      "has-[[data-slot][aria-invalid=true]]:border-destructive",
+      "has-[[data-slot][aria-invalid=true]]:ring-destructive/20",
+      "dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40",
+      "motion-reduce:transition-none",
+    ]) {
+      expect(groupClasses).toContain(c);
+    }
     expect(group).toContain("h-[var(--control-h,");
-    expect(group).toContain("bg-surface-inset");
-    // The edge is a real border so consumer border-* classes merge against it.
-    expect(group.split(" ")).toEqual(expect.arrayContaining(["border", "border-hairline-strong"]));
-    expect(group).not.toContain("0_0_0_1px_var(--hairline");
-    expect(group).toContain(
-      "has-[[data-slot][aria-invalid=true]]:[--focus-color:var(--destructive)]",
-    );
-    expect(group).toContain("motion-reduce:transition-none");
+    expect(group).not.toContain("focus-ring");
+    expect(group).not.toContain("surface-");
+    expect(group).not.toContain("hairline");
+    expect(group).not.toContain("--elevation-inset");
 
-    const control = screen.getByPlaceholderText("Styled").className;
-    expect(control).toContain("bg-transparent");
-    expect(control).toContain("shadow-none");
-    // The inner control stays borderless; the wrapper owns the edge.
-    expect(control.split(" ")).toContain("border-0");
-    expect(control.split(" ")).not.toContain("border");
-    expect(control).not.toContain("--elevation-inset");
-    expect(control).toContain("[--focus-width:0px]");
-    expect(control).not.toContain("bg-surface-inset");
+    const control = screen.getByPlaceholderText("Styled").className.split(" ");
+    // The inner control stays borderless and ringless; the wrapper owns both.
+    for (const c of [
+      "bg-transparent",
+      "shadow-none",
+      "border-0",
+      "ring-0",
+      "focus-visible:ring-0",
+      "aria-invalid:ring-0",
+    ]) {
+      expect(control).toContain(c);
+    }
 
     expect(screen.getByTestId("addon").className).toContain(
       "text-muted-foreground",

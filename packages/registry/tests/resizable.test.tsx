@@ -309,21 +309,23 @@ describe("ResizablePanel", () => {
 });
 
 describe("ResizableHandle v2 styling", () => {
-  it("draws a hairline handle with the offset focus ring", () => {
+  it("draws a border-coloured handle with the ring focus style", () => {
     const { separator } = renderGroup();
     const classes = separator.className.split(" ");
-    expect(classes).toContain("bg-hairline");
-    expect(classes).toContain("focus-visible:focus-ring");
-    expect(classes).not.toContain("bg-border");
-    expect(separator.className).not.toContain("ring-ring");
-    expect(separator.className).not.toContain("ring-3");
+    expect(classes).toContain("bg-border");
+    expect(classes).toContain("focus-visible:ring-1");
+    expect(classes).toContain("focus-visible:ring-ring");
+    expect(classes).toContain("ring-offset-background");
+    expect(separator.className).not.toContain("hairline");
+    expect(separator.className).not.toContain("focus-ring");
   });
 
-  it("renders the grip on the raised surface with a hairline edge", () => {
+  it("renders the grip in the border colour with the raised shadow", () => {
     const { separator } = renderGroup();
     const grip = must(separator.firstElementChild);
-    expect(grip.className).toContain("bg-surface-raised");
-    expect(grip.className).toContain("ring-hairline-strong");
-    expect(grip.className).not.toContain("bg-border");
+    expect(grip.className).toContain("bg-border");
+    expect(grip.className).toContain("shadow-raised");
+    expect(grip.className).not.toContain("surface");
+    expect(grip.className).not.toContain("hairline");
   });
 });

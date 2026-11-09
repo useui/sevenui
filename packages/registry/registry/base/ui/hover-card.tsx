@@ -7,19 +7,9 @@ function HoverCard({ ...props }: PreviewCardPrimitive.Root.Props) {
   return <PreviewCardPrimitive.Root data-slot="hover-card" {...props} />;
 }
 
-function HoverCardTrigger({
-  className,
-  ...props
-}: PreviewCardPrimitive.Trigger.Props) {
+function HoverCardTrigger({ ...props }: PreviewCardPrimitive.Trigger.Props) {
   return (
-    <PreviewCardPrimitive.Trigger
-      data-slot="hover-card-trigger"
-      className={cn(
-        "rounded-sm outline-none focus-visible:focus-ring",
-        className,
-      )}
-      {...props}
-    />
+    <PreviewCardPrimitive.Trigger data-slot="hover-card-trigger" {...props} />
   );
 }
 
@@ -47,8 +37,7 @@ function HoverCardContent({
         <PreviewCardPrimitive.Popup
           data-slot="hover-card-content"
           className={cn(
-            // One raised surface; the overlay shadow carries the hairline ring.
-            "z-50 w-64 origin-(--transform-origin) rounded-lg bg-surface-raised p-[var(--panel-pad,1.125rem)] text-sm text-popover-foreground shadow-overlay outline-hidden",
+            "z-50 w-64 origin-(--transform-origin) rounded-lg bg-popover p-[var(--panel-pad,1.125rem)] text-sm text-popover-foreground shadow-overlay ring-1 ring-foreground/10 outline-hidden",
             // Same motion as the select popup; reduced motion shows it instantly.
             "transition-[scale,opacity] duration-150 ease-snappy data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0 motion-reduce:transition-none",
             className,

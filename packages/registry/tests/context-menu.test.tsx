@@ -219,8 +219,8 @@ describe("ContextMenu v2 styles", () => {
     for (const n of [rest, highlighted, alpha]) expect(n).not.toBeNaN();
     const p = palette(mode);
     const ratios = {
-      rest: contrastOn(mix(p.foreground, rest, p.destructive), p.surfaces.raised),
-      highlighted: contrastOn(mix(p.foreground, highlighted, p.destructive), p.surfaces.raised, {
+      rest: contrastOn(mix(p.foreground, rest, p.destructive), p.surfaces.popover),
+      highlighted: contrastOn(mix(p.foreground, highlighted, p.destructive), p.surfaces.popover, {
         color: p.destructive,
         alpha,
       }),
@@ -232,35 +232,38 @@ describe("ContextMenu v2 styles", () => {
   it("lifts muted descendants to the foreground on a highlighted row", async () => {
     render(<StyledMenu />);
     await openContextMenu();
-    // Muted text on the hairline highlight is ~4.1-4.3:1, under AA.
+    // Muted descendants follow the row to accent-foreground on the highlight.
     expect(slot("context-menu-shortcut").split(" ")).toContain(
-      "group-data-highlighted/context-menu-item:text-foreground",
+      "group-data-highlighted/context-menu-item:text-accent-foreground",
     );
     expect(slot("context-menu-item").split(" ")).toContain(
-      "not-data-[variant=destructive]:data-highlighted:**:text-foreground",
+      "not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground",
     );
     for (const row of ["context-menu-checkbox-item", "context-menu-radio-item"]) {
-      // Only muted text, so the brand check indicator keeps its colour.
+      // Only muted text, so the check indicator keeps the item colour.
       expect(slot(row).split(" ")).toContain(
-        "data-highlighted:[&_.text-muted-foreground]:text-foreground",
+        "data-highlighted:[&_.text-muted-foreground]:text-accent-foreground",
       );
       expect(slot(row)).not.toContain("**:text-foreground");
     }
   });
 
-  it("renders the popup as a raised overlay with a reduced-motion fallback", async () => {
+  it("renders the popup on the popover with a ring edge, the overlay shadow and a reduced-motion fallback", async () => {
     render(<StyledMenu />);
     await openContextMenu();
     const popup = slot("context-menu-content");
-    expect(popup).toContain("bg-surface-raised");
+    expect(popup).toContain("bg-popover");
+    expect(popup).toContain("ring-1 ring-foreground/10");
     expect(popup).toContain("shadow-overlay");
+    expect(popup).not.toContain("surface-");
+    expect(popup).not.toContain("hairline");
     expect(popup).toContain("p-1");
     expect(popup).toContain("data-starting-style:opacity-0");
     expect(popup).toContain("data-starting-style:scale-[0.98]");
     expect(popup).toContain("motion-reduce:transition-none");
   });
 
-  it("sizes items from --item-h, highlights with the hairline and carries the focus ring except when disabled", async () => {
+  it("sizes items from --item-h, highlights with the accent and hides the outline like main", async () => {
     render(<StyledMenu />);
     await openContextMenu();
     for (const name of [
@@ -270,14 +273,14 @@ describe("ContextMenu v2 styles", () => {
     ]) {
       const cls = slot(name);
       expect(cls).toContain("min-h-[var(--item-h,2rem)]");
-      expect(cls).toContain("data-highlighted:bg-hairline");
-      expect(cls).toContain("data-highlighted:text-foreground");
+      expect(cls).toContain("data-highlighted:bg-accent");
+      expect(cls).toContain("data-highlighted:text-accent-foreground");
       expect(cls).not.toContain("surface-panel");
       expect(cls).not.toContain("data-highlighted:shadow-");
       expect(cls).toContain("data-disabled:data-highlighted:bg-transparent");
-      expect(cls).toContain("focus-visible:focus-ring");
-      // Disabled rows keep the inset keyboard focus ring.
-      expect(cls).not.toContain("data-disabled:focus-visible:outline-none");
+      expect(cls).toContain("outline-hidden");
+      expect(cls).not.toContain("focus-ring");
+      expect(cls).not.toContain("--focus-gap");
       if (name === "context-menu-item") {
         // The destructive highlight outranks the generic guard, so it needs its own.
         expect(cls).toContain(
@@ -285,18 +288,17 @@ describe("ContextMenu v2 styles", () => {
         );
       }
       expect(cls).not.toContain("ring-3");
-      expect(cls).not.toContain("bg-accent");
     }
   });
 
-  it("uses brand indicators, mono shortcuts and hairline separators", async () => {
+  it("uses neutral indicators, mono shortcuts and border separators", async () => {
     render(<StyledMenu />);
     await openContextMenu();
     for (const name of ["context-menu-checkbox-item", "context-menu-radio-item"]) {
       const indicator = document.querySelector(`[data-slot="${name}"] > span`);
-      expect(indicator?.getAttribute("class")).toContain("text-brand");
+      expect(indicator?.getAttribute("class")).not.toContain("brand");
     }
     expect(slot("context-menu-shortcut")).toContain("font-mono");
-    expect(slot("context-menu-separator")).toContain("bg-hairline");
+    expect(slot("context-menu-separator")).toContain("bg-border");
   });
 });

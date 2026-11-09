@@ -195,21 +195,32 @@ describe("Select", () => {
 });
 
 describe("Select v2 styles", () => {
-  it("renders a raised trigger with the offset focus ring and control scale", () => {
+  it("renders a bordered trigger with the halo focus ring and control scale", () => {
     render(<FruitSelect />);
     const cls = screen.getByRole("combobox").className;
-    expect(cls).toContain("focus-visible:focus-ring");
-    expect(cls).not.toContain("ring-3");
-    expect(cls).not.toContain("ring-ring");
-    expect(cls).not.toContain("focus-visible:border-ring");
-    expect(cls).toContain("bg-surface-raised");
-    // The edge is a real border so consumer border-* classes merge against it.
-    expect(cls.split(" ")).toEqual(expect.arrayContaining(["border", "border-hairline-strong"]));
-    expect(cls).not.toContain("0_0_0_1px_var(--hairline");
-    expect(cls).toContain("data-[size=default]:h-[var(--control-h,2.125rem)]");
-    expect(cls).toContain(
+    const classes = cls.split(" ");
+    for (const c of [
+      "border",
+      "border-input",
+      "bg-transparent",
+      "dark:bg-input/30",
+      "dark:hover:bg-input/50",
+      "focus-visible:border-ring",
+      "focus-visible:ring-3",
+      "focus-visible:ring-ring/50",
+      "aria-invalid:border-destructive",
+      "aria-invalid:ring-3",
+      "aria-invalid:ring-destructive/20",
+      "dark:aria-invalid:ring-destructive/40",
+      "data-[size=default]:h-[var(--control-h,2.125rem)]",
       "data-[size=sm]:h-[calc(var(--control-h,2.125rem)-0.25rem)]",
-    );
+    ]) {
+      expect(classes).toContain(c);
+    }
+    expect(cls).not.toContain("focus-ring");
+    expect(cls).not.toContain("surface-");
+    expect(cls).not.toContain("hairline");
+    expect(cls).not.toContain("--elevation-highlight");
   });
 
   it("renders the popup as an overlay surface with a reduced-motion counterpart", async () => {
@@ -219,8 +230,11 @@ describe("Select v2 styles", () => {
     const listbox = await screen.findByRole("listbox");
     const popup = must(listbox.closest("[data-slot=select-content]"));
     const cls = popup.className;
-    expect(cls).toContain("bg-surface-raised");
+    expect(cls.split(" ")).toEqual(
+      expect.arrayContaining(["bg-popover", "ring-1", "ring-foreground/10"]),
+    );
     expect(cls).toContain("shadow-overlay");
+    expect(cls).not.toContain("surface-");
     expect(cls).toContain("rounded-lg");
     expect(cls).toContain("p-1");
     expect(cls).toContain("data-starting-style:opacity-0");
@@ -232,28 +246,25 @@ describe("Select v2 styles", () => {
     expect(must(popup.parentElement).className).toContain("isolate z-50");
   });
 
-  it("sizes items from --item-h, highlights with the hairline and checks in brand", async () => {
+  it("sizes items from --item-h, highlights with the accent and checks in the item colour", async () => {
     const user = userEvent.setup();
     render(<FruitSelect defaultValue="banana" />);
     await user.click(screen.getByRole("combobox"));
     const item = await screen.findByRole("option", { name: "Banana" });
     expect(item.className).toContain("min-h-[var(--item-h,2rem)]");
-    expect(item.className).toContain("data-highlighted:bg-hairline");
-    expect(item.className).toContain("data-highlighted:text-foreground");
+    expect(item.className).toContain("data-highlighted:bg-accent");
+    expect(item.className).toContain("data-highlighted:text-accent-foreground");
     expect(item.className).not.toContain("surface-panel");
     expect(item.className).not.toContain("data-highlighted:shadow-");
     expect(item.className).toContain("data-disabled:data-highlighted:bg-transparent");
-    // Inset ring so the scrolling popup's overflow does not clip it.
-    expect(item.className).toContain("[--focus-gap:-1.5px]");
-    expect(item.className).toContain("focus-visible:focus-ring");
-    // Disabled rows keep the inset keyboard focus ring.
-    expect(item.className).not.toContain("data-disabled:focus-visible:outline-none");
+    // The highlight marks keyboard focus; the item draws no focus ring.
+    expect(item.className).not.toContain("focus-ring");
     const check = must(item.querySelector("[data-slot=select-item-indicator]"));
-    expect(check.className).toContain("text-brand");
+    expect(check.className).not.toContain("brand");
     // Muted descendants lift to the foreground on the highlight (AA), the
-    // brand check keeps its colour.
+    // check keeps the item colour.
     expect(item.className.split(" ")).toContain(
-      "data-highlighted:[&_.text-muted-foreground]:text-foreground",
+      "data-highlighted:[&_.text-muted-foreground]:text-accent-foreground",
     );
     expect(item.className).not.toContain("**:text-foreground");
   });

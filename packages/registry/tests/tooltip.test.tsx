@@ -91,12 +91,12 @@ describe("Tooltip", () => {
 });
 
 describe("Tooltip v2 styles", () => {
-  it("renders an inverted, compact bubble", async () => {
+  it("renders a compact primary bubble", async () => {
     render(<ExampleTooltip open />);
     const popup = await screen.findByText("Add to library");
     for (const cls of [
-      "bg-foreground",
-      "text-background",
+      "bg-primary",
+      "text-primary-foreground",
       "text-xs",
       "px-2",
       "py-1",
@@ -104,7 +104,7 @@ describe("Tooltip v2 styles", () => {
     ]) {
       expect(popup.className).toContain(cls);
     }
-    expect(popup.className).not.toContain("bg-primary");
+    expect(popup.className).not.toContain("bg-foreground");
   });
 
   it("fades in over 100ms without scaling", async () => {
@@ -120,7 +120,7 @@ describe("Tooltip v2 styles", () => {
     render(<ExampleTooltip open />);
     const popup = await screen.findByText("Add to library");
     const arrow = popup.lastElementChild;
-    expect(arrow?.className).toContain("bg-foreground");
+    expect(arrow?.className).toContain("bg-primary");
     expect(arrow?.className).not.toContain("shadow");
   });
 });

@@ -145,20 +145,35 @@ describe("Drawer", () => {
 });
 
 describe("Drawer v2 styles", () => {
-  it("renders a single raised panel with an overlay shadow", async () => {
+  it("renders a popover panel with a border edge and an overlay shadow", async () => {
     render(<ExampleDrawer open />);
     await screen.findByRole("dialog");
     const popup = getPopup();
-    expect(popup?.className).toContain("bg-surface-raised");
-    expect(popup?.className).toContain("shadow-overlay");
+    const classes = popup?.className.split(" ") ?? [];
+    for (const cls of [
+      "bg-popover",
+      "text-popover-foreground",
+      "border",
+      "border-popover",
+      "dark:border-border",
+      "shadow-overlay",
+    ]) {
+      expect(classes).toContain(cls);
+    }
+    expect(popup?.className).toContain(
+      "after:bg-(--drawer-bleed-background,var(--color-popover))",
+    );
+    expect(popup?.className).not.toContain("surface-");
+    expect(popup?.className).not.toContain("hairline");
     expect(popup?.className).not.toContain("ring-3");
   });
 
-  it("colours the swipe handle with the strong hairline", async () => {
+  it("colours the swipe handle with the muted token", async () => {
     render(<ExampleDrawer open showSwipeHandle />);
     await screen.findByRole("dialog");
     const handle = document.querySelector('[data-slot="drawer-swipe-handle"]');
-    expect(handle?.className).toContain("after:bg-hairline-strong");
+    expect(handle?.className).toContain("after:bg-muted");
+    expect(handle?.className).not.toContain("hairline");
   });
 
   it("pads the header and footer with the panel padding", async () => {
@@ -179,11 +194,11 @@ describe("Drawer v2 styles", () => {
     expect(popup?.className).toContain("motion-reduce:data-ending-style:opacity-0!");
   });
 
-  it("uses a plain dimmed backdrop without blur", async () => {
+  it("dims and blurs the backdrop as main does", async () => {
     render(<ExampleDrawer open />);
     await screen.findByRole("dialog");
     const overlay = document.querySelector('[data-slot="drawer-overlay"]');
-    expect(overlay?.className).toContain("bg-black/40");
-    expect(overlay?.className).not.toContain("backdrop-blur");
+    expect(overlay?.className).toContain("bg-black/30");
+    expect(overlay?.className).toContain("supports-backdrop-filter:backdrop-blur-sm");
   });
 });

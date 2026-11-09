@@ -32,11 +32,7 @@ function Command({
       <div
         data-slot="command"
         className={cn(
-          // Tray surface; the highlighted row is the inner panel. Standalone,
-          // the palette shows the offset ring while its search input has
-          // keyboard focus; inside a dialog the input always has focus, so
-          // the dialog edge is the indicator and no ring is drawn.
-          "flex size-full flex-col overflow-hidden rounded-xl! bg-surface-tray p-1 text-popover-foreground shadow-[inset_0_0_0_1px_var(--hairline)] outline-none in-data-[slot=dialog-content]:shadow-none [&:not([data-slot=dialog-content]_*):has([data-slot=command-input]:focus-visible)]:focus-ring",
+          "flex size-full flex-col overflow-hidden rounded-xl! bg-popover p-1 text-popover-foreground",
           className,
         )}
       >
@@ -68,7 +64,7 @@ function CommandDialog({
       </DialogHeader>
       <DialogContent
         className={cn(
-          "top-1/3 translate-y-0 overflow-hidden rounded-xl! bg-surface-tray p-0 shadow-overlay",
+          "top-1/3 translate-y-0 overflow-hidden rounded-xl! p-0 shadow-overlay",
           className,
         )}
         showCloseButton={showCloseButton}
@@ -84,11 +80,8 @@ function CommandInput({
   ...props
 }: React.ComponentProps<typeof AutocompletePrimitive.Input>) {
   return (
-    <div
-      data-slot="command-input-wrapper"
-      className="-mx-1 -mt-1 mb-1 border-b border-hairline px-1"
-    >
-      <InputGroup className="h-[calc(var(--control-h,2.125rem)+0.5rem)]! rounded-none! border-0! bg-transparent! shadow-none! ring-0! *:data-[slot=input-group-addon]:pl-2!">
+    <div data-slot="command-input-wrapper" className="p-1 pb-0">
+      <InputGroup className="h-[var(--control-h,2.125rem)]! rounded-lg! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:pl-2!">
         <AutocompletePrimitive.Input
           data-slot="command-input"
           className={cn(
@@ -174,7 +167,7 @@ function CommandSeparator({
   return (
     <AutocompletePrimitive.Separator
       data-slot="command-separator"
-      className={cn("-mx-1 my-1 h-px bg-hairline", className)}
+      className={cn("-mx-1 my-1 h-px bg-border", className)}
       {...props}
     />
   );
@@ -188,7 +181,7 @@ function CommandItem({
     <AutocompletePrimitive.Item
       data-slot="command-item"
       className={cn(
-        "group/command-item relative flex min-h-[var(--item-h,2rem)] cursor-default items-center gap-[var(--control-gap,0.5rem)] rounded-md px-2 py-0.5 text-[length:var(--control-text,0.8125rem)] outline-hidden select-none in-data-[slot=dialog-content]:rounded-lg! data-disabled:pointer-events-none data-disabled:opacity-50 data-highlighted:bg-hairline data-highlighted:text-foreground data-disabled:data-highlighted:bg-transparent [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-highlighted:*:[svg]:text-foreground",
+        "group/command-item relative flex min-h-[var(--item-h,2rem)] cursor-default items-center gap-[var(--control-gap,0.5rem)] rounded-md px-2 py-0.5 text-[length:var(--control-text,0.8125rem)] outline-hidden select-none in-data-[slot=dialog-content]:rounded-lg! data-disabled:pointer-events-none data-disabled:opacity-50 data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:data-highlighted:bg-transparent [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-highlighted:*:[svg]:text-accent-foreground",
         className,
       )}
       {...props}
@@ -204,8 +197,7 @@ function CommandShortcut({
     <span
       data-slot="command-shortcut"
       className={cn(
-        // B1 kbd look, classes only.
-        "ml-auto inline-flex h-5 min-w-5 items-center justify-center gap-0.5 rounded-sm bg-surface-raised px-1 font-mono text-[10.5px] leading-none font-medium text-muted-foreground shadow-[inset_0_0_0_1px_var(--hairline),inset_0_-1px_0_var(--hairline-strong)] group-data-highlighted/command-item:text-foreground",
+        "ml-auto inline-flex h-5 min-w-5 items-center justify-center gap-0.5 rounded-sm px-1 font-mono text-[10.5px] leading-none font-medium text-muted-foreground group-data-highlighted/command-item:text-accent-foreground",
         className,
       )}
       {...props}

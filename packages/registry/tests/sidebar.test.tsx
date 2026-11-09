@@ -180,36 +180,37 @@ describe("Sidebar v2 style", () => {
     );
   }
 
-  it("puts the container on the tray surface with a hairline edge", () => {
+  it("puts the container on the sidebar colour with a default border edge", () => {
     const { container } = render(<Styled />);
     const inner = container.querySelector('[data-slot="sidebar-inner"]');
     const outer = container.querySelector('[data-slot="sidebar-container"]');
-    expect(inner?.className).toContain("bg-surface-tray");
-    expect(outer?.className).toContain("group-data-[side=left]:border-hairline");
+    expect(inner?.className).toContain("bg-sidebar");
+    expect(outer?.className).toContain("group-data-[side=left]:border-r");
+    expect(`${inner?.className} ${outer?.className}`).not.toMatch(/surface-|hairline/);
   });
 
-  it("sizes menu buttons to the item height and focuses with the offset ring", () => {
+  it("sizes menu buttons to the item height and focuses with main's sidebar ring", () => {
     render(<Styled />);
     const button = screen.getByRole("button", { name: "Drafts" });
     expect(button.className).toContain("min-h-[var(--item-h,2rem)]");
     expect(button.className).toContain("rounded-md");
-    expect(button.className).toContain("focus-visible:focus-ring");
-    expect(button.className).not.toContain("ring-2");
-    expect(button.className).not.toContain("ring-sidebar-ring");
+    expect(button.className).toContain("focus-visible:ring-2");
+    expect(button.className).toContain("ring-sidebar-ring");
+    expect(button.className).not.toContain("focus-ring");
     expect(button.className).toContain("motion-reduce:transition-none");
   });
 
-  it("raises the active item on a neutral surface without accent", () => {
+  it("marks the active item with the sidebar accent", () => {
     render(<Styled />);
     const active = screen.getByRole("button", { name: "Inbox" });
     expect(active.getAttribute("data-active")).not.toBeNull();
-    expect(active.className).toContain("data-active:bg-surface-raised");
-    expect(active.className).toContain("var(--hairline-strong");
-    expect(active.className).toContain("var(--elevation-highlight");
+    expect(active.className).toContain("data-active:bg-sidebar-accent");
+    expect(active.className).toContain("data-active:text-sidebar-accent-foreground");
+    expect(active.className).toContain("hover:bg-sidebar-accent");
     expect(active.className).not.toMatch(/\bbrand\b|bg-brand|text-brand/);
     const sub = screen.getByRole("link", { name: "Archived" });
-    expect(sub.className).toContain("data-active:bg-surface-raised");
-    expect(sub.className).toContain("focus-visible:focus-ring");
+    expect(sub.className).toContain("data-active:bg-sidebar-accent");
+    expect(sub.className).toContain("focus-visible:ring-2");
   });
 
   it("sets group labels in 11px uppercase mono", () => {
@@ -230,11 +231,13 @@ describe("Sidebar v2 style", () => {
     }
   });
 
-  it("renders the floating variant as a panel with a hairline", () => {
+  it("renders the floating variant with a sidebar-border ring and raised shadow", () => {
     const { container } = render(<Styled variant="floating" />);
     const inner = container.querySelector('[data-slot="sidebar-inner"]');
     expect(inner?.className).toContain(
-      "group-data-[variant=floating]:bg-surface-panel",
+      "group-data-[variant=floating]:ring-sidebar-border",
     );
+    expect(inner?.className).toContain("group-data-[variant=floating]:shadow-raised");
+    expect(inner?.className).not.toMatch(/surface-|hairline|elevation-/);
   });
 });

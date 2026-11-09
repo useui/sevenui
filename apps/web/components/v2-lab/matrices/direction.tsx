@@ -12,7 +12,7 @@ function Row() {
     <Item variant="outline" className="w-80">
       <ItemContent>
         <ItemTitle>
-          Deployments <Badge variant="highlight">New</Badge>
+          Deployments <Badge variant="secondary">New</Badge>
         </ItemTitle>
         <ItemDescription>Start-aligned text and trailing actions.</ItemDescription>
       </ItemContent>

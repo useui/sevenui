@@ -111,28 +111,31 @@ describe("Toolbar v2 design language", () => {
     return el.className.split(/\s+/);
   }
 
-  it("sits on a recessed tray with a hairline edge and density gap", () => {
+  it("sits on the background with a border edge and density gap", () => {
     render(<BasicToolbar />);
     const list = split(screen.getByRole("toolbar"));
-    expect(list).toContain("bg-surface-tray");
+    expect(list).toContain("bg-background");
+    expect(list).toContain("border");
     expect(list).toContain("p-0.5");
-    expect(list).toContain("shadow-[inset_0_0_0_1px_var(--hairline,var(--border))]");
+    expect(list.join(" ")).not.toMatch(/surface-|hairline/);
     expect(list).toContain("gap-[var(--control-gap,0.5rem)]");
     expect(list).not.toContain("shadow-xs");
   });
 
-  it("sizes buttons 4px under the control height and uses the offset focus ring", () => {
+  it("sizes buttons 4px under the control height and uses main's focus ring", () => {
     render(<BasicToolbar />);
     const list = split(screen.getByText("Underline"));
     expect(list).toContain("h-[calc(var(--control-h,2.125rem)-4px)]");
     expect(list).toContain("text-[length:var(--control-text,0.8125rem)]");
-    expect(list).toContain("focus-visible:focus-ring");
-    expect(list).toContain("data-[pressed]:bg-surface-raised");
-    expect(list.join(" ")).not.toMatch(/ring-2|ring-3|ring-ring/);
+    expect(list).toContain("focus-visible:ring-2");
+    expect(list).toContain("focus-visible:ring-ring/50");
+    expect(list).not.toContain("focus-visible:focus-ring");
+    expect(list).toContain("data-[pressed]:bg-accent");
+    expect(list).toContain("hover:bg-accent");
     expect(list.some((c) => c.includes("brand"))).toBe(false);
   });
 
-  it("uses the offset focus ring on links and an inset field for inputs", () => {
+  it("uses main's focus ring on links and a bordered field for inputs", () => {
     render(
       <Toolbar>
         <ToolbarLink href="/help">Help</ToolbarLink>
@@ -140,20 +143,19 @@ describe("Toolbar v2 design language", () => {
       </Toolbar>,
     );
     expect(split(screen.getByRole("link", { name: "Help" }))).toContain(
-      "focus-visible:focus-ring",
+      "focus-visible:ring-2",
     );
     const input = split(screen.getByPlaceholderText("Font size"));
-    expect(input).toContain("focus-visible:focus-ring");
-    expect(input).toContain("bg-surface-inset");
-    expect(input).toContain(
-      "shadow-[inset_0_0_0_1px_var(--hairline-strong,var(--input)),var(--elevation-inset,0_0_#0000)]",
-    );
+    expect(input).toContain("focus-visible:ring-2");
+    expect(input).toContain("border-input");
+    expect(input).toContain("bg-transparent");
+    expect(input.join(" ")).not.toMatch(/surface-|hairline|elevation-inset|focus-ring/);
   });
 
-  it("draws separators with the hairline", () => {
+  it("draws separators with the border colour", () => {
     render(<BasicToolbar />);
     const list = split(screen.getByRole("separator"));
-    expect(list).toContain("bg-hairline");
-    expect(list).not.toContain("bg-border");
+    expect(list).toContain("bg-border");
+    expect(list).not.toContain("bg-hairline");
   });
 });

@@ -71,17 +71,17 @@ describe("ScrollArea", () => {
 });
 
 describe("ScrollArea v2 style", () => {
-  it("focuses the viewport with the offset ring", () => {
+  it("focuses the viewport with the ring", () => {
     const { container } = render(<ScrollArea>Content</ScrollArea>);
     const viewport = container.querySelector(
       '[data-slot="scroll-area-viewport"]',
     );
-    expect(viewport?.className).toContain("focus-visible:focus-ring");
-    expect(viewport?.className).not.toContain("ring-ring");
-    expect(viewport?.className).not.toContain("ring-[3px]");
+    expect(viewport?.className).toContain("focus-visible:ring-[3px]");
+    expect(viewport?.className).toContain("focus-visible:ring-ring/50");
+    expect(viewport?.className).not.toContain("focus-ring");
   });
 
-  it("draws a hairline thumb on a transparent track", () => {
+  it("draws a border-coloured thumb on a transparent track", () => {
     const { container } = render(
       <ScrollArea>
         <ScrollBar keepMounted />
@@ -93,7 +93,8 @@ describe("ScrollArea v2 style", () => {
     );
     const thumb = container.querySelector('[data-slot="scroll-area-thumb"]');
     expect(scrollbar?.className).toContain("bg-transparent");
-    expect(thumb?.className).toContain("bg-hairline-strong");
+    expect(thumb?.className).toContain("bg-border");
+    expect(thumb?.className).not.toContain("hairline");
     expect(thumb?.className).toContain("hover:bg-muted-foreground/40");
     expect(thumb?.className).toContain("motion-reduce:transition-none");
   });

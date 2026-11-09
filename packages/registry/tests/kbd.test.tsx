@@ -15,7 +15,7 @@ describe("Kbd", () => {
     render(<Kbd className="custom-kbd">K</Kbd>);
     const kbd = screen.getByText("K");
     expect(kbd.className).toContain("custom-kbd");
-    expect(kbd.className).toContain("bg-surface-raised");
+    expect(kbd.className).toContain("bg-muted");
   });
 
   it("passes through arbitrary props", () => {
@@ -55,14 +55,13 @@ describe("KbdGroup", () => {
 });
 
 describe("Kbd v2 design language", () => {
-  it("is a raised keycap with a hairline edge and a stronger bottom lip", () => {
+  it("is a flat muted key without a hairline edge", () => {
     render(<Kbd>K</Kbd>);
-    const list = screen.getByText("K").className.split(/\s+/);
-    expect(list).toContain("bg-surface-raised");
-    expect(list).toContain(
-      "shadow-[inset_0_0_0_1px_var(--hairline,var(--border)),inset_0_-1px_0_var(--hairline-strong,var(--border))]",
-    );
-    expect(list).not.toContain("bg-muted");
+    const cls = screen.getByText("K").className;
+    expect(cls.split(/\s+/)).toContain("bg-muted");
+    expect(cls).not.toContain("surface");
+    expect(cls).not.toContain("hairline");
+    expect(cls).not.toContain("shadow-[");
   });
 
   it("sets a fixed mono 10.5px face that ignores density", () => {

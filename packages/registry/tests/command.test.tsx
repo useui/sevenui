@@ -126,7 +126,7 @@ describe("CommandDialog", () => {
     expect(onOpenChange.mock.calls[0][0]).toBe(false);
   });
 
-  it("renders the dialog content on the tray surface", () => {
+  it("renders the dialog content with the overlay shadow and no v2 surface", () => {
     render(
       <CommandDialog open>
         <Palette />
@@ -135,7 +135,7 @@ describe("CommandDialog", () => {
     const content = document.querySelector(
       "[data-slot=dialog-content]",
     ) as HTMLElement;
-    expect(content.className).toContain("bg-surface-tray");
+    expect(content.className).not.toContain("surface-");
     expect(content.className).toContain("shadow-overlay");
   });
 });
@@ -162,23 +162,26 @@ describe("Command v2 styles", () => {
     );
   }
 
-  it("puts the palette on the tray surface with a focus ring while its input has focus", () => {
+  it("puts the palette on the popover with no root focus ring or hairline edge", () => {
     const { container } = render(<ShortcutPalette />);
     const root = container.querySelector("[data-slot=command]") as HTMLElement;
-    expect(root.className).toContain("bg-surface-tray");
-    expect(root.className).toContain(
-      "[&:not([data-slot=dialog-content]_*):has([data-slot=command-input]:focus-visible)]:focus-ring",
-    );
-    expect(root.className).not.toContain("ring-3");
+    expect(root.className).toContain("bg-popover");
+    expect(root.className).not.toContain("surface-");
+    expect(root.className).not.toContain("focus-ring");
+    expect(root.className).not.toContain("hairline");
   });
 
-  it("separates the search row with a bottom hairline", () => {
+  it("renders the search row as main's inset input sized from --control-h", () => {
     const { container } = render(<ShortcutPalette />);
     const wrapper = container.querySelector(
       "[data-slot=command-input-wrapper]",
     ) as HTMLElement;
-    expect(wrapper.className).toContain("border-b");
-    expect(wrapper.className).toContain("border-hairline");
+    expect(wrapper.className).toContain("p-1");
+    expect(wrapper.className).not.toContain("hairline");
+    const group = wrapper.firstElementChild as HTMLElement;
+    expect(group.className).toContain("bg-input/30");
+    expect(group.className).toContain("h-[var(--control-h,2.125rem)]!");
+    expect(group.className).not.toContain("ring-0!");
   });
 
   it("renders the placeholder in full-strength muted text", () => {
@@ -188,7 +191,7 @@ describe("Command v2 styles", () => {
     expect(input.className).not.toContain("placeholder:text-muted-foreground/");
   });
 
-  it("sizes items by --item-h and highlights them with the hairline", () => {
+  it("sizes items by --item-h and highlights them with the accent", () => {
     render(<ShortcutPalette />);
     const item = screen.getByText("Calendar").closest(
       "[data-slot=command-item]",
@@ -196,12 +199,12 @@ describe("Command v2 styles", () => {
     expect(item.className).toContain("min-h-[var(--item-h,2rem)]");
     // padding small enough that a 20px keycap fits a compact 26px row
     expect(item.className).toContain("py-0.5");
-    expect(item.className).toContain("data-highlighted:bg-hairline");
-    expect(item.className).toContain("data-highlighted:text-foreground");
+    expect(item.className).toContain("data-highlighted:bg-accent");
+    expect(item.className).toContain("data-highlighted:text-accent-foreground");
     expect(item.className).not.toContain("surface-panel");
     expect(item.className).not.toContain("data-highlighted:shadow-");
     expect(item.className).toContain("data-disabled:data-highlighted:bg-transparent");
-    expect(item.className).not.toContain("data-highlighted:bg-muted");
+    expect(item.className).not.toContain("hairline");
   });
 
   it("renders group headings as mono 11px uppercase labels", () => {
@@ -220,20 +223,18 @@ describe("Command v2 styles", () => {
     expect(heading.className).not.toContain("text-muted-foreground/");
   });
 
-  it("styles shortcuts as keycaps and the separator as a hairline", () => {
+  it("styles shortcuts as mono key hints and the separator with the border colour", () => {
     const { container } = render(<ShortcutPalette />);
     const shortcut = container.querySelector(
       "[data-slot=command-shortcut]",
     ) as HTMLElement;
-    expect(shortcut.className).toContain("bg-surface-raised");
-    expect(shortcut.className).toContain(
-      "shadow-[inset_0_0_0_1px_var(--hairline),inset_0_-1px_0_var(--hairline-strong)]",
-    );
+    expect(shortcut.className).not.toContain("surface-");
+    expect(shortcut.className).not.toContain("hairline");
     expect(shortcut.className).toContain("font-mono");
     expect(shortcut.className).toContain("text-[10.5px]");
     const separator = container.querySelector(
       "[data-slot=command-separator]",
     ) as HTMLElement;
-    expect(separator.className).toContain("bg-hairline");
+    expect(separator.className).toContain("bg-border");
   });
 });

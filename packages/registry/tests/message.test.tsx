@@ -141,15 +141,13 @@ describe("Message v2 styles", () => {
     }
   });
 
-  it("draws the avatar with a hairline ring on a panel fallback", () => {
+  it("draws the avatar fallback on main's muted fill with no edge", () => {
     const { container } = render(<FullMessage />);
     const avatar = container.querySelector(
       '[data-slot="message-avatar"]',
     ) as HTMLElement;
-    expect(avatar.className).toContain("ring-1");
-    expect(avatar.className).toContain("ring-hairline");
-    expect(avatar.className).toContain("bg-surface-panel");
+    expect(avatar.className).toContain("bg-muted");
     expect(avatar.className).toContain("text-muted-foreground");
-    expect(avatar.className).not.toContain("bg-muted");
+    expect(avatar.className).not.toMatch(/(^|\s)ring-|hairline|surface-/);
   });
 });

@@ -93,13 +93,21 @@ describe("Popover", () => {
 });
 
 describe("Popover v2 styles", () => {
-  it("renders a single raised surface with the panel padding", async () => {
+  it("renders the popover surface with a ring edge and the panel padding", async () => {
     render(<ExamplePopover open />);
     await screen.findByText("Dimensions");
     const content = getContent();
-    expect(content?.className).toContain("bg-surface-raised");
-    expect(content?.className).toContain("shadow-overlay");
-    expect(content?.className).toContain("p-[var(--panel-pad,1.125rem)]");
+    const classes = content?.className.split(" ") ?? [];
+    for (const cls of [
+      "bg-popover",
+      "ring-1",
+      "ring-foreground/10",
+      "shadow-overlay",
+      "p-[var(--panel-pad,1.125rem)]",
+    ]) {
+      expect(classes).toContain(cls);
+    }
+    expect(content?.className).not.toContain("surface-");
     expect(content?.className).not.toContain("ring-3");
   });
 

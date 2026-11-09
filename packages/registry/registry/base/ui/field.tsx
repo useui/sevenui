@@ -45,9 +45,6 @@ function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="field-group"
       className={cn(
         "group/field-group @container/field-group flex w-full flex-col gap-5 data-[slot=checkbox-group]:gap-3 *:data-[slot=field-group]:gap-4",
-        // Field rows: consecutive horizontal fields read as a settings list,
-        // split by a hairline instead of floating in whitespace.
-        "[&>[data-slot=field][data-orientation=horizontal]+[data-slot=field][data-orientation=horizontal]]:border-t [&>[data-slot=field][data-orientation=horizontal]+[data-slot=field][data-orientation=horizontal]]:border-hairline [&>[data-slot=field][data-orientation=horizontal]+[data-slot=field][data-orientation=horizontal]]:pt-5",
         className,
       )}
       {...props}
@@ -111,7 +108,7 @@ function FieldLabel({
       data-slot="field-label"
       render={<Label />}
       className={cn(
-        "group/field-label peer/field-label flex w-fit gap-[var(--control-gap,0.5rem)] leading-snug group-data-[disabled]/field:opacity-50 has-data-checked:border-primary/30 has-data-checked:bg-primary/5 has-[>[data-slot=field]]:rounded-lg has-[>[data-slot=field]]:border has-[>[data-slot=field]]:not-has-data-checked:border-hairline-strong has-[>[data-slot=field]]:not-has-data-checked:bg-surface-panel has-[>[data-slot=field]]:not-has-[:disabled,[data-disabled]]:hover:bg-muted/50 has-[>[data-slot=field]]:has-[:focus-visible]:focus-ring *:data-[slot=field]:p-2.5 dark:has-data-checked:border-primary/20 dark:has-data-checked:bg-primary/10",
+        "group/field-label peer/field-label flex w-fit gap-[var(--control-gap,0.5rem)] leading-snug group-data-[disabled]/field:opacity-50 has-data-checked:border-primary/30 has-data-checked:bg-primary/5 has-[>[data-slot=field]]:rounded-lg has-[>[data-slot=field]]:border has-[>[data-slot=field]]:not-has-[:disabled,[data-disabled]]:hover:bg-muted/50 has-[>[data-slot=field]]:has-[:focus-visible]:border-ring has-[>[data-slot=field]]:has-[:focus-visible]:ring-3 has-[>[data-slot=field]]:has-[:focus-visible]:ring-ring/50 *:data-[slot=field]:p-2.5 dark:has-data-checked:border-primary/20 dark:has-data-checked:bg-primary/10",
         "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col",
         className,
       )}

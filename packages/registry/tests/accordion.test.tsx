@@ -113,20 +113,22 @@ describe("Accordion", () => {
 });
 
 describe("Accordion v2 style", () => {
-  it("separates rows with a hairline", () => {
+  it("separates rows with the border colour", () => {
     const { container } = render(<BasicAccordion />);
     const item = container.querySelector('[data-slot="accordion-item"]');
-    expect(item?.className).toContain("not-last:border-hairline");
+    expect(item?.className).toContain("not-last:border-b");
+    expect(item?.className).not.toContain("hairline");
   });
 
-  it("sizes triggers to the item height and focuses with the offset ring", () => {
+  it("sizes triggers to the item height and focuses with the ring", () => {
     render(<BasicAccordion />);
     for (const trigger of screen.getAllByRole("button")) {
       expect(trigger.className).toContain("min-h-[var(--item-h,2rem)]");
-      expect(trigger.className).toContain("focus-visible:focus-ring");
-      expect(trigger.className).not.toContain("ring-3");
-      expect(trigger.className).not.toContain("ring-ring");
-      expect(trigger.className).not.toContain("focus-visible:border-ring");
+      expect(trigger.className).toContain("focus-visible:border-ring");
+      expect(trigger.className).toContain("focus-visible:ring-3");
+      expect(trigger.className).toContain("focus-visible:ring-ring/50");
+      expect(trigger.className).toContain("focus-visible:after:border-ring");
+      expect(trigger.className).not.toContain("focus-ring");
     }
   });
 

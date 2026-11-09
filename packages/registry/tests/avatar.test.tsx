@@ -173,19 +173,20 @@ describe("AvatarGroup", () => {
 });
 
 describe("Avatar v2 design language", () => {
-  it("draws an inner hairline over the image without a blend mode", () => {
+  it("draws an inner border over the image with a blend mode", () => {
     render(
       <Avatar data-testid="avatar">
         <AvatarFallback>AL</AvatarFallback>
       </Avatar>,
     );
     const cls = screen.getByTestId("avatar").className;
-    expect(cls).toContain("after:border-hairline");
-    expect(cls).not.toContain("after:border-border");
-    expect(cls).not.toContain("mix-blend");
+    expect(cls).toContain("after:border-border");
+    expect(cls).toContain("after:mix-blend-darken");
+    expect(cls).toContain("dark:after:mix-blend-lighten");
+    expect(cls).not.toContain("hairline");
   });
 
-  it("sets the fallback and the overflow count on the panel surface", () => {
+  it("sets the fallback and the overflow count on the muted surface", () => {
     render(
       <AvatarGroup>
         <Avatar>
@@ -196,9 +197,10 @@ describe("Avatar v2 design language", () => {
     );
     for (const id of ["fallback", "count"]) {
       const classes = screen.getByTestId(id).className.split(" ");
-      expect(classes).toContain("bg-surface-panel");
+      expect(classes).toContain("bg-muted");
       expect(classes).toContain("text-muted-foreground");
-      expect(classes).not.toContain("bg-muted");
+      expect(classes.join(" ")).not.toContain("surface");
+      expect(classes.join(" ")).not.toContain("hairline");
     }
   });
 });

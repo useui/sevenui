@@ -101,14 +101,16 @@ describe("NativeSelect", () => {
   });
 });
 
-describe("NativeSelect v2 styles", () => {
-  it("uses the offset focus ring, never the old halo", () => {
+describe("NativeSelect styles", () => {
+  it("uses the ring-3 focus halo, not the offset focus ring", () => {
     render(<Fruits />);
     const cls = screen.getByLabelText("Fruit").className;
-    expect(cls).toContain("focus-visible:focus-ring");
-    expect(cls).not.toContain("ring-3");
-    expect(cls).not.toContain("ring-ring");
-    expect(cls).not.toContain("focus-visible:border-ring");
+    expect(cls).toContain("focus-visible:border-ring");
+    expect(cls).toContain("focus-visible:ring-3");
+    expect(cls).toContain("focus-visible:ring-ring/50");
+    expect(cls).not.toMatch(/:focus-ring(\s|$)/);
+    expect(cls).not.toContain("--focus-color");
+    expect(cls).toContain("aria-invalid:ring-destructive/20");
   });
 
   it("reads its height, padding and text size from the control scale", () => {
@@ -122,14 +124,13 @@ describe("NativeSelect v2 styles", () => {
     );
   });
 
-  it("sits on the inset field surface", () => {
+  it("sits on a transparent field with the input border and no inset", () => {
     render(<Fruits />);
     const cls = screen.getByLabelText("Fruit").className;
-    expect(cls).toContain("bg-surface-inset");
-    // The edge is a real border so consumer border-* classes merge against it.
-    expect(cls.split(" ")).toEqual(expect.arrayContaining(["border", "border-hairline-strong"]));
-    expect(cls).not.toContain("0_0_0_1px_var(--hairline");
-    expect(cls).not.toContain("bg-transparent");
+    expect(cls.split(" ")).toEqual(
+      expect.arrayContaining(["border", "border-input", "bg-transparent", "dark:bg-input/30"]),
+    );
+    expect(cls).not.toMatch(/surface-|hairline|elevation-inset|shadow-/);
   });
 
   it("keeps the chevron muted", () => {

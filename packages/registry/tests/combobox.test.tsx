@@ -157,23 +157,25 @@ describe("Combobox v2 styles", () => {
     await screen.findByRole("listbox");
   }
 
-  it("gives the input wrapper the inset field surface, density height and offset focus ring", () => {
+  it("gives the input wrapper the bordered field, density height and halo focus ring", () => {
     render(<FruitCombobox />);
     const group = getInput().closest("[data-slot=input-group]") as HTMLElement;
-    expect(group.className).toContain("bg-surface-inset");
-    // InputGroup's border edge, not a combobox-only shadow ring over border-0.
     const classes = group.className.split(" ");
-    expect(classes).toEqual(expect.arrayContaining(["border", "border-hairline-strong"]));
+    for (const c of [
+      "border",
+      "border-input",
+      "dark:bg-input/30",
+      "has-[[data-slot=input-group-control]:focus-visible]:border-ring",
+      "has-[[data-slot=input-group-control]:focus-visible]:ring-3",
+      "has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50",
+      "h-[var(--control-h,2.125rem)]",
+    ]) {
+      expect(classes).toContain(c);
+    }
     expect(classes).not.toContain("border-0");
-    expect(group.className).not.toContain("0_0_0_1px_var(--hairline");
-    expect(group.className).toContain("h-[var(--control-h,2.125rem)]");
-    expect(group.className).toContain(
-      "has-[[data-slot=input-group-control]:focus-visible]:focus-ring",
-    );
-    expect(group.className).not.toContain("ring-3");
-    // InputGroup carries no halo or dark fill any more, so no shims displace them.
-    expect(group.className).not.toContain("ring-0");
-    expect(group.className).not.toContain("dark:bg-surface-inset");
+    expect(group.className).not.toContain("focus-ring");
+    expect(group.className).not.toContain("surface-");
+    expect(group.className).not.toContain("hairline");
   });
 
   it("keeps the className on the input-group root", () => {
@@ -190,18 +192,22 @@ describe("Combobox v2 styles", () => {
     await openPopup();
     const item = document.querySelector("[data-slot=combobox-item]") as HTMLElement;
     expect(item.className.split(" ")).toContain(
-      "data-highlighted:[&_.text-muted-foreground]:text-foreground",
+      "data-highlighted:[&_.text-muted-foreground]:text-accent-foreground",
     );
     expect(item.className).not.toContain("**:text-foreground");
   });
 
-  it("renders the popup as a raised overlay with a reduced-motion-safe entry", async () => {
+  it("renders the popup as an overlay with a reduced-motion-safe entry", async () => {
     await openPopup();
     const popup = document.querySelector(
       "[data-slot=combobox-content]",
     ) as HTMLElement;
-    expect(popup.className).toContain("bg-surface-raised");
+    expect(popup.className.split(" ")).toEqual(
+      expect.arrayContaining(["bg-popover", "ring-1", "ring-foreground/10"]),
+    );
     expect(popup.className).toContain("shadow-overlay");
+    expect(popup.className).not.toContain("surface-");
+    expect(popup.className).not.toContain("hairline");
     expect(popup.className).toContain("rounded-lg");
     expect(popup.className).toContain("data-starting-style:opacity-0");
     expect(popup.className).toContain("data-starting-style:scale-[0.98]");
@@ -210,21 +216,20 @@ describe("Combobox v2 styles", () => {
     expect(popup.className).not.toContain("zoom-in-95");
   });
 
-  it("sizes items by --item-h, highlights with the hairline and marks the selection in brand", async () => {
+  it("sizes items by --item-h, highlights with the accent and marks the selection in the item colour", async () => {
     await openPopup();
     const option = screen.getByRole("option", { name: "Cherry" });
     expect(option.className).toContain("min-h-[var(--item-h,2rem)]");
-    expect(option.className).toContain("data-highlighted:bg-hairline");
-    expect(option.className).toContain("data-highlighted:text-foreground");
+    expect(option.className).toContain("data-highlighted:bg-accent");
+    expect(option.className).toContain("data-highlighted:text-accent-foreground");
     expect(option.className).not.toContain("surface-panel");
     expect(option.className).not.toContain("data-highlighted:shadow-");
     expect(option.className).toContain("data-disabled:data-highlighted:bg-transparent");
-    expect(option.className).not.toContain("bg-accent");
     const indicator = option.querySelector("svg")?.parentElement as HTMLElement;
-    expect(indicator.className).toContain("text-brand");
+    expect(indicator.className).not.toMatch(/text-(brand|primary)/);
   });
 
-  it("gives chips the inset field surface and a focus-within ring", () => {
+  it("gives chips the bordered field and a focus-within halo ring", () => {
     function Chips() {
       const anchor = useComboboxAnchor();
       return (
@@ -246,13 +251,27 @@ describe("Combobox v2 styles", () => {
     const chips = document.querySelector(
       "[data-slot=combobox-chips]",
     ) as HTMLElement;
-    expect(chips.className).toContain("bg-surface-inset");
-    expect(chips.className).toContain("focus-within:focus-ring");
-    expect(chips.className).toContain("min-h-[var(--control-h,2.125rem)]");
-    expect(chips.className).not.toContain("ring-3");
+    const chipsClasses = chips.className.split(" ");
+    for (const c of [
+      "border",
+      "border-input",
+      "dark:bg-input/30",
+      "focus-within:border-ring",
+      "focus-within:ring-3",
+      "focus-within:ring-ring/50",
+      "has-aria-invalid:border-destructive",
+      "has-aria-invalid:ring-destructive/20",
+      "min-h-[var(--control-h,2.125rem)]",
+    ]) {
+      expect(chipsClasses).toContain(c);
+    }
+    expect(chips.className).not.toContain("focus-ring");
+    expect(chips.className).not.toContain("surface-");
     const chip = document.querySelector(
       "[data-slot=combobox-chip]",
     ) as HTMLElement;
-    expect(chip.className).toContain("bg-surface-raised");
+    expect(chip.className.split(" ")).toContain("bg-muted");
+    expect(chip.className).not.toContain("--elevation-highlight");
+    expect(chip.className).not.toContain("hairline");
   });
 });
