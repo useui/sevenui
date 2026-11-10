@@ -26,3 +26,10 @@ export function currentTabForRoute(pathname: string, tabs: SiteTab[]): string | 
   }
   return best?.href;
 }
+
+/** The sections laid out in the sidebar shell: a floating sidebar card and no site header from lg up, and no footer. */
+const SHELL_PATHS = ["/docs", "/components", "/blocks"];
+
+export function isShellRoute(pathname: string): boolean {
+  return SHELL_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`));
+}

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Fragment, type ReactNode } from "react";
 import { badgeVariants } from "@/registry/base/ui/badge";
+import { LayerCard } from "@/registry/base/ui/layer-card";
 import { JsonLd } from "../../components/json-ld";
 import { pageMetadata } from "../../lib/metadata";
+import { PageOpening, VersionChip } from "../../components/page-opening";
 import { requirePageMeta } from "../../lib/page-meta";
 import { RELEASES, type RoadmapStatus, UPCOMING } from "../../lib/roadmap";
 
@@ -50,28 +52,30 @@ export default async function RoadmapPage() {
 
   return (
     <main id="content">
-      <section className="border-b border-border">
-        <div className="l-row l-marks flex items-center justify-between gap-4 border-b border-border px-6 py-3 font-mono text-xs text-muted-foreground">
-          <span>{meta.title}</span>
-          {current ? <span className="text-end">Current v{current.version}</span> : null}
-        </div>
+      <section>
+        <PageOpening meta={current ? <VersionChip version={current.version} /> : null} title={meta.title} />
         <div className="l-row">
-          <div className="legal mx-auto max-w-[68ch] px-6 py-14 sm:px-10">
+          <div className="legal mx-auto max-w-[68ch] px-6 pt-6 pb-14 sm:px-10">
             <h1>{meta.title}</h1>
             <p>{meta.description}</p>
 
             {UPCOMING.items.length > 0 ? (
-              <section aria-labelledby="next-title" className="mt-14 scroll-mt-20 border-t border-border pt-10" id="next">
+              <section aria-labelledby="next-title" className="mt-20 scroll-mt-20" id="next">
                 <Eyebrow>Upcoming</Eyebrow>
                 {/* `.legal` sets heading margins unlayered, so utilities cannot override them. */}
                 <h2 id="next-title" style={{ marginTop: "0.75rem" }}>
                   {UPCOMING.label}
                 </h2>
                 <p>{UPCOMING.summary}</p>
-                <ol className="mt-6 divide-y divide-border rounded-lg border border-border">
+                <ol className="mt-6 flex flex-col gap-2">
                   {UPCOMING.items.map((item) => (
-                    // `.legal li` adds a margin and a dash marker unlayered; the card rows drop both.
-                    <li className="px-5 py-4 before:hidden" key={item.title} style={{ marginTop: 0 }}>
+                    // `.legal li` adds a margin and a dot marker unlayered; the card rows drop both.
+                    // A LayerCard with no panel renders as one raised surface.
+                    <LayerCard
+                      className="block [--layer-card-radius:1rem] before:hidden"
+                      key={item.title}
+                      render={<li style={{ marginTop: 0 }} />}
+                    >
                       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
                         <h3 className="text-sm font-semibold text-foreground">{item.title}</h3>
                         <span className={badgeVariants({ variant: STATUS_VARIANT[item.status] })}>{item.status}</span>
@@ -79,7 +83,7 @@ export default async function RoadmapPage() {
                       <p style={{ marginTop: "0.375rem" }}>
                         <Inline text={item.description} />
                       </p>
-                    </li>
+                    </LayerCard>
                   ))}
                 </ol>
               </section>
@@ -88,7 +92,7 @@ export default async function RoadmapPage() {
             {RELEASES.map((release, index) => (
               <article
                 aria-labelledby={`${anchorFor(release.version)}-title`}
-                className="mt-14 scroll-mt-20 border-t border-border pt-10"
+                className="mt-20 scroll-mt-20"
                 id={anchorFor(release.version)}
                 key={release.version}
               >

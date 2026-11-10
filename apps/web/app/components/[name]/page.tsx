@@ -1,6 +1,7 @@
 import { BookOpen, LayoutTemplate } from "lucide-react";
 import type { Metadata } from "next";
-import { Breadcrumb, type Crumb } from "../../../components/breadcrumb";
+import type { Crumb } from "../../../components/breadcrumb";
+import { PageIntro } from "../../../components/shell/page-intro";
 import { DocsTocDesktop, DocsTocMobile, DocsTocProvider } from "../../../components/docs/toc";
 import { ActionLink, ShareOnX } from "../../../components/page-actions";
 import { ExampleCard } from "../../../components/gallery/example-card";
@@ -45,32 +46,25 @@ export default async function GalleryComponentPage({ params }: { params: Promise
   return (
     <DocsTocProvider headings={headings}>
       {/* The rail sits at the viewport edge; header and examples share one column centered in the rest. */}
-      <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_15rem]">
+      <div className="xl:grid xl:grid-cols-[minmax(0,56rem)_16.25rem] xl:gap-x-10">
         <div className="min-w-0">
-          <header className="border-b border-border px-6 pt-8 pb-10 lg:px-10">
-            <div className="mx-auto max-w-4xl">
-              <Breadcrumb className="text-sm text-muted-foreground" crumbs={crumbs} />
-              <h1 className="mt-6 font-display text-4xl leading-[1.1] font-medium tracking-tighter text-balance sm:text-5xl">
-                {component.label} components
-              </h1>
-              <p className="mt-4 max-w-2xl text-pretty text-lg text-muted-foreground">{meta.description}</p>
-              <div className="mt-6 flex flex-wrap gap-2">
-                <ActionLink href={`/docs/components/${name}`} variant="primary">
-                  <BookOpen aria-hidden="true" />
-                  Read the docs
-                </ActionLink>
-                <ActionLink href="/blocks">
-                  <LayoutTemplate aria-hidden="true" />
-                  Browse Pro blocks
-                </ActionLink>
-                <ShareOnX
-                  route={route}
-                  text={`${component.count} ${component.label} components for React, built on Base UI. Copy the code, own it.`}
-                />
-              </div>
-            </div>
-          </header>
-          <div className="mx-auto flex max-w-4xl flex-col gap-14 px-6 py-10 lg:box-content lg:px-10">
+          <div className="max-w-4xl">
+            <PageIntro crumbs={crumbs} description={meta.description} title={`${component.label} components`}>
+              <ActionLink href={`/docs/components/${name}`} variant="primary">
+                <BookOpen aria-hidden="true" />
+                Read the docs
+              </ActionLink>
+              <ActionLink href="/blocks">
+                <LayoutTemplate aria-hidden="true" />
+                Browse Pro blocks
+              </ActionLink>
+              <ShareOnX
+                route={route}
+                text={`${component.count} ${component.label} components for React, built on Base UI. Copy the code, own it.`}
+              />
+            </PageIntro>
+          </div>
+          <div className="flex max-w-4xl flex-col gap-14 py-10">
             <DocsTocMobile className="-mb-4" />
             {examples.map((example) => (
               <ExampleCard
@@ -86,7 +80,7 @@ export default async function GalleryComponentPage({ params }: { params: Promise
         </div>
         <aside
           aria-label="On this page"
-          className="sticky top-16 hidden h-[calc(100dvh-4rem)] scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent overflow-y-auto border-l border-border px-5 pt-10 pb-10 text-sm xl:block"
+          className="sticky top-[calc(var(--header-h)+2.5rem)] hidden h-[calc(100dvh-var(--header-h)-2.5rem)] scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent overflow-y-auto pb-10 text-sm xl:block"
         >
           <DocsTocDesktop />
         </aside>

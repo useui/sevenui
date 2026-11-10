@@ -5,6 +5,8 @@ import type { ComponentType, SVGProps } from "react";
 import { CategoryCard } from "../../components/blocks/category-card";
 import { ProOffer } from "../../components/blocks/pro-offer";
 import { JsonLd } from "../../components/json-ld";
+import type { Crumb } from "../../components/breadcrumb";
+import { PageIntro } from "../../components/shell/page-intro";
 import { ShareOnX } from "../../components/page-actions";
 import { loadBlocksTree } from "../../lib/blocks";
 import { pageMetadataOrNotFound } from "../../lib/metadata";
@@ -12,6 +14,9 @@ import { getPageMeta } from "../../lib/page-meta";
 import { lucideIcon } from "../../lib/pro-manifest";
 
 const ROUTE = "/blocks";
+
+/** Shown on the page only; the page's structured data stays as it was, without a breadcrumb list. */
+const CRUMBS: Crumb[] = [{ label: "Home", href: "/" }, { label: "Blocks" }];
 
 export async function generateMetadata(): Promise<Metadata> {
   return pageMetadataOrNotFound(ROUTE);
@@ -32,18 +37,14 @@ export default async function BlocksPage() {
 
   return (
     <>
-      <header className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6 border-b border-border px-6 py-12 lg:px-10">
-        <div className="max-w-2xl">
-          <h1 className="text-3xl font-semibold tracking-tight">{meta.title}</h1>
-          <p className="mt-2 text-muted-foreground">{summary}</p>
-        </div>
+      <PageIntro crumbs={CRUMBS} description={summary} title={meta.title}>
         <ShareOnX
           route={ROUTE}
           text={`${totalBlocks} Pro blocks for React, built on Base UI: full sections and pages, ready to ship.`}
         />
-      </header>
+      </PageIntro>
       <ProOffer />
-      <div className="px-6 py-12 lg:px-10">
+      <div className="py-12">
         <div className="flex max-w-5xl flex-col gap-12">
           {groups.map((group) => {
             const GroupIcon = group.icon

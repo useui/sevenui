@@ -1,36 +1,14 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useCallback } from "react";
-import type { GalleryFamily } from "../lib/gallery";
-import { useDrawer } from "./drawer-context";
+import { isShellRoute } from "../lib/site-tabs";
 import { DrawerShell } from "./drawer-shell";
-import { GalleryNav } from "./gallery/nav";
 
-export function SiteDrawer({
-  primitivesHref,
-  galleryFamilies,
-}: {
-  primitivesHref: string;
-  galleryFamilies: GalleryFamily[];
-}) {
-  const { setOpen } = useDrawer();
+/** The small-screen site menu. The shell sections (docs, components, blocks) bring their own sidebar drawer. */
+export function SiteDrawer({ primitivesHref }: { primitivesHref: string }) {
   const pathname = usePathname();
 
-  const isDocs = pathname === "/docs" || pathname.startsWith("/docs/");
+  if (isShellRoute(pathname)) return null;
 
-  const isBlocks = pathname === "/blocks" || pathname.startsWith("/blocks/");
-
-  const isGallery = pathname === "/components" || pathname.startsWith("/components/");
-
-  const closeDrawer = useCallback(() => setOpen(false), [setOpen]);
-
-  if (isDocs || isBlocks) return null;
-
-  return (
-    <DrawerShell
-      primitivesHref={primitivesHref}
-      tree={isGallery ? <GalleryNav families={galleryFamilies} onNavigate={closeDrawer} /> : undefined}
-    />
-  );
+  return <DrawerShell primitivesHref={primitivesHref} />;
 }

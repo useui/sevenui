@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { LayerCard } from "@/registry/base/ui/layer-card";
 import { PRO_LAUNCH, PRO_REGULAR } from "../../lib/pro-pricing";
 
 export function ProOffer() {
   return (
-    <div className="border-b border-border bg-muted/30 px-6 py-5 lg:px-10">
+    // No panel inside, so the LayerCard renders as a single raised surface.
+    <LayerCard className="mt-8 [--layer-card-radius:1rem]">
       <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-4">
         <p className="max-w-xl text-pretty text-sm text-muted-foreground">
           Every block here is <span className="font-medium text-foreground">Pro</span>.
@@ -21,6 +23,6 @@ export function ProOffer() {
           Get Pro — {PRO_LAUNCH}
         </Link>
       </div>
-    </div>
+    </LayerCard>
   );
 }

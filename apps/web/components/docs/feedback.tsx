@@ -25,7 +25,7 @@ export function DocsFeedback({ title }: { title: string }) {
   return (
     <section
       aria-label="Was this page helpful?"
-      className="mx-auto mt-12 flex max-w-content items-center justify-between gap-4 border-border border-t pt-6"
+      className="mt-14 flex max-w-docs items-center justify-between gap-4 border-border border-t pt-6"
     >
       <p className="text-muted-foreground text-sm">Was this page helpful?</p>
       <div className={voted ? "hidden" : "flex items-center gap-2"}>

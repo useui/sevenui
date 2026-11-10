@@ -62,17 +62,17 @@ export function SizeFigures({
   ];
 
   return (
-    <ul className="mt-14 grid grid-cols-1 border-t border-hairline-strong md:grid-cols-3">
+    <ul className="mt-14 grid grid-cols-1 gap-12 md:grid-cols-3 md:gap-8">
       {sizes.map((size) => (
         <li
-          className="flex min-w-0 flex-col border-b border-hairline py-6 last:border-b-0 md:border-r md:border-b-0 md:px-6 md:first:pl-0 md:last:border-r-0 md:last:pr-0"
+          className="flex min-w-0 flex-col"
           data-size-card={size.name.toLowerCase()}
           key={size.name}
         >
           <p className={CAPTION}>
             {size.fig} — {size.name}
           </p>
-          <div className="mt-5 grid h-44 place-items-center overflow-hidden rounded-xl bg-surface-tray shadow-[inset_0_0_0_1px_var(--hairline)]">
+          <div className="mt-5 grid h-44 place-items-center overflow-hidden rounded-3xl bg-surface-tray">
             {size.render}
           </div>
           <h3 className="mt-6 text-[0.9375rem] font-[510] tracking-[-0.01em]">{size.name}</h3>

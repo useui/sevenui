@@ -95,7 +95,7 @@ function SignedOut({ onSignIn }: { onSignIn: () => void }) {
 /** The identity strip, full width under the header; the skeleton has the same box. */
 function IdentityBar({ children }: { children: React.ReactNode }) {
   return (
-    <div className="border-b border-border">
+    <div>
       <div className="l-row flex min-h-[4.5rem] items-center justify-between gap-4 px-6 py-4 sm:px-8">{children}</div>
     </div>
   );
@@ -294,7 +294,7 @@ function Licensed({ identity, rows }: { identity: Identity; rows: LicenseRow[] }
         </div>
       ) : null}
 
-      <section aria-labelledby="setup-title" className="border-t border-border">
+      <section aria-labelledby="setup-title">
         <div className={`l-row grid grid-cols-1 gap-10 px-6 py-14 sm:px-8 sm:py-20 ${COLUMNS}`}>
           <div>
             <h2 className="text-3xl font-semibold tracking-[-0.035em] sm:text-4xl" id="setup-title">
@@ -328,7 +328,7 @@ function Licensed({ identity, rows }: { identity: Identity; rows: LicenseRow[] }
                 </Select>
               </div>
             ) : null}
-            <div className="mt-8 grid max-w-sm grid-cols-1 gap-6 border-t border-border pt-6 text-sm">
+            <div className="mt-8 grid max-w-sm grid-cols-1 gap-6 rounded-2xl bg-muted/50 p-5 text-sm">
               <div>
                 <h3 className="font-medium">Keep the key out of git</h3>
                 <p className="mt-1.5 leading-relaxed text-pretty text-muted-foreground">
@@ -376,7 +376,7 @@ function Licensed({ identity, rows }: { identity: Identity; rows: LicenseRow[] }
 function LicenseSummary({ count, licensedTo }: { count: number; licensedTo: string }) {
   return (
     <article aria-label="License summary" className={SURFACE}>
-      <header className="flex items-center justify-between gap-4 border-b border-border px-5 py-3">
+      <header className="flex items-center justify-between gap-4 px-5 pt-4 pb-1">
         <span className="flex items-center gap-2 text-sm font-medium">
           <Logomark className="size-4" />
           SevenUI Pro
@@ -397,14 +397,14 @@ function LicenseSummary({ count, licensedTo }: { count: number; licensedTo: stri
           Add a license
         </Link>
       </div>
-      <dl className="grid grid-cols-2 gap-px border-t border-border bg-border text-sm sm:grid-cols-4">
+      <dl className="m-2.5 mt-0 grid grid-cols-2 gap-1 rounded-2xl bg-muted/50 p-1 text-sm sm:grid-cols-4">
         {[
           ["Licensed to", licensedTo],
           ["Term", "Lifetime"],
           ["Seats", `${count} developers`],
           ["Projects", "Unlimited"],
         ].map(([term, value]) => (
-          <div className="flex min-w-0 flex-col gap-0.5 bg-card px-5 py-3" key={term}>
+          <div className="flex min-w-0 flex-col gap-0.5 px-3.5 py-2.5" key={term}>
             <dt className="text-xs text-muted-foreground">{term}</dt>
             <dd className="truncate font-medium">{value}</dd>
           </div>

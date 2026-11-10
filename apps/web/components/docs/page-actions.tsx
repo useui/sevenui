@@ -8,7 +8,7 @@ const DOCS_SOURCE_PATH = "apps/web/docs";
 const EDIT_BASE = `https://github.com/${site.github.owner}/${site.github.repo}/edit/main/${DOCS_SOURCE_PATH}`;
 
 const rowClass =
-  "flex w-full items-center gap-2.5 py-1.5 text-start text-muted-foreground text-sm transition-colors hover:text-foreground";
+  "flex w-full items-center gap-2 py-1 text-start font-medium text-[0.8125rem] text-docs-tertiary transition-colors hover:text-foreground";
 const menuRowClass =
   "flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-start text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground";
 const summaryClass = `${rowClass} cursor-pointer list-none [&::-webkit-details-marker]:hidden`;
@@ -140,7 +140,7 @@ export function DocsPageActions({ route }: { route: string }) {
   };
 
   return (
-    <div className="mt-8 space-y-0.5 border-border border-t pt-4">
+    <div className="mt-6 space-y-0.5">
       <a className={rowClass} href={`${EDIT_BASE}/${slug}.mdx`} rel="noreferrer" target="_blank">
         <span>
           <GithubMark />

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { LayerCard, LayerCardHeader, LayerCardPanel } from "@/registry/base/ui/layer-card";
 import { ScrollArea } from "@/registry/base/ui/scroll-area";
 import { CopyButton } from "./copy-button";
 import { currentPackageManager, type PackageManager } from "../../lib/package-manager";
@@ -37,6 +38,11 @@ export type CodeBlockProps = React.ComponentPropsWithoutRef<"pre"> & {
   language?: string;
   headerRight?: React.ReactNode;
   installCommands?: Record<PackageManager, string>;
+  /**
+   * Only the code and a floating copy button, for a pane that already sits in a frame (the Code tab of a
+   * demo, which is itself a LayerCard panel). Without it the block is its own LayerCard.
+   */
+  bare?: boolean;
 };
 
 // Its children arrive from Server Components and can be lazy references during
@@ -48,51 +54,59 @@ export function CodeBlock({
   language,
   headerRight,
   installCommands,
+  bare = false,
   tabIndex: _tabIndex,
   ...rest
 }: CodeBlockProps) {
   const preRef = React.useRef<HTMLPreElement>(null);
 
   const label = language ? (LANGUAGE_LABELS[language] ?? language.toUpperCase()) : undefined;
-  const hasIcon = language !== undefined && language in LANGUAGE_ICON_PATHS;
 
   const getCopyText = installCommands
     ? () => installCommands[currentPackageManager()] ?? ""
     : () => preRef.current?.querySelector("code")?.textContent ?? "";
 
+  // The viewport scrolls (and takes the tab stop once it overflows), so the header and copy button stay put.
+  const scroller = (
+    <ScrollArea className="[&_[data-slot=scroll-area-viewport]]:max-h-96" orientation="both">
+      {children}
+    </ScrollArea>
+  );
+
+  if (bare) {
+    return (
+      <pre
+        {...rest}
+        ref={preRef}
+        data-language={language}
+        className={cx("group relative pt-4 pb-2.5 text-[0.8125rem] leading-[1.55]", className)}
+      >
+        {scroller}
+        <CopyButton getText={getCopyText} />
+      </pre>
+    );
+  }
+
+  // The language, package-manager menu and copy button are the tray's header chrome; the code is the panel.
   return (
-    <pre
-      {...rest}
-      ref={preRef}
-      data-language={language}
-      className={cx(
-        "group relative my-6 rounded-md border border-border bg-transparent pb-2.5 text-[0.8125rem] leading-[1.55]",
-        label || headerRight ? "pt-15" : "pt-4",
-        className,
-      )}
-    >
-      {label || headerRight ? (
-        <div
-          aria-hidden={headerRight ? undefined : true}
-          className={cx(
-            "absolute inset-x-0 top-0 flex h-11 items-center border-b border-border pr-13 font-sans text-xs font-medium text-muted-foreground",
-            hasIcon ? "pl-10" : "pl-4",
-          )}
-        >
-          {label}
-          {headerRight ? <div className="ml-auto flex items-center">{headerRight}</div> : null}
+    <LayerCard className={cx("my-6", className)} data-language={language} size="sm">
+      <LayerCardHeader className="flex min-h-9 items-center gap-2 py-0.5 pr-0.5 pl-[calc(1.25rem+1px)]">
+        {label ? (
+          <span aria-hidden="true" className="flex items-center gap-2 font-sans text-xs font-medium text-muted-foreground">
+            <LanguageIcon language={language ?? ""} />
+            {label}
+          </span>
+        ) : null}
+        <div className="ml-auto flex items-center gap-0.5">
+          {headerRight}
+          <CopyButton getText={getCopyText} placement="inline" />
         </div>
-      ) : null}
-      {hasIcon && language ? (
-        <span aria-hidden="true" className="absolute top-3.5 left-4 size-3.5 text-muted-foreground">
-          <LanguageIcon language={language} />
-        </span>
-      ) : null}
-      {/* The viewport scrolls (and takes the tab stop once it overflows), so the header and copy button stay put. */}
-      <ScrollArea className="[&_[data-slot=scroll-area-viewport]]:max-h-96" orientation="both">
-        {children}
-      </ScrollArea>
-      <CopyButton getText={getCopyText} />
-    </pre>
+      </LayerCardHeader>
+      <LayerCardPanel className="overflow-hidden p-0">
+        <pre {...rest} ref={preRef} className="pt-3.5 pb-2 text-[0.8125rem] leading-[1.55]">
+          {scroller}
+        </pre>
+      </LayerCardPanel>
+    </LayerCard>
   );
 }

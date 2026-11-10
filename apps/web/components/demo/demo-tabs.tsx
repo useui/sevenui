@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { LayerCard, LayerCardHeader, LayerCardPanel } from "@/registry/base/ui/layer-card";
+import { LAYER_FRAME_LG, LAYER_TAB, LAYER_TOOLBAR, LAYER_WINDOW } from "../layer-frame";
 
 const TABS = [
   { value: "preview", label: "Preview" },
@@ -15,9 +17,6 @@ type Tab = (typeof TABS)[number]["value"];
  */
 export const CodeWantedContext = React.createContext(false);
 
-const TAB_CLASSES =
-  "rounded-md px-2.5 py-1 text-muted-foreground transition-colors hover:text-foreground aria-selected:bg-muted aria-selected:text-foreground";
-
 export function DemoTabs({
   code,
   preview,
@@ -25,6 +24,7 @@ export function DemoTabs({
   actions,
   label = "Example view",
   className,
+  detached = false,
 }: {
   code: React.ReactNode;
   preview: React.ReactNode;
@@ -34,6 +34,8 @@ export function DemoTabs({
   /** Accessible name for the tablist; the gallery passes the example title. */
   label?: string;
   className?: string;
+  /** The docs look: a larger tray radius for the single demo that heads a primitive page. */
+  detached?: boolean;
 }) {
   const [tab, setTab] = React.useState<Tab>("preview");
   const [codeWanted, setCodeWanted] = React.useState(false);
@@ -59,7 +61,7 @@ export function DemoTabs({
   const tablist = (
     <div
       aria-label={label}
-      className="flex shrink-0 rounded-lg border border-border p-0.5 text-sm"
+      className="flex shrink-0 gap-1 p-0.5 text-sm font-medium"
       onKeyDown={onKeyDown}
       role="tablist"
     >
@@ -67,7 +69,7 @@ export function DemoTabs({
         <button
           aria-controls={`${id}-${entry.value}`}
           aria-selected={tab === entry.value}
-          className={TAB_CLASSES}
+          className={LAYER_TAB}
           id={`${id}-${entry.value}-tab`}
           key={entry.value}
           onClick={() => {
@@ -100,35 +102,30 @@ export function DemoTabs({
     </>
   );
 
+  // One frame for both looks: the tabs and actions are the tray's header chrome and the active pane is its
+  // panel. No overflow clipping on the tray, so the install and package-manager menus drop out of it.
   if (actions !== undefined) {
     return (
       <div className={className}>
         {heading}
-        {/* No overflow-hidden on the frame: the install menu drops out of the toolbar. */}
-        <div className="mt-3 rounded-xl border border-border">
-          <div className="@container/toolbar flex h-12 items-center gap-2 rounded-t-[calc(var(--radius-xl)_-_1px)] border-b border-border bg-muted/30 px-2">
+        <LayerCard className={`${heading === undefined ? "" : "mt-3"} ${detached ? LAYER_FRAME_LG : ""}`}>
+          <LayerCardHeader className={LAYER_TOOLBAR}>
             {tablist}
             <div className="ml-auto flex min-w-0 items-center gap-1">{actions}</div>
-          </div>
-          <div className="overflow-hidden rounded-b-[calc(var(--radius-xl)_-_1px)]">{panels}</div>
-        </div>
+          </LayerCardHeader>
+          <LayerCardPanel className={LAYER_WINDOW}>{panels}</LayerCardPanel>
+        </LayerCard>
       </div>
     );
   }
 
   return (
     <div className={className}>
-      <div
-        className={
-          heading !== undefined
-            ? "flex flex-wrap items-end justify-between gap-x-4 gap-y-3"
-            : "flex items-center justify-end"
-        }
-      >
-        {heading}
-        {tablist}
-      </div>
-      <div className="mt-3 overflow-hidden rounded-xl border border-border">{panels}</div>
+      {heading}
+      <LayerCard className={heading === undefined ? undefined : "mt-3"}>
+        <LayerCardHeader className={`${LAYER_TOOLBAR} justify-end`}>{tablist}</LayerCardHeader>
+        <LayerCardPanel className={LAYER_WINDOW}>{panels}</LayerCardPanel>
+      </LayerCard>
     </div>
   );
 }

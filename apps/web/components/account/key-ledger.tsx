@@ -38,7 +38,7 @@ export function KeyLedger({
 }) {
   return (
     <section aria-labelledby="ledger-title" className={SURFACE}>
-      <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-border px-5 py-3">
+      <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-5 pt-4 pb-2">
         <h2 className="flex items-center gap-2 text-sm font-medium" id="ledger-title">
           <Logomark className="size-4" />
           SevenUI Pro keys
@@ -48,20 +48,20 @@ export function KeyLedger({
       </header>
       <div
         aria-hidden
-        className="hidden grid-cols-[2rem_minmax(0,1fr)_auto] gap-x-5 border-b border-border bg-muted/40 px-5 py-2 text-xs text-muted-foreground lg:grid"
+        className="mx-2.5 hidden grid-cols-[2rem_minmax(0,1fr)_auto] gap-x-5 rounded-xl bg-muted/50 px-2.5 py-2 text-xs text-muted-foreground lg:grid"
       >
         <span>#</span>
         <span>License key</span>
         <span className="sr-only">Actions</span>
       </div>
-      <ol className="divide-y divide-border">
+      <ol className="flex flex-col gap-1 p-2.5">
         {rows.map((license, index) => {
           const active = license.key === activeKey;
           return (
             <li
               className={cx(
-                "grid grid-cols-[2rem_minmax(0,1fr)] items-center gap-x-4 gap-y-3 px-5 py-4 transition-colors lg:grid-cols-[2rem_minmax(0,1fr)_auto] lg:gap-x-5",
-                active && "bg-muted/30",
+                "grid grid-cols-[2rem_minmax(0,1fr)] items-center gap-x-4 gap-y-3 rounded-2xl px-2.5 py-3.5 transition-colors lg:grid-cols-[2rem_minmax(0,1fr)_auto] lg:gap-x-5",
+                active && "bg-muted/50",
               )}
               key={license.key}
             >
@@ -96,7 +96,7 @@ export function KeyLedger({
           );
         })}
       </ol>
-      <p className="border-t border-border px-5 py-3 text-xs leading-relaxed text-muted-foreground">
+      <p className="px-5 pt-1 pb-4 text-xs leading-relaxed text-muted-foreground">
         &ldquo;Copy setup&rdquo; copies the full key with the three setup steps, ready to send to the developer
         who uses it.
       </p>

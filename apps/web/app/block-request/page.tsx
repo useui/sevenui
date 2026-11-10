@@ -87,7 +87,7 @@ export default async function BlockRequestPage() {
           your existing key like any other Block.
         </p>
 
-        <p className="mt-12! border-t border-border pt-4 text-xs! leading-relaxed">
+        <p className="mt-12! rounded-2xl bg-muted/50 px-5 py-4 text-xs! leading-relaxed">
           If you submit a Block request and the Block you requested is added to the Pro catalog, your purchase is no
           longer eligible for a refund, including within the 14-day refund window described in the{" "}
           <Link href="/terms">Terms</Link>.

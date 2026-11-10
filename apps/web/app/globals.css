@@ -64,6 +64,12 @@
   --elevation-inset: inset 0 1px 2px rgb(0 0 0 / 0.05);
   --elevation-raised: 0 1px 2px rgb(0 0 0 / 0.06);
   --elevation-overlay: 0 30px 60px -30px rgb(20 22 30 / 0.25);
+  /* Docs shell: the floating sidebar card, its active row, and the quiet third text tier. */
+  --docs-panel: oklch(1 0 0);
+  --docs-panel-edge: oklch(0 0 0 / 7%);
+  --docs-panel-shadow: 0 1px 2px oklch(0 0 0 / 4%), 0 12px 32px -16px oklch(0 0 0 / 12%);
+  --docs-active: color-mix(in oklch, var(--foreground) 6%, var(--docs-panel));
+  --docs-tertiary: color-mix(in oklch, var(--muted-foreground) 72%, var(--background));
 }
 
 [data-theme="dark"] {
@@ -113,6 +119,11 @@
   --elevation-inset: inset 0 1px 2px rgb(0 0 0 / 0.4);
   --elevation-raised: 0 1px 2px rgb(0 0 0 / 0.3);
   --elevation-overlay: 0 30px 60px -30px rgb(0 0 0 / 0.8);
+  --docs-panel: var(--card);
+  --docs-panel-edge: oklch(1 0 0 / 8%);
+  --docs-panel-shadow: none;
+  --docs-active: oklch(0.235 0.006 271);
+  --docs-tertiary: color-mix(in oklch, var(--muted-foreground) 62%, var(--background));
 }
 
 @theme inline {
@@ -163,12 +174,18 @@
   --font-display: var(--font-sans);
 
   --container-content: 42rem;
+  --container-docs: 50.5rem;
   --color-surface-tray: var(--surface-tray);
   --color-surface-panel: var(--surface-panel);
   --color-surface-raised: var(--surface-raised);
   --color-surface-inset: var(--surface-inset);
   --color-hairline: var(--hairline);
   --color-hairline-strong: var(--hairline-strong);
+  --color-docs-panel: var(--docs-panel);
+  --color-docs-panel-edge: var(--docs-panel-edge);
+  --color-docs-active: var(--docs-active);
+  --color-docs-tertiary: var(--docs-tertiary);
+  --shadow-docs-panel: var(--docs-panel-shadow);
   --shadow-highlight: var(--elevation-highlight);
   --shadow-inset: var(--elevation-inset);
   --shadow-raised: var(--elevation-raised);
@@ -182,6 +199,9 @@
 }
 
 :root {
+  /* The site header's height. Docs drop the header from lg up (the sidebar card carries the
+     logo and search), so everything pinned below the header reads this instead of 4rem. */
+  --header-h: 4rem;
   --focus-width: 1.5px;
   --focus-gap: 2px;
   --control-h: 2.125rem;
@@ -222,7 +242,7 @@
     scroll-behavior: smooth;
     /* The sticky header height. Anything taller pushes every anchor and every
        route transition into Next's "scroll the segment into view" branch. */
-    scroll-padding-top: 4rem;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
     text-rendering: optimizeLegibility;
   }
 
@@ -385,6 +405,8 @@ html {
   flex-direction: column;
   max-width: none !important;
   background: var(--background);
+  /* The preview is a LayerCard tray; at full screen it meets the screen edges, so it drops its own corners. */
+  border-radius: 0;
 }
 [data-block-preview][data-fs] {
   position: fixed;
@@ -417,37 +439,6 @@ html {
   margin-inline: auto;
   width: 100%;
   max-width: 72rem; /* the same 72rem measure the docs pages' column uses */
-}
-
-@media (min-width: 640px) {
-  .l-row {
-    border-inline: 1px solid var(--border);
-  }
-}
-
-/* The corner marks sit on the row's side rules; while the row still spans the
-   viewport they would hang past its edge and cause a horizontal scroll. */
-@media (min-width: 73rem) {
-  .l-marks::before,
-  .l-marks::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    z-index: 1;
-    width: 7px;
-    height: 7px;
-    border: 1px solid var(--border);
-    background: var(--background);
-    transform: translate(-50%, -50%);
-  }
-
-  .l-marks::before {
-    left: 0;
-  }
-
-  .l-marks::after {
-    left: 100%;
-  }
 }
 
 .legal h1 {
@@ -494,8 +485,9 @@ html {
   top: 0.6875rem;
   left: -1.125rem;
   width: 5px;
-  height: 1px;
-  background: var(--border);
+  height: 5px;
+  border-radius: 9999px;
+  background: var(--docs-tertiary);
 }
 
 .legal strong {
@@ -515,24 +507,32 @@ html {
   text-underline-offset: 4px;
 }
 
-/* Cookie/processor tables: the same hairline grid as the rest of the canvas. */
+/* Cookie/processor tables: a soft filled surface instead of a hairline grid. */
 .legal table {
   margin-top: 1.25rem;
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border-radius: 1rem;
+  background: color-mix(in oklch, var(--muted) 50%, transparent);
   font-size: 0.875rem;
   text-align: start;
 }
 
 .legal th,
 .legal td {
-  border: 1px solid var(--border);
-  padding: 0.5rem 0.75rem;
+  padding: 0.625rem 0.875rem;
   vertical-align: top;
   color: var(--muted-foreground);
 }
 
+.legal tbody tr:nth-child(even) td {
+  background: color-mix(in oklch, var(--muted) 55%, transparent);
+}
+
 .legal th {
+  background: var(--muted);
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.75rem;
   font-weight: 500;
@@ -777,4 +777,164 @@ html #cc-main {
 #cc-main :focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
+}
+
+/*
+ * The site sidebar's tree. Each row hangs off a rail at 17px by a rounded elbow. Rails sit above the row
+ * backgrounds (z-index) so an active row never cuts its own line.
+ */
+/* An opaque tone mixed against the sidebar's own ground: rails and elbows overlap, and a translucent
+   colour would darken wherever two of them stack. The drawer sits on the page background, the lg card on
+   its panel. */
+.site-sidebar {
+  --tree-ground: var(--background);
+}
+
+@media (min-width: 64rem) {
+  .site-sidebar {
+    --tree-ground: var(--docs-panel);
+  }
+}
+
+.site-tree {
+  --rail: color-mix(in oklch, var(--foreground) 13%, var(--tree-ground));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-tree > li {
+  position: relative;
+}
+
+/*
+ * The rail. Rows are 32px tall and each elbow is an 8px arc from y=8 to the row's centre, so the rail
+ * itself draws every straight part: down to the arc on the last row, the full height elsewhere.
+ */
+.site-tree > li::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset-inline-start: 17px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--rail);
+  pointer-events: none;
+  transition: background-color 240ms var(--ease-snappy);
+}
+
+.site-tree > li:last-child::before {
+  bottom: auto;
+  height: 8px;
+}
+
+.site-tree-row {
+  position: relative;
+}
+
+/* The elbow: only the rounded turn and its short run toward the label. */
+.site-tree-row::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset-inline-start: 17px;
+  top: 8px;
+  width: 10px;
+  height: 8px;
+  border: 0 solid var(--rail);
+  border-inline-start-width: 1px;
+  border-block-end-width: 1px;
+  border-end-start-radius: 8px;
+  pointer-events: none;
+  transition: border-color 240ms var(--ease-snappy);
+}
+
+/* Groups open and close by height where the browser can animate `details` content. */
+@supports selector(::details-content) {
+  .site-sidebar {
+    interpolate-size: allow-keywords;
+  }
+
+  .site-sidebar details::details-content {
+    block-size: 0;
+    overflow-y: clip;
+    opacity: 0;
+    transition:
+      block-size 260ms var(--ease-snappy),
+      opacity 200ms ease,
+      content-visibility 260ms allow-discrete;
+  }
+
+  .site-sidebar details[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-sidebar details::details-content,
+  .site-tree > li::before,
+  .site-tree-row::before {
+    transition: none;
+  }
+}
+
+/* The header's Library and Resources menus (Base UI NavigationMenu). One popup follows the open
+   trigger and takes the size of its content; the content slides in from the side it was reached from. */
+.site-nav-positioner {
+  transition:
+    top 0.35s var(--ease-snappy),
+    left 0.35s var(--ease-snappy),
+    right 0.35s var(--ease-snappy),
+    bottom 0.35s var(--ease-snappy);
+}
+
+.site-nav-positioner[data-instant] {
+  transition: none;
+}
+
+.site-nav-popup {
+  transition:
+    opacity 0.2s ease,
+    scale 0.35s var(--ease-snappy),
+    width 0.35s var(--ease-snappy),
+    height 0.35s var(--ease-snappy);
+}
+
+.site-nav-popup:is([data-starting-style], [data-ending-style]) {
+  opacity: 0;
+  scale: 0.97;
+}
+
+.site-nav-popup[data-ending-style] {
+  transition-duration: 0.15s;
+}
+
+.site-nav-content {
+  transition:
+    opacity 0.18s ease,
+    translate 0.35s var(--ease-snappy);
+}
+
+.site-nav-content:is([data-starting-style], [data-ending-style]) {
+  opacity: 0;
+}
+
+.site-nav-content[data-starting-style][data-activation-direction="left"],
+.site-nav-content[data-ending-style][data-activation-direction="right"] {
+  translate: -40% 0;
+}
+
+.site-nav-content[data-starting-style][data-activation-direction="right"],
+.site-nav-content[data-ending-style][data-activation-direction="left"] {
+  translate: 40% 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-nav-positioner,
+  .site-nav-popup,
+  .site-nav-content {
+    transition: none;
+  }
 }

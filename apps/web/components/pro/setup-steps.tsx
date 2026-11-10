@@ -82,7 +82,7 @@ export function SetupSteps({
         <li className="grid grid-cols-[1.75rem_minmax(0,1fr)] gap-x-3" key={step.title}>
           <span
             aria-hidden
-            className="mt-px grid size-6 place-items-center rounded-full border border-border text-xs text-muted-foreground tabular-nums"
+            className="mt-px grid size-6 place-items-center rounded-full bg-muted text-xs text-muted-foreground tabular-nums"
           >
             {index + 1}
           </span>

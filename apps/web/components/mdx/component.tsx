@@ -12,6 +12,7 @@ export async function Component({ path: demoPath, contain = false }: { path: str
       // No install control: a primitive page installs the primitive, from its Installation section.
       actions={<ThemeCustomizer />}
       className="my-6"
+      detached
       code={await sourcePane(`demos/${demoPath}.tsx`)}
       preview={
         <PreviewPane contain={contain}>

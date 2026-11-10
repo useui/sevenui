@@ -24,9 +24,11 @@ function ensureLiveRegion(): HTMLElement {
 export type CopyButtonProps = {
   getText: () => string;
   className?: string;
+  /** "float" pins it over the code's top-right corner; "inline" lets a header row place it. */
+  placement?: "float" | "inline";
 };
 
-export function CopyButton({ getText, className }: CopyButtonProps) {
+export function CopyButton({ getText, className, placement = "float" }: CopyButtonProps) {
   const [copied, setCopied] = React.useState(false);
   const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -56,7 +58,11 @@ export function CopyButton({ getText, className }: CopyButtonProps) {
       onClick={handleClick}
       aria-label={copied ? "Copied" : "Copy code"}
       className={cx(
-        "absolute top-2 right-3 z-[2] inline-flex size-[1.875rem] select-none items-center justify-center rounded-md bg-background text-muted-foreground transition-colors [&_svg]:pointer-events-none [&_svg]:shrink-0 hover:bg-muted hover:text-foreground",
+        "inline-flex size-[1.875rem] shrink-0 select-none items-center justify-center rounded-md text-muted-foreground transition-colors [&_svg]:pointer-events-none [&_svg]:shrink-0 hover:text-foreground",
+        placement === "float"
+          ? "absolute top-2 right-3 z-[2] bg-background hover:bg-muted"
+          : // On a LayerCard tray the hover lifts the button to the panel surface, like the selected tab.
+            "hover:bg-(--layer-card-panel-bg,var(--muted))",
         className,
       )}
     >

@@ -35,7 +35,7 @@ export async function sourcePane(relPath: string): Promise<React.ReactElement> {
   const highlighted = await highlightRegistrySource(relPath);
 
   return (
-    <CodeBlock className="my-0! rounded-none! border-0!" language="tsx">
+    <CodeBlock bare language="tsx">
       <code
         className={cx(CODE_CLASS, "language-tsx shiki")}
         // biome-ignore lint/security/noDangerouslySetInnerHtml: build-time Shiki output from our own sources

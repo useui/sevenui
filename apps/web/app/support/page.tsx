@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowUpRightIcon, MailIcon } from "lucide-react";
+import { LayerCard } from "@/registry/base/ui/layer-card";
 import { JsonLd } from "../../components/json-ld";
 import { pageMetadata } from "../../lib/metadata";
+import { EmailChip, PageOpening } from "../../components/page-opening";
 import { requirePageMeta } from "../../lib/page-meta";
 import { FAQ, ISSUES_URL } from "./faq";
 
@@ -16,8 +18,9 @@ const MAILTO = `mailto:${EMAIL}?subject=${encodeURIComponent("Support")}`;
 const BUTTON =
   "inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground! no-underline! transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
+// A LayerCard with no panel renders as one raised surface; the link is the card itself.
 const CARD =
-  "flex h-full flex-col gap-1 rounded-lg border border-border px-4 py-3 no-underline! transition-colors hover:border-foreground/35 hover:bg-muted/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
+  "h-full gap-1 [--layer-card-radius:1rem] no-underline! transition-colors hover:bg-docs-active focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
 type QuickLink = { label: string; href: string; description: string; external?: boolean };
 
@@ -57,13 +60,10 @@ export default async function SupportPage() {
 
   return (
     <main id="content">
-      <section className="border-b border-border">
-        <div className="l-row l-marks flex items-center justify-between gap-4 border-b border-border px-6 py-3 font-mono text-xs text-muted-foreground">
-          <span>{meta.title}</span>
-          <span className="text-end">{EMAIL}</span>
-        </div>
+      <section>
+        <PageOpening meta={<EmailChip email={EMAIL} />} title={meta.title} />
         <div className="l-row">
-          <div className="legal mx-auto max-w-[68ch] px-6 py-14 sm:px-10">
+          <div className="legal mx-auto max-w-[68ch] px-6 pt-6 pb-14 sm:px-10">
             <h1>{meta.title}</h1>
             <p>
               Questions about installing SevenUI, your Pro license, or a Block that isn't behaving? Email us at{" "}
@@ -80,7 +80,7 @@ export default async function SupportPage() {
               </a>
             </p>
 
-            <section aria-labelledby="links-title" className="mt-14 border-t border-border pt-10" id="links">
+            <section aria-labelledby="links-title" className="mt-20" id="links">
               <Eyebrow>Self-serve</Eyebrow>
               {/* `.legal` sets heading margins unlayered, so utilities cannot override them. */}
               <h2 id="links-title" style={{ marginTop: "0.75rem" }}>
@@ -100,26 +100,30 @@ export default async function SupportPage() {
                     </>
                   );
                   return link.external ? (
-                    <a className={CARD} href={link.href} key={link.href} rel="noopener noreferrer" target="_blank">
+                    <LayerCard
+                      className={CARD}
+                      key={link.href}
+                      render={<a href={link.href} rel="noopener noreferrer" target="_blank" />}
+                    >
                       {body}
-                    </a>
+                    </LayerCard>
                   ) : (
-                    <Link className={CARD} href={link.href} key={link.href}>
+                    <LayerCard className={CARD} key={link.href} render={<Link href={link.href} />}>
                       {body}
-                    </Link>
+                    </LayerCard>
                   );
                 })}
               </nav>
             </section>
 
-            <section aria-labelledby="faq-title" className="mt-14 scroll-mt-20 border-t border-border pt-10" id="faq">
+            <section aria-labelledby="faq-title" className="mt-20 scroll-mt-20" id="faq">
               <Eyebrow>FAQ</Eyebrow>
               <h2 id="faq-title" style={{ marginTop: "0.75rem" }}>
                 Common questions
               </h2>
-              <dl className="divide-y divide-border border-y border-border" style={{ marginTop: "1.5rem" }}>
+              <dl className="flex flex-col gap-2" style={{ marginTop: "1.5rem" }}>
                 {FAQ.map((entry) => (
-                  <div className="py-5" key={entry.q}>
+                  <div className="rounded-2xl bg-muted/50 px-5 py-4" key={entry.q}>
                     <dt className="font-medium text-foreground">{entry.q}</dt>
                     <dd className="mt-1.5">{entry.a}</dd>
                   </div>

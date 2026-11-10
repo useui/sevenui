@@ -8,12 +8,19 @@ const SearchCommandDialog = dynamic(() => import("./command-dialog"), {
   ssr: false,
 });
 
-const STRING_SEARCH = "Search";
+const STRING_SEARCH = "Quick search";
 
 const DEFAULT_SHORTCUT = "⌘K";
 const CONTROL_SHORTCUT = "Ctrl K";
 
-export function SearchTrigger() {
+type Variant = "pill";
+
+const VARIANT_CLASSES: Record<Variant, string> = {
+  // The header: an icon on phones, a "Quick search ⌘K" pill from md up. Four header entries leave it room at lg.
+  pill: "size-9 justify-center rounded-[10px] md:h-9 md:w-52 md:justify-start md:gap-2 md:rounded-full md:bg-muted md:ps-3 md:pe-1.5",
+};
+
+export function SearchTrigger({ variant = "pill" }: { variant?: Variant }) {
   const [open, setOpen] = useState(false);
   const [everOpened, setEverOpened] = useState(false);
   const [shortcut, setShortcut] = useState(DEFAULT_SHORTCUT);
@@ -52,13 +59,23 @@ export function SearchTrigger() {
     <>
       <button
         aria-label={STRING_SEARCH}
-        className="inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        className={`inline-flex shrink-0 cursor-pointer items-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground ${VARIANT_CLASSES[variant]}`}
         onClick={openPalette}
         type="button"
       >
         <SearchIcon aria-hidden="true" className="shrink-0" size={16} />
-        {/* <span className="grow shrink-0 basis-0 text-start max-xl:hidden">{STRING_SEARCH}</span>
-        <kbd className="shrink-0 font-mono text-[0.7rem] max-xl:hidden">{shortcut}</kbd> */}
+        <span
+          className={`grow text-start font-normal text-sm ${variant === "pill" ? "max-md:hidden" : ""}`}
+        >
+          {STRING_SEARCH}
+        </span>
+        <kbd
+          className={`shrink-0 rounded-md bg-foreground/10 px-1.5 py-px font-medium font-sans text-muted-foreground text-xs ${
+            variant === "pill" ? "max-md:hidden" : ""
+          }`}
+        >
+          {shortcut}
+        </kbd>
       </button>
       {everOpened && <SearchCommandDialog onOpenChange={setOpen} open={open} />}
     </>

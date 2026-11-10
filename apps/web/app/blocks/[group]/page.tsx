@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProOffer } from "../../../components/blocks/pro-offer";
 import { CategoryCard } from "../../../components/blocks/category-card";
-import { Breadcrumb, type Crumb } from "../../../components/breadcrumb";
+import type { Crumb } from "../../../components/breadcrumb";
+import { PageIntro } from "../../../components/shell/page-intro";
 import { JsonLd } from "../../../components/json-ld";
 import { ShareOnX } from "../../../components/page-actions";
 import { loadBlocksTree } from "../../../lib/blocks";
@@ -38,19 +39,14 @@ export default async function BlocksGroupPage({ params }: { params: Promise<Para
 
   return (
     <>
-      <header className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6 border-b border-border px-6 py-12 lg:px-10">
-        <div className="max-w-2xl">
-          <Breadcrumb className="text-sm text-muted-foreground" crumbs={crumbs} />
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight">{group.label} blocks</h1>
-          <p className="mt-2 text-muted-foreground">{summary}</p>
-        </div>
+      <PageIntro crumbs={crumbs} description={summary} title={`${group.label} blocks`}>
         <ShareOnX
           route={route}
           text={`${group.label}: ${group.items.length} Pro blocks for React, built on Base UI.`}
         />
-      </header>
+      </PageIntro>
       <ProOffer />
-      <div className="px-6 py-12 lg:px-10">
+      <div className="py-12">
         <div className="grid max-w-5xl gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {group.categories.map((category) => (
             <CategoryCard category={category} group={group.id} headingLevel={2} key={category.id} />

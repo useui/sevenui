@@ -8,7 +8,7 @@ import { cx } from "../../lib/cx";
 import type { LicenseRow } from "./types";
 
 export const SURFACE =
-  "overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-[0_1px_2px_color-mix(in_oklch,var(--foreground)_5%,transparent),0_20px_40px_-24px_color-mix(in_oklch,var(--foreground)_24%,transparent)] dark:shadow-none";
+  "overflow-hidden rounded-3xl border border-docs-panel-edge bg-docs-panel text-card-foreground shadow-docs-panel";
 
 /** A key split on "-": separators sit quieter, and a line only breaks between segments. */
 export function KeyText({ value, className }: { value: string; className?: string }) {
@@ -42,7 +42,7 @@ function Frame({
 }) {
   return (
     <article aria-label={label} className={cx(SURFACE, className)}>
-      <header className="flex items-center justify-between gap-4 border-b border-border px-5 py-3">
+      <header className="flex items-center justify-between gap-4 px-5 pt-4 pb-1">
         <span className="flex items-center gap-2 text-sm font-medium">
           <Logomark className="size-4" />
           SevenUI Pro
@@ -50,14 +50,14 @@ function Frame({
         <span className="text-xs text-muted-foreground">{badge ?? "Lifetime · per developer"}</span>
       </header>
       {children}
-      <dl className="grid grid-cols-2 gap-px border-t border-border bg-border text-sm sm:grid-cols-4">{terms}</dl>
+      <dl className="m-2.5 mt-0 grid grid-cols-2 gap-1 rounded-2xl bg-muted/50 p-1 text-sm sm:grid-cols-4">{terms}</dl>
     </article>
   );
 }
 
 function Term({ term, children }: { term: string; children: ReactNode }) {
   return (
-    <div className="flex min-w-0 flex-col gap-0.5 bg-card px-5 py-3">
+    <div className="flex min-w-0 flex-col gap-0.5 px-3.5 py-2.5">
       <dt className="text-xs text-muted-foreground">{term}</dt>
       <dd className="truncate font-medium">{children}</dd>
     </div>
@@ -124,7 +124,7 @@ export function LockedKey({ caption }: { caption: string }) {
           <p className="text-xs text-muted-foreground">License key</p>
           <div className="mt-2 flex items-center gap-3">
             <KeyText className="min-w-0 flex-1 py-1 text-[1.0625rem] text-muted-foreground sm:text-[1.3125rem]" value="SEVENUI-••••-••••-••••" />
-            <span className="grid size-9 shrink-0 place-items-center rounded-lg border border-dashed border-foreground/25 text-muted-foreground">
+            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-muted text-muted-foreground">
               <LockIcon aria-hidden className="size-4" />
             </span>
           </div>
@@ -138,7 +138,7 @@ export function LockedKey({ caption }: { caption: string }) {
 export function KeySkeleton() {
   return (
     <div aria-hidden className={cx(SURFACE, "animate-pulse motion-reduce:animate-none")}>
-      <div className="flex items-center justify-between border-b border-border px-5 py-3.5">
+      <div className="flex items-center justify-between px-5 pt-4 pb-1">
         <div className="h-3.5 w-24 rounded-sm bg-muted" />
         <div className="h-3 w-28 rounded-sm bg-muted" />
       </div>
@@ -149,7 +149,7 @@ export function KeySkeleton() {
           <div className="h-9 w-20 rounded-lg bg-muted" />
         </div>
       </div>
-      <div className="h-[3.75rem] border-t border-border" />
+      <div className="m-2.5 mt-0 h-[3.75rem] rounded-2xl bg-muted/50" />
     </div>
   );
 }

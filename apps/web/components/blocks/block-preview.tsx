@@ -14,9 +14,11 @@ import {
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from "react";
 import { currentPackageManager } from "../../lib/package-manager";
 import { installCommand } from "../../lib/registry";
+import { LayerCard, LayerCardHeader, LayerCardPanel } from "@/registry/base/ui/layer-card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/registry/base/ui/tooltip";
 import { useAnnounce } from "../announcer";
 import { ThemeCustomizer } from "../customizer/theme-customizer";
+import { LAYER_FRAME_LG, LAYER_TOOLBAR } from "../layer-frame";
 import { TOOLBAR_ICON } from "../toolbar-classes";
 import { useBlockLoadGate } from "./blocks-load-gate";
 import { InstallControl } from "./install-control";
@@ -28,6 +30,8 @@ const MAX_WIDTH = 1440;
 const HANDLE_HALF = 8;
 const KEY_STEP = 24;
 const COPIED_MS = 1600;
+// The tray around the resizable panel: 4px padding and a 1px border on each side.
+const TRAY_CHROME = 10;
 
 const ALWAYS = `${TOOLBAR_ICON} inline-flex`;
 const PRESET = `${ALWAYS} aria-pressed:bg-muted aria-pressed:text-foreground`;
@@ -66,6 +70,8 @@ export function BlockPreview({
   const gate = useBlockLoadGate();
 
   const wrapperRef = useRef<HTMLDivElement>(null);
+  // The panel resizes inside the tray's content box, so widths are measured against this track, not the tray.
+  const trackRef = useRef<HTMLDivElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -93,9 +99,9 @@ export function BlockPreview({
   }
 
   function trackMax(): number {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return MAX_WIDTH;
-    return Math.min(wrapper.getBoundingClientRect().width - borderDelta(), MAX_WIDTH);
+    const track = trackRef.current;
+    if (!track) return MAX_WIDTH;
+    return Math.min(track.getBoundingClientRect().width - borderDelta(), MAX_WIDTH);
   }
 
   function applyWidth(targetIframePx: number) {
@@ -158,9 +164,9 @@ export function BlockPreview({
 
     function onMove(moveEvent: PointerEvent) {
       const drag = dragRef.current;
-      const wrapper = wrapperRef.current;
-      if (!drag || !wrapper || moveEvent.pointerId !== drag.pointerId) return;
-      const rect = wrapper.getBoundingClientRect();
+      const track = trackRef.current;
+      if (!drag || !track || moveEvent.pointerId !== drag.pointerId) return;
+      const rect = track.getBoundingClientRect();
       const targetBoxPx = moveEvent.clientX + drag.grabOffset - rect.left;
       applyWidth(targetBoxPx - borderDelta());
     }
@@ -359,14 +365,20 @@ export function BlockPreview({
   ] as const;
 
   return (
-    <div
-      className="@container/card relative w-full rounded-xl bg-muted/30"
-      data-block-preview=""
-      data-fs={fsFallback ? "" : undefined}
-      ref={wrapperRef}
-      style={{ maxWidth: `calc(${MAX_WIDTH}px + 2px)` }}
+    // The toolbar is the tray's header chrome and the resizable preview box is its panel, so narrowing the
+    // preview uncovers the tray behind it and the handle rides the panel's edge.
+    <LayerCard
+      className={`@container/card w-full ${LAYER_FRAME_LG}`}
+      render={
+        <div
+          data-block-preview=""
+          data-fs={fsFallback ? "" : undefined}
+          ref={wrapperRef}
+          style={{ maxWidth: `calc(${MAX_WIDTH}px + 2px + ${TRAY_CHROME}px)` }}
+        />
+      }
     >
-      <div className="@container/toolbar flex h-11 items-center gap-2 rounded-t-xl border border-border bg-muted/30 px-3">
+      <LayerCardHeader className={LAYER_TOOLBAR}>
         {/* biome-ignore lint/a11y/useSemanticElements: a <fieldset> brings its own border and min-width into a toolbar row */}
         <div aria-label="Preview width" className="hidden shrink-0 items-center gap-1 @2xl/card:flex" role="group">
           {presets.map(({ value, tip, name: label, Icon }) => (
@@ -517,9 +529,9 @@ export function BlockPreview({
           <InstallControl item={installItem} title={title} />
           <ThemeCustomizer />
         </div>
-      </div>
+      </LayerCardHeader>
 
-      <div className="relative" data-resize-frame="">
+      <div className="relative" data-resize-frame="" ref={trackRef}>
         {/* biome-ignore lint/a11y/useSemanticElements: a draggable, focusable splitter cannot be an <hr> */}
         <div
           aria-label="Resize preview"
@@ -542,37 +554,29 @@ export function BlockPreview({
             className="h-12 w-1.5 rounded-full bg-border transition-colors group-hover:bg-foreground/30 group-focus-visible:bg-foreground/50"
           />
         </div>
-        <div className="overflow-hidden rounded-b-xl">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-10 rounded-b-xl border border-t-0 border-border"
-          />
-          <div
-            className="relative overflow-hidden border border-t-0 border-border bg-background"
-            data-resize-box=""
-            ref={boxRef}
-            style={{ width: "100%", maxWidth: "100%" }}
-          >
-            <div className="relative" data-dragging={dragging ? "true" : undefined} data-preview-wrap="">
-              <iframe
-                className="w-full"
-                onError={releaseSlot}
-                onLoad={releaseSlot}
-                ref={iframeRef}
-                src={src}
-                style={{ height: `${height}px` }}
-                title={`${title} preview`}
-              />
-              <span
-                className="pointer-events-none absolute top-2 right-2 z-10 rounded bg-foreground px-1.5 py-0.5 font-mono text-xs text-background tabular-nums opacity-0 transition-opacity duration-150"
-                data-width-readout=""
+        <LayerCardPanel
+          className="overflow-hidden bg-background p-0"
+          render={<div data-resize-box="" ref={boxRef} style={{ width: "100%", maxWidth: "100%" }} />}
+        >
+          <div className="relative" data-dragging={dragging ? "true" : undefined} data-preview-wrap="">
+            <iframe
+              className="w-full"
+              onError={releaseSlot}
+              onLoad={releaseSlot}
+              ref={iframeRef}
+              src={src}
+              style={{ height: `${height}px` }}
+              title={`${title} preview`}
+            />
+            <span
+              className="pointer-events-none absolute top-2 right-2 z-10 rounded bg-foreground px-1.5 py-0.5 font-mono text-xs text-background tabular-nums opacity-0 transition-opacity duration-150"
+              data-width-readout=""
               >
-                {width === undefined ? "100%" : `${width}px`}
-              </span>
-            </div>
+              {width === undefined ? "100%" : `${width}px`}
+            </span>
           </div>
-        </div>
+        </LayerCardPanel>
       </div>
-    </div>
+    </LayerCard>
   );
 }

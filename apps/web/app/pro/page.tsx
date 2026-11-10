@@ -71,7 +71,7 @@ export default async function ProPage() {
 
   return (
     <main className="sv-page" id="content">
-      <section aria-labelledby="pro-title" className="border-b border-border">
+      <section aria-labelledby="pro-title">
         <div className="l-row grid grid-cols-1 gap-12 px-6 pt-14 pb-14 sm:px-8 sm:pt-20 sm:pb-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-16 lg:pt-24">
           <div className="flex flex-col">
             <h1
@@ -104,7 +104,7 @@ export default async function ProPage() {
                 <ArrowDownIcon aria-hidden="true" className="size-4" />
               </a>
             </div>
-            <table className="mt-12 w-full border-t border-border text-sm max-lg:hidden lg:mt-auto">
+            <table className="mt-12 w-full text-sm max-lg:hidden lg:mt-auto">
               <caption className="sr-only">What the catalog holds today, by group</caption>
               <thead className="sr-only">
                 <tr>
@@ -113,20 +113,20 @@ export default async function ProPage() {
                   <th scope="col">Blocks</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody>
                 {catalog.groups.map((group) => (
                   <tr key={group.id}>
-                    <th className="py-3 pe-4 text-start font-medium whitespace-nowrap" scope="row">
+                    <th className="py-2 pe-4 text-start font-medium whitespace-nowrap" scope="row">
                       <a className="hover:underline" href={`#group-${group.id}`}>
                         {group.label}
                       </a>
                     </th>
-                    <td className="py-3 pe-4 text-muted-foreground">
+                    <td className="py-2 pe-4 text-muted-foreground">
                       <span className="line-clamp-1">
                         {group.categories.map((category) => category.label).join(", ")}
                       </span>
                     </td>
-                    <td className="py-3 text-end whitespace-nowrap text-muted-foreground tabular-nums">
+                    <td className="py-2 text-end whitespace-nowrap text-muted-foreground tabular-nums">
                       {plural(group.items.length, "Block", "Blocks")}
                     </td>
                   </tr>
@@ -136,16 +136,16 @@ export default async function ProPage() {
           </div>
 
           <div
-            className="scroll-mt-24 self-start overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-[0_1px_2px_color-mix(in_oklab,var(--foreground)_5%,transparent),0_24px_48px_-28px_color-mix(in_oklab,var(--foreground)_30%,transparent)] dark:shadow-none"
+            className="scroll-mt-24 self-start overflow-hidden rounded-3xl border border-docs-panel-edge bg-docs-panel text-card-foreground shadow-docs-panel"
             id="order"
           >
-            <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3.5">
+            <div className="flex items-center justify-between gap-3 px-5 pt-5">
               <h2 className="text-sm font-semibold">SevenUI Pro license</h2>
-              <span className="rounded-full border border-foreground/20 px-2 py-0.5 text-xs text-muted-foreground">
+              <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">
                 Launch price
               </span>
             </div>
-            <div className="px-5 pt-5 pb-4">
+            <div className="px-5 pt-4 pb-4">
               <p className="flex items-baseline gap-2.5">
                 <span className="text-5xl font-semibold tracking-[-0.04em] tabular-nums">{PRO_LAUNCH}</span>
                 <span className="text-xl text-muted-foreground tabular-nums line-through decoration-1">
@@ -155,9 +155,9 @@ export default async function ProPage() {
               </p>
               <p className="mt-2 text-sm text-muted-foreground">One payment, at the launch price.</p>
             </div>
-            <dl className="divide-y divide-border border-y border-border text-sm">
+            <dl className="mx-2.5 rounded-2xl bg-muted/50 py-1.5 text-sm">
               {TERMS.map((term) => (
-                <div className="grid grid-cols-[5.5rem_minmax(0,1fr)] gap-3 px-5 py-2.5" key={term.label}>
+                <div className="grid grid-cols-[5.5rem_minmax(0,1fr)] gap-3 px-2.5 py-1.5" key={term.label}>
                   <dt className="text-muted-foreground">{term.label}</dt>
                   <dd className="text-pretty">{term.value}</dd>
                 </div>
@@ -175,7 +175,7 @@ export default async function ProPage() {
               </p>
             </div>
             <Link
-              className="flex items-center gap-2.5 border-t border-border bg-muted/40 px-5 py-3 text-sm transition-colors hover:bg-muted"
+              className="m-2.5 mt-0 flex items-center gap-2.5 rounded-2xl bg-muted/50 px-2.5 py-3 text-sm transition-colors hover:bg-muted"
               href="/account"
             >
               <KeyRoundIcon aria-hidden="true" className="size-4 text-muted-foreground" />
@@ -187,7 +187,7 @@ export default async function ProPage() {
         </div>
       </section>
 
-      <section aria-labelledby="catalog-title" className="scroll-mt-16 border-b border-border" id="catalog">
+      <section aria-labelledby="catalog-title" className="scroll-mt-16" id="catalog">
         <div className="l-row px-6 pt-16 sm:px-8 sm:pt-24">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between lg:gap-14">
             <h2 className={H2} id="catalog-title">
@@ -204,7 +204,7 @@ export default async function ProPage() {
             {catalog.groups.map((group) => (
               <section
                 aria-labelledby={`group-${group.id}`}
-                className="scroll-mt-16 border-t border-border py-10 sm:py-12"
+                className="scroll-mt-16 py-10 sm:py-12"
                 key={group.id}
               >
                 <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
@@ -223,12 +223,12 @@ export default async function ProPage() {
                   {group.categories.map((category) => (
                     <li key={category.id}>
                       <Link
-                        className="group block rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                        className="group block rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                         href={`/blocks/${group.id}/${category.id}`}
                       >
                         <BlockCover
                           alt=""
-                          className="rounded-lg border border-border transition-[border-color,box-shadow] duration-200 group-hover:border-foreground/35 group-hover:shadow-[0_12px_28px_-16px_color-mix(in_oklch,var(--foreground)_30%,transparent)]"
+                          className="rounded-2xl border border-docs-panel-edge shadow-docs-panel transition-shadow duration-200 group-hover:shadow-[0_12px_28px_-16px_color-mix(in_oklch,var(--foreground)_30%,transparent)]"
                           cover={category.cover}
                         />
                         <span className="mt-3 flex items-baseline justify-between gap-3">
@@ -250,7 +250,7 @@ export default async function ProPage() {
         </div>
       </section>
 
-      <section aria-labelledby="setup-title" className="scroll-mt-16 border-b border-border" id="setup">
+      <section aria-labelledby="setup-title" className="scroll-mt-16" id="setup">
         <div className="l-row grid grid-cols-1 gap-10 px-6 py-16 sm:px-8 sm:py-24 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14">
           <div>
             <h2 className={H2} id="setup-title">
@@ -267,7 +267,7 @@ export default async function ProPage() {
         </div>
       </section>
 
-      <section aria-labelledby="license-title" className="border-b border-border">
+      <section aria-labelledby="license-title">
         <div className="l-row px-6 py-16 sm:px-8 sm:py-24">
           <h2 className={H2} id="license-title">
             What the license lets you do.
@@ -303,17 +303,17 @@ export default async function ProPage() {
         </div>
       </section>
 
-      <section aria-labelledby="faq-title" className="scroll-mt-16 border-b border-border" id="faq">
+      <section aria-labelledby="faq-title" className="scroll-mt-16" id="faq">
         <div className="l-row">
-          <div className="px-6 pt-16 pb-10 sm:px-8 sm:pt-24">
+          <div className="px-6 pt-16 pb-8 sm:px-8 sm:pt-24">
             <h2 className={H2} id="faq-title">
               Questions, answered plainly.
             </h2>
           </div>
-          <dl className="divide-y divide-border border-t border-border">
+          <dl className="flex flex-col gap-2 px-6 sm:px-8">
             {FAQ.map((entry) => (
               <div
-                className="grid grid-cols-1 gap-2 px-6 py-6 sm:px-8 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-14"
+                className="grid grid-cols-1 gap-2 rounded-2xl bg-muted/50 px-5 py-5 sm:px-6 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-14"
                 key={entry.q}
               >
                 <dt className="text-[0.9375rem] font-medium">{entry.q}</dt>

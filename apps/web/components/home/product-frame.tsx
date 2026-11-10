@@ -158,7 +158,7 @@ export function ProductFrame() {
         delete-workspace dialog, finds alert-dialog in the registry, installs it, and composes the new section
         into the settings form. The form controls, the density toggle and the delete dialog are real.
       </figcaption>
-      <LayerCard className="[--layer-card-radius:1rem] [--layer-card-shadow:var(--elevation-highlight),var(--elevation-overlay)]">
+      <LayerCard className="[--layer-card-radius:1.25rem] [--layer-card-shadow:var(--elevation-highlight),0_0_0_1px_var(--docs-panel-edge),0_30px_60px_-36px_color-mix(in_oklch,var(--foreground)_22%,transparent)]">
         <LayerCardPanel className="grid overflow-hidden p-0 md:grid-cols-[minmax(0,1fr)_17rem] lg:min-h-[36.5rem] lg:grid-cols-[11.5rem_minmax(0,1fr)_18rem]">
           <Sidebar />
 

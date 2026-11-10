@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { BlockCard } from "../../../../components/blocks/block-card";
 import { PackageManagerIcons } from "../../../../components/blocks/package-manager-icons";
 import { ProOffer } from "../../../../components/blocks/pro-offer";
-import { Breadcrumb, type Crumb } from "../../../../components/breadcrumb";
+import type { Crumb } from "../../../../components/breadcrumb";
+import { PageIntro } from "../../../../components/shell/page-intro";
 import { JsonLd } from "../../../../components/json-ld";
 import { ShareOnX } from "../../../../components/page-actions";
 import { loadBlocksTree } from "../../../../lib/blocks";
@@ -48,19 +49,14 @@ export default async function BlocksCategoryPage({ params }: { params: Promise<P
   return (
     <>
       <PackageManagerIcons />
-      <header className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6 border-b border-border px-6 py-12 lg:px-10">
-        <div className="max-w-2xl">
-          <Breadcrumb className="text-sm text-muted-foreground" crumbs={crumbs} />
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight">{category.label} blocks</h1>
-          <p className="mt-2 text-muted-foreground">{summary}</p>
-        </div>
+      <PageIntro crumbs={crumbs} description={summary} title={`${category.label} blocks`}>
         <ShareOnX
           route={route}
           text={`${category.label}: ${category.items.length} Pro blocks for React, built on Base UI.`}
         />
-      </header>
+      </PageIntro>
       <ProOffer />
-      <div className="px-6 py-12 lg:px-10">
+      <div className="py-12">
         <div className="divide-y divide-border">
           {category.items.map((item) => (
             <BlockCard

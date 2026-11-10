@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { LayerCard, LayerCardFooter, LayerCardPanel } from "@/registry/base/ui/layer-card";
 import type { Category } from "../../lib/blocks";
+
+const COVER = "h-full w-full object-cover transition-transform duration-200 motion-safe:group-hover:scale-[1.02]";
 
 export function CategoryCard({
   group,
@@ -15,36 +18,28 @@ export function CategoryCard({
   const Heading = headingLevel === 2 ? "h2" : "h3";
 
   return (
-    <Link className="group block" href={`/blocks/${group}/${category.id}`}>
-      <div className="aspect-video overflow-hidden rounded-xl border border-border bg-muted/30">
+    // The cover is the raised panel; the label, count and description sit on the tray as footer chrome.
+    <LayerCard
+      className="group transition-[border-color] hover:[--layer-card-border-color:var(--hairline-strong)] focus-visible:focus-ring"
+      render={<Link href={`/blocks/${group}/${category.id}`} />}
+    >
+      <LayerCardPanel className="aspect-video overflow-hidden p-0">
         {cover ? (
           <>
-            <img
-              alt=""
-              className={`h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.02] ${cover.darkSrc ? "dark:hidden" : ""}`}
-              loading="lazy"
-              src={cover.src}
-            />
-            {cover.darkSrc && (
-              <img
-                alt=""
-                className="hidden h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.02] dark:block"
-                loading="lazy"
-                src={cover.darkSrc}
-              />
-            )}
+            <img alt="" className={`${COVER} ${cover.darkSrc ? "dark:hidden" : ""}`} loading="lazy" src={cover.src} />
+            {cover.darkSrc && <img alt="" className={`${COVER} hidden dark:block`} loading="lazy" src={cover.darkSrc} />}
           </>
         ) : (
           <img alt="" className="h-full w-full object-cover" loading="lazy" src="/placeholder.svg" />
         )}
-      </div>
-      <div className="mt-3 flex items-baseline justify-between gap-4">
-        <Heading className="text-sm font-medium tracking-tighter">{category.label}</Heading>
-        <span className="text-xs text-muted-foreground">
-          {`${category.items.length} ${category.items.length === 1 ? "block" : "blocks"}`}
+      </LayerCardPanel>
+      <LayerCardFooter className="flex-col items-stretch gap-1 pt-2.5 pb-2">
+        <span className="flex items-baseline justify-between gap-4">
+          <Heading className="text-sm font-medium tracking-tighter text-foreground">{category.label}</Heading>
+          <span className="text-xs">{`${category.items.length} ${category.items.length === 1 ? "block" : "blocks"}`}</span>
         </span>
-      </div>
-      <p className="mt-1 text-sm text-muted-foreground">{category.description}</p>
-    </Link>
+        <p className="text-sm text-muted-foreground">{category.description}</p>
+      </LayerCardFooter>
+    </LayerCard>
   );
 }

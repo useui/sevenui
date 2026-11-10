@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, List } from "lucide-react";
 import { createContext, useContext, type ReactNode } from "react";
 import type { Heading } from "../../lib/docs/headings";
 import { useActiveHeading } from "./use-active-heading";
@@ -33,7 +33,7 @@ function ariaCurrent(isActive: boolean): "location" | undefined {
   return isActive ? "location" : undefined;
 }
 
-export function DocsTocMobile({ className = "mx-auto mb-6 max-w-content" }: { className?: string }) {
+export function DocsTocMobile({ className = "mt-6 max-w-docs" }: { className?: string }) {
   const { activeId, headings } = useToc();
   if (headings.length === 0) return null;
 
@@ -70,14 +70,19 @@ export function DocsTocDesktop() {
 
   return (
     <>
-      <p className="mb-3 font-semibold text-foreground text-sm">On this page</p>
-      <ul className="m-0 list-none p-0">
+      <p className="m-0 flex items-center gap-2 font-medium text-foreground text-sm">
+        <List aria-hidden="true" className="text-muted-foreground" size={15} />
+        On this page
+      </p>
+      {/* A rail on the left; the active entry draws a 2px bar over it. */}
+      <ul className="m-0 mt-3 list-none border-border border-s p-0">
         {headings.map((heading) => (
-          <li key={heading.id} style={indent(heading.depth)}>
+          <li key={heading.id}>
             <a
               aria-current={ariaCurrent(heading.id === activeId)}
-              className="block py-1.5 text-muted-foreground transition-colors hover:text-foreground aria-[current=location]:font-medium aria-[current=location]:text-foreground"
+              className="relative block py-1.5 pe-1 font-medium text-docs-tertiary transition-colors before:absolute before:-start-px before:inset-y-0 before:w-0.5 before:bg-transparent hover:text-foreground aria-[current=location]:text-foreground aria-[current=location]:before:bg-foreground"
               href={`#${heading.id}`}
+              style={{ paddingInlineStart: `${1 + (heading.depth - 2) * 0.75}rem` }}
             >
               {heading.text}
             </a>

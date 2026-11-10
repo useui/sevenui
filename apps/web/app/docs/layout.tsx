@@ -2,18 +2,14 @@ import { TooltipProvider } from "@/registry/base/ui/tooltip";
 import { Announcer } from "../../components/announcer";
 import { PackageManagerIcons } from "../../components/blocks/package-manager-icons";
 import { CustomizerProvider } from "../../components/customizer/customizer-provider";
-import { DocsSidebar } from "../../components/docs/sidebar";
-import { getNavTree, resolvePrimitivesHref } from "../../lib/docs/nav";
+import { SiteSidebar } from "../../components/shell/site-sidebar";
+import { getShellNav } from "../../lib/shell-nav";
 
 // Each page renders its own <main> and "On this page" aside, so the layout's
 // RSC payload carries no per-page data: a page ships its own headings and
 // breadcrumb instead of every page's.
 export default async function DocsLayout({ children }: { children: React.ReactNode }) {
-  const tree = await getNavTree();
-  const primitivesHref = resolvePrimitivesHref(tree);
-  if (!primitivesHref) {
-    throw new Error("app/docs/layout.tsx: nav tree has no Primitives group with a resolvable href");
-  }
+  const nav = await getShellNav();
 
   // The same providers as the gallery: every <Component> demo carries the gallery's toolbar, whose
   // install menu announces its copies and whose Customize button drives the page's one panel.
@@ -22,8 +18,10 @@ export default async function DocsLayout({ children }: { children: React.ReactNo
       <Announcer>
         <CustomizerProvider>
           <PackageManagerIcons />
-          <div className="mx-auto grid grid-cols-1 items-start lg:grid-cols-[17.5rem_minmax(0,1fr)] xl:grid-cols-[17.5rem_minmax(0,1fr)_17.5rem]">
-            <DocsSidebar primitivesHref={primitivesHref} tree={tree} />
+          <div
+            className="grid grid-cols-1 items-start lg:grid-cols-[17.75rem_minmax(0,1fr)] lg:gap-x-10 xl:grid-cols-[17.75rem_minmax(0,1fr)_16.25rem]"
+          >
+            <SiteSidebar nav={nav} />
             {children}
           </div>
         </CustomizerProvider>

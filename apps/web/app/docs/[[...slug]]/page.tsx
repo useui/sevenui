@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { DocsBreadcrumb } from "../../../components/docs/breadcrumb";
 import { DocsFeedback } from "../../../components/docs/feedback";
 import { DocsPageActions } from "../../../components/docs/page-actions";
 import { DocsPagination } from "../../../components/docs/pagination";
 import { DocsTocDesktop, DocsTocMobile, DocsTocProvider } from "../../../components/docs/toc";
 import { JsonLd } from "../../../components/json-ld";
+import { ShellTopline } from "../../../components/shell/page-intro";
 import { getDoc, getDocIndex } from "../../../lib/docs";
 import { docsTrail, getNavTree } from "../../../lib/docs/nav";
 import { pageMetadataOrNotFound } from "../../../lib/metadata";
@@ -41,17 +41,17 @@ export default async function DocPage({ params }: { params: Promise<Params> }) {
 
   return (
     <DocsTocProvider headings={doc.headings}>
-      <main className="px-6 pt-6 pb-10 lg:px-8 xl:px-10" id="content">
-        <DocsBreadcrumb crumbs={docsTrail(tree, route)} />
+      <main className="min-w-0 px-6 pt-6 pb-12 lg:ps-0 lg:pe-8 lg:pt-10 xl:pe-0" id="content">
+        <ShellTopline className="max-w-docs" crumbs={docsTrail(tree, route)} />
         <DocsTocMobile />
         <link href="/agent-readability.json" rel="describedby" type="application/json" />
         <link href="/llms.txt" rel="describedby" type="text/plain" />
         <link href={`${route}.md`} rel="alternate" type="text/markdown" />
-        <article className="mx-auto max-w-content">
-          <h1 className="mb-4 font-display text-4xl leading-[1.1] font-medium tracking-tighter text-foreground break-words sm:text-5xl">
+        <article className="max-w-docs">
+          <h1 className="mt-6 mb-0 font-display font-medium text-2xl text-foreground leading-[34px] tracking-normal break-words">
             {doc.title}
           </h1>
-          <p className="my-4 text-lg text-muted-foreground">{doc.description}</p>
+          <p className="mt-3 mb-8 font-medium text-base text-muted-foreground leading-[22px]">{doc.description}</p>
           <MDXContent />
         </article>
         <DocsFeedback title={meta?.title ?? doc.title} />
@@ -60,7 +60,7 @@ export default async function DocPage({ params }: { params: Promise<Params> }) {
       </main>
       <aside
         aria-label="On this page"
-        className="sticky top-16 hidden h-[calc(100dvh-4rem)] scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent overflow-y-auto px-4 pt-6 pb-10 text-sm xl:block"
+        className="sticky top-(--header-h) hidden h-[calc(100dvh-var(--header-h))] scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent overflow-y-auto pe-7 pt-10 pb-10 text-sm xl:block"
       >
         <DocsTocDesktop />
         <DocsPageActions route={route} />

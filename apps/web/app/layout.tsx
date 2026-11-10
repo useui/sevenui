@@ -8,8 +8,9 @@ import { SiteDrawer } from "../components/site-drawer";
 import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
 import { ThemeProvider } from "../components/theme-provider";
-import { getNavTree, resolvePrimitivesHref } from "../lib/docs/nav";
-import { galleryFamilies } from "../lib/gallery";
+import { getNavTree, isNavGroup, resolvePrimitivesHref } from "../lib/docs/nav";
+import { getHeaderNav } from "../lib/header-nav";
+import { galleryComponents, galleryFamilies } from "../lib/gallery";
 import { site } from "../lib/site";
 
 const inter = Inter({
@@ -33,10 +34,16 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const primitivesHref = resolvePrimitivesHref(await getNavTree());
+  const tree = await getNavTree();
+  const primitivesHref = resolvePrimitivesHref(tree);
   if (!primitivesHref) {
     throw new Error("app/layout.tsx: nav tree has no Primitives group with a resolvable href");
   }
+
+  const primitiveCount = tree.find(isNavGroup)?.children.length ?? 0;
+  const componentCount = galleryComponents.reduce((sum, component) => sum + component.count, 0);
+  const componentFamilies = galleryFamilies.map(({ id, label }) => ({ id, label }));
+  const headerNav = await getHeaderNav(primitivesHref);
 
   return (
     <html
@@ -62,10 +69,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             Skip to content
           </a>
           <DrawerProvider>
-            <SiteHeader primitivesHref={primitivesHref} />
+            <SiteHeader nav={headerNav} />
             {children}
-            <SiteDrawer galleryFamilies={galleryFamilies} primitivesHref={primitivesHref} />
-            <SiteFooter primitivesHref={primitivesHref} />
+            <SiteDrawer primitivesHref={primitivesHref} />
+            <SiteFooter
+              componentCount={componentCount}
+              componentFamilies={componentFamilies}
+              primitiveCount={primitiveCount}
+              primitivesHref={primitivesHref}
+            />
           </DrawerProvider>
         </ThemeProvider>
         <CookieConsentBanner />

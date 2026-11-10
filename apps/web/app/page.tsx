@@ -73,10 +73,10 @@ export default function Home() {
       <section aria-labelledby="home-title">
         <div className={`${ROW} pt-16 pb-12 sm:pt-24 sm:pb-16`}>
           <Link
-            className="inline-flex max-w-full items-center gap-2 rounded-full bg-surface-tray py-1 pr-3 pl-1 text-[0.8125rem] text-foreground/85 shadow-[inset_0_0_0_1px_var(--hairline)] hover:text-foreground"
+            className="inline-flex max-w-full items-center gap-2 rounded-full bg-surface-tray py-1 pr-3 pl-1 text-[0.8125rem] text-foreground/85 hover:text-foreground"
             href="/docs"
           >
-            <span className="rounded-full bg-surface-raised px-2 py-0.5 text-[0.6875rem] font-medium text-foreground shadow-[inset_0_0_0_1px_var(--hairline)]">
+            <span className="rounded-full bg-surface-raised px-2 py-0.5 text-[0.6875rem] font-medium text-foreground shadow-docs-panel">
               v2
             </span>
             <span className="truncate">Base UI components for shadcn/ui</span>
@@ -128,8 +128,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section aria-labelledby="sizes-title" className="border-t border-border">
-        <div className={`${ROW} py-20 sm:py-28`}>
+      <section aria-labelledby="sizes-title">
+        <div className={`${ROW} py-16 sm:py-24`}>
           <div className={`${DISPLAY} max-w-[46rem] text-[1.75rem] leading-[1.15] sm:text-[2.25rem]`}>
             <h2 className="inline tracking-[inherit]" id="sizes-title">
               One registry, three sizes.
@@ -143,8 +143,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section aria-labelledby="agents-title" className="border-t border-border">
-        <div className={`${ROW} py-20 sm:py-28`}>
+      <section aria-labelledby="agents-title">
+        <div className={`${ROW} py-16 sm:py-24`}>
           <div className={`${DISPLAY} max-w-[46rem] text-[1.75rem] leading-[1.15] sm:text-[2.25rem]`}>
             <h2 className="inline tracking-[inherit]" id="agents-title">
               Built for teams and their agents.
@@ -153,9 +153,12 @@ export default function Home() {
               The registry is plain source and one command, so an agent uses it the way you do.
             </span>
           </div>
-          <ol className="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-xl bg-hairline shadow-[0_0_0_1px_var(--hairline)] md:grid-cols-3">
+          <ol className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-3">
             {AGENT_LEVELS.map((level) => (
-              <li className="flex flex-col bg-background p-6" key={level.fig}>
+              <li
+                className="flex flex-col rounded-3xl border border-docs-panel-edge bg-docs-panel p-6 shadow-docs-panel"
+                key={level.fig}
+              >
                 <p className={CAPTION}>{level.fig}</p>
                 <h3 className="mt-4 text-[0.9375rem] font-[510] tracking-[-0.01em]">{level.title}</h3>
                 <p className="mt-2 max-w-[36ch] flex-1 text-sm leading-relaxed text-pretty text-muted-foreground [&_code]:font-mono [&_code]:text-[0.8125rem] [&_code]:whitespace-nowrap [&_code]:text-foreground/85">
@@ -179,8 +182,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section aria-labelledby="start-title" className="border-t border-border">
-        <div className={`${ROW} py-20 sm:py-28`}>
+      <section aria-labelledby="start-title">
+        <div className={`${ROW} py-16 sm:py-24`}>
           <div className={`${DISPLAY} max-w-[40rem] text-[1.75rem] leading-[1.15] sm:text-[2.25rem]`}>
             <h2 className="inline tracking-[inherit]" id="start-title">
               Start with one command.

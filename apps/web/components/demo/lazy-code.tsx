@@ -40,7 +40,7 @@ export function LazyCode({ src, rawHref }: { src: string; rawHref: string }) {
   }
 
   return (
-    <CodeBlock aria-busy={state.status !== "ready"} className="my-0! rounded-none! border-0!" language="tsx">
+    <CodeBlock aria-busy={state.status !== "ready"} bare language="tsx">
       {state.status === "ready" ? (
         <code
           className={cx(CODE_CLASS, "language-tsx shiki")}

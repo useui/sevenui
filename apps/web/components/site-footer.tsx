@@ -4,29 +4,31 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as CookieConsent from "vanilla-cookieconsent";
+import { isShellRoute } from "../lib/site-tabs";
 import { Logomark } from "./logomark";
+import { GithubMark, outlineButton } from "./site-actions";
+import { ThemeSwitch } from "./theme-switch";
 
 const footerPrimitives = ["button", "input", "select", "combobox", "checkbox", "switch", "slider", "table"];
 
-const linkClass = "inline-flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground";
+const linkClass = "inline-flex items-center gap-1 py-1.5 font-medium text-muted-foreground text-sm transition-colors hover:text-foreground";
+const viewAllClass = "inline-flex items-center gap-1 py-1.5 font-medium text-foreground text-sm";
 
-type FooterLink = { label: string; href: string; external?: boolean; arrow?: boolean };
+type FooterLink = { label: string; href: string; external?: boolean };
 
 const productLinks: FooterLink[] = [
-  { label: "Components", href: "/components" },
   { label: "Blocks", href: "/blocks" },
   { label: "Pro", href: "/pro" },
   { label: "Roadmap", href: "/roadmap" },
+  { label: "Block Request", href: "/block-request" },
 ];
 
 const resourceLinks: FooterLink[] = [
   { label: "Introduction", href: "/docs" },
   { label: "Installation", href: "/docs/installation" },
   { label: "Theming", href: "/docs/theming" },
-  { label: "Block Request", href: "/block-request" },
   { label: "Support", href: "/support" },
   { label: "llms.txt", href: "/llms.txt", external: true },
-  { label: "GitHub", href: "https://github.com/useui/sevenui", external: true },
 ];
 
 const builtOnLinks: FooterLink[] = [
@@ -35,10 +37,20 @@ const builtOnLinks: FooterLink[] = [
   { label: "Tailwind CSS", href: "https://tailwindcss.com", external: true },
 ];
 
-function FooterNav({ label, links }: { label: string; links: FooterLink[] }) {
+export type FooterFamily = { id: string; label: string };
+
+function FooterNav({
+  label,
+  links,
+  viewAll,
+}: {
+  label: string;
+  links: FooterLink[];
+  viewAll?: { href: string; count: number };
+}) {
   return (
-    <nav aria-label={label} className="flex flex-col items-start gap-2 text-sm">
-      <span className="mb-1 font-medium">{label}</span>
+    <nav aria-label={label} className="flex flex-col items-start">
+      <span className="mb-3 font-semibold text-docs-tertiary text-xs uppercase tracking-[0.3px]">{label}</span>
       {links.map((link) =>
         link.external ? (
           // Plain anchors: off-site links, and llms.txt is a route handler, not a page.
@@ -53,53 +65,98 @@ function FooterNav({ label, links }: { label: string; links: FooterLink[] }) {
         ) : (
           <Link className={linkClass} href={link.href} key={link.href}>
             {link.label}
-            {link.arrow && <ArrowRight aria-hidden="true" className="size-3.5" />}
           </Link>
         ),
+      )}
+      {viewAll && (
+        <Link className={viewAllClass} href={viewAll.href}>
+          View all <span className="text-docs-tertiary">({viewAll.count})</span>
+          <ArrowRight aria-hidden="true" className="size-3.5" />
+        </Link>
       )}
     </nav>
   );
 }
 
-export function SiteFooter({ primitivesHref }: { primitivesHref: string }) {
-  const framed = usePathname() === "/";
+export function SiteFooter({
+  componentCount,
+  componentFamilies,
+  primitiveCount,
+  primitivesHref,
+}: {
+  componentCount: number;
+  componentFamilies: FooterFamily[];
+  primitiveCount: number;
+  primitivesHref: string;
+}) {
+  const pathname = usePathname();
+  const framed = pathname === "/";
 
-  const primitiveLinks: FooterLink[] = [
-    ...footerPrimitives.map((name) => ({
-      label: name.charAt(0).toUpperCase() + name.slice(1).replace("-", " "),
-      href: `/docs/components/${name}`,
-    })),
-    { label: "All primitives", href: primitivesHref, arrow: true },
-  ];
+  // The shell sections end on their own content: the sidebar card already carries every link this footer would.
+  if (isShellRoute(pathname)) return null;
 
-  const columns = (
+  const primitiveLinks: FooterLink[] = footerPrimitives.map((name) => ({
+    label: name.charAt(0).toUpperCase() + name.slice(1).replace("-", " "),
+    href: `/docs/components/${name}`,
+  }));
+
+  const familyLinks: FooterLink[] = componentFamilies.map((family) => ({
+    label: family.label,
+    href: `/components#${family.id}`,
+  }));
+
+  const body = (
     <>
-      <div className="flex flex-col gap-3 sm:col-span-2 lg:col-span-1">
-        <span className="inline-flex items-center gap-2 font-semibold">
-          <Logomark className="h-5 w-auto" /> SevenUI
-        </span>
-        <p className="max-w-xs text-sm text-muted-foreground">
-          <span className="block font-medium text-foreground">Built for teams and their agents.</span>
-          Base UI components for shadcn/ui, distributed through the shadcn registry.
-        </p>
+      <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-start">
+        <div>
+          <Link aria-label="SevenUI home" className="inline-flex text-foreground" href="/">
+            <Logomark className="h-6 w-auto" />
+          </Link>
+          <p className="mt-3.5 max-w-[27rem] font-medium text-muted-foreground text-sm">
+            SevenUI is a set of Base UI components for shadcn/ui, built for teams and their agents and
+            distributed through the shadcn registry.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <a
+            className={`${outlineButton} px-3`}
+            href="https://github.com/useui/sevenui"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <GithubMark />
+            GitHub
+          </a>
+          <Link className={`${outlineButton} px-3`} href="/pro">
+            <Logomark className="h-3.5 w-auto shrink-0" />
+            Get Pro
+          </Link>
+        </div>
       </div>
-      <FooterNav label="Primitives" links={primitiveLinks} />
-      <FooterNav label="Product" links={productLinks} />
-      <FooterNav label="Resources" links={resourceLinks} />
-      <FooterNav label="Built on" links={builtOnLinks} />
+      <div className="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-5">
+        <FooterNav label="Primitives" links={primitiveLinks} viewAll={{ href: primitivesHref, count: primitiveCount }} />
+        <FooterNav label="Components" links={familyLinks} viewAll={{ href: "/components", count: componentCount }} />
+        <FooterNav label="Product" links={productLinks} />
+        <FooterNav label="Resources" links={resourceLinks} />
+        <FooterNav label="Built on" links={builtOnLinks} />
+      </div>
     </>
   );
 
   const legal = (
     <>
-      <p>MIT License © 2026 SevenUI</p>
-      <nav aria-label="Legal" className="flex items-center gap-4">
+      <ThemeSwitch />
+      <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-2 gap-y-1 font-medium">
+        <span>MIT License © 2026 SevenUI</span>
+        <span aria-hidden="true">·</span>
         <Link className="transition-colors hover:text-foreground" href="/terms">
           Terms
         </Link>
+        <span aria-hidden="true">·</span>
         <Link className="transition-colors hover:text-foreground" href="/privacy">
           Privacy
         </Link>
+        <span aria-hidden="true">·</span>
         <button className="cursor-pointer transition-colors hover:text-foreground" onClick={() => CookieConsent.showPreferences()} type="button">
           Cookie settings
         </button>
@@ -107,28 +164,28 @@ export function SiteFooter({ primitivesHref }: { primitivesHref: string }) {
     </>
   );
 
+  // A soft tinted surface inset from the viewport edges, in place of hairline rules above and inside it.
+  const SURFACE = "mx-3 mb-3 rounded-3xl bg-muted/50 sm:mx-4 sm:mb-4";
+  const legalRow = "flex flex-col gap-3 py-4 text-docs-tertiary text-xs sm:flex-row sm:items-center sm:justify-between";
+
   if (framed) {
     return (
-      <footer>
-        <div className="l-row l-marks">
-          <div className="grid w-full gap-10 px-6 py-14 sm:grid-cols-2 lg:grid-cols-[1.5fr_repeat(4,1fr)]">{columns}</div>
+      <footer className={SURFACE}>
+        <div className="l-row">
+          <div className="px-6 pt-14 pb-10">{body}</div>
         </div>
-        <div className="border-t border-border">
-          <div className="l-row flex flex-col gap-3 px-6 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-            {legal}
-          </div>
+        <div>
+          <div className={`l-row px-6 ${legalRow}`}>{legal}</div>
         </div>
       </footer>
     );
   }
 
   return (
-    <footer className="border-t border-border">
-      <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 sm:grid-cols-2 lg:grid-cols-[1.5fr_repeat(4,1fr)]">{columns}</div>
-      <div className="border-t border-border">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          {legal}
-        </div>
+    <footer className={SURFACE}>
+      <div className="mx-auto max-w-6xl px-6 pt-14 pb-10">{body}</div>
+      <div>
+        <div className={`mx-auto max-w-6xl px-6 ${legalRow}`}>{legal}</div>
       </div>
     </footer>
   );

@@ -145,14 +145,14 @@ export function CustomizerPanel() {
         {open && (
           <button
             aria-hidden="true"
-            className="fixed inset-x-0 top-16 bottom-0 z-[37] cursor-default bg-black/30 lg:hidden"
+            className="fixed inset-x-0 top-(--header-h) bottom-0 z-[37] cursor-default bg-black/30 lg:hidden"
             onClick={() => setOpen(false)}
             tabIndex={-1}
             type="button"
           />
         )}
         <Dialog.Popup
-          className={`fixed start-0 top-16 bottom-0 z-[38] flex w-[min(23rem,calc(100vw-3rem))] flex-col border-e border-border bg-background text-foreground shadow-[16px_0_40px_-24px_rgb(0_0_0/0.28)] outline-none ${SLIDE}`}
+          className={`fixed start-0 top-(--header-h) bottom-0 z-[38] flex w-[min(23rem,calc(100vw-3rem))] flex-col border-e border-border bg-background text-foreground shadow-[16px_0_40px_-24px_rgb(0_0_0/0.28)] outline-none ${SLIDE}`}
           finalFocus={triggerRef}
           id={CUSTOMIZER_PANEL_ID}
         >

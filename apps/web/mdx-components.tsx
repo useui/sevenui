@@ -11,7 +11,7 @@ function cx(...values: Array<string | false | null | undefined>): string {
 }
 
 function P({ className, ...props }: React.ComponentPropsWithoutRef<"p">) {
-  return <p className={cx("my-4 text-[0.875rem] text-muted-foreground leading-[1.7]", className)} {...props} />;
+  return <p className={cx("my-3.5 font-medium text-base text-muted-foreground leading-[22px]", className)} {...props} />;
 }
 
 const HEADING_ANCHOR_CLASSES =
@@ -28,7 +28,7 @@ function H2({ className, children, ...props }: React.ComponentPropsWithoutRef<"h
   return (
     <h2
       className={cx(
-        "mt-12 mb-[1em] font-display text-[1.625rem] leading-[1.2] font-medium tracking-tighter text-foreground break-words first:mt-0 sm:text-3xl",
+        "mt-14 mb-2.5 font-display text-xl leading-[26px] font-medium tracking-normal text-foreground break-words first:mt-0",
         className,
       )}
       {...props}
@@ -42,7 +42,7 @@ function H3({ className, children, ...props }: React.ComponentPropsWithoutRef<"h
   return (
     <h3
       className={cx(
-        "mt-8 mb-3 font-display text-xl leading-[1.35] font-medium tracking-tighter text-foreground break-words [h2+&]:mt-0",
+        "mt-8 mb-2 font-display text-base leading-6 font-medium tracking-normal text-foreground break-words [h2+&]:mt-0",
         className,
       )}
       {...props}
@@ -104,7 +104,7 @@ function Ul({ className, ...props }: React.ComponentPropsWithoutRef<"ul">) {
 function Li({ className, ...props }: React.ComponentPropsWithoutRef<"li">) {
   return (
     <li
-      className={cx("my-[7px] ps-[0.375em] text-[0.875rem] text-muted-foreground leading-[1.7]", className)}
+      className={cx("my-1.5 ps-[0.375em] font-medium text-base text-muted-foreground leading-[22px]", className)}
       {...props}
     />
   );
