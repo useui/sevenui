@@ -54,7 +54,7 @@
   --elevation-highlight: inset 0 1px 0 rgb(255 255 255 / 0.9);
   --elevation-inset: inset 0 1px 2px rgb(0 0 0 / 0.05);
   --elevation-raised: 0 1px 2px rgb(0 0 0 / 0.06);
-  --elevation-overlay: 0 0 0 1px var(--hairline-strong), 0 30px 60px -30px rgb(20 22 30 / 0.25);
+  --elevation-overlay: 0 30px 60px -30px rgb(20 22 30 / 0.25);
 }
 
 .dark,
@@ -104,7 +104,7 @@
   --elevation-highlight: inset 0 1px 0 rgb(255 255 255 / 0.06);
   --elevation-inset: inset 0 1px 2px rgb(0 0 0 / 0.4);
   --elevation-raised: 0 1px 2px rgb(0 0 0 / 0.3);
-  --elevation-overlay: 0 0 0 1px var(--hairline-strong), 0 30px 60px -30px rgb(0 0 0 / 0.8);
+  --elevation-overlay: 0 30px 60px -30px rgb(0 0 0 / 0.8);
 }
 
 /* Tailwind v4 preflight leaves the default border color at currentColor;
