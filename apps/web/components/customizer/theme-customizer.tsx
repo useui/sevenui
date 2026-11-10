@@ -1,39 +1,30 @@
 "use client";
 
 import { Palette } from "lucide-react";
+import { useEffect } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/registry/base/ui/tooltip";
-import { CUSTOMIZER_PANEL_ID, useCustomizer } from "./customizer-state";
+import { useCustomizer, useCustomizerTrigger } from "./customizer-state";
 
 /**
- * Toolbar button that toggles the page's customizer panel. Every instance drives the same panel
+ * Toolbar button that toggles the page's customizer dock. Every instance drives the same dock
  * and the same stored preset, which the block iframes and the inline previews both read.
- * It sits outside the preset scope, so it keeps the site's own primary whatever theme is picked.
+ * It is drawn as quiet toolbar chrome: the floating launcher is the customizer's home, and this is
+ * the shortcut to it from wherever a preview is being read.
  */
 export function ThemeCustomizer() {
-  const { config, open, requestPanel, setOpen, triggerRef } = useCustomizer();
+  const { open, registerPreview } = useCustomizer();
+  const trigger = useCustomizerTrigger();
+
+  // A mounted toolbar means the page has something to restyle, which is what brings the launcher in.
+  useEffect(() => registerPreview(), [registerPreview]);
 
   return (
     <Tooltip>
       <TooltipTrigger
         render={
           <button
-            aria-controls={open ? CUSTOMIZER_PANEL_ID : undefined}
-            aria-expanded={open}
-            aria-label={
-              config === null
-                ? "Customize theme"
-                : `Customize theme — ${config.theme} theme, ${config.baseColor} base color, ${config.radius} radius`
-            }
-            className="inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md border border-transparent bg-primary px-2 text-xs font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-expanded:bg-primary/85"
-            onClick={(event) => {
-              triggerRef.current = event.currentTarget;
-              requestPanel();
-              setOpen(!open);
-            }}
-            // Intent to open: start loading the panel so it is mounted, closed, before the click.
-            onFocus={requestPanel}
-            onPointerEnter={requestPanel}
-            type="button"
+            {...trigger}
+            className="inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md border border-border px-2 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-expanded:bg-muted aria-expanded:text-foreground"
           />
         }
       >
