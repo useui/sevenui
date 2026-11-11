@@ -52,7 +52,8 @@ describe("Label v2 styles", () => {
     const cls = screen.getByText("Styled").className;
     expect(cls).toContain("text-[length:var(--control-text,");
     expect(cls).toContain("font-medium");
-    expect(cls).toContain("text-foreground");
+    // No colour of its own: an invalid Field colours its label through inheritance, as on main.
+    expect(cls.split(" ")).not.toContain("text-foreground");
     expect(cls).toContain("peer-disabled:opacity-60");
     expect(cls).not.toContain("opacity-50");
   });

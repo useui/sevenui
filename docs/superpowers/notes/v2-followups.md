@@ -28,10 +28,11 @@ rest follow their category's uniform shift and were not opened one by one.
   and buttons are a few pixels wider; both containers are one step wider now.
 - Uniform, intended shifts: field descriptions and table heads are 12px, list
   and accordion rows are denser, calendar cells are larger.
-- Open, a design call: `alert` padding went from 8/10px to `--panel-pad`
-  (18px). Every alert is at least 20px taller and its description wraps earlier.
-- Open, a design call: an invalid field no longer colours its label
-  (`number-field-05`, `field-03`); only the control and the message turn red.
+- Decided 2026-11-12: `alert` is back on main's compact padding, radius and
+  action position (the v2 destructive tint stays), and `label` no longer sets
+  its own colour, so an invalid field colours its label again.
+- Decided 2026-11-12: token names stay unprefixed (`--control-h`, `--panel-pad`,
+  `--hairline`).
 
 ## Lab fixtures (`apps/web/components/v2-lab/matrices`)
 

@@ -91,12 +91,12 @@ describe("Alert", () => {
   });
 
   describe("v2 design language", () => {
-    it("pads from --panel-pad, read with a fallback so density inherits", () => {
+    it("keeps main's compact padding rather than the panel pad", () => {
       render(<Alert>P</Alert>);
-      const cls = screen.getByRole("alert").className;
-      expect(cls).toContain("p-[var(--panel-pad,1.125rem)]");
-      expect(cls).not.toContain("[:where(&)]:[--panel-pad");
-      expect(cls.split(" ")).not.toContain("px-2.5");
+      const cls = screen.getByRole("alert").className.split(" ");
+      expect(cls).toContain("px-2.5");
+      expect(cls).toContain("py-2");
+      expect(cls.join(" ")).not.toContain("--panel-pad");
     });
 
     it("leaves inline links in title and description without a focus style of their own, as main does", () => {
