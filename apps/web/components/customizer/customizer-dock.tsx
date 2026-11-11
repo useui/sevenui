@@ -9,7 +9,7 @@ import { Dices, Moon, RotateCcw, Sun, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import { type KeyboardEvent, type ReactNode, useMemo, useRef, useState } from "react";
 import { Kbd } from "@/registry/base/ui/kbd";
-import { LayerCard, LayerCardHeader, LayerCardPanel, LayerCardTitle } from "@/registry/base/ui/layer-card";
+import { LayerCard, LayerCardAction, LayerCardHeader, LayerCardPanel, LayerCardTitle } from "@/registry/base/ui/layer-card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/registry/base/ui/tooltip";
 import { useAnnounce } from "../announcer";
 import { DOCK_POSITION } from "./customizer-launcher";
@@ -357,6 +357,10 @@ export function CustomizerDock() {
                           <Popover.Title render={<LayerCardTitle className="text-xs text-muted-foreground" />}>
                             {AXIS_TITLE[axis]}
                           </Popover.Title>
+                          {/* On phones the dock shows glyphs only, so the tray is where the current value is named. */}
+                          <LayerCardAction aria-hidden="true" className="text-xs font-medium text-foreground">
+                            {{ theme, baseColor: base, radius }[axis]?.label}
+                          </LayerCardAction>
                         </LayerCardHeader>
                         <LayerCardPanel className="p-1">
                         {axis === "theme" && (
