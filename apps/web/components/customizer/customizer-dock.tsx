@@ -9,9 +9,10 @@ import { Dices, Moon, RotateCcw, Sun, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import { type KeyboardEvent, type ReactNode, useMemo, useRef, useState } from "react";
 import { Kbd } from "@/registry/base/ui/kbd";
+import { LayerCard, LayerCardHeader, LayerCardPanel, LayerCardTitle } from "@/registry/base/ui/layer-card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/registry/base/ui/tooltip";
 import { useAnnounce } from "../announcer";
-import { DOCK_POSITION, DOCK_SURFACE } from "./customizer-launcher";
+import { DOCK_POSITION } from "./customizer-launcher";
 import { CUSTOMIZER_DOCK_ID, useCustomizer } from "./customizer-state";
 
 type Axis = "baseColor" | "radius" | "theme";
@@ -27,15 +28,22 @@ const AXIS_TITLE: Record<Axis, string> = {
 const tray = Popover.createHandle<Axis>();
 
 const ITEM =
-  "inline-flex h-9 shrink-0 cursor-pointer select-none items-center justify-center rounded-full text-[13px] font-medium text-muted-foreground outline-none transition-[color,background-color] duration-150 hover:bg-foreground/[0.06] hover:text-foreground focus-visible:focus-ring focus-visible:[--focus-gap:0px] data-popup-open:bg-foreground/[0.08] data-popup-open:text-foreground data-disabled:cursor-default data-disabled:opacity-40 data-disabled:hover:bg-transparent data-disabled:hover:text-muted-foreground motion-reduce:transition-none";
+  "inline-flex h-9 shrink-0 cursor-pointer select-none items-center justify-center rounded-[max(0px,calc(var(--layer-card-panel-radius)-2px))] text-[13px] font-medium text-muted-foreground outline-none transition-[color,background-color] duration-150 hover:bg-foreground/[0.06] hover:text-foreground focus-visible:focus-ring focus-visible:[--focus-gap:0px] data-popup-open:bg-foreground/[0.08] data-popup-open:text-foreground data-disabled:cursor-default data-disabled:opacity-40 data-disabled:hover:bg-transparent data-disabled:hover:text-muted-foreground motion-reduce:transition-none";
 const ICON_ITEM = `${ITEM} w-9`;
+
+// Both floating surfaces are LayerCards: a muted tray that carries the chrome, and a raised panel
+// that carries the choice. The tray's stock fill is half transparent, which is right on a page
+// and wrong over one, so it is mixed into the opaque raised surface here; the elevation is the
+// overlay one because these float above content.
+const LAYER_SURFACE =
+  "text-foreground [--layer-card-bg:color-mix(in_oklch,var(--muted)_70%,var(--surface-raised))] shadow-[var(--elevation-raised),var(--elevation-overlay)]";
 const AXIS_ITEM = `${ITEM} gap-2 px-2.5 sm:ps-2 sm:pe-3`;
 const SEPARATOR = "mx-1 h-5 w-px shrink-0 bg-hairline-strong";
 
 // An option is a glyph over its name. Checked is drawn as a filled, hairline-ringed cell and a
 // heavier label, so the state never rests on colour alone.
 const OPTION =
-  "group/option flex min-w-0 cursor-pointer select-none flex-col items-center gap-2 rounded-xl px-1 pt-2.5 pb-2 text-[11px] leading-none text-muted-foreground outline-none transition-[color,background-color,box-shadow] duration-150 hover:bg-foreground/[0.05] hover:text-foreground focus-visible:focus-ring focus-visible:[--focus-gap:0px] data-checked:bg-foreground/[0.07] data-checked:font-medium data-checked:text-foreground data-checked:shadow-[inset_0_0_0_1px_var(--hairline-strong)] forced-colors:data-checked:outline-2 forced-colors:data-checked:-outline-offset-2 forced-colors:data-checked:outline-[Highlight] motion-reduce:transition-none";
+  "group/option flex min-w-0 cursor-pointer select-none flex-col items-center gap-2 rounded-[max(0px,calc(var(--layer-card-panel-radius)-3px))] px-1 pt-2.5 pb-2 text-[11px] leading-none text-muted-foreground outline-none transition-[color,background-color,box-shadow] duration-150 hover:bg-foreground/[0.05] hover:text-foreground focus-visible:focus-ring focus-visible:[--focus-gap:0px] data-checked:bg-foreground/[0.07] data-checked:font-medium data-checked:text-foreground data-checked:shadow-[inset_0_0_0_1px_var(--hairline-strong)] forced-colors:data-checked:outline-2 forced-colors:data-checked:-outline-offset-2 forced-colors:data-checked:outline-[Highlight] motion-reduce:transition-none";
 
 // Light swatches vanish on a white surface and the neutral one on a dark surface; a faint rim keeps both.
 const RIM = "outline outline-1 -outline-offset-1 outline-foreground/15 dark:outline-foreground/40";
@@ -250,18 +258,21 @@ export function CustomizerDock() {
     >
       <Dialog.Portal>
         <Dialog.Popup
-          className={`${DOCK_POSITION} ${DOCK_SURFACE} ${DOCK_MOTION} max-w-[calc(100vw-1rem)] rounded-full p-1 outline-none print:hidden`}
+          className={`${DOCK_POSITION} ${LAYER_SURFACE} ${DOCK_MOTION} max-w-[calc(100vw-1rem)] outline-none print:hidden`}
           finalFocus={triggerRef}
           id={CUSTOMIZER_DOCK_ID}
           onKeyDown={onKeyDown}
           ref={dockRef}
+          render={<LayerCard size="xs" />}
         >
           <Dialog.Title className="sr-only">Customize</Dialog.Title>
           <Dialog.Description className="sr-only">
             Every preview on this page follows your picks. They are saved in this browser.
           </Dialog.Description>
 
-          <Toolbar.Root aria-label="Theme customizer" className="flex items-center">
+          <Toolbar.Root aria-label="Theme customizer" className="flex items-center gap-0.5">
+            {/* The three axes are the content, so they sit on the panel; the actions stay on the tray as chrome. */}
+            <LayerCardPanel className="me-0.5 flex items-center gap-0.5 p-0.5" fit>
             <Toolbar.Button aria-label={`Theme: ${theme?.label}`} className={AXIS_ITEM} render={axisTrigger("theme")}>
               {theme ? <ThemeGlyph swatch={theme.swatch} value={theme.value} /> : null}
               <Readout label={theme?.label} options={themeOptions} />
@@ -274,8 +285,7 @@ export function CustomizerDock() {
               {radius ? <RadiusGlyph glyph={radius.glyph} /> : null}
               <Readout label={radius?.label} options={radiusOptions} />
             </Toolbar.Button>
-
-            <span aria-hidden="true" className={SEPARATOR} />
+            </LayerCardPanel>
 
             <Hint label="Shuffle" shortcut="S">
               <Toolbar.Button aria-label="Shuffle a new combination" className={ICON_ITEM} onClick={shuffle}>
@@ -338,11 +348,17 @@ export function CustomizerDock() {
                   sideOffset={8}
                 >
                   <Popover.Popup
-                    className={`${DOCK_SURFACE} ${TRAY_MOTION} w-(--anchor-width) max-w-[calc(100vw-1rem)] rounded-[1.25rem] sm:w-[max(var(--anchor-width),28rem)] p-1.5 outline-none`}
+                    className={`${LAYER_SURFACE} ${TRAY_MOTION} w-(--anchor-width) max-w-[calc(100vw-1rem)] outline-none sm:w-[max(var(--anchor-width),28rem)]`}
+                    render={<LayerCard size="xs" />}
                   >
                     {axis !== undefined && (
                       <>
-                        <Popover.Title className="sr-only">{AXIS_TITLE[axis]}</Popover.Title>
+                        <LayerCardHeader className="py-1">
+                          <Popover.Title render={<LayerCardTitle className="text-xs text-muted-foreground" />}>
+                            {AXIS_TITLE[axis]}
+                          </Popover.Title>
+                        </LayerCardHeader>
+                        <LayerCardPanel className="p-1">
                         {axis === "theme" && (
                           <Options
                             axis={axis}
@@ -390,6 +406,7 @@ export function CustomizerDock() {
                             ))}
                           </Options>
                         )}
+                        </LayerCardPanel>
                       </>
                     )}
                   </Popover.Popup>

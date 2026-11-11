@@ -26,7 +26,7 @@ export function CustomizerLauncher() {
   return (
     <button
       {...trigger}
-      className={`${DOCK_POSITION} ${DOCK_SURFACE} inline-flex h-10 items-center gap-2 rounded-full ps-3 pe-3.5 text-[13px] font-medium outline-none transition-[opacity,scale,background-color] duration-200 ease-snappy hover:bg-[color-mix(in_oklch,var(--surface-raised),var(--foreground)_5%)] focus-visible:focus-ring active:scale-[0.97] motion-reduce:transition-none print:hidden ${open ? "pointer-events-none scale-90 opacity-0" : ""}`}
+      className={`${DOCK_POSITION} ${DOCK_SURFACE} inline-flex h-10 items-center gap-2 rounded-xl ps-3 pe-3.5 text-[13px] font-medium outline-none transition-[opacity,scale,background-color] duration-200 ease-snappy hover:bg-[color-mix(in_oklch,var(--surface-raised),var(--foreground)_5%)] focus-visible:focus-ring active:scale-[0.97] motion-reduce:transition-none print:hidden ${open ? "pointer-events-none scale-90 opacity-0" : ""}`}
       // The dock takes this spot while it is open; the pill steps out of the tab order until it closes.
       inert={open}
     >
