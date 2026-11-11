@@ -28,13 +28,10 @@ type PresetReader = (storage: Pick<Storage, "getItem">) => PresetValues;
 export type ThemeOption = { label: string; swatch: string; value: string };
 export type BaseOption = { ink: string; label: string; swatch: string; value: string };
 export type RadiusOption = { glyph: string; label: string; value: string };
-/** A curated combination: one pick sets all three axes. */
-export type LookOption = { baseColor: string; label: string; radius: string; theme: string; value: string };
 
 export type CustomizerOptions = {
   baseOptions: readonly BaseOption[];
   defaults: PresetValues;
-  looks: readonly LookOption[];
   radiusOptions: readonly RadiusOption[];
   storageKey: string;
   themeOptions: readonly ThemeOption[];
@@ -44,7 +41,7 @@ export type CustomizerOptions = {
 export const CUSTOMIZER_DOCK_ID = "theme-customizer-dock";
 
 type CustomizerValue = CustomizerOptions & {
-  /** Writes several axes in one step, so a look or a shuffle is one storage write and one repaint. */
+  /** Writes several axes in one step, so a shuffle is one storage write and one repaint. */
   apply: (values: Partial<Record<PresetField, string>>) => void;
   /** `null` until the stored preset has been read on the client. */
   config: PresetValues | null;
@@ -74,7 +71,6 @@ export function CustomizerStateProvider({
   baseOptions,
   children,
   defaults,
-  looks,
   radiusOptions,
   storageKey,
   themeOptions,
@@ -164,7 +160,6 @@ export function CustomizerStateProvider({
       dirty,
       dockRequested,
       hasPreviews: previewCount > 0,
-      looks,
       open,
       radiusOptions,
       registerPreview,
@@ -182,7 +177,6 @@ export function CustomizerStateProvider({
     defaults,
     dockRequested,
     loadReader,
-    looks,
     open,
     previewCount,
     radiusOptions,

@@ -3,13 +3,10 @@ import "server-only";
 import { BASE_COLORS, THEMES } from "@sevenui/presets/presets";
 import {
   BASE_COLOR_NAMES,
-  type BaseColorName,
   DEFAULT_PRESET_CONFIG,
   PRESET_CONFIG_KEY,
   RADIUS_NAMES,
-  type RadiusName,
   THEME_NAMES,
-  type ThemeName,
 } from "@sevenui/presets/schema";
 import type { ReactNode } from "react";
 import { CustomizerLauncher } from "./customizer-launcher";
@@ -37,19 +34,6 @@ const RADIUS_GLYPH: Record<(typeof RADIUS_NAMES)[number], string> = {
   large: "7px",
 };
 
-// Curated combinations, typed against the schema so a renamed option fails the typecheck here
-// instead of writing a preset the reader would silently discard.
-const LOOKS: readonly { baseColor: BaseColorName; label: string; radius: RadiusName; theme: ThemeName; value: string }[] = [
-  { value: "default", label: "Default", theme: DEFAULT_PRESET_CONFIG.theme, baseColor: DEFAULT_PRESET_CONFIG.baseColor, radius: DEFAULT_PRESET_CONFIG.radius },
-  { value: "ocean", label: "Ocean", theme: "blue", baseColor: "slate", radius: "large" },
-  { value: "moss", label: "Moss", theme: "green", baseColor: "stone", radius: "small" },
-  { value: "ember", label: "Ember", theme: "orange", baseColor: "stone", radius: "default" },
-  { value: "orchid", label: "Orchid", theme: "violet", baseColor: "zinc", radius: "large" },
-  { value: "rosewater", label: "Rosewater", theme: "rose", baseColor: "gray", radius: "large" },
-  { value: "signal", label: "Signal", theme: "yellow", baseColor: "zinc", radius: "none" },
-  { value: "ledger", label: "Ledger", theme: "neutral", baseColor: "gray", radius: "none" },
-];
-
 /**
  * Resolves the option swatches on the server so the preset tables stay out of the client bundle,
  * and mounts the page's one customizer: a light launcher pill, and the dock it grows into, loaded
@@ -65,7 +49,6 @@ export function CustomizerProvider({ children }: { children: ReactNode }) {
         value: name,
       }))}
       defaults={DEFAULT_PRESET_CONFIG}
-      looks={LOOKS}
       radiusOptions={RADIUS_NAMES.map((name) => ({
         glyph: RADIUS_GLYPH[name],
         label: RADIUS_LABELS[name],

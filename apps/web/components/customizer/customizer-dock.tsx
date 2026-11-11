@@ -5,7 +5,7 @@ import { Popover } from "@base-ui/react/popover";
 import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { Toolbar } from "@base-ui/react/toolbar";
-import { Dices, Moon, RotateCcw, Sparkles, Sun, X } from "lucide-react";
+import { Dices, Moon, RotateCcw, Sun, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import { type KeyboardEvent, type ReactNode, useMemo, useRef, useState } from "react";
 import { Kbd } from "@/registry/base/ui/kbd";
@@ -14,16 +14,15 @@ import { useAnnounce } from "../announcer";
 import { DOCK_POSITION, DOCK_SURFACE } from "./customizer-launcher";
 import { CUSTOMIZER_DOCK_ID, useCustomizer } from "./customizer-state";
 
-type Axis = "baseColor" | "looks" | "radius" | "theme";
+type Axis = "baseColor" | "radius" | "theme";
 
 const AXIS_TITLE: Record<Axis, string> = {
-  looks: "Looks",
   theme: "Theme",
   baseColor: "Base color",
   radius: "Radius",
 };
 
-// One tray serves all four axes: the dock's buttons are detached triggers of the same popover, so
+// One tray serves all three axes: the dock's buttons are detached triggers of the same popover, so
 // moving from Theme to Radius swaps the tray's content instead of closing one popup and opening another.
 const tray = Popover.createHandle<Axis>();
 
@@ -124,7 +123,7 @@ function Options({
  * The page's single customizer: a floating dock at the bottom centre of the viewport. Nothing is
  * covered or dimmed, because the point is watching the previews change while you pick. Each axis
  * is one press away: its button opens a tray of options right above the dock, and the arrow keys
- * try them live. Looks set all three axes at once and Shuffle rolls a new combination.
+ * try them live. Shuffle rolls a new combination across all three.
  */
 export function CustomizerDock() {
   const {
@@ -133,7 +132,6 @@ export function CustomizerDock() {
     config,
     defaults,
     dirty,
-    looks,
     open,
     radiusOptions,
     reset,
@@ -156,10 +154,6 @@ export function CustomizerDock() {
   const theme = themeOptions.find((option) => option.value === current.theme);
   const base = baseOptions.find((option) => option.value === current.baseColor);
   const radius = radiusOptions.find((option) => option.value === current.radius);
-  const look = looks.find(
-    (option) =>
-      option.theme === current.theme && option.baseColor === current.baseColor && option.radius === current.radius,
-  );
 
   const describe = (values: { baseColor: string; radius: string; theme: string }) =>
     [
@@ -244,15 +238,6 @@ export function CustomizerDock() {
           </Dialog.Description>
 
           <Toolbar.Root aria-label="Theme customizer" className="flex items-center">
-            <Toolbar.Button aria-label="Looks" className={`${ITEM} w-9 sm:w-auto sm:gap-1.5 sm:ps-2.5 sm:pe-3`} render={axisTrigger("looks")}>
-              <Sparkles aria-hidden="true" className="size-4 shrink-0" strokeWidth={1.75} />
-              <span aria-hidden="true" className="hidden text-foreground sm:inline">
-                Looks
-              </span>
-            </Toolbar.Button>
-
-            <span aria-hidden="true" className={SEPARATOR} />
-
             <Toolbar.Button aria-label={`Theme: ${theme?.label}`} className={AXIS_ITEM} render={axisTrigger("theme")}>
               {theme ? <ThemeGlyph swatch={theme.swatch} value={theme.value} /> : null}
               <span aria-hidden="true" className="hidden text-foreground sm:inline">
@@ -323,6 +308,7 @@ export function CustomizerDock() {
           >
             {({ payload: axis }) => (
               <Popover.Portal>
+                {/* The tray matches the dock on phones; wider screens give it a floor so eight theme names fit untruncated. */}
                 {/* Anchored to the whole dock, not the pressed button, so the tray reads as the dock opening upward. */}
                 <Popover.Positioner
                   align="center"
@@ -334,48 +320,11 @@ export function CustomizerDock() {
                   sideOffset={8}
                 >
                   <Popover.Popup
-                    className={`${DOCK_SURFACE} ${TRAY_MOTION} w-(--anchor-width) rounded-[1.25rem] p-1.5 outline-none`}
+                    className={`${DOCK_SURFACE} ${TRAY_MOTION} w-(--anchor-width) max-w-[calc(100vw-1rem)] rounded-[1.25rem] sm:w-[max(var(--anchor-width),28rem)] p-1.5 outline-none`}
                   >
                     {axis !== undefined && (
                       <>
                         <Popover.Title className="sr-only">{AXIS_TITLE[axis]}</Popover.Title>
-                        {axis === "looks" && (
-                          <Options
-                            axis={axis}
-                            columns="grid-cols-4"
-                            onValueChange={(next) => {
-                              const picked = looks.find((option) => option.value === next);
-                              if (picked) apply({ theme: picked.theme, baseColor: picked.baseColor, radius: picked.radius });
-                            }}
-                            value={look?.value ?? ""}
-                          >
-                            {looks.map((option) => {
-                              const optionBase = baseOptions.find((item) => item.value === option.baseColor);
-                              const optionTheme = themeOptions.find((item) => item.value === option.theme);
-                              const optionRadius = radiusOptions.find((item) => item.value === option.radius);
-                              return (
-                                <Radio.Root className={OPTION} key={option.value} value={option.value}>
-                                  {/* A thumbnail of the combination: the theme's button on the base's surface, cornered by the radius. */}
-                                  <span
-                                    aria-hidden="true"
-                                    className={`${RIM} flex h-7 w-11 shrink-0 flex-col justify-between p-1`}
-                                    style={{
-                                      background: optionBase?.swatch,
-                                      borderRadius: `calc(${optionRadius?.glyph} * 1.4)`,
-                                    }}
-                                  >
-                                    <span className="h-0.5 w-4 rounded-full opacity-40" style={{ background: optionBase?.ink }} />
-                                    <span
-                                      className="h-2 w-6 self-end"
-                                      style={{ background: optionTheme?.swatch, borderRadius: `calc(${optionRadius?.glyph} * 0.6)` }}
-                                    />
-                                  </span>
-                                  <span className="max-w-full truncate">{option.label}</span>
-                                </Radio.Root>
-                              );
-                            })}
-                          </Options>
-                        )}
                         {axis === "theme" && (
                           <Options
                             axis={axis}
