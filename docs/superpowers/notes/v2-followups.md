@@ -7,13 +7,10 @@ site. Primitive-level regressions were fixed on the branch instead.
 
 ## Site and customizer
 
-- **Portaled popups ignore the theme customizer.** The preset variables are
-  scoped to the docs preview container. Anything Base UI portals to `<body>`
-  (select and combobox popups, menus, popovers, dialogs, sheets, toasts) renders
-  with the site defaults. With `rose` + radius `none`, a select trigger is
-  square and rose, but its popup keeps a 10px radius and the neutral/blue
-  colours (`/docs/components/select`, `/docs/components/dialog`). Fix: apply the
-  preset on `:root`/`body`, or re-apply it on the portal container.
+- ~~Portaled popups ignore the theme customizer.~~ Fixed: `preset-scope.tsx`
+  marks a Base UI portal with the scope attribute when whatever opened it was
+  inside a preview. Known gap: a toast fired from a timer after the pointer has
+  left the preview is not claimed.
 - **Site chrome takes the new neutrals and primitives.** Header, search and
   sidebar already look different on `feat/v2` (expected; restyle in project 2).
 - The customizer has no "accent" picker yet (deferred by the spec).
