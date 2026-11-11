@@ -19,7 +19,7 @@ const marks = [
 
 export default function Toggle01() {
   return (
-    <div className="flex w-full max-w-sm flex-col divide-y rounded-xl border">
+    <div className="flex w-full max-w-md flex-col divide-y rounded-xl border">
       {densities.map((density) => (
         <div
           key={density.size}

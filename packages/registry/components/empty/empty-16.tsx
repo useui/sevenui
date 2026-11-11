@@ -49,7 +49,7 @@ export default function Empty16() {
   return (
     <section
       aria-labelledby="empty-16-title"
-      className="w-full max-w-lg rounded-xl border bg-card text-card-foreground shadow-sm"
+      className="w-full max-w-xl rounded-xl border bg-card text-card-foreground shadow-sm"
     >
       <header className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3">
         <div className="min-w-0">

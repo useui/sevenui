@@ -17,23 +17,21 @@ site. Primitive-level regressions were fixed on the branch instead.
 
 ## Gallery components (`packages/registry/components`)
 
-- `questionnaire/questionnaire-10.tsx`: the chat bubble card nests the
-  questionnaire tray and panel, giving three hairline borders and about 12px of
-  padding at each level. It reads heavy. `-11` is a double pad (card body plus tray).
-  Consider a `bare` treatment inside cards, as `questionnaire-01` does.
-- `questionnaire/*`: the default progress render now shows a bar under the
-  "Question n of m" text. `-12` (`w-auto min-w-0`) makes the bar narrow. Gallery
-  items that use the default render are 02, 03, 05, 06, 11, 12, 13 and 14.
-- `questionnaire/questionnaire-04.tsx`: title spacing changed with the new
-  floated legend; check that its own `mb-*` override still looks right.
-- Badge `default` changed from a filled primary to a raised neutral chip. Every
-  gallery item using a default badge looks different; check the ones that relied
-  on the filled look for emphasis.
-- `message-scroller-07/-08/-09/-13`: `MessageScrollerButton` defaults to the
-  outline variant now (was secondary).
-- Dialog gallery items with `p-0` and a `DialogFooter` must pass `m-0` on the
-  footer (`dialog-07`, `dialog-08` already do). That is the shadcn footer-bar
-  idiom, kept on purpose.
+Swept 2026-11-12: all 915 examples measured on `feat/v2` against production
+`main` in the same 700px preview box; 282 differ by more than 3px in height and
+none in width. The items first listed here (questionnaire, badge default,
+message-scroller) match `main` again since the 2026-11-10 primitive scope-back.
+The 36 largest and least typical differences were compared side by side; the
+rest follow their category's uniform shift and were not opened one by one.
+
+- Fixed: `toggle-01` and `empty-16` wrapped their toolbars because lg toggles
+  and buttons are a few pixels wider; both containers are one step wider now.
+- Uniform, intended shifts: field descriptions and table heads are 12px, list
+  and accordion rows are denser, calendar cells are larger.
+- Open, a design call: `alert` padding went from 8/10px to `--panel-pad`
+  (18px). Every alert is at least 20px taller and its description wraps earlier.
+- Open, a design call: an invalid field no longer colours its label
+  (`number-field-05`, `field-03`); only the control and the message turn red.
 
 ## Lab fixtures (`apps/web/components/v2-lab/matrices`)
 
