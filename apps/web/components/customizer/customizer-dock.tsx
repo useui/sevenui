@@ -120,6 +120,30 @@ function Options({
 }
 
 /**
+ * An axis button's current value. Every option's label is stacked, invisible, in the same grid
+ * cell, so the slot is always as wide as the longest one: the dock keeps its width and Shuffle
+ * stays under the pointer however many times it is pressed. The visible label is keyed by its
+ * text, so a change remounts it and it rolls in from below.
+ */
+function Readout({ label, options }: { label: string | undefined; options: readonly { label: string }[] }) {
+  return (
+    <span aria-hidden="true" className="hidden text-start text-foreground sm:inline-grid">
+      {options.map((option) => (
+        <span className="invisible col-start-1 row-start-1" key={option.label}>
+          {option.label}
+        </span>
+      ))}
+      <span
+        className="col-start-1 row-start-1 transition-[opacity,translate] duration-200 ease-out starting:translate-y-1.5 starting:opacity-0 motion-reduce:transition-none"
+        key={label}
+      >
+        {label}
+      </span>
+    </span>
+  );
+}
+
+/**
  * The page's single customizer: a floating dock at the bottom centre of the viewport. Nothing is
  * covered or dimmed, because the point is watching the previews change while you pick. Each axis
  * is one press away: its button opens a tray of options right above the dock, and the arrow keys
@@ -240,21 +264,15 @@ export function CustomizerDock() {
           <Toolbar.Root aria-label="Theme customizer" className="flex items-center">
             <Toolbar.Button aria-label={`Theme: ${theme?.label}`} className={AXIS_ITEM} render={axisTrigger("theme")}>
               {theme ? <ThemeGlyph swatch={theme.swatch} value={theme.value} /> : null}
-              <span aria-hidden="true" className="hidden text-foreground sm:inline">
-                {theme?.label}
-              </span>
+              <Readout label={theme?.label} options={themeOptions} />
             </Toolbar.Button>
             <Toolbar.Button aria-label={`Base color: ${base?.label}`} className={AXIS_ITEM} render={axisTrigger("baseColor")}>
               {base ? <BaseGlyph ink={base.ink} swatch={base.swatch} /> : null}
-              <span aria-hidden="true" className="hidden text-foreground sm:inline">
-                {base?.label}
-              </span>
+              <Readout label={base?.label} options={baseOptions} />
             </Toolbar.Button>
             <Toolbar.Button aria-label={`Radius: ${radius?.label}`} className={AXIS_ITEM} render={axisTrigger("radius")}>
               {radius ? <RadiusGlyph glyph={radius.glyph} /> : null}
-              <span aria-hidden="true" className="hidden text-foreground sm:inline">
-                {radius?.label}
-              </span>
+              <Readout label={radius?.label} options={radiusOptions} />
             </Toolbar.Button>
 
             <span aria-hidden="true" className={SEPARATOR} />
