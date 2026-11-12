@@ -146,3 +146,14 @@ describe("Accordion v2 style", () => {
     expect(panel?.className).toContain("motion-reduce:animate-none");
   });
 });
+
+describe("Accordion state attributes", () => {
+  it("marks the trigger of an open item with data-panel-open", async () => {
+    const user = userEvent.setup();
+    render(<BasicAccordion />);
+    const trigger = screen.getByRole("button", { name: "Shipping" });
+    expect(trigger.hasAttribute("data-panel-open")).toBe(false);
+    await user.click(trigger);
+    expect(trigger.hasAttribute("data-panel-open")).toBe(true);
+  });
+});
