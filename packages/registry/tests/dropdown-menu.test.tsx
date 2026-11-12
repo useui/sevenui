@@ -14,6 +14,9 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/registry/base/ui/dropdown-menu";
 import { AA, contrastOn, destructivePull, destructiveTint, mix, palette } from "./helpers/palette";
@@ -206,6 +209,40 @@ describe("DropdownMenu", () => {
         screen.getByRole("menuitemradio", { name: "Top" }).getAttribute("aria-checked"),
       ).toBe("true");
     });
+  });
+});
+
+describe("DropdownMenu submenus", () => {
+  it("opens a submenu with ArrowRight, marks its trigger and runs its items", async () => {
+    const user = userEvent.setup();
+    const onInvite = vi.fn();
+    render(
+      <DropdownMenu>
+        <DropdownMenuTrigger>Open</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>One</DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>More</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem onClick={onInvite}>Invite</DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        </DropdownMenuContent>
+      </DropdownMenu>,
+    );
+    await user.click(screen.getByText("Open"));
+    await screen.findByRole("menu");
+    expect(screen.getByText("Open").hasAttribute("data-popup-open")).toBe(true);
+    await user.keyboard("{ArrowDown}{ArrowDown}{ArrowRight}");
+    const invite = await screen.findByText("Invite");
+    await waitFor(() => {
+      expect(invite.closest("[data-slot=dropdown-menu-sub-content]")).toBeTruthy();
+    });
+    const subTrigger = screen.getByText("More").closest("[data-slot=dropdown-menu-sub-trigger]");
+    expect(subTrigger?.hasAttribute("data-popup-open")).toBe(true);
+    await waitFor(() => expect(document.activeElement?.textContent).toBe("Invite"));
+    await user.keyboard("{Enter}");
+    expect(onInvite).toHaveBeenCalledTimes(1);
   });
 });
 
