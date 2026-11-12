@@ -1,0 +1,49 @@
+# v2 remaining work
+
+Parked on 2026-11-13. Pick this up when the owner asks what is left to do for
+v2. Everything here happens on `feat/v2`; nothing merges to `main` until v2
+ships. Neither project has a spec yet: each starts with a spec, then a plan.
+
+Order is fixed: project 3, then project 4, then the release (project 5).
+
+## Project 3: agent channel without MCP
+
+Static content that lets a coding agent use SevenUI correctly with nothing
+installed. It works in any agent that can read a file or a URL.
+
+Scope as agreed on 2026-11-03:
+
+- A "For agents" tab on the site.
+- A rules file the user drops into their own project.
+- Markdown versions of the pages.
+
+Already in the repo, contents not yet reviewed against that scope:
+
+- `apps/web/app/llms.txt` and `apps/web/app/llms-full.txt` (routes).
+- `apps/web/app/index.md` (route) and `apps/web/scripts/build-md-mirrors.ts`
+  (markdown mirrors of the pages).
+- `apps/web/app/agent-readability.json` (route).
+- The agent positioning sentence in the site summary.
+
+Not there yet: the "For agents" tab (`apps/web/lib/site-tabs.ts` has no such
+entry) and the rules file.
+
+First step: inventory what the existing surfaces serve, decide what is
+missing, and settle the scope with the owner before writing the spec.
+
+## Project 4: MCP server
+
+A running server an agent connects to and calls tools on (search primitives,
+fetch a source, install). Deliberately last: it needs setup and only helps
+clients that support MCP, while project 3 reaches every agent.
+
+Nothing exists yet. Tool list, hosting and auth are all undecided.
+
+## Also parked
+
+- Project 5, the v2 release, follows project 4.
+- Toys section: named and approved on 2026-10-23, waiting for the owner's go.
+- Block previews following the customizer can only be checked on a deployed
+  build (`/previews/*` rewrites to the pro deployment on Vercel only). The
+  owner will look once v2 is in production.
+- Open design notes from project 2: `docs/superpowers/notes/v2-followups.md`.
