@@ -1,16 +1,101 @@
 "use client";
 
-import { useMemo } from "react";
-import { Field as FieldPrimitive } from "@base-ui/react/field";
+import * as React from "react";
+import {
+  Field as FieldPrimitive,
+  FieldDescription as FieldDescriptionPrimitive,
+  FieldError as FieldErrorPrimitive,
+  FieldGroup as FieldGroupPrimitive,
+  FieldLabel as FieldLabelPrimitive,
+  FieldLegend as FieldLegendPrimitive,
+  FieldSet as FieldSetPrimitive,
+  type ValidityKey,
+} from "@ui-sdk/react/field";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
-import { Label } from "@/registry/ui-sdk/ui/label";
 import { Separator } from "@/registry/ui-sdk/ui/separator";
 
-function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
+type ValidationMode = "onSubmit" | "onBlur" | "onChange";
+type Validator = (
+  value: unknown,
+  formValues: Record<string, unknown>,
+) => string | string[] | null | Promise<string | string[] | null>;
+
+// What `Form` (form.tsx) shares with the fields inside it. UI SDK has no Form,
+// so the two files meet through a context both reach by a global symbol: the
+// public exports stay those of the base flavour, and neither file imports the
+// other.
+type FormRegistration = {
+  name: string | undefined;
+  value: () => unknown;
+  validate: () => Promise<boolean> | boolean;
+  focus: () => void;
+};
+type FormContextValue = {
+  errors?: Record<string, string | string[]>;
+  clearError: (name: string) => void;
+  validationMode?: ValidationMode;
+  register: (field: FormRegistration) => () => void;
+  values: () => Record<string, unknown>;
+};
+const formContextKey = Symbol.for("sevenui.ui-sdk.form");
+const FormContext: React.Context<FormContextValue | null> =
+  ((globalThis as Record<symbol, unknown>)[formContextKey] as
+    | React.Context<FormContextValue | null>
+    | undefined) ??
+  ((globalThis as Record<symbol, unknown>)[formContextKey] =
+    React.createContext<FormContextValue | null>(null));
+
+// The message a bare FieldError shows when the wrapper, not the browser,
+// decides the field is invalid (`validate`, or a Form `errors` entry).
+const FieldMessageContext = React.createContext<string[] | null>(null);
+
+// The value Base UI hands `validate` and `onFormSubmit`: a checkbox or switch
+// gives its checked state, a radio group its checked value, a number field a
+// number, anything else its text.
+function readValue(root: HTMLElement | null): unknown {
+  const control = root?.querySelector<
+    HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+  >("input, textarea, select");
+  if (!root || !control) return undefined;
+  if (control instanceof HTMLInputElement) {
+    if (control.type === "radio") {
+      return (
+        root.querySelector<HTMLInputElement>("input[type=radio]:checked")
+          ?.value ?? null
+      );
+    }
+    if (control.type === "checkbox") return control.checked;
+    if (control.closest("[data-slot=number-field]")) {
+      const n = Number(control.value.replace(/[^\d.eE+-]/g, ""));
+      return control.value.trim() === "" || Number.isNaN(n) ? null : n;
+    }
+  }
+  return control.value;
+}
+
+function focusControl(root: HTMLElement | null) {
+  root
+    ?.querySelector<HTMLElement>(
+      "input:not([type=hidden]):not([aria-hidden=true]), textarea, select, button, [tabindex]",
+    )
+    ?.focus();
+}
+
+function toMessages(error: string | string[] | null | undefined) {
+  if (!error || (Array.isArray(error) && error.length === 0)) return null;
+  return Array.isArray(error) ? error : [error];
+}
+
+function FieldSet({
+  className,
+  ...props
+}: Omit<React.ComponentProps<typeof FieldSetPrimitive>, "className"> & {
+  className?: string;
+}) {
   return (
-    <fieldset
+    <FieldSetPrimitive
       data-slot="field-set"
       className={cn(
         "flex flex-col gap-4 has-[>[data-slot=checkbox-group]]:gap-3 has-[>[data-slot=radio-group]]:gap-3",
@@ -25,9 +110,12 @@ function FieldLegend({
   className,
   variant = "legend",
   ...props
-}: React.ComponentProps<"legend"> & { variant?: "legend" | "label" }) {
+}: Omit<React.ComponentProps<typeof FieldLegendPrimitive>, "className"> & {
+  className?: string;
+  variant?: "legend" | "label";
+}) {
   return (
-    <legend
+    <FieldLegendPrimitive
       data-slot="field-legend"
       data-variant={variant}
       className={cn(
@@ -39,9 +127,14 @@ function FieldLegend({
   );
 }
 
-function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
+function FieldGroup({
+  className,
+  ...props
+}: Omit<React.ComponentProps<typeof FieldGroupPrimitive>, "className"> & {
+  className?: string;
+}) {
   return (
-    <div
+    <FieldGroupPrimitive
       data-slot="field-group"
       className={cn(
         "group/field-group @container/field-group flex w-full flex-col gap-5 data-[slot=checkbox-group]:gap-3 *:data-[slot=field-group]:gap-4",
@@ -70,19 +163,131 @@ const fieldVariants = cva(
   },
 );
 
+type FieldPrimitiveProps = React.ComponentProps<typeof FieldPrimitive>;
+
+type FieldProps = Omit<FieldPrimitiveProps, "className" | "render"> &
+  VariantProps<typeof fieldVariants> & {
+    className?: string;
+    render?: FieldPrimitiveProps["render"] | React.ReactElement<unknown>;
+    // Base UI's validation API, run by the wrapper (UI SDK validates natively).
+    validate?: Validator;
+    validationMode?: ValidationMode;
+    validationDebounceTime?: number;
+    // Base UI's externally controlled state flags, mirrored as attributes.
+    dirty?: boolean;
+    touched?: boolean;
+    actionsRef?: React.RefObject<{ validate: () => void } | null>;
+  };
+
 function Field({
   className,
   orientation = "vertical",
+  name,
+  invalid,
+  validate,
+  validationMode,
+  validationDebounceTime = 0,
+  dirty,
+  touched,
+  actionsRef,
+  render,
+  ref,
   ...props
-}: React.ComponentProps<typeof FieldPrimitive.Root> &
-  VariantProps<typeof fieldVariants>) {
+}: FieldProps) {
+  const form = React.useContext(FormContext);
+  const mode = validationMode ?? form?.validationMode ?? "onSubmit";
+  const rootRef = React.useRef<HTMLDivElement | null>(null);
+  const [error, setError] = React.useState<string[] | null>(null);
+  const [shown, setShown] = React.useState(false);
+  const run = React.useRef(0);
+  const latest = React.useRef({ validate, form, shown, mode });
+  latest.current = { validate, form, shown, mode };
+
+  const runValidate = React.useCallback((): Promise<boolean> | boolean => {
+    const { validate: check, form: owner } = latest.current;
+    if (!check) return true;
+    const ticket = ++run.current;
+    const result = check(readValue(rootRef.current), owner?.values() ?? {});
+    const settle = (next: string | string[] | null) => {
+      if (ticket !== run.current) return true;
+      const messages = toMessages(next);
+      setError(messages);
+      setShown(true);
+      return messages === null;
+    };
+    return result instanceof Promise ? result.then(settle) : settle(result);
+  }, []);
+
+  React.useImperativeHandle(actionsRef, () => ({
+    validate: () => void runValidate(),
+  }));
+
+  React.useEffect(() => {
+    if (!form) return;
+    return form.register({
+      name,
+      value: () => readValue(rootRef.current),
+      validate: runValidate,
+      focus: () => focusControl(rootRef.current),
+    });
+  }, [form, name, runValidate]);
+
+  // Value changes and blur reach the root as native events from whichever
+  // control the field holds (input, checkbox, radio group, number field…).
+  React.useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const onValueChange = () => {
+      const { form: owner, shown: wasShown, mode: current } = latest.current;
+      if (name) owner?.clearError(name);
+      if (current === "onChange" || wasShown) {
+        clearTimeout(timer);
+        if (current === "onChange" && validationDebounceTime > 0) {
+          timer = setTimeout(() => void runValidate(), validationDebounceTime);
+        } else {
+          void runValidate();
+        }
+      }
+    };
+    const onFocusOut = (event: FocusEvent) => {
+      if (root.contains(event.relatedTarget as Node | null)) return;
+      if (latest.current.mode === "onBlur") void runValidate();
+    };
+    root.addEventListener("input", onValueChange);
+    root.addEventListener("change", onValueChange);
+    root.addEventListener("focusout", onFocusOut);
+    return () => {
+      clearTimeout(timer);
+      root.removeEventListener("input", onValueChange);
+      root.removeEventListener("change", onValueChange);
+      root.removeEventListener("focusout", onFocusOut);
+    };
+  }, [name, runValidate, validationDebounceTime]);
+
+  const external = name ? toMessages(form?.errors?.[name]) : null;
+  const message = external ?? (shown ? error : null);
+  const forcedInvalid = invalid ?? (message ? true : undefined);
+
   return (
-    <FieldPrimitive.Root
-      data-slot="field"
-      data-orientation={orientation}
-      className={cn(fieldVariants({ orientation }), className)}
-      {...props}
-    />
+    <FieldMessageContext.Provider value={message}>
+      <FieldPrimitive
+        ref={(node: HTMLDivElement | null) => {
+          rootRef.current = node;
+          if (typeof ref === "function") ref(node);
+          else if (ref) ref.current = node;
+        }}
+        name={name}
+        invalid={forcedInvalid}
+        data-slot="field"
+        data-orientation={orientation}
+        data-dirty={dirty ? "" : undefined}
+        data-touched={touched ? "" : undefined}
+        className={cn(fieldVariants({ orientation }), className)}
+        render={render as FieldPrimitiveProps["render"]}
+        {...props}
+      />
+    </FieldMessageContext.Provider>
   );
 }
 
@@ -99,15 +304,19 @@ function FieldContent({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+// Base renders the label through SevenUI's Label (`render={<Label />}`), so
+// its classes come first; UI SDK's FieldLabel is already the native <label>.
 function FieldLabel({
   className,
   ...props
-}: React.ComponentProps<typeof FieldPrimitive.Label>) {
+}: Omit<React.ComponentProps<typeof FieldLabelPrimitive>, "className"> & {
+  className?: string;
+}) {
   return (
-    <FieldPrimitive.Label
+    <FieldLabelPrimitive
       data-slot="field-label"
-      render={<Label />}
       className={cn(
+        "flex items-center gap-2 text-[length:var(--control-text,0.8125rem)] leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-60 peer-disabled:cursor-not-allowed peer-disabled:opacity-60 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-60 has-data-disabled:opacity-60",
         "group/field-label peer/field-label flex w-fit gap-[var(--control-gap,0.5rem)] leading-snug group-data-[disabled]/field:opacity-50 has-data-checked:border-primary/30 has-data-checked:bg-primary/5 has-[>[data-slot=field]]:rounded-lg has-[>[data-slot=field]]:border has-[>[data-slot=field]]:not-has-[:disabled,[data-disabled]]:hover:bg-muted/50 has-[>[data-slot=field]]:has-[:focus-visible]:border-ring has-[>[data-slot=field]]:has-[:focus-visible]:ring-3 has-[>[data-slot=field]]:has-[:focus-visible]:ring-ring/50 *:data-[slot=field]:p-2.5 dark:has-data-checked:border-primary/20 dark:has-data-checked:bg-primary/10",
         "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col",
         className,
@@ -133,9 +342,14 @@ function FieldTitle({ className, ...props }: React.ComponentProps<"div">) {
 function FieldDescription({
   className,
   ...props
-}: React.ComponentProps<typeof FieldPrimitive.Description>) {
+}: Omit<
+  React.ComponentProps<typeof FieldDescriptionPrimitive>,
+  "className"
+> & {
+  className?: string;
+}) {
   return (
-    <FieldPrimitive.Description
+    <FieldDescriptionPrimitive
       data-slot="field-description"
       className={cn(
         "text-left text-xs leading-normal font-normal text-muted-foreground group-data-[orientation=horizontal]/field:text-balance [[data-variant=legend]+&]:-mt-1.5",
@@ -178,16 +392,35 @@ function FieldSeparator({
   );
 }
 
+function renderMessages(messages: Array<string | undefined>) {
+  if (messages.length === 1) return messages[0];
+  return (
+    <ul className="ml-4 flex list-disc flex-col gap-1">
+      {messages.map(
+        (message, index) => message && <li key={index}>{message}</li>,
+      )}
+    </ul>
+  );
+}
+
 function FieldError({
   className,
   children,
   errors,
   match,
   ...props
-}: React.ComponentProps<typeof FieldPrimitive.Error> & {
+}: Omit<
+  React.ComponentProps<typeof FieldErrorPrimitive>,
+  "className" | "match" | "children"
+> & {
+  className?: string;
+  children?: React.ReactNode;
+  // Base UI also accepts `"valid"`, which UI SDK has no flag for.
+  match?: boolean | ValidityKey | "valid";
   errors?: Array<{ message?: string } | undefined>;
 }) {
-  const content = useMemo(() => {
+  const fieldMessage = React.useContext(FieldMessageContext);
+  const content = React.useMemo(() => {
     if (children) {
       return children;
     }
@@ -200,18 +433,7 @@ function FieldError({
       ...new Map(errors.map((error) => [error?.message, error])).values(),
     ];
 
-    if (uniqueErrors.length === 1) {
-      return uniqueErrors[0]?.message;
-    }
-
-    return (
-      <ul className="ml-4 flex list-disc flex-col gap-1">
-        {uniqueErrors.map(
-          (error, index) =>
-            error?.message && <li key={index}>{error.message}</li>,
-        )}
-      </ul>
-    );
+    return renderMessages(uniqueErrors.map((error) => error?.message));
   }, [children, errors]);
 
   // External errors / literal children requested but empty: render nothing.
@@ -219,16 +441,28 @@ function FieldError({
     return null;
   }
 
+  // A bare error shows the wrapper's own message (validate / Form errors)
+  // while it has one, else the browser's.
+  const own =
+    content == null && match === undefined && fieldMessage
+      ? renderMessages(fieldMessage)
+      : null;
+  const shown = content ?? own;
+
   return (
-    <FieldPrimitive.Error
+    <FieldErrorPrimitive
       role="alert"
       data-slot="field-error"
-      match={match ?? (content ? true : undefined)}
+      match={
+        match === "valid"
+          ? false
+          : (match ?? (shown != null ? true : undefined))
+      }
       className={cn("text-xs font-normal text-destructive", className)}
       {...props}
-      // An explicit `children: undefined` would override the message Base UI
-      // auto-renders from context, so only pass children when we have content.
-      {...(content != null ? { children: content } : null)}
+      // An explicit `children: undefined` would override the message UI SDK
+      // renders from the browser, so only pass children when we have content.
+      {...(shown != null ? { children: shown } : null)}
     />
   );
 }
