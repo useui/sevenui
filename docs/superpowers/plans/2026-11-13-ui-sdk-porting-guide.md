@@ -349,6 +349,26 @@ Check these:
 | command | item `onClick` | `onSelect`, run for pointer and Enter | UI SDK API |
 | command | filtered-out items and empty groups unmounted | kept mounted with `hidden` (`expectFilteredOut` in tests) | UI SDK behaviour |
 | command | `autoHighlight="always"`: the first item is highlighted on mount | the first item is highlighted once the input is used | UI SDK behaviour |
+| batch 4 (separator, tabs, accordion, collapsible, scroll-area, progress, meter, avatar, toggle, toggle-group, toolbar) | a caller's `data-slot` replaces the wrapper's default | same, set on the rendered element through `render` | UI SDK ignores a `data-slot` prop on its parts |
+| tabs | selected tab has `data-active` | `data-active` added beside UI SDK's `data-selected` | the classes and 38 example classNames style `data-active` |
+| tabs | `activateOnFocus` (default false) and `loopFocus` on `TabsList` | reported up to the root as `activation` (`"manual"` unless set) and `loop` | UI SDK sets them on the root |
+| tabs | `value` typed `any`; `value` beside `defaultValue` lets `value` win | `any` kept; `defaultValue` dropped when `value` is set | examples hand the value to typed setters; UI SDK throws on both |
+| tabs | `Tabs.Indicator` from `@base-ui/react/tabs` inside a SevenUI `TabsList` | not usable: it needs Base UI's Tabs context; UI SDK's `TabsIndicator` takes the same `--active-tab-*` variables | `demos/tabs/tabs-indicator.tsx`, `components/tabs/tabs-05.tsx` |
+| accordion | `orientation`, `loopFocus` on the root | accepted, ignored | no UI SDK counterpart |
+| accordion, collapsible | open trigger has `data-panel-open` | `data-panel-open` added beside UI SDK's `data-open` | 27 example classNames style it (sidebar, collapsible, item) |
+| accordion, collapsible | `value`/`open` beside `defaultValue`/`defaultOpen` | the default is dropped when the controlled prop is set | UI SDK throws on both |
+| accordion | header `<h3>` has no `data-slot` | UI SDK's `accordion-header` slot removed | markup parity |
+| scroll-area | scrollbar unmounted while its axis does not overflow (unless `keepMounted`) | mounted with `hidden`; root uses `type="auto"` | UI SDK keeps scrollbars mounted and marks a showing one `data-visible` |
+| scroll-area | root `data-has-overflow-x/y`, `data-overflow-{x,y}-{start,end}` | derived from UI SDK state; the `x` edges are not set while both axes overflow | UI SDK state names the edges of one axis only |
+| scroll-area | any number of `ScrollBar`s per axis | one per axis: a caller's `ScrollBar` replaces the root's own for that axis | UI SDK rejects two scrollbars with the same orientation |
+| scroll-area | `overflowEdgeThreshold` | accepted, ignored | no UI SDK counterpart |
+| progress, meter | `getAriaValueText(formatted, value)`; `Value` children `(formatted, value)`; `locale` any `Intl.LocalesArgument` | mapped onto `getValueLabel(value, { formatted })`, state children, and the first locale as a string | UI SDK API |
+| progress | indeterminate bar announces `aria-valuetext="indeterminate progress"` | the flavour supplies the same text | UI SDK sets no text while indeterminate |
+| avatar | image unmounted until it loads, and on error | `<img>` rendered at once (and kept after an error), visually hidden with `aria-hidden` until loaded; no `data-starting-style` fade (`components/avatar/avatar-05.tsx` loses its fade-in) | UI SDK renders the image server-side so it can load before hydration |
+| avatar | `onLoadingStatusChange` on `AvatarImage` | forwarded to the root's callback | UI SDK reports the status on the root |
+| toggle-group | `orientation` only sets `data-orientation` (Base UI keeps left/right arrows) | passed to UI SDK, so a vertical group moves with up/down; `loopFocus` → `loop` | UI SDK reads orientation for keys and `data-orientation` |
+| toolbar | `ToolbarButton render={<Toggle />}` | renders the `Toggle` directly with the button's props and classes | a UI SDK toggle joins the toolbar itself; through a toolbar button it registered twice and the toolbar lost its tab stop. The flavour toolbar imports the flavour toggle |
+| toolbar | parts have no `data-slot` | UI SDK's `toolbar`, `toolbar-button`, … slots appear | UI SDK sets them; harmless |
 
 ## 9. Third-party wrappers and plain-markup primitives: evidence for the open decisions
 
