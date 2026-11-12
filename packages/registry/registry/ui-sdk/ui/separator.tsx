@@ -1,11 +1,9 @@
 "use client";
 
 import type * as React from "react";
-import { type RenderProp, renderElement } from "@ui-sdk/react/primitive";
+import { renderElement } from "@ui-sdk/react/primitive";
 import { Separator as SeparatorPrimitive } from "@ui-sdk/react/separator";
 import { cn } from "cn";
-
-type BaseRender = React.ReactElement<unknown> | RenderProp<never>;
 
 // UI SDK ignores a data-slot prop on its parts; one on the rendered element
 // wins. Base UI let a caller's data-slot replace the default (sidebar,
@@ -16,13 +14,9 @@ function Separator({
   "data-slot": slot = "separator",
   render,
   ...props
-}: Omit<
-  React.ComponentProps<typeof SeparatorPrimitive>,
-  "className" | "render"
-> & {
+}: Omit<React.ComponentProps<typeof SeparatorPrimitive>, "className"> & {
   className?: string;
   "data-slot"?: string;
-  render?: BaseRender;
 }) {
   return (
     <SeparatorPrimitive
@@ -31,7 +25,7 @@ function Separator({
         renderElement(
           "div",
           { ...separatorProps, "data-slot": slot },
-          render as RenderProp<typeof state> | undefined,
+          render,
           state,
         )
       }
