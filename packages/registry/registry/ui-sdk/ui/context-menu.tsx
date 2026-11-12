@@ -96,12 +96,27 @@ function ContextMenuTrigger({
   );
 }
 
-type FocusTarget = React.ComponentProps<typeof MenuContent>["finalFocus"];
-type BaseFinalFocus =
-  | FocusTarget
+// Base UI's focus props take a boolean, a ref, or a function of the
+// interaction that returns an element, `true`/`null` (the default) or
+// `false`/nothing (leave focus). UI SDK takes "none" or a getter.
+type BaseFocus =
   | boolean
   | React.RefObject<HTMLElement | null>
-  | (() => boolean | HTMLElement | null | undefined);
+  | ((interaction: string) => boolean | HTMLElement | null | undefined);
+
+function toFocusTarget(focus: BaseFocus | undefined) {
+  if (focus === undefined || focus === true) return undefined;
+  if (focus === false) return "none" as const;
+  if (typeof focus === "function") {
+    return (): HTMLElement | undefined => {
+      const target = focus("mouse");
+      if (target instanceof HTMLElement) return target;
+      if (target === true || target === null) return undefined;
+      return document.activeElement instanceof HTMLElement ? document.activeElement : undefined;
+    };
+  }
+  return (): HTMLElement | undefined => focus.current ?? undefined;
+}
 
 type ContentProps = Omit<
   React.ComponentProps<typeof MenuContent>,
@@ -110,28 +125,8 @@ type ContentProps = Omit<
   side?: Side | "inline-start" | "inline-end";
   render?: BaseRender;
   "data-slot"?: string;
-  finalFocus?: BaseFinalFocus;
+  finalFocus?: BaseFocus;
 };
-
-// Base UI's finalFocus also takes a boolean, a ref, or a function returning
-// a boolean: true keeps the default (the trigger), false leaves focus where
-// it is.
-function toFinalFocus(target: BaseFinalFocus): FocusTarget {
-  if (target === true || target === undefined) return undefined;
-  if (target === false) return "none";
-  if (typeof target === "object" && target !== null && "current" in target) {
-    return () => target.current;
-  }
-  if (typeof target === "function") {
-    return () => {
-      const result = target();
-      if (result === false) return document.activeElement as HTMLElement | null;
-      if (result === true || !result) return undefined;
-      return result;
-    };
-  }
-  return target;
-}
 
 // No Positioner: UI SDK positions the content itself, in the top layer, so
 // placement props sit on this part. A submenu needs UI SDK's MenuSubContent.
@@ -149,7 +144,7 @@ function contentPart(Content: typeof MenuContent, defaultSlot: string) {
   }: ContentProps) => (
       <Content
         render={part(slot, "div", render)}
-        finalFocus={toFinalFocus(finalFocus)}
+        finalFocus={toFocusTarget(finalFocus)}
         align={align}
         alignOffset={alignOffset}
         side={toSide(side)}

@@ -18,12 +18,6 @@ type OpenChange = NonNullable<React.ComponentProps<typeof PopoverPrimitive>["onO
 // unguarded after checking the reason, so the type follows Base UI.
 type OpenChangeDetails = Parameters<OpenChange>[1] & { event: Event };
 type Timing = { openOnHover?: boolean; delay?: number; closeDelay?: number };
-type FocusTarget = HTMLElement | null | undefined;
-// Base UI's focus props: a boolean, a ref, or a function of the interaction.
-type BaseFocus =
-  | boolean
-  | React.RefObject<HTMLElement | null>
-  | ((interaction: string) => boolean | undefined | HTMLElement | null);
 
 // Base UI sets hover opening and its delays on the trigger; UI SDK sets them
 // on the root. The trigger reports its values up so the root can apply them.
@@ -105,16 +99,26 @@ function toSide(side: Side | "inline-start" | "inline-end" | undefined): Side {
   return side;
 }
 
-function toFocus(focus: BaseFocus | undefined, none: "none") {
+// Base UI's focus props take a boolean, a ref, or a function of the
+// interaction that returns an element, `true`/`null` (the default) or
+// `false`/nothing (leave focus). UI SDK takes "none" or a getter.
+type BaseFocus =
+  | boolean
+  | React.RefObject<HTMLElement | null>
+  | ((interaction: string) => boolean | HTMLElement | null | undefined);
+
+function toFocusTarget(focus: BaseFocus | undefined) {
   if (focus === undefined || focus === true) return undefined;
-  if (focus === false) return none;
+  if (focus === false) return "none" as const;
   if (typeof focus === "function") {
-    return (): FocusTarget => {
+    return (): HTMLElement | undefined => {
       const target = focus("mouse");
-      return target instanceof HTMLElement ? target : undefined;
+      if (target instanceof HTMLElement) return target;
+      if (target === true || target === null) return undefined;
+      return document.activeElement instanceof HTMLElement ? document.activeElement : undefined;
     };
   }
-  return (): FocusTarget => focus.current;
+  return (): HTMLElement | undefined => focus.current ?? undefined;
 }
 
 // UI SDK has no Positioner or Portal: the content is positioned itself, in
@@ -144,8 +148,8 @@ function PopoverContent({
       alignOffset={alignOffset}
       side={toSide(side)}
       sideOffset={sideOffset}
-      initialFocus={toFocus(initialFocus, "none")}
-      finalFocus={toFocus(finalFocus, "none")}
+      initialFocus={toFocusTarget(initialFocus)}
+      finalFocus={toFocusTarget(finalFocus)}
       className={cn(
         "z-50 flex w-72 origin-(--transform-origin) flex-col gap-2.5 rounded-lg bg-popover p-[var(--panel-pad,1.125rem)] text-sm text-popover-foreground shadow-overlay ring-1 ring-foreground/10 outline-hidden",
         // Same motion as the select popup; reduced motion shows it instantly.

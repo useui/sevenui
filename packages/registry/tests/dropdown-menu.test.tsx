@@ -212,6 +212,105 @@ describe("DropdownMenu", () => {
   });
 });
 
+// Base UI's finalFocus forms: a boolean, a ref, or a function returning an
+// element, true (the default) or false (leave focus). sidebar-04 relies on
+// the function form.
+describe("DropdownMenu finalFocus", () => {
+  function FocusMenu({
+    finalFocus,
+  }: {
+    finalFocus?: React.ComponentProps<typeof DropdownMenuContent>["finalFocus"];
+  }) {
+    return (
+      <>
+        <DropdownMenu>
+          <DropdownMenuTrigger>Open menu</DropdownMenuTrigger>
+          <DropdownMenuContent finalFocus={finalFocus}>
+            <DropdownMenuItem>Rename</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <button type="button" id="elsewhere">
+          Elsewhere
+        </button>
+      </>
+    );
+  }
+
+  async function closeWithEscape(user: ReturnType<typeof userEvent.setup>) {
+    await user.click(screen.getByText("Open menu"));
+    const menu = await screen.findByRole("menu");
+    await waitFor(() => expect(menu.contains(document.activeElement)).toBe(true));
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("menu")).toBeNull());
+    // Let a deferred focus return settle before reading it.
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+
+  const trigger = () => screen.getByText("Open menu").closest("button");
+  const elsewhere = () => document.getElementById("elsewhere");
+
+  it("returns focus to the trigger by default and for true", async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(<FocusMenu />);
+    await closeWithEscape(user);
+    expect(document.activeElement).toBe(trigger());
+    unmount();
+    render(<FocusMenu finalFocus={() => true} />);
+    await closeWithEscape(user);
+    expect(document.activeElement).toBe(trigger());
+  });
+
+  it("leaves focus alone for false", async () => {
+    const user = userEvent.setup();
+    render(<FocusMenu finalFocus={false} />);
+    await closeWithEscape(user);
+    expect(document.activeElement).not.toBe(trigger());
+  });
+
+  // UI SDK's getter cannot say "leave focus", so the flavour cannot drop focus
+  // as Base UI does when it is still inside the closing menu; what examples
+  // need is that the field their action mounts keeps it (sidebar-04).
+  it("lets a field mounted by the action keep focus for a function returning false", async () => {
+    function RenameMenu() {
+      const [renaming, setRenaming] = React.useState(false);
+      const renamingRef = React.useRef(false);
+      renamingRef.current = renaming;
+      return (
+        <>
+          <DropdownMenu>
+            <DropdownMenuTrigger>Open menu</DropdownMenuTrigger>
+            <DropdownMenuContent finalFocus={() => !renamingRef.current}>
+              <DropdownMenuItem onClick={() => setRenaming(true)}>Rename</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {/* biome-ignore lint/a11y/noAutofocus: the rename field takes focus as sidebar-04's does. */}
+          {renaming && <input aria-label="Name" autoFocus />}
+        </>
+      );
+    }
+    const user = userEvent.setup();
+    render(<RenameMenu />);
+    await user.click(screen.getByText("Open menu"));
+    await user.click(await screen.findByRole("menuitem", { name: "Rename" }));
+    await waitFor(() => expect(screen.queryByRole("menu")).toBeNull());
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(document.activeElement).toBe(screen.getByLabelText("Name"));
+  });
+
+  it("moves focus to a ref or to the element a function returns", async () => {
+    const user = userEvent.setup();
+    const ref = { current: null as HTMLElement | null };
+    const { unmount } = render(<FocusMenu finalFocus={ref} />);
+    ref.current = elsewhere();
+    await closeWithEscape(user);
+    expect(document.activeElement).toBe(elsewhere());
+    unmount();
+    render(<FocusMenu finalFocus={() => elsewhere()} />);
+    await closeWithEscape(user);
+    expect(document.activeElement).toBe(elsewhere());
+  });
+});
+
 describe("DropdownMenu submenus", () => {
   it("opens a submenu with ArrowRight, marks its trigger and runs its items", async () => {
     const user = userEvent.setup();

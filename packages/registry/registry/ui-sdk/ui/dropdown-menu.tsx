@@ -97,10 +97,36 @@ function DropdownMenuTrigger({
   );
 }
 
-type ContentProps = Omit<React.ComponentProps<typeof MenuContent>, "side" | "render"> & {
+// Base UI's focus props take a boolean, a ref, or a function of the
+// interaction that returns an element, `true`/`null` (the default) or
+// `false`/nothing (leave focus). UI SDK takes "none" or a getter.
+type BaseFocus =
+  | boolean
+  | React.RefObject<HTMLElement | null>
+  | ((interaction: string) => boolean | HTMLElement | null | undefined);
+
+function toFocusTarget(focus: BaseFocus | undefined) {
+  if (focus === undefined || focus === true) return undefined;
+  if (focus === false) return "none" as const;
+  if (typeof focus === "function") {
+    return (): HTMLElement | undefined => {
+      const target = focus("mouse");
+      if (target instanceof HTMLElement) return target;
+      if (target === true || target === null) return undefined;
+      return document.activeElement instanceof HTMLElement ? document.activeElement : undefined;
+    };
+  }
+  return (): HTMLElement | undefined => focus.current ?? undefined;
+}
+
+type ContentProps = Omit<
+  React.ComponentProps<typeof MenuContent>,
+  "side" | "render" | "finalFocus"
+> & {
   side?: Side | "inline-start" | "inline-end";
   render?: BaseRender;
   "data-slot"?: string;
+  finalFocus?: BaseFocus;
 };
 
 // No Positioner: UI SDK positions the content itself, in the top layer, so
@@ -114,11 +140,13 @@ function contentPart(Content: typeof MenuContent, defaultSlot: string) {
     className,
     render,
     "data-slot": slot = defaultSlot,
+    finalFocus,
     ...props
   }: ContentProps) {
     return (
       <Content
         render={part(slot, "div", render)}
+        finalFocus={toFocusTarget(finalFocus)}
         align={align}
         alignOffset={alignOffset}
         side={toSide(side)}

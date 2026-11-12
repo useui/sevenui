@@ -16,12 +16,6 @@ import { cn } from "cn";
 import { Button } from "@/registry/ui-sdk/ui/button";
 
 type BaseRender = React.ReactElement<unknown> | RenderProp<never>;
-type FocusTarget = HTMLElement | null | undefined;
-// Base UI's focus props: a boolean, a ref, or a function of the interaction.
-type BaseFocus =
-  | boolean
-  | React.RefObject<HTMLElement | null>
-  | ((interaction: string) => boolean | undefined | HTMLElement | null);
 
 // UI SDK ignores a data-slot prop on its parts; one on the rendered element
 // wins. Used where SevenUI's slot name differs from UI SDK's.
@@ -40,16 +34,26 @@ function withSlot<State>(
     );
 }
 
-function toFocus(focus: BaseFocus | undefined) {
+// Base UI's focus props take a boolean, a ref, or a function of the
+// interaction that returns an element, `true`/`null` (the default) or
+// `false`/nothing (leave focus). UI SDK takes "none" or a getter.
+type BaseFocus =
+  | boolean
+  | React.RefObject<HTMLElement | null>
+  | ((interaction: string) => boolean | HTMLElement | null | undefined);
+
+function toFocusTarget(focus: BaseFocus | undefined) {
   if (focus === undefined || focus === true) return undefined;
   if (focus === false) return "none" as const;
   if (typeof focus === "function") {
-    return (): FocusTarget => {
+    return (): HTMLElement | undefined => {
       const target = focus("mouse");
-      return target instanceof HTMLElement ? target : undefined;
+      if (target instanceof HTMLElement) return target;
+      if (target === true || target === null) return undefined;
+      return document.activeElement instanceof HTMLElement ? document.activeElement : undefined;
     };
   }
-  return (): FocusTarget => focus.current;
+  return (): HTMLElement | undefined => focus.current ?? undefined;
 }
 
 function AlertDialog({
@@ -136,8 +140,8 @@ function AlertDialogContent({
       <AlertDialogContentPrimitive
         data-slot="alert-dialog-content"
         data-size={size}
-        initialFocus={toFocus(initialFocus)}
-        finalFocus={toFocus(finalFocus)}
+        initialFocus={toFocusTarget(initialFocus)}
+        finalFocus={toFocusTarget(finalFocus)}
         className={cn(
           // The popup parents the consumer's children directly, so layout
           // classes passed to AlertDialogContent land on the grid itself.

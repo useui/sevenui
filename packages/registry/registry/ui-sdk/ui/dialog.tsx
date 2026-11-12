@@ -27,6 +27,28 @@ function withSlot<State>(
     renderElement(tag, { ...props, "data-slot": slot }, render, state);
 }
 
+// Base UI's focus props take a boolean, a ref, or a function of the
+// interaction that returns an element, `true`/`null` (the default) or
+// `false`/nothing (leave focus). UI SDK takes "none" or a getter.
+type BaseFocus =
+  | boolean
+  | React.RefObject<HTMLElement | null>
+  | ((interaction: string) => boolean | HTMLElement | null | undefined);
+
+function toFocusTarget(focus: BaseFocus | undefined) {
+  if (focus === undefined || focus === true) return undefined;
+  if (focus === false) return "none" as const;
+  if (typeof focus === "function") {
+    return (): HTMLElement | undefined => {
+      const target = focus("mouse");
+      if (target instanceof HTMLElement) return target;
+      if (target === true || target === null) return undefined;
+      return document.activeElement instanceof HTMLElement ? document.activeElement : undefined;
+    };
+  }
+  return (): HTMLElement | undefined => focus.current ?? undefined;
+}
+
 // `disablePointerDismissal` is Base UI's name for UI SDK's
 // `closeOnOutsidePress={false}`.
 function Dialog({
@@ -111,16 +133,25 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
+  initialFocus,
+  finalFocus,
   ...props
-}: Omit<React.ComponentProps<typeof DialogContentPrimitive>, "children"> & {
+}: Omit<
+  React.ComponentProps<typeof DialogContentPrimitive>,
+  "children" | "initialFocus" | "finalFocus"
+> & {
   children?: React.ReactNode;
   showCloseButton?: boolean;
+  initialFocus?: BaseFocus;
+  finalFocus?: BaseFocus;
 }) {
   return (
     <>
       <DialogOverlay />
       <DialogContentPrimitive
         data-slot="dialog-content"
+        initialFocus={toFocusTarget(initialFocus)}
+        finalFocus={toFocusTarget(finalFocus)}
         className={cn(
           // The popup parents the consumer's children directly, so layout
           // classes passed to DialogContent land on the grid itself.

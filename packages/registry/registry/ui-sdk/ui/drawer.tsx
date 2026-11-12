@@ -18,12 +18,6 @@ type DrawerProps = React.ComponentProps<typeof DrawerPrimitive>;
 type SnapPoint = NonNullable<DrawerProps["snapPoint"]>;
 type SnapPointChange = NonNullable<DrawerProps["onSnapPointChange"]>;
 type BaseRender = React.ReactElement<unknown> | RenderProp<never>;
-type FocusTarget = HTMLElement | null | undefined;
-// Base UI's focus props: a boolean, a ref, or a function of the interaction.
-type BaseFocus =
-  | boolean
-  | React.RefObject<HTMLElement | null>
-  | ((interaction: string) => boolean | undefined | HTMLElement | null);
 type ContentState = { nestedOpen: boolean; dragging: boolean };
 
 type DrawerContextProps = {
@@ -62,16 +56,26 @@ function withSlot<State>(
     );
 }
 
-function toFocus(focus: BaseFocus | undefined) {
+// Base UI's focus props take a boolean, a ref, or a function of the
+// interaction that returns an element, `true`/`null` (the default) or
+// `false`/nothing (leave focus). UI SDK takes "none" or a getter.
+type BaseFocus =
+  | boolean
+  | React.RefObject<HTMLElement | null>
+  | ((interaction: string) => boolean | HTMLElement | null | undefined);
+
+function toFocusTarget(focus: BaseFocus | undefined) {
   if (focus === undefined || focus === true) return undefined;
   if (focus === false) return "none" as const;
   if (typeof focus === "function") {
-    return (): FocusTarget => {
+    return (): HTMLElement | undefined => {
       const target = focus("mouse");
-      return target instanceof HTMLElement ? target : undefined;
+      if (target instanceof HTMLElement) return target;
+      if (target === true || target === null) return undefined;
+      return document.activeElement instanceof HTMLElement ? document.activeElement : undefined;
     };
   }
-  return (): FocusTarget => focus.current;
+  return (): HTMLElement | undefined => focus.current ?? undefined;
 }
 
 // Base UI names the edge by the direction a swipe closes it; UI SDK by side.
@@ -252,8 +256,8 @@ function DrawerContent({
           "data-nested-drawer-open": state.nestedOpen ? "" : undefined,
           "data-swiping": state.dragging ? "" : undefined,
         }))}
-        initialFocus={toFocus(initialFocus)}
-        finalFocus={toFocus(finalFocus)}
+        initialFocus={toFocusTarget(initialFocus)}
+        finalFocus={toFocusTarget(finalFocus)}
         className={cn(
           // Base.
           "group/drawer-popup pointer-events-auto z-50 m-(--drawer-inset,0px) flex h-(--drawer-content-height) max-h-(--drawer-content-max-height,none) min-h-0 w-(--drawer-content-width,auto) flex-col rounded-[min(var(--radius-4xl),24px)] border border-popover bg-popover text-sm text-popover-foreground shadow-overlay transition-[height,opacity,filter,scale] duration-200 ease-snappy outline-none select-none [--drawer-bleed-background:transparent] [--drawer-inset:--spacing(2)] [--drawer-stacked-shadow:0_-20px_25px_-5px_rgb(0_0_0/0.1),0_-8px_10px_-6px_rgb(0_0_0/0.1)] [interpolate-size:allow-keywords] data-[swipe-direction=down]:data-nested-drawer-open:shadow-(--drawer-stacked-shadow) dark:border-border",
