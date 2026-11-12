@@ -119,16 +119,20 @@ function AlertDialogOverlay({
   );
 }
 
+// Base UI marks a dialog with an open nested dialog data-nested-dialog-open;
+// UI SDK's state calls it nestedOpen (dialog-10 styles the Base UI name).
 function AlertDialogContent({
   className,
   size = "default",
   initialFocus,
   finalFocus,
+  render,
   ...props
 }: Omit<
   React.ComponentProps<typeof AlertDialogContentPrimitive>,
-  "className" | "initialFocus" | "finalFocus"
+  "className" | "initialFocus" | "finalFocus" | "render"
 > & {
+  render?: BaseRender;
   className?: string;
   size?: "default" | "sm";
   initialFocus?: BaseFocus;
@@ -140,6 +144,9 @@ function AlertDialogContent({
       <AlertDialogContentPrimitive
         data-slot="alert-dialog-content"
         data-size={size}
+        render={withSlot<{ nestedOpen: boolean }>("alert-dialog-content", "div", render, (state) => ({
+          "data-nested-dialog-open": state.nestedOpen ? "" : undefined,
+        }))}
         initialFocus={toFocusTarget(initialFocus)}
         finalFocus={toFocusTarget(finalFocus)}
         className={cn(

@@ -129,12 +129,15 @@ function DialogOverlay({
   );
 }
 
+// Base UI marks a dialog with an open nested dialog data-nested-dialog-open;
+// UI SDK's state calls it nestedOpen (dialog-10 styles the Base UI name).
 function DialogContent({
   className,
   children,
   showCloseButton = true,
   initialFocus,
   finalFocus,
+  render,
   ...props
 }: Omit<
   React.ComponentProps<typeof DialogContentPrimitive>,
@@ -150,6 +153,14 @@ function DialogContent({
       <DialogOverlay />
       <DialogContentPrimitive
         data-slot="dialog-content"
+        render={(contentProps, state) =>
+          renderElement(
+            "div",
+            { ...contentProps, "data-nested-dialog-open": state.nestedOpen ? "" : undefined },
+            render,
+            state,
+          )
+        }
         initialFocus={toFocusTarget(initialFocus)}
         finalFocus={toFocusTarget(finalFocus)}
         className={cn(

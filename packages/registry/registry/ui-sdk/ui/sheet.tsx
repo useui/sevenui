@@ -129,6 +129,8 @@ function SheetOverlay({
   );
 }
 
+// Base UI marks a dialog with an open nested dialog data-nested-dialog-open;
+// UI SDK's state calls it nestedOpen (dialog-10 styles the Base UI name).
 function SheetContent({
   className,
   children,
@@ -157,7 +159,9 @@ function SheetContent({
       <SheetOverlay />
       <SheetContentPrimitive
         data-side={side}
-        render={withSlot(slot, "div", render)}
+        render={withSlot<{ nestedOpen: boolean }>(slot, "div", render, (state) => ({
+          "data-nested-dialog-open": state.nestedOpen ? "" : undefined,
+        }))}
         initialFocus={toFocusTarget(initialFocus)}
         finalFocus={toFocusTarget(finalFocus)}
         className={cn(

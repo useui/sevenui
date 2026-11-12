@@ -179,6 +179,32 @@ describe("Dialog focus targets", () => {
   });
 });
 
+describe("Nested dialogs", () => {
+  it("marks the parent with data-nested-dialog-open while a nested dialog is open", async () => {
+    const user = userEvent.setup();
+    render(
+      <Dialog>
+        <DialogTrigger>Open outer</DialogTrigger>
+        <DialogContent data-testid="outer">
+          <DialogTitle>Outer</DialogTitle>
+          <Dialog>
+            <DialogTrigger>Open inner</DialogTrigger>
+            <DialogContent>
+              <DialogTitle>Inner</DialogTitle>
+            </DialogContent>
+          </Dialog>
+        </DialogContent>
+      </Dialog>,
+    );
+    await user.click(screen.getByText("Open outer"));
+    const outer = await screen.findByTestId("outer");
+    expect(outer.hasAttribute("data-nested-dialog-open")).toBe(false);
+    await user.click(screen.getByText("Open inner"));
+    await screen.findByText("Inner");
+    await waitFor(() => expect(outer.hasAttribute("data-nested-dialog-open")).toBe(true));
+  });
+});
+
 describe("Dialog v2 styles", () => {
   async function renderOpen() {
     render(<ExampleDialog open />);
