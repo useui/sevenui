@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Input as InputPrimitive } from "@ui-sdk/react/input";
+import { renderElement } from "@ui-sdk/react/primitive";
 import { cn } from "cn";
 
 type InputPrimitiveProps = React.ComponentProps<typeof InputPrimitive>;
@@ -23,12 +24,17 @@ function Input({
   type,
   value,
   defaultValue,
+  "data-slot": slot = "input",
   ...props
-}: React.ComponentProps<"input">) {
+}: React.ComponentProps<"input"> & { "data-slot"?: string }) {
   return (
     <InputPrimitive
       type={type}
-      data-slot="input"
+      // UI SDK ignores a data-slot prop on its part; set through `render`, a
+      // caller's slot (`sidebar-input`, `input-group-control`) still wins.
+      render={(p, state) =>
+        renderElement("input", { ...p, "data-slot": slot }, undefined, state)
+      }
       className={cn(
         "h-[var(--control-h,2.125rem)] w-full min-w-0 rounded-lg border border-input bg-transparent px-[var(--control-px,0.75rem)] py-1 text-base transition-[color,border-color,box-shadow] duration-150 outline-none motion-reduce:transition-none md:text-[length:var(--control-text,0.8125rem)] dark:bg-input/30",
         "file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-[length:var(--control-text,0.8125rem)] file:font-medium file:text-foreground placeholder:text-muted-foreground",
