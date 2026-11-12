@@ -39,9 +39,19 @@ clients that support MCP, while project 3 reaches every agent.
 
 Nothing exists yet. Tool list, hosting and auth are all undecided.
 
+## Release constraint
+
+Owner's requirement, 2026-11-13: v2 goes to production on Vercel from
+`feat/v2` itself, without merging into `main`. How (changing the project's
+production branch, promoting a branch deployment, or a CLI production deploy)
+is undecided, and so is what happens to `main` afterwards. Settle both with the
+owner before releasing. The pro deployment and the `/previews/*` rewrite must
+keep working against whatever becomes production.
+
 ## Also parked
 
-- Project 5, the v2 release, follows project 4.
+- Project 5, the v2 release, follows project 4 and must honour the release
+  constraint above.
 - Toys section: named and approved on 2026-10-23, waiting for the owner's go.
 - Block previews following the customizer can only be checked on a deployed
   build (`/previews/*` rewrites to the pro deployment on Vercel only). The
