@@ -1,7 +1,7 @@
 # SevenUI — UI SDK as a second primitive flavour
 
 **Date:** 2026-11-13
-**Status:** Infrastructure and pilots done on `feat/ui-sdk`. 23 of 66 primitives are published in the flavour; the rest are being ported in parallel.
+**Status:** All 66 primitives are ported and published in the flavour on `feat/ui-sdk` (`node scripts/ui-sdk-flavour.mjs status --strict` exits 0). The whole tree was verified together after the parallel ports (2026-11-13).
 **Companions:**
 - ADR: `docs/adr/0002-ui-sdk-second-flavour.md`
 - Porter's manual: `docs/superpowers/plans/2026-11-13-ui-sdk-porting-guide.md` (it holds the verified mapping, the adapter patterns and the divergence table)
@@ -90,11 +90,13 @@ Each failure mode was positive-controlled: an edited seed, a drifted mirror, a r
 - the layer step is printed;
 - base-flavour JSX typechecks against the flavour, including Base UI-only props such as `closeOnClick`, `indeterminate`, `items`, `side="inline-end"` and `TooltipTrigger delay`.
 
-**The smoke test exits 1 on this branch before reaching the flavour block.** The failing assertion is the existing one that `--surface-tray:` is declared exactly twice after `select`+`dialog`, and it fails with the unmodified script as well. With only that assertion bypassed, the whole script, flavour block included, passes.
+**The smoke test passes**, flavour block included. It used to exit 1 on an older assertion that `--surface-tray:` is declared exactly twice after `select`+`dialog`. That count broke when the token probe moved from `--brand` to `--surface-tray` (`e35a034`): shadcn 4.19.1 does not read a `color-mix()` value as a colour, so the first install already writes a third, pass-through `--surface-tray: var(--surface-tray);` into `@theme inline`. The second install never duplicated anything. The assertion now counts the two theme-block declarations and checks that the second install adds no match.
+
+**`scripts/check-ui-sdk-compat.mjs`** (`pnpm check:ui-sdk-compat`). It typechecks all 1,063 demos and gallery examples as a project that installed the flavour sees them: `@/registry/base/ui/*` resolves to the flavour, and the four replaced libraries are not installed. Two controls keep it honest: a file importing `@base-ui/react/tabs` must be reported, and a type that only the flavour calendar exports must resolve. The result, `packages/registry/ui-sdk-compat.json`, classifies each example as `ok`, `differs` or `needs-variant`. The check fails when the manifest is stale.
 
 ## 6. Byte parity
 
-`apps/web/public/r` was built before any change and copied aside, then rebuilt at the end and compared with `diff -r`. The only difference is the new `r/ui-sdk/` directory: 23 items plus `registry.json`. Everything else under `r/`, `r/demo/` and `r/component/` is byte-identical.
+`apps/web/public/r` was built at `e7024e6` (before any flavour work) and at the tip, and compared with `diff -r`. The only difference is the new `r/ui-sdk/` directory: 66 items plus `registry.json`. The other 1,135 files under `r/`, `r/demo/` and `r/component/` are byte-identical.
 
 ## 7. Pilots
 
@@ -116,13 +118,14 @@ Things found on the way, each with its fix, are in the guide:
 
 | Run | Result | What changed |
 |---|---|---|
-| `base` project | 931 | The original 906 pass unchanged. +1 is a new submenu test in `dropdown-menu.test.tsx`; +24 are export-freeze checks for ported flavour files. The Field + Checkbox labelling test moved from `checkbox.test.tsx` to `field.test.tsx`, so the count is the same. |
-| `ui-sdk` project | 292 tests, 24 files | — |
+| `base` project | 1,013 tests, 71 files | The original tests pass unchanged; the additions are export-freeze checks for every ported file and tests added with the ports. |
+| `ui-sdk` project | 865 tests + 1 expected failure, 66 files | The expected failure is the input-otp paste test (`it.fails`): a UI SDK 0.1.0-beta.1 bug, see the guide's §8. |
 
 Flavour-specific expectations live in `tests/helpers/flavour.ts`. Each states why it exists.
 
 ## 9. Open items
 
+- **13 examples need a flavour variant**, and 69 typecheck but hit a recorded difference: see `packages/registry/ui-sdk-compat.json`.
 - **Examples are not flavoured.** `/r/demo/*` and `/r/component/*` declare `registryDependencies` on base URLs, so installing an example into a UI SDK project pulls the Base UI primitive over the flavour one. The example source itself works against either flavour, which is the point of decision 5. Options:
   - generate flavoured example registries (`/r/ui-sdk/demo/*`) by retargeting registryDependencies at build time;
   - document "install the primitives first".
