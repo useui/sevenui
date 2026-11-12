@@ -1,13 +1,16 @@
 "use client";
 
-import { Separator as SeparatorPrimitive } from "@base-ui/react/separator";
+import type * as React from "react";
+import { Separator as SeparatorPrimitive } from "@ui-sdk/react/separator";
 import { cn } from "cn";
 
 function Separator({
   className,
   orientation = "horizontal",
   ...props
-}: SeparatorPrimitive.Props) {
+}: Omit<React.ComponentProps<typeof SeparatorPrimitive>, "className"> & {
+  className?: string;
+}) {
   return (
     <SeparatorPrimitive
       data-slot="separator"
