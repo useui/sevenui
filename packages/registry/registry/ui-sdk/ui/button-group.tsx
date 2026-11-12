@@ -1,5 +1,5 @@
-import { mergeProps } from "@base-ui/react/merge-props";
-import { useRender } from "@base-ui/react/use-render";
+import type * as React from "react";
+import { mergeProps, type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
@@ -38,15 +38,22 @@ function ButtonGroup({
   );
 }
 
+type ButtonGroupTextState = { slot: "button-group-text" };
+
+// Base UI's useRender turns state into data attributes; renderElement does not,
+// so data-slot is set explicitly. ReactElement<unknown> keeps Base UI's render type.
 function ButtonGroupText({
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
-  return useRender({
-    defaultTagName: "div",
-    props: mergeProps<"div">(
+}: React.ComponentProps<"div"> & {
+  render?: RenderProp<ButtonGroupTextState> | React.ReactElement<unknown>;
+}) {
+  return renderElement(
+    "div",
+    mergeProps(
       {
+        "data-slot": "button-group-text",
         className: cn(
           "flex items-center gap-[var(--control-gap,0.5rem)] rounded-lg border bg-muted px-[var(--control-px,0.75rem)] text-[length:var(--control-text,0.8125rem)] font-medium [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
           className,
@@ -54,22 +61,25 @@ function ButtonGroupText({
       },
       props,
     ),
-    render,
-    state: {
-      slot: "button-group-text",
-    },
-  });
+    render as RenderProp<ButtonGroupTextState> | undefined,
+    { slot: "button-group-text" } satisfies ButtonGroupTextState,
+  );
 }
 
+// UI SDK ignores a data-slot prop on a part; one on the rendered element wins.
 function ButtonGroupSeparator({
   className,
   orientation = "vertical",
+  render,
+  "data-slot": slot = "button-group-separator",
   ...props
-}: React.ComponentProps<typeof Separator>) {
+}: React.ComponentProps<typeof Separator> & { "data-slot"?: string }) {
   return (
     <Separator
-      data-slot="button-group-separator"
       orientation={orientation}
+      render={(partProps, state) =>
+        renderElement("div", { ...partProps, "data-slot": slot }, render, state)
+      }
       className={cn(
         "relative self-stretch bg-input data-[orientation=horizontal]:mx-px data-[orientation=horizontal]:w-auto data-[orientation=vertical]:my-px data-[orientation=vertical]:h-auto",
         className,

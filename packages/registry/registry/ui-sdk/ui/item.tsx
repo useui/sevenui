@@ -1,6 +1,5 @@
-import * as React from "react";
-import { mergeProps } from "@base-ui/react/merge-props";
-import { useRender } from "@base-ui/react/use-render";
+import type * as React from "react";
+import { mergeProps, type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
@@ -17,15 +16,20 @@ function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+// UI SDK ignores a data-slot prop on a part; one on the rendered element wins.
 function ItemSeparator({
   className,
+  render,
+  "data-slot": slot = "item-separator",
   ...props
-}: React.ComponentProps<typeof Separator>) {
+}: React.ComponentProps<typeof Separator> & { "data-slot"?: string }) {
   return (
     <Separator
-      data-slot="item-separator"
       orientation="horizontal"
       className={cn("my-2", className)}
+      render={(partProps, state) =>
+        renderElement("div", { ...partProps, "data-slot": slot }, render, state)
+      }
       {...props}
     />
   );
@@ -60,28 +64,39 @@ const itemVariants = cva(
   },
 );
 
+type ItemState = {
+  slot: "item";
+  variant: VariantProps<typeof itemVariants>["variant"];
+  size: VariantProps<typeof itemVariants>["size"];
+};
+
+// Base UI's useRender turns state into data attributes; renderElement does not,
+// so data-slot, data-variant and data-size are set explicitly.
+// ReactElement<unknown> keeps Base UI's render type.
 function Item({
   className,
   variant = "default",
   size = "default",
   render,
   ...props
-}: useRender.ComponentProps<"div"> & VariantProps<typeof itemVariants>) {
-  return useRender({
-    defaultTagName: "div",
-    props: mergeProps<"div">(
+}: React.ComponentProps<"div"> &
+  VariantProps<typeof itemVariants> & {
+    render?: RenderProp<ItemState> | React.ReactElement<unknown>;
+  }) {
+  return renderElement(
+    "div",
+    mergeProps(
       {
+        "data-slot": "item",
+        "data-variant": variant ?? undefined,
+        "data-size": size ?? undefined,
         className: cn(itemVariants({ variant, size, className })),
       },
       props,
     ),
-    render,
-    state: {
-      slot: "item",
-      variant,
-      size,
-    },
-  });
+    render as RenderProp<ItemState> | undefined,
+    { slot: "item", variant, size } satisfies ItemState,
+  );
 }
 
 const itemMediaVariants = cva(

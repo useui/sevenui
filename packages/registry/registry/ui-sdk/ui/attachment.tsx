@@ -1,6 +1,5 @@
-import * as React from "react";
-import { mergeProps } from "@base-ui/react/merge-props";
-import { useRender } from "@base-ui/react/use-render";
+import type * as React from "react";
+import { mergeProps, type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
@@ -159,26 +158,31 @@ function AttachmentAction({
   );
 }
 
+type AttachmentTriggerState = { slot: "attachment-trigger" };
+
+// Base UI's useRender turns state into data attributes; renderElement does not,
+// so data-slot is set explicitly. ReactElement<unknown> keeps Base UI's render type.
 function AttachmentTrigger({
   className,
   render,
   type,
   ...props
-}: useRender.ComponentProps<"button">) {
-  return useRender({
-    defaultTagName: "button",
-    props: mergeProps<"button">(
+}: React.ComponentProps<"button"> & {
+  render?: RenderProp<AttachmentTriggerState> | React.ReactElement<unknown>;
+}) {
+  return renderElement(
+    "button",
+    mergeProps(
       {
+        "data-slot": "attachment-trigger",
         type: render ? type : (type ?? "button"),
         className: cn("absolute inset-0 z-10 outline-none", className),
       },
       props,
     ),
-    render,
-    state: {
-      slot: "attachment-trigger",
-    },
-  });
+    render as RenderProp<AttachmentTriggerState> | undefined,
+    { slot: "attachment-trigger" } satisfies AttachmentTriggerState,
+  );
 }
 
 function AttachmentGroup({ className, ...props }: React.ComponentProps<"div">) {

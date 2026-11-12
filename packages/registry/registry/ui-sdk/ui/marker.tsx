@@ -1,6 +1,5 @@
-import * as React from "react";
-import { mergeProps } from "@base-ui/react/merge-props";
-import { useRender } from "@base-ui/react/use-render";
+import type * as React from "react";
+import { mergeProps, type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
@@ -18,26 +17,36 @@ const markerVariants = cva(
   },
 );
 
+type MarkerState = {
+  slot: "marker";
+  variant: VariantProps<typeof markerVariants>["variant"];
+};
+
+// Base UI's useRender turns state into data attributes; renderElement does not,
+// so data-slot and data-variant are set explicitly. ReactElement<unknown>
+// keeps Base UI's render type.
 function Marker({
   className,
   variant = "default",
   render,
   ...props
-}: useRender.ComponentProps<"div"> & VariantProps<typeof markerVariants>) {
-  return useRender({
-    defaultTagName: "div",
-    props: mergeProps<"div">(
+}: React.ComponentProps<"div"> &
+  VariantProps<typeof markerVariants> & {
+    render?: RenderProp<MarkerState> | React.ReactElement<unknown>;
+  }) {
+  return renderElement(
+    "div",
+    mergeProps(
       {
+        "data-slot": "marker",
+        "data-variant": variant ?? undefined,
         className: cn(markerVariants({ variant, className })),
       },
       props,
     ),
-    render,
-    state: {
-      slot: "marker",
-      variant,
-    },
-  });
+    render as RenderProp<MarkerState> | undefined,
+    { slot: "marker", variant } satisfies MarkerState,
+  );
 }
 
 function MarkerIcon({ className, ...props }: React.ComponentProps<"span">) {

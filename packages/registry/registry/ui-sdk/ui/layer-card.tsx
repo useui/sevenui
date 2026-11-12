@@ -1,8 +1,7 @@
 "use client";
 
-import * as React from "react";
-import { mergeProps } from "@base-ui/react/merge-props";
-import { useRender } from "@base-ui/react/use-render";
+import type * as React from "react";
+import { mergeProps, type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
@@ -115,6 +114,23 @@ const layerCardVariants = cva(
   },
 );
 
+type LayerCardVariantProps = VariantProps<typeof layerCardVariants>;
+
+type LayerCardState = {
+  slot: "layer-card";
+  variant: LayerCardVariantProps["variant"];
+  size: LayerCardVariantProps["size"];
+  orientation: LayerCardVariantProps["orientation"];
+  tone: LayerCardVariantProps["tone"];
+  stacked: LayerCardVariantProps["stacked"];
+  dense: LayerCardVariantProps["dense"];
+};
+
+// Base UI's useRender turns state into data attributes (a true boolean as an
+// empty attribute, a false one omitted); renderElement does not, so they are
+// set explicitly. ReactElement<unknown> keeps Base UI's render type.
+const flag = (value: boolean | null | undefined) => (value ? "" : undefined);
+
 function LayerCard({
   className,
   variant = "default",
@@ -125,11 +141,21 @@ function LayerCard({
   tone = "default",
   render,
   ...props
-}: useRender.ComponentProps<"div"> & VariantProps<typeof layerCardVariants>) {
-  return useRender({
-    defaultTagName: "div",
-    props: mergeProps<"div">(
+}: React.ComponentProps<"div"> &
+  LayerCardVariantProps & {
+    render?: RenderProp<LayerCardState> | React.ReactElement<unknown>;
+  }) {
+  return renderElement(
+    "div",
+    mergeProps(
       {
+        "data-slot": "layer-card",
+        "data-variant": variant ?? undefined,
+        "data-size": size ?? undefined,
+        "data-orientation": orientation ?? undefined,
+        "data-tone": tone ?? undefined,
+        "data-stacked": flag(stacked),
+        "data-dense": flag(dense),
         className: cn(
           layerCardVariants({ variant, size, orientation, stacked, dense, tone }),
           className,
@@ -137,8 +163,8 @@ function LayerCard({
       },
       props,
     ),
-    render,
-    state: {
+    render as RenderProp<LayerCardState> | undefined,
+    {
       slot: "layer-card",
       variant,
       size,
@@ -146,8 +172,8 @@ function LayerCard({
       tone,
       stacked,
       dense,
-    },
-  });
+    } satisfies LayerCardState,
+  );
 }
 
 function LayerCardHeader({ className, ...props }: React.ComponentProps<"div">) {
@@ -163,20 +189,27 @@ function LayerCardHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+type LayerCardTitleState = { slot: "layer-card-title" };
+
 function LayerCardTitle({
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
-  return useRender({
-    defaultTagName: "div",
-    props: mergeProps<"div">(
-      { className: cn("text-sm leading-snug font-medium", className) },
+}: React.ComponentProps<"div"> & {
+  render?: RenderProp<LayerCardTitleState> | React.ReactElement<unknown>;
+}) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "layer-card-title",
+        className: cn("text-sm leading-snug font-medium", className),
+      },
       props,
     ),
-    render,
-    state: { slot: "layer-card-title" },
-  });
+    render as RenderProp<LayerCardTitleState> | undefined,
+    { slot: "layer-card-title" } satisfies LayerCardTitleState,
+  );
 }
 
 function LayerCardDescription({
@@ -205,16 +238,22 @@ function LayerCardAction({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+type LayerCardPanelState = { fit: boolean };
+
 function LayerCardPanel({
   className,
   fit = false,
   render,
   ...props
-}: useRender.ComponentProps<"div"> & { fit?: boolean }) {
-  return useRender({
-    defaultTagName: "div",
-    props: mergeProps<"div">(
+}: React.ComponentProps<"div"> & {
+  fit?: boolean;
+  render?: RenderProp<LayerCardPanelState> | React.ReactElement<unknown>;
+}) {
+  return renderElement(
+    "div",
+    mergeProps(
       {
+        "data-fit": flag(fit),
         className: cn(
           "relative min-w-0 rounded-(--layer-card-panel-radius) border border-(color:--layer-card-border-color) bg-(--layer-card-panel-bg) bg-clip-padding px-(--layer-card-panel-px) py-(--layer-card-panel-py) text-card-foreground shadow-[var(--elevation-raised,0_1px_2px_0_rgb(0_0_0/0.05))]",
           !fit && "grow",
@@ -226,11 +265,11 @@ function LayerCardPanel({
       // The tray finds its panels by this slot, so it goes last: a component
       // that renders through a panel (CollapsibleContent render={…}) passes
       // its own data-slot, which must not win.
-      { "data-slot": "layer-card-panel" } as React.ComponentProps<"div">,
+      { "data-slot": "layer-card-panel" },
     ),
-    render,
-    state: { fit },
-  });
+    render as RenderProp<LayerCardPanelState> | undefined,
+    { fit } satisfies LayerCardPanelState,
+  );
 }
 
 function LayerCardFooter({ className, ...props }: React.ComponentProps<"div">) {

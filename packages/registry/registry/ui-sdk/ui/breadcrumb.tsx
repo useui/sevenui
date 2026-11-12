@@ -1,6 +1,5 @@
-import * as React from "react";
-import { mergeProps } from "@base-ui/react/merge-props";
-import { useRender } from "@base-ui/react/use-render";
+import type * as React from "react";
+import { mergeProps, type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cn } from "cn";
 import { ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
 
@@ -38,15 +37,22 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
   );
 }
 
+type BreadcrumbLinkState = { slot: "breadcrumb-link" };
+
+// Base UI's useRender turns state into data attributes; renderElement does not,
+// so data-slot is set explicitly. ReactElement<unknown> keeps Base UI's render type.
 function BreadcrumbLink({
   className,
   render,
   ...props
-}: useRender.ComponentProps<"a">) {
-  return useRender({
-    defaultTagName: "a",
-    props: mergeProps<"a">(
+}: React.ComponentProps<"a"> & {
+  render?: RenderProp<BreadcrumbLinkState> | React.ReactElement<unknown>;
+}) {
+  return renderElement(
+    "a",
+    mergeProps(
       {
+        "data-slot": "breadcrumb-link",
         className: cn(
           "transition-[color,background-color,border-color] hover:text-foreground motion-reduce:transition-none",
           className,
@@ -54,11 +60,9 @@ function BreadcrumbLink({
       },
       props,
     ),
-    render,
-    state: {
-      slot: "breadcrumb-link",
-    },
-  });
+    render as RenderProp<BreadcrumbLinkState> | undefined,
+    { slot: "breadcrumb-link" } satisfies BreadcrumbLinkState,
+  );
 }
 
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {

@@ -1,6 +1,5 @@
-import * as React from "react";
-import { mergeProps } from "@base-ui/react/merge-props";
-import { useRender } from "@base-ui/react/use-render";
+import type * as React from "react";
+import { mergeProps, type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
@@ -61,15 +60,22 @@ function Bubble({
   );
 }
 
+type BubbleContentState = { slot: "bubble-content" };
+
+// Base UI's useRender turns state into data attributes; renderElement does not,
+// so data-slot is set explicitly. ReactElement<unknown> keeps Base UI's render type.
 function BubbleContent({
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
-  return useRender({
-    defaultTagName: "div",
-    props: mergeProps<"div">(
+}: React.ComponentProps<"div"> & {
+  render?: RenderProp<BubbleContentState> | React.ReactElement<unknown>;
+}) {
+  return renderElement(
+    "div",
+    mergeProps(
       {
+        "data-slot": "bubble-content",
         className: cn(
           "w-fit max-w-full min-w-0 overflow-hidden rounded-xl border border-transparent px-[var(--control-px,0.75rem)] py-[calc(var(--control-px,0.75rem)*0.66)] text-sm leading-relaxed wrap-break-word group-data-[align=end]/bubble:self-end [button]:text-left [button,a]:transition-[color,background-color,border-color] [button,a]:outline-none [button,a]:focus-visible:border-ring [button,a]:focus-visible:ring-3 [button,a]:focus-visible:ring-ring/30 motion-reduce:[button,a]:transition-none",
           className,
@@ -77,11 +83,9 @@ function BubbleContent({
       },
       props,
     ),
-    render,
-    state: {
-      slot: "bubble-content",
-    },
-  });
+    render as RenderProp<BubbleContentState> | undefined,
+    { slot: "bubble-content" } satisfies BubbleContentState,
+  );
 }
 
 const bubbleReactionsVariants = cva(
