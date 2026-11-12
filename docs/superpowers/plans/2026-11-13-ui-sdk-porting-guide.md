@@ -329,6 +329,26 @@ Check these:
 | sidebar | `SidebarMenuButton` tooltip hidden with `hidden` on the popup while expanded or mobile | `disabled` on the `Tooltip` root, plus `hidden` (only ever set, never cleared) so a tooltip already open when the sidebar expands disappears | UI SDK manages `hidden` on closed content; `disabled` does not close an open tooltip |
 | sidebar | `SidebarMenuButton` with `tooltip` keeps `data-slot="sidebar-menu-button"` on the trigger | same, put back on the rendered element through the trigger's `render` | the tooltip trigger part would set `tooltip-trigger` |
 | sidebar | `SidebarInput`/`SidebarSeparator` pass `data-slot` to `Input`/`Separator` | the slot is set through `render` (Input's type has no `render`, so it is passed untyped) | the flavour `Input` and `Separator` drop a caller's `data-slot` |
+| context-menu | `finalFocus` takes a boolean, a ref, or a function returning a boolean | mapped: `true` keeps the default, `false` → `"none"` (or the focused element, from a function), a ref is read when the menu closes | UI SDK's `finalFocus` takes a target, `"none"` or a function returning an element |
+| context-menu | `disabled`, `orientation`, `closeDelay` on the root | accepted, ignored | no UI SDK counterpart |
+| menubar | `data-slot` passed to the `DropdownMenu*` parts | set by a `render` function over the dropdown-menu part's own | the dropdown-menu flavour sets its slot on the rendered element |
+| navigation-menu | `Portal > Positioner > Popup > Viewport` (`--positioner-*`, `--popup-*`) | one `NavigationMenuViewport` top-layer popup sized by `--viewport-width/height`; the surface classes sit on it, so content's parent is the surface | UI SDK has one viewport element |
+| navigation-menu | content `h-full w-auto`, sized by Base UI | `absolute top-0 start-0 h-auto w-max`, capped by a copied `--panel-h` | UI SDK measures the content to size the viewport; a viewport-relative height would loop |
+| navigation-menu | link `active`, `closeOnClick` (default false) | `current` (plus `data-active`), `closeOnSelect={closeOnClick}` | UI SDK API |
+| navigation-menu | `NavigationMenuIndicator` is Base UI's `Icon` | UI SDK `NavigationMenuIndicator` (sits under the open trigger via `--active-item-*`); `data-[state=…]` classes stay inert | no Icon part; 0 example uses |
+| navigation-menu | root `actionsRef`; positioner `sticky`, `positionMethod`, `collisionBoundary`, `collisionAvoidance`, `disableAnchorTracking` | accepted, ignored | no UI SDK counterpart |
+| combobox | `items` + function children on `ComboboxList`/`ComboboxCollection` | every item rendered from `items` (or `ComboboxGroup items`); UI SDK filters rendered items by `label`, and keeps filtered-out ones mounted with `hidden` | UI SDK `items` is list data that renders its own parts |
+| combobox | `filter(item, query)`, `filter={null}`, `itemToStringLabel`/`itemToStringValue`, `inputValue`/`onInputValueChange`, `loopFocus`, `onItemHighlighted` | `filter(entry.value, query)`, `filter={false}`, `itemToLabel`/`itemToValue`, `query`/`onQueryChange`, `loop`, `onHighlight` | UI SDK naming; object items default to their `label`, else `value` |
+| combobox | `ComboboxChip` without `value` (Base UI infers it) | `ComboboxValue` fills each chip's `value` by position in the selected values | UI SDK chips need their value |
+| combobox | `ComboboxValue` children `(value)` | unwrapped from `(state)`; without children it shows `state.label` | API shape |
+| combobox | `ComboboxContent anchor` as a ref | read through `{ getBoundingClientRect }` on every position check | UI SDK anchors take an element, selector or box |
+| combobox | root `id`, `inputRef`, `actionsRef`, `openOnInputClick`, `highlightItemOnHover`, `autoComplete`, `limit`, `locale`, `grid`, `virtualized`, `inline`, `filteredItems` | accepted, ignored | no UI SDK counterpart (0 example uses) |
+| command | Autocomplete root: `value`/`onValueChange` is the search text | mapped to `query`/`onQueryChange`; UI SDK's own `value` (the highlighted command) is not exposed | the examples drive the search text |
+| command | choosing an item may fill the input (`details.reason === "item-press"`) | the query never changes on choosing, so the 8 examples' `item-press` guard simply never fires | UI SDK API |
+| command | item `value` is any object; `filter(item, query)`; `mode="none"` | the item is keyed by a string (`itemToStringValue`, else `value`/`id`, else label) and mapped back for `filter`; `mode="none"`/`filter={null}` → `filter={false}`; default filter `"contains"` | UI SDK commands take string values; its default `"fuzzy"` matches differently |
+| command | item `onClick` | `onSelect`, run for pointer and Enter | UI SDK API |
+| command | filtered-out items and empty groups unmounted | kept mounted with `hidden` (`expectFilteredOut` in tests) | UI SDK behaviour |
+| command | `autoHighlight="always"`: the first item is highlighted on mount | the first item is highlighted once the input is used | UI SDK behaviour |
 
 ## 9. Third-party wrappers and plain-markup primitives: evidence for the open decisions
 
