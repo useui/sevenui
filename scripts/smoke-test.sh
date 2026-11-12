@@ -181,12 +181,19 @@ TOK_CSS="$TOK/src/styles.css"
 (cd "$TOK" && "$SHADCN_BIN" add --yes --overwrite "http://localhost:$PORT/button.json")
 grep -q -- '--surface-tray:' "$TOK_CSS" || { echo "--surface-tray: missing after button install" >&2; exit 1; }
 grep -q '@utility focus-ring' "$TOK_CSS" || { echo "@utility focus-ring missing after button install" >&2; exit 1; }
+# shadcn also writes `--surface-tray: var(--surface-tray);` into @theme inline,
+# because it does not read a color-mix() value as a colour; so count the
+# theme-block declarations (their value is the color-mix) and every match.
+tray_values() { grep -c -- '--surface-tray: color-mix' "$TOK_CSS"; }
+tray_after_one="$(grep -c -- '--surface-tray:' "$TOK_CSS")"
 (cd "$TOK" && "$SHADCN_BIN" add --yes --overwrite \
   "http://localhost:$PORT/select.json" "http://localhost:$PORT/dialog.json")
 # Each shared dependency installs once: --surface-tray is declared once per theme
 # block (:root and .dark), never duplicated by the second install.
-test "$(grep -c -- '--surface-tray:' "$TOK_CSS")" -eq 2 \
+test "$(tray_values)" -eq 2 \
   || { echo "--surface-tray: should be declared exactly twice (:root + .dark) after select+dialog" >&2; exit 1; }
+test "$(grep -c -- '--surface-tray:' "$TOK_CSS")" -eq "$tray_after_one" \
+  || { echo "--surface-tray: the select+dialog install added declarations" >&2; exit 1; }
 test "$(grep -c '@utility focus-ring' "$TOK_CSS")" -eq 1 \
   || { echo "@utility focus-ring should appear exactly once" >&2; exit 1; }
 stock_decls "$TOK_CSS" > "$WORK/tokens-after.txt"
