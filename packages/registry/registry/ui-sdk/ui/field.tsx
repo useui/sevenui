@@ -67,10 +67,13 @@ function readValue(root: HTMLElement | null): unknown {
       );
     }
     if (control.type === "checkbox") return control.checked;
-    if (control.closest("[data-slot=number-field]")) {
-      const n = Number(control.value.replace(/[^\d.eE+-]/g, ""));
-      return control.value.trim() === "" || Number.isNaN(n) ? null : n;
-    }
+    // A number input submits its raw number from a hidden input.
+    const raw = control
+      .closest("[data-slot=number-input]")
+      ?.querySelector<HTMLInputElement>(
+        "[data-slot=number-input-hidden-input]",
+      );
+    if (raw) return raw.value === "" ? null : Number(raw.value);
   }
   return control.value;
 }
