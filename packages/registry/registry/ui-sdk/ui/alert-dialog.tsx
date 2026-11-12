@@ -1,36 +1,113 @@
 "use client";
 
-import * as React from "react";
-import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog";
+import type * as React from "react";
+import {
+  AlertDialogBackdrop as AlertDialogBackdropPrimitive,
+  AlertDialogClose as AlertDialogClosePrimitive,
+  AlertDialogContent as AlertDialogContentPrimitive,
+  AlertDialogDescription as AlertDialogDescriptionPrimitive,
+  AlertDialog as AlertDialogPrimitive,
+  AlertDialogTitle as AlertDialogTitlePrimitive,
+  AlertDialogTrigger as AlertDialogTriggerPrimitive,
+} from "@ui-sdk/react/alert-dialog";
+import { type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cn } from "cn";
 
 import { Button } from "@/registry/ui-sdk/ui/button";
 
-function AlertDialog({ ...props }: AlertDialogPrimitive.Root.Props) {
-  return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />;
+type BaseRender = React.ReactElement<unknown> | RenderProp<never>;
+type FocusTarget = HTMLElement | null | undefined;
+// Base UI's focus props: a boolean, a ref, or a function of the interaction.
+type BaseFocus =
+  | boolean
+  | React.RefObject<HTMLElement | null>
+  | ((interaction: string) => boolean | undefined | HTMLElement | null);
+
+// UI SDK ignores a data-slot prop on its parts; one on the rendered element
+// wins. Used where SevenUI's slot name differs from UI SDK's.
+function withSlot<State>(
+  slot: string,
+  tag: string,
+  render?: BaseRender,
+  extra?: (state: State) => Record<string, unknown>,
+): RenderProp<State> {
+  return (props, state) =>
+    renderElement(
+      tag,
+      { ...props, "data-slot": slot, ...extra?.(state) },
+      render as RenderProp<State> | undefined,
+      state,
+    );
 }
 
-function AlertDialogTrigger({ ...props }: AlertDialogPrimitive.Trigger.Props) {
+function toFocus(focus: BaseFocus | undefined) {
+  if (focus === undefined || focus === true) return undefined;
+  if (focus === false) return "none" as const;
+  if (typeof focus === "function") {
+    return (): FocusTarget => {
+      const target = focus("mouse");
+      return target instanceof HTMLElement ? target : undefined;
+    };
+  }
+  return (): FocusTarget => focus.current;
+}
+
+function AlertDialog({
+  ...props
+}: React.ComponentProps<typeof AlertDialogPrimitive>) {
+  return <AlertDialogPrimitive {...props} />;
+}
+
+// Base UI marks an open popup's trigger with data-popup-open and examples
+// style it, so the trigger carries it beside UI SDK's data-open.
+function AlertDialogTrigger({
+  render,
+  ...props
+}: Omit<React.ComponentProps<typeof AlertDialogTriggerPrimitive>, "render"> & {
+  render?: BaseRender;
+}) {
   return (
-    <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />
+    <AlertDialogTriggerPrimitive
+      data-slot="alert-dialog-trigger"
+      render={withSlot<{ open: boolean }>(
+        "alert-dialog-trigger",
+        "button",
+        render,
+        (state) => ({ "data-popup-open": state.open ? "" : undefined }),
+      )}
+      {...props}
+    />
   );
 }
 
-function AlertDialogPortal({ ...props }: AlertDialogPrimitive.Portal.Props) {
-  return (
-    <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal" {...props} />
-  );
+// UI SDK renders popups in place in the top layer, so there is nothing to
+// portal; the part stays so composed markup keeps working.
+function AlertDialogPortal({
+  children,
+}: {
+  children?: React.ReactNode;
+  container?: unknown;
+  keepMounted?: boolean;
+}) {
+  return <>{children}</>;
 }
 
+// UI SDK's backdrop is a top-layer popover whose reset is keyed to its own
+// slot (alert-dialog-backdrop). Keeping SevenUI's alert-dialog-overlay slot
+// loses that reset, so size-auto undoes the popover's fit-content size.
 function AlertDialogOverlay({
   className,
+  render,
   ...props
-}: AlertDialogPrimitive.Backdrop.Props) {
+}: Omit<React.ComponentProps<typeof AlertDialogBackdropPrimitive>, "className" | "render"> & {
+  className?: string;
+  render?: BaseRender;
+}) {
   return (
-    <AlertDialogPrimitive.Backdrop
-      data-slot="alert-dialog-overlay"
+    <AlertDialogBackdropPrimitive
+      render={withSlot("alert-dialog-overlay", "div", render)}
       className={cn(
-        "fixed inset-0 isolate z-50 bg-black/10 supports-backdrop-filter:backdrop-blur-xs transition-opacity duration-150 ease-snappy data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-opacity",
+        "fixed inset-0 isolate z-50 size-auto bg-black/10 supports-backdrop-filter:backdrop-blur-xs transition-opacity duration-150 ease-snappy data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-opacity",
         className,
       )}
       {...props}
@@ -41,16 +118,26 @@ function AlertDialogOverlay({
 function AlertDialogContent({
   className,
   size = "default",
+  initialFocus,
+  finalFocus,
   ...props
-}: AlertDialogPrimitive.Popup.Props & {
+}: Omit<
+  React.ComponentProps<typeof AlertDialogContentPrimitive>,
+  "className" | "initialFocus" | "finalFocus"
+> & {
+  className?: string;
   size?: "default" | "sm";
+  initialFocus?: BaseFocus;
+  finalFocus?: BaseFocus;
 }) {
   return (
-    <AlertDialogPortal>
+    <>
       <AlertDialogOverlay />
-      <AlertDialogPrimitive.Popup
+      <AlertDialogContentPrimitive
         data-slot="alert-dialog-content"
         data-size={size}
+        initialFocus={toFocus(initialFocus)}
+        finalFocus={toFocus(finalFocus)}
         className={cn(
           // The popup parents the consumer's children directly, so layout
           // classes passed to AlertDialogContent land on the grid itself.
@@ -61,7 +148,7 @@ function AlertDialogContent({
         )}
         {...props}
       />
-    </AlertDialogPortal>
+    </>
   );
 }
 
@@ -116,9 +203,11 @@ function AlertDialogMedia({
 function AlertDialogTitle({
   className,
   ...props
-}: React.ComponentProps<typeof AlertDialogPrimitive.Title>) {
+}: Omit<React.ComponentProps<typeof AlertDialogTitlePrimitive>, "className"> & {
+  className?: string;
+}) {
   return (
-    <AlertDialogPrimitive.Title
+    <AlertDialogTitlePrimitive
       data-slot="alert-dialog-title"
       className={cn(
         "cn-font-heading text-base font-semibold tracking-[-0.01em] sm:group-data-[size=default]/alert-dialog-content:group-has-data-[slot=alert-dialog-media]/alert-dialog-content:col-start-2",
@@ -132,9 +221,11 @@ function AlertDialogTitle({
 function AlertDialogDescription({
   className,
   ...props
-}: React.ComponentProps<typeof AlertDialogPrimitive.Description>) {
+}: Omit<React.ComponentProps<typeof AlertDialogDescriptionPrimitive>, "className"> & {
+  className?: string;
+}) {
   return (
-    <AlertDialogPrimitive.Description
+    <AlertDialogDescriptionPrimitive
       data-slot="alert-dialog-description"
       className={cn(
         "text-sm text-balance text-muted-foreground md:text-pretty *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
@@ -145,18 +236,31 @@ function AlertDialogDescription({
   );
 }
 
+type CloseProps = Omit<
+  React.ComponentProps<typeof AlertDialogClosePrimitive>,
+  "className" | "render"
+> & {
+  className?: string;
+  render?: BaseRender;
+} & Pick<React.ComponentProps<typeof Button>, "variant" | "size">;
+
+// Both buttons are Close parts rendering a SevenUI Button. The slot goes on
+// the rendered element, where UI SDK would otherwise put alert-dialog-close.
 function AlertDialogAction({
   className,
   variant = "default",
   size = "default",
+  render,
   ...props
-}: AlertDialogPrimitive.Close.Props &
-  Pick<React.ComponentProps<typeof Button>, "variant" | "size">) {
+}: CloseProps) {
   return (
-    <AlertDialogPrimitive.Close
-      data-slot="alert-dialog-action"
+    <AlertDialogClosePrimitive
       className={cn(className)}
-      render={<Button variant={variant} size={size} />}
+      render={withSlot(
+        "alert-dialog-action",
+        "button",
+        render ?? <Button variant={variant} size={size} />,
+      )}
       {...props}
     />
   );
@@ -166,14 +270,17 @@ function AlertDialogCancel({
   className,
   variant = "outline",
   size = "default",
+  render,
   ...props
-}: AlertDialogPrimitive.Close.Props &
-  Pick<React.ComponentProps<typeof Button>, "variant" | "size">) {
+}: CloseProps) {
   return (
-    <AlertDialogPrimitive.Close
-      data-slot="alert-dialog-cancel"
+    <AlertDialogClosePrimitive
       className={cn(className)}
-      render={<Button variant={variant} size={size} />}
+      render={withSlot(
+        "alert-dialog-cancel",
+        "button",
+        render ?? <Button variant={variant} size={size} />,
+      )}
       {...props}
     />
   );
