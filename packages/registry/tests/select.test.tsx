@@ -159,6 +159,24 @@ describe("Select", () => {
     });
   });
 
+  it("labels the trigger from grouped items", () => {
+    render(
+      <Select items={[{ label: "Fruits", items: fruits }]} defaultValue="banana">
+        <SelectTrigger>
+          <SelectValue placeholder="Pick a fruit" />
+        </SelectTrigger>
+        <SelectContent>
+          {fruits.map((fruit) => (
+            <SelectItem key={fruit.value} value={fruit.value}>
+              {fruit.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>,
+    );
+    expect(screen.getByRole("combobox").textContent).toContain("Banana");
+  });
+
   it("does not select a disabled option", async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();

@@ -36,14 +36,18 @@ function withSlot<State>(
 // naming the placeholder. UI SDK's `items` is the list's data and would
 // override the rendered items (their `disabled` among them), so the map
 // becomes `itemToLabel` instead.
+type LabeledItem = { value: unknown; label: React.ReactNode };
 type BaseItems =
-  | ReadonlyArray<{ value: unknown; label: React.ReactNode }>
+  | ReadonlyArray<LabeledItem>
+  | ReadonlyArray<{ [key: string]: unknown; items: ReadonlyArray<LabeledItem> }>
   | Record<string, React.ReactNode>;
 
 function readItems(items: BaseItems | undefined) {
   if (!items) return { itemToLabel: undefined, placeholder: undefined };
-  const entries = Array.isArray(items)
-    ? (items as ReadonlyArray<{ value: unknown; label: React.ReactNode }>)
+  const entries: ReadonlyArray<LabeledItem> = Array.isArray(items)
+    ? items.flatMap((entry: LabeledItem | { items: ReadonlyArray<LabeledItem> }) =>
+        "items" in entry && Array.isArray(entry.items) ? entry.items : [entry as LabeledItem],
+      )
     : Object.entries(items).map(([value, label]) => ({ value, label }));
   const labels = new Map<unknown, string>();
   let placeholder: string | undefined;
@@ -58,12 +62,26 @@ function readItems(items: BaseItems | undefined) {
   };
 }
 
+// The value props are typed as Base UI types them, so `T` is inferred from
+// `value` and `onValueChange` gets its parameter type. UI SDK's own props are
+// a union (single, multiple, either) that an Omit would merge.
+type SelectValueType<T, Multiple extends boolean | undefined> = Multiple extends true ? T[] : T;
 type SelectProps<T, Multiple extends boolean | undefined> = Omit<
-  SelectPrimitiveProps<T, Multiple>,
-  "items"
-> & { items?: BaseItems };
+  // biome-ignore lint/suspicious/noExplicitAny: a generic Omit here defeats inferring T.
+  SelectPrimitiveProps<any>,
+  "items" | "multiple" | "value" | "defaultValue" | "onValueChange"
+> & {
+  items?: BaseItems;
+  multiple?: Multiple;
+  value?: SelectValueType<T, Multiple> | null;
+  defaultValue?: SelectValueType<T, Multiple> | null;
+  onValueChange?: (
+    value: SelectValueType<T, Multiple> | (Multiple extends true ? never : null),
+    details: Parameters<NonNullable<SelectPrimitiveProps<T>["onValueChange"]>>[1],
+  ) => void;
+};
 
-function Select<T = string, Multiple extends boolean | undefined = false>({
+function Select<T, Multiple extends boolean | undefined = false>({
   items,
   placeholder,
   itemToLabel,
@@ -72,7 +90,7 @@ function Select<T = string, Multiple extends boolean | undefined = false>({
   const data = React.useMemo(() => readItems(items), [items]);
   return (
     <SelectPrimitive<T, Multiple>
-      {...(props as SelectPrimitiveProps<T, Multiple>)}
+      {...(props as unknown as SelectPrimitiveProps<T, Multiple>)}
       itemToLabel={itemToLabel ?? data.itemToLabel}
       placeholder={placeholder ?? data.placeholder}
     />
@@ -165,10 +183,16 @@ function SelectContent({
   align = "center",
   alignOffset = 0,
   alignItemWithTrigger = true,
+  finalFocus: _finalFocus,
   ...props
 }: Omit<React.ComponentProps<typeof SelectContentPrimitive>, "side" | "children"> & {
   side?: Side | "inline-start" | "inline-end";
   children?: React.ReactNode;
+  // Accepted for Base UI parity: UI SDK's select always returns focus to its trigger.
+  finalFocus?:
+    | boolean
+    | React.RefObject<HTMLElement | null>
+    | ((closeType: string) => boolean | HTMLElement | null | undefined);
 }) {
   return (
     <SelectContentPrimitive
