@@ -173,6 +173,15 @@ describe("Drawer v2 styles", () => {
     expect(popup?.className).not.toContain("ring-3");
   });
 
+  // drawer-12 caps the sheet with a --drawer-height it sets itself.
+  it("sizes the content from a caller's --drawer-height", async () => {
+    const user = userEvent.setup();
+    render(<ExampleDrawer />);
+    await user.click(screen.getByText("Open drawer"));
+    await screen.findByRole("dialog");
+    expect(getPopup()?.className).toContain("[--drawer-content-height:var(--drawer-height,auto)]");
+  });
+
   it("colours the swipe handle with the muted token", async () => {
     render(<ExampleDrawer open showSwipeHandle />);
     await screen.findByRole("dialog");
