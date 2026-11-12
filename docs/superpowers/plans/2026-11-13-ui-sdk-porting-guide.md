@@ -42,12 +42,13 @@ The generator reads each primitive's state from the files themselves:
 |---|---|
 | **pending** | The flavour file is the untouched *seed*: the base file with `@/registry/base/` rewritten to `@/registry/ui-sdk/`. Seeds exist so that every import resolves and the tree typechecks. `calendar`, `carousel` and `resizable` get **no** seed (their port is a rewrite), so for them "pending" means the file is absent. |
 | **ported** | The file imports nothing UI SDK replaces. |
-| **mirror** | A ported file whose base file imports nothing UI SDK replaces. It must stay a byte-identical retargeted copy of its base file: `kbd`, `card`, `table`, `label`, `textarea`, `pagination`, `input-group`, and so on. |
-| **blocked** | Ported, but a registryDependency is not ported yet. It is left out of `/r/ui-sdk/` until that dependency is ported, so the published flavour is always a closed graph. Today `input-group` is blocked on `input`. |
+| **mirror** | A ported file whose base file imports nothing UI SDK replaces. It must stay a byte-identical retargeted copy of its base file: `kbd`, `card`, `table`, `pagination`, and so on. **Except** the names in `UI_SDK_PORTS` (`label`, `textarea`, `input-group`): plain markup in base that the flavour builds on a UI SDK component (§9.4). Their flavour file must import `@ui-sdk/react`; while it is still the seed copy they count as pending. |
+| **blocked** | Ported, but a registryDependency is not ported yet. It is left out of `/r/ui-sdk/` until that dependency is ported, so the published flavour is always a closed graph. |
 
 These states fail `pnpm check:registry`:
 - a seed that has been edited but still imports a replaced library (a half-done port);
 - a mirror that drifted from its base file;
+- a `UI_SDK_PORTS` file (`label`, `textarea`, `input-group`) that was edited but imports nothing from `@ui-sdk/react`;
 - a seed for `calendar`, `carousel` or `resizable`;
 - a `.tsx` file that belongs to no primitive;
 - an `@/registry/base/` import inside the flavour tree.
@@ -392,6 +393,36 @@ Check these:
 | toast | viewport slot `toast-viewport` | kept through `render`, plus `top-auto overflow-visible bg-transparent text-inherit` | outside UI SDK's slot-keyed popover reset |
 | popover, hover-card | `onOpenChange` details: `event` always present | typed as present (Base UI's type), but undefined at runtime for controller changes | `hover-card-06` reads `event.event.target` after checking the reason |
 | drawer | snap points typed `number \| string` | accepted as such and cast to UI SDK's `SnapPoint` (`px`, `rem`, `%`, `"content"`), the strings Base UI accepts | UI SDK narrows the string type |
+| input, textarea, label | a caller's `data-slot` replaces the default | same, set through `render` (a `data-slot` prop on the UI SDK part is ignored) | wrappers re-slot them (`sidebar-input`, `input-group-control`) |
+| input, textarea | `value` may be a number or an array | turned into text | UI SDK holds a string |
+| textarea | native `onSubmit` accepted (never fires on a textarea) | accepted and dropped | UI SDK's `onSubmit` is a submit shortcut with another signature |
+| input-group | `InputGroup` is a plain `div role="group"` | UI SDK `InputGroup` (pressing its text focuses the field) plus `role="group"` from the wrapper | UI SDK renders no role |
+| field | `validate`, `validationMode`, `validationDebounceTime`, `actionsRef` run by Base UI Field | run by the wrapper: it reads the control's value, keeps the message, and forces UI SDK's `invalid` while a validator fails; a bare `FieldError` shows that message. Native constraints (`required`, `type`, `pattern`) are UI SDK's own and show after a submit attempt | UI SDK validates natively and has no `validate` |
+| field | `validate` (onSubmit mode) blocks a native submit through Base UI's form state | blocks only inside SevenUI `Form`; a field with `validate` in a plain `<form>` validates on change once shown, but does not stop the native submit | no `setCustomValidity`, to avoid a second, native copy of the message |
+| field | `dirty`, `touched` mark every part | mirrored as `data-dirty`/`data-touched` on the root only | UI SDK has no such state |
+| field | `FieldError match="valid"` | never shown | UI SDK has no `valid` flag |
+| field | parts carry `data-valid`, `data-touched`, `data-dirty`, `data-filled`, `data-focused` | UI SDK's `data-invalid`, `data-valid`, `data-focused`, `data-required`, `data-disabled`; the control gets `data-filled` | different libraries; one example styles `[data-slot=input-group-control][data-valid]` |
+| field | `FieldLabel` renders SevenUI `Label` | UI SDK `FieldLabel` with the label's classes merged in | the field label must be UI SDK's to wire the control |
+| form | Base UI `Form` (values from registered fields, `errors` cleared on change, `noValidate`) | a native `<form>` adapter: same `onFormSubmit(values, details)`, `errors`, `validationMode`, `actionsRef`; synchronous validators block the submit and focus the first invalid field; values come from the fields (checkbox/switch → boolean, radio → value, number field → number); native constraint errors are left to the browser + UI SDK, so the form is not `noValidate` | UI SDK has no Form; `details` is `{ reason: "none", event }` |
+| radio-group | `value` of any type | stringified | UI SDK radio values are strings |
+| radio-group | `inputRef` | accepted, ignored | UI SDK renders its own hidden inputs |
+| switch | Enter toggles | Enter submits the form, only Space toggles | UI SDK follows the native checkbox |
+| switch | `uncheckedValue`, `inputRef`, `nativeButton` | accepted, ignored (1 example uses `uncheckedValue`) | no UI SDK counterpart |
+| slider | `onValueCommitted`, `minStepsBetweenValues` | mapped to `onValueCommit`, `minStepsBetweenThumbs` | UI SDK naming |
+| slider | `thumbAlignment="edge"` keeps thumbs inside the track | thumbs centre on their value, so at 0 % and 100 % half a thumb overhangs the track | UI SDK has no edge alignment |
+| slider | range input carries `aria-valuenow`; each thumb's input `min`/`max` are the slider's | the native range input exposes its value; inputs of a range are bounded by their neighbours | UI SDK behaviour |
+| slider | `thumbCollisionBehavior`, `locale` objects, `inputRef` | accepted; only a string `locale` is passed on | no UI SDK counterpart |
+| number-field | root `id` and `inputRef` belong to the input | handed to `NumberFieldInput` through context | UI SDK's root is the wrapping div |
+| number-field | `allowWheelScrub`, `onValueCommitted`, `step="any"` | `wheel`, `onValueCommit`, no step | UI SDK naming |
+| number-field | `allowOutOfRange`, `snapOnStep` | accepted, ignored: UI SDK always clamps and snaps a committed value | no UI SDK counterpart |
+| number-field | parts have no `data-slot` | UI SDK's `number-input-*` slots appear | UI SDK sets them; harmless |
+| input-otp | one `<input>` per slot, numbered by order | one native input laid over slot boxes; the wrapper numbers `InputOTPSlot`s by their order on the page (an explicit `index` also works) | UI SDK's model; screen readers meet one input |
+| input-otp | slots style `focus:*` | the same classes plus `data-active:*` on the slot typing goes to, and a drawn caret (`animate-pulse`) in the empty active slot | the slot boxes never take focus |
+| input-otp | `length`, `validationType`, `onValueComplete` | `maxLength`, `pattern` (`numeric`→`digits`, `alpha`→`letters`, `none`→any), `onValueCommit` | UI SDK naming |
+| input-otp | `normalizeValue`, `mask` | applied by the wrapper (the value is held by the wrapper when `normalizeValue` is set; `mask` draws `•`) | no UI SDK counterpart |
+| input-otp | `onValueInvalid`, `autoSubmit` | accepted, ignored | no UI SDK counterpart |
+| input-otp | root `aria-invalid` styles the group through `has-aria-invalid` | goes to the native input, which sits outside the groups, so the group ring does not show; a slot's own `aria-invalid` still works | UI SDK puts aria on the input |
+| input-otp | paste fills the slots | **UI SDK bug (0.1.0-beta.1):** with `__UI_SDK_STRICT__` its dev check throws on its own `paste` reason and the paste is lost; without strict it is a console warning and paste works | test marked `it.fails` for the flavour |
 
 ## 9. Third-party wrappers and plain-markup primitives: evidence for the open decisions
 
@@ -554,7 +585,10 @@ Check these:
 - 10 need callback, ref or map adapters. 2 need pixel measurement.
 - 1 depends on rrp's `[data-panel]` DOM.
 
-### 9.4 Plain-markup primitives that have a UI SDK component (not changed yet; they stay mirrors)
+### 9.4 Plain-markup primitives that have a UI SDK component
+
+**Decision (2026-11-13).** `label` → UI SDK `Label`, `textarea` → UI SDK `Textarea`, and `input-group` → wrapper markup around UI SDK `InputGroup` + the flavour `Input`/`Textarea`, all with the base API kept. They are listed in `UI_SDK_PORTS` in `scripts/ui-sdk-flavour.mjs`, so they are real ports, not mirrors. `pagination` stays a mirror. The evidence below is as it was gathered, followed by what the ports found.
+
 
 **`label`.**
 - UI SDK `Label` is the same native `<label data-slot="label">`. It adds `aria-labelledby` wiring for non-labelable controls (radio group, slider) and no text selection on double-click.
@@ -571,6 +605,7 @@ Check these:
   - `onSelect` is not in the type.
   - `onSubmit` changes signature.
 - Usage of the narrowed props: `onSelect`/`onSubmit` 0 / 0, `value` 0 / 35, `onChange` 0 / 34.
+- **As ported:** the wrapper keeps `React.ComponentProps<"textarea">`. A number or array `value` is turned into text; `onSelect` is passed on and fires (tested); the native `onSubmit` is dropped, because a submit event never reaches a `<textarea>` in either flavour, while passing it would make it UI SDK's submit shortcut. All 35 examples typecheck unchanged.
 
 **`pagination`.**
 - UI SDK `Pagination` is stateful. It has `page`/`onPageChange`, `pageCount` or `total`+`pageSize`, `getHref`, and a `PaginationLink` that **requires `page`**. Links render as buttons without `getHref`. `data-current` replaces `data-active`. Steps get their own slots (`pagination-previous`/`-next`).
@@ -580,9 +615,9 @@ Check these:
 
 **`input-group`.**
 - UI SDK has `InputGroup` and `InputClear` in `@ui-sdk/react/input`. It has no Addon, Button, Text or Textarea parts, no align variants and no `input-group-control` slot.
-- The base API can be kept as wrapper markup around UI SDK `InputGroup` + `Input`. This is unverified on two points:
-  - whether `role="group"` is rendered;
-  - whether a caller's `data-slot` overrides `Input`'s own.
+- The base API can be kept as wrapper markup around UI SDK `InputGroup` + `Input`. The two open points, **verified in jsdom:**
+  - UI SDK `InputGroup` renders **no** `role`; a `role="group"` passed to it is kept, so the wrapper passes it.
+  - A `data-slot` prop on UI SDK `Input`/`Textarea` is ignored, so the flavour `Input`, `Textarea` and `Label` set the slot through `render` with the caller's value winning; `input-group-control` survives. The `combobox` and `input-group` flavour tests pass on it.
 - `combobox` and `command` style its slots, and 3 examples do too.
 - Usage: 5 / 53.
 
