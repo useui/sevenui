@@ -1,5 +1,5 @@
-import { mergeProps } from "@base-ui/react/merge-props";
-import { useRender } from "@base-ui/react/use-render";
+import type * as React from "react";
+import { mergeProps, type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
@@ -47,26 +47,33 @@ const badgeVariants = cva(
   },
 );
 
+type BadgeState = {
+  slot: "badge";
+  variant: VariantProps<typeof badgeVariants>["variant"];
+};
+
+// Base UI's useRender turns state into data attributes; renderElement does not,
+// so data-slot and data-variant are set explicitly.
 function Badge({
   className,
   variant = "default",
   render,
   ...props
-}: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants>) {
-  return useRender({
-    defaultTagName: "span",
-    props: mergeProps<"span">(
+}: React.ComponentProps<"span"> &
+  VariantProps<typeof badgeVariants> & { render?: RenderProp<BadgeState> }) {
+  return renderElement(
+    "span",
+    mergeProps(
       {
+        "data-slot": "badge",
+        "data-variant": variant,
         className: cn(badgeVariants({ variant }), className),
       },
       props,
     ),
     render,
-    state: {
-      slot: "badge",
-      variant,
-    },
-  });
+    { slot: "badge", variant } satisfies BadgeState,
+  );
 }
 
 export { Badge, badgeVariants };

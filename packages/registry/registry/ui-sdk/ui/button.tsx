@@ -1,4 +1,9 @@
-import { Button as ButtonPrimitive } from "@base-ui/react/button";
+import type * as React from "react";
+import {
+  type ButtonActionDetails,
+  Button as ButtonPrimitive,
+} from "@ui-sdk/react/button";
+import { renderElement } from "@ui-sdk/react/primitive";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
@@ -39,16 +44,45 @@ const buttonVariants = cva(
   },
 );
 
+type ButtonPrimitiveProps = React.ComponentProps<typeof ButtonPrimitive>;
+
+// Typed as Base UI types them, so callers written against the base flavour
+// compile unchanged: a <button> event, and UI SDK's press details optional.
+type ButtonProps = Omit<ButtonPrimitiveProps, "className" | "onClick"> &
+  VariantProps<typeof buttonVariants> & {
+    className?: string;
+    onClick?: (
+      event: React.MouseEvent<HTMLButtonElement>,
+      details?: ButtonActionDetails,
+    ) => unknown;
+    // Base UI's hint for a `render` that is not a <button>. UI SDK works that
+    // out itself, so it is accepted and dropped.
+    nativeButton?: boolean;
+    "data-slot"?: string;
+  };
+
 function Button({
   className,
   variant = "default",
   size = "default",
+  nativeButton: _nativeButton,
+  onClick,
+  render,
+  "data-slot": slot = "button",
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+}: ButtonProps) {
   return (
     <ButtonPrimitive
-      data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      onClick={onClick as ButtonPrimitiveProps["onClick"]}
+      // UI SDK ignores a data-slot prop on a part; one on the rendered
+      // element wins, so a caller's slot (carousel-next) goes there.
+      render={
+        slot === "button"
+          ? render
+          : (partProps, state) =>
+              renderElement("button", { ...partProps, "data-slot": slot }, render, state)
+      }
       {...props}
     />
   );
