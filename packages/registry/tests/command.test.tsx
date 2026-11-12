@@ -13,6 +13,7 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/registry/base/ui/command";
+import { expectFilteredOut } from "./helpers/flavour";
 
 type Item = { value: string; label: string };
 type Group = { value: string; items: Item[] };
@@ -75,8 +76,8 @@ describe("Command", () => {
     await user.keyboard("cal");
     expect(screen.getByText("Calendar")).toBeTruthy();
     expect(screen.getByText("Calculator")).toBeTruthy();
-    expect(screen.queryByText("Profile")).toBeNull();
-    expect(screen.queryByText("Settings")).toBeNull();
+    expectFilteredOut(screen.queryByText("Profile"));
+    expectFilteredOut(screen.queryByText("Settings"));
   });
 
   it("shows the empty state when nothing matches", async () => {
@@ -85,7 +86,7 @@ describe("Command", () => {
     await user.click(screen.getByPlaceholderText("Type a command or search..."));
     await user.keyboard("zzzz");
     expect(screen.getByText("No results found.")).toBeTruthy();
-    expect(screen.queryByText("Calendar")).toBeNull();
+    expectFilteredOut(screen.queryByText("Calendar"));
   });
 
   it("activates the highlighted item with Enter", async () => {

@@ -51,3 +51,15 @@ export async function waitForPopupFocus(popup: Element) {
   if (!isUiSdk) return;
   await waitFor(() => expect(popup.contains(document.activeElement)).toBe(true));
 }
+
+/**
+ * Asserts a list item was filtered out. Base UI unmounts it; UI SDK keeps a
+ * filtered-out composed command, option or group mounted with `hidden`.
+ */
+export function expectFilteredOut(element: Element | null) {
+  if (!isUiSdk) {
+    expect(element).toBeNull();
+    return;
+  }
+  expect(element === null || element.closest("[hidden]") !== null).toBe(true);
+}
