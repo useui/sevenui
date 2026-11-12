@@ -323,6 +323,9 @@ Check these:
 | dropdown-menu | `openOnHover`, `closeDelay`, `orientation`, `disabled` on the root | accepted, ignored | no UI SDK counterpart |
 | dropdown-menu | checkbox item has no `value` | a generated `useId()` value unless one is passed | UI SDK identifies checkbox items in the menu's `onCheckedChange` |
 | registry | examples (`/r/demo/*`, `/r/component/*`) depend on `/r/<x>.json` | installing an example into a UI SDK project pulls the **base** primitive | examples are not flavoured yet (spec §9) |
+| breadcrumb, button-group, item, marker, bubble, attachment, layer-card | `useRender` state → `data-*` (`data-slot`, `data-variant`, `data-size`, …; a `true` boolean as an empty attribute) | the same attributes set explicitly in the first `mergeProps` source; `layer-card-panel` keeps its slot last | `renderElement` derives no attributes |
+| button-group, item | `ButtonGroupSeparator`/`ItemSeparator` pass `data-slot` to `Separator` | the slot is set through `render` on the rendered element | UI SDK ignores a `data-slot` prop on a part (§4.1) |
+| direction | `DirectionProvider` is context only and adds no element | context **plus** a `<div dir style="display: contents">` wrapper (no `dir` without a `direction` prop); `useDirection` reads the context as before | UI SDK reads the computed direction from the page, not from React context |
 
 ## 9. Third-party wrappers and plain-markup primitives: evidence for the open decisions
 
