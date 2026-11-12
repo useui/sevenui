@@ -1,15 +1,90 @@
 "use client";
 
 import * as React from "react";
-import { Select as SelectPrimitive } from "@base-ui/react/select";
+import { type RenderProp, renderElement } from "@ui-sdk/react/primitive";
+import {
+  SelectContent as SelectContentPrimitive,
+  SelectGroup as SelectGroupPrimitive,
+  SelectGroupLabel,
+  SelectItem as SelectItemPrimitive,
+  SelectItemIndicator,
+  SelectItemText,
+  Select as SelectPrimitive,
+  type SelectProps as SelectPrimitiveProps,
+  SelectSeparator as SelectSeparatorPrimitive,
+  SelectTrigger as SelectTriggerPrimitive,
+  SelectValue as SelectValuePrimitive,
+} from "@ui-sdk/react/select";
 import { cn } from "cn";
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon } from "lucide-react";
 
-const Select = SelectPrimitive.Root;
+type Side = React.ComponentProps<typeof SelectContentPrimitive>["side"];
 
-function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
+// UI SDK ignores a data-slot prop on its parts; one on the rendered element
+// wins. Used where SevenUI's slot name differs from UI SDK's.
+function withSlot<State>(
+  slot: string,
+  tag: string,
+  render?: RenderProp<State>,
+): RenderProp<State> {
+  return (props, state) =>
+    renderElement(tag, { ...props, "data-slot": slot }, render, state);
+}
+
+// Base UI's `items` only maps values to the labels the trigger shows, as
+// `{ value, label }[]` or a record, with an optional `value: null` entry
+// naming the placeholder. UI SDK's `items` is the list's data and would
+// override the rendered items (their `disabled` among them), so the map
+// becomes `itemToLabel` instead.
+type BaseItems =
+  | ReadonlyArray<{ value: unknown; label: React.ReactNode }>
+  | Record<string, React.ReactNode>;
+
+function readItems(items: BaseItems | undefined) {
+  if (!items) return { itemToLabel: undefined, placeholder: undefined };
+  const entries = Array.isArray(items)
+    ? (items as ReadonlyArray<{ value: unknown; label: React.ReactNode }>)
+    : Object.entries(items).map(([value, label]) => ({ value, label }));
+  const labels = new Map<unknown, string>();
+  let placeholder: string | undefined;
+  for (const { value, label } of entries) {
+    const text = typeof label === "string" || typeof label === "number" ? String(label) : undefined;
+    if (value == null) placeholder = text;
+    else if (text !== undefined) labels.set(value, text);
+  }
+  return {
+    itemToLabel: (value: unknown) => labels.get(value) ?? String(value),
+    placeholder,
+  };
+}
+
+type SelectProps<T, Multiple extends boolean | undefined> = Omit<
+  SelectPrimitiveProps<T, Multiple>,
+  "items"
+> & { items?: BaseItems };
+
+function Select<T = string, Multiple extends boolean | undefined = false>({
+  items,
+  placeholder,
+  itemToLabel,
+  ...props
+}: SelectProps<T, Multiple>) {
+  const data = React.useMemo(() => readItems(items), [items]);
   return (
-    <SelectPrimitive.Group
+    <SelectPrimitive<T, Multiple>
+      {...(props as SelectPrimitiveProps<T, Multiple>)}
+      itemToLabel={itemToLabel ?? data.itemToLabel}
+      placeholder={placeholder ?? data.placeholder}
+    />
+  );
+}
+
+function SelectGroup({
+  className,
+  ...props
+}: React.ComponentProps<typeof SelectGroupPrimitive>) {
+  return (
+    <SelectGroupPrimitive
       data-slot="select-group"
       className={cn("scroll-my-1", className)}
       {...props}
@@ -17,28 +92,52 @@ function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   );
 }
 
-function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
+// Base UI passes a function child the selected value; UI SDK passes the
+// value's state, so the value is unwrapped.
+function SelectValue({
+  className,
+  children,
+  ...props
+}: Omit<React.ComponentProps<typeof SelectValuePrimitive>, "children"> & {
+  // biome-ignore lint/suspicious/noExplicitAny: Base UI types the value as any.
+  children?: React.ReactNode | ((value: any) => React.ReactNode);
+}) {
   return (
-    <SelectPrimitive.Value
+    <SelectValuePrimitive
       data-slot="select-value"
       className={cn("flex min-w-0 flex-1 truncate text-left not-has-[*]:block", className)}
       {...props}
-    />
+    >
+      {typeof children === "function" ? (state) => children(state.value) : children}
+    </SelectValuePrimitive>
   );
 }
 
+// Base UI marks an open popup's trigger with data-popup-open and examples
+// style it, so the trigger carries it beside UI SDK's data-open.
 function SelectTrigger({
   className,
   size = "default",
   children,
+  render,
   ...props
-}: SelectPrimitive.Trigger.Props & {
+}: Omit<React.ComponentProps<typeof SelectTriggerPrimitive>, "render" | "children"> & {
+  children?: React.ReactNode;
   size?: "sm" | "default";
+  render?: React.ReactElement<unknown> | RenderProp<{ open: boolean }>;
 }) {
   return (
-    <SelectPrimitive.Trigger
+    <SelectTriggerPrimitive
       data-slot="select-trigger"
       data-size={size}
+      render={(triggerProps, state) =>
+        renderElement(
+          "button",
+          { ...triggerProps, "data-popup-open": state.open ? "" : undefined },
+          render as RenderProp<{ open: boolean }> | undefined,
+          state,
+        )
+      }
       className={cn(
         // Control-scale variables fall back inline: a :where() default on this
         // element would shadow a [data-density=compact] ancestor. A plain-text
@@ -50,15 +149,14 @@ function SelectTrigger({
       {...props}
     >
       {children}
-      <SelectPrimitive.Icon
-        render={
-          <ChevronDownIcon className="pointer-events-none size-4 text-muted-foreground" />
-        }
-      />
-    </SelectPrimitive.Trigger>
+      <ChevronDownIcon className="pointer-events-none size-4 text-muted-foreground" />
+    </SelectTriggerPrimitive>
   );
 }
 
+// No Positioner: UI SDK positions the content itself, in the top layer, so
+// placement props sit on this part and Base UI's `inline-start`/`inline-end`
+// map to `start`/`end`. UI SDK has no scroll arrows; the list scrolls.
 function SelectContent({
   className,
   children,
@@ -68,46 +166,40 @@ function SelectContent({
   alignOffset = 0,
   alignItemWithTrigger = true,
   ...props
-}: SelectPrimitive.Popup.Props &
-  Pick<
-    SelectPrimitive.Positioner.Props,
-    "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger"
-  >) {
+}: Omit<React.ComponentProps<typeof SelectContentPrimitive>, "side" | "children"> & {
+  side?: Side | "inline-start" | "inline-end";
+  children?: React.ReactNode;
+}) {
   return (
-    <SelectPrimitive.Portal>
-      <SelectPrimitive.Positioner
-        side={side}
-        sideOffset={sideOffset}
-        align={align}
-        alignOffset={alignOffset}
-        alignItemWithTrigger={alignItemWithTrigger}
-        className="isolate z-50"
-      >
-        <SelectPrimitive.Popup
-          data-slot="select-content"
-          data-align-trigger={alignItemWithTrigger}
-          className={cn(
-            "relative isolate z-50 max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground shadow-overlay ring-1 ring-foreground/10 transition-[scale,opacity] duration-100 ease-snappy data-starting-style:scale-[0.98] data-starting-style:opacity-0 data-ending-style:scale-[0.98] data-ending-style:opacity-0 motion-reduce:transition-none data-[align-trigger=true]:transition-none",
-            className,
-          )}
-          {...props}
-        >
-          <SelectScrollUpButton />
-          <SelectPrimitive.List>{children}</SelectPrimitive.List>
-          <SelectScrollDownButton />
-        </SelectPrimitive.Popup>
-      </SelectPrimitive.Positioner>
-    </SelectPrimitive.Portal>
+    <SelectContentPrimitive
+      data-slot="select-content"
+      data-align-trigger={alignItemWithTrigger}
+      side={side === "inline-start" ? "start" : side === "inline-end" ? "end" : side}
+      sideOffset={sideOffset}
+      align={align}
+      alignOffset={alignOffset}
+      alignItemWithTrigger={alignItemWithTrigger}
+      className={cn(
+        "relative isolate z-50 max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground shadow-overlay ring-1 ring-foreground/10 transition-[scale,opacity] duration-100 ease-snappy data-starting-style:scale-[0.98] data-starting-style:opacity-0 data-ending-style:scale-[0.98] data-ending-style:opacity-0 motion-reduce:transition-none data-[align-trigger=true]:transition-none",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </SelectContentPrimitive>
   );
 }
 
+// SevenUI's SelectLabel labels a group, which is UI SDK's SelectGroupLabel
+// (UI SDK's own SelectLabel labels the whole select).
 function SelectLabel({
   className,
+  render,
   ...props
-}: SelectPrimitive.GroupLabel.Props) {
+}: React.ComponentProps<typeof SelectGroupLabel>) {
   return (
-    <SelectPrimitive.GroupLabel
-      data-slot="select-label"
+    <SelectGroupLabel
+      render={withSlot("select-label", "div", render)}
       className={cn("px-2 py-1 text-xs text-muted-foreground", className)}
       {...props}
     />
@@ -118,9 +210,11 @@ function SelectItem({
   className,
   children,
   ...props
-}: SelectPrimitive.Item.Props) {
+}: Omit<React.ComponentProps<typeof SelectItemPrimitive>, "children"> & {
+  children?: React.ReactNode;
+}) {
   return (
-    <SelectPrimitive.Item
+    <SelectItemPrimitive
       data-slot="select-item"
       className={cn(
         "relative flex min-h-[var(--item-h,2rem)] w-full cursor-default items-center gap-[var(--control-gap,0.5rem)] rounded-md py-1 pr-8 pl-2 text-[length:var(--control-text,0.8125rem)] outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-highlighted:[&_.text-muted-foreground]:text-accent-foreground data-disabled:data-highlighted:bg-transparent data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
@@ -128,29 +222,22 @@ function SelectItem({
       )}
       {...props}
     >
-      <SelectPrimitive.ItemText className="flex min-w-0 flex-1 gap-2 truncate not-has-[*]:block">
+      <SelectItemText className="flex min-w-0 flex-1 gap-2 truncate not-has-[*]:block">
         {children}
-      </SelectPrimitive.ItemText>
-      <SelectPrimitive.ItemIndicator
-        render={
-          <span
-              data-slot="select-item-indicator"
-              className="pointer-events-none absolute right-2 flex size-4 items-center justify-center"
-            >
-            <CheckIcon className="pointer-events-none" />
-          </span>
-        }
-      />
-    </SelectPrimitive.Item>
+      </SelectItemText>
+      <SelectItemIndicator className="pointer-events-none absolute right-2 flex size-4 items-center justify-center">
+        <CheckIcon className="pointer-events-none" />
+      </SelectItemIndicator>
+    </SelectItemPrimitive>
   );
 }
 
 function SelectSeparator({
   className,
   ...props
-}: SelectPrimitive.Separator.Props) {
+}: React.ComponentProps<typeof SelectSeparatorPrimitive>) {
   return (
-    <SelectPrimitive.Separator
+    <SelectSeparatorPrimitive
       data-slot="select-separator"
       className={cn("pointer-events-none -mx-1 my-1 h-px bg-border", className)}
       {...props}
@@ -158,40 +245,14 @@ function SelectSeparator({
   );
 }
 
-function SelectScrollUpButton({
-  className,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollUpArrow>) {
-  return (
-    <SelectPrimitive.ScrollUpArrow
-      data-slot="select-scroll-up-button"
-      className={cn(
-        "top-0 z-10 flex w-full cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4",
-        className,
-      )}
-      {...props}
-    >
-      <ChevronUpIcon />
-    </SelectPrimitive.ScrollUpArrow>
-  );
+// UI SDK's select has no scroll arrows: the content scrolls natively. The
+// parts stay so composed markup keeps working, and render nothing.
+function SelectScrollUpButton(_props: React.ComponentProps<"div">) {
+  return null;
 }
 
-function SelectScrollDownButton({
-  className,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollDownArrow>) {
-  return (
-    <SelectPrimitive.ScrollDownArrow
-      data-slot="select-scroll-down-button"
-      className={cn(
-        "bottom-0 z-10 flex w-full cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4",
-        className,
-      )}
-      {...props}
-    >
-      <ChevronDownIcon />
-    </SelectPrimitive.ScrollDownArrow>
-  );
+function SelectScrollDownButton(_props: React.ComponentProps<"div">) {
+  return null;
 }
 
 export {

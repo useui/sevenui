@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/registry/base/ui/select";
+import { byFlavour, isUiSdk, waitForPopupFocus } from "./helpers/flavour";
 import { must } from "./helpers/must";
 
 const fruits = [
@@ -100,9 +101,15 @@ describe("Select", () => {
     render(<FruitSelect onValueChange={onValueChange} />);
     const trigger = screen.getByRole("combobox");
     await user.click(trigger);
-    await screen.findByRole("listbox");
+    await waitForPopupFocus(await screen.findByRole("listbox"));
     await user.keyboard("{ArrowDown}{Enter}");
-    expect(onValueChange).toHaveBeenCalledWith("apple", expect.anything());
+    // Opening with a pointer highlights nothing in Base UI, so ArrowDown
+    // reaches the first option; UI SDK highlights the first option on open,
+    // so ArrowDown moves on to the second.
+    expect(onValueChange).toHaveBeenCalledWith(
+      byFlavour({ base: "apple", "ui-sdk": "banana" }),
+      expect.anything(),
+    );
     await waitFor(() => {
       expect(screen.queryByRole("listbox")).toBeNull();
     });
@@ -243,7 +250,12 @@ describe("Select v2 styles", () => {
     // Base UI positioning classes stay.
     expect(cls).toContain("max-h-(--available-height)");
     expect(cls).toContain("origin-(--transform-origin)");
-    expect(must(popup.parentElement).className).toContain("isolate z-50");
+    if (isUiSdk) {
+      // No Positioner: UI SDK positions the content itself, in the top layer.
+      expect(popup.hasAttribute("popover")).toBe(true);
+    } else {
+      expect(must(popup.parentElement).className).toContain("isolate z-50");
+    }
   });
 
   it("sizes items from --item-h, highlights with the accent and checks in the item colour", async () => {
