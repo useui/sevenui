@@ -107,7 +107,7 @@ function InputOTP({
         if (!fallback.current.has(key)) {
           fallback.current.set(key, fallback.current.size);
         }
-        return fallback.current.get(key)!;
+        return fallback.current.get(key) ?? 0;
       },
     }),
     [order, mask],

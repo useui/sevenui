@@ -9,6 +9,7 @@ import {
   InputOTPSlot,
 } from "@/registry/base/ui/input-otp";
 import { isUiSdk } from "./helpers/flavour";
+import { must } from "./helpers/must";
 
 function OTP(
   props: Omit<React.ComponentProps<typeof InputOTP>, "length" | "children">,
@@ -43,7 +44,7 @@ function getSlots(container: HTMLElement) {
 // that input and reads each slot's text.
 function typingTarget(container: HTMLElement) {
   return isUiSdk
-    ? container.querySelector<HTMLInputElement>("input")!
+    ? must(container.querySelector<HTMLInputElement>("input"))
     : getSlots(container)[0];
 }
 

@@ -26,12 +26,11 @@ type FormContextValue = {
   values: () => Record<string, unknown>;
 };
 const formContextKey = Symbol.for("sevenui.ui-sdk.form");
-const FormContext: React.Context<FormContextValue | null> =
-  ((globalThis as Record<symbol, unknown>)[formContextKey] as
-    | React.Context<FormContextValue | null>
-    | undefined) ??
-  ((globalThis as Record<symbol, unknown>)[formContextKey] =
-    React.createContext<FormContextValue | null>(null));
+const contexts = globalThis as {
+  [key: symbol]: React.Context<FormContextValue | null> | undefined;
+};
+contexts[formContextKey] ??= React.createContext<FormContextValue | null>(null);
+const FormContext = contexts[formContextKey] as React.Context<FormContextValue | null>;
 
 const noNames = new Set<string>();
 
