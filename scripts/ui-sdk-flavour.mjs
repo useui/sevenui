@@ -15,7 +15,9 @@
 //            that gets no seed, is absent
 //   ported   its flavour file imports nothing in REPLACED (a base file that
 //            imports nothing in REPLACED is a "mirror": ported by being an
-//            exact retargeted copy)
+//            exact retargeted copy, unless it is in UI_SDK_PORTS: plain markup
+//            in base that the flavour builds on a UI SDK component, so its
+//            file must import @ui-sdk/react, and its seed copy is pending)
 //   blocked  ported, but a registryDependency is not, so it stays out of the
 //            published registry until that dependency is ported
 //
@@ -45,6 +47,11 @@ export const REPLACED = {
   "embla-carousel-react": { seed: false },
   "react-resizable-panels": { seed: false },
 };
+// Plain markup in base that UI SDK ships a component for (guide §9.4): these
+// are real ports, not mirrors. pagination stays a mirror: UI SDK's is stateful
+// and cannot keep the base API.
+export const UI_SDK_PORTS = new Set(["label", "textarea", "input-group"]);
+
 // Keep in sync with packages/registry/vitest.config.ts and tests/api-freeze.test.ts.
 export const REPLACED_IMPORT =
   /from\s+["'](@base-ui\/react|react-day-picker|embla-carousel-react|react-resizable-panels)(?:\/[^"']*)?["']/g;
@@ -120,9 +127,12 @@ export function readFlavour() {
   for (const item of uiItems) {
     let status = "ported";
     const files = [];
-    const mirror = (item.files ?? []).every(
-      (f) => replacedImports(read(join(REGISTRY_ROOT, f.path))).length === 0,
-    );
+    const uiSdkPort = UI_SDK_PORTS.has(item.name);
+    const mirror =
+      !uiSdkPort &&
+      (item.files ?? []).every(
+        (f) => replacedImports(read(join(REGISTRY_ROOT, f.path))).length === 0,
+      );
     for (const file of item.files ?? []) {
       const base = read(join(REGISTRY_ROOT, file.path));
       const path = flavourPath(file.path);
@@ -150,6 +160,14 @@ export function readFlavour() {
           );
         }
         status = "pending";
+      } else if (uiSdkPort) {
+        if (source === seed) {
+          status = "pending";
+        } else if (!importedPackages(source).has("@ui-sdk/react")) {
+          problems.push(
+            `${item.name}: ${path} must be built on a UI SDK component (it is a UI SDK port, not a mirror), but imports nothing from @ui-sdk/react; finish the port or run "node scripts/ui-sdk-flavour.mjs sync"`,
+          );
+        }
       } else if (replacedImports(base).length === 0 && source !== seed) {
         problems.push(
           `${item.name}: ${path} must stay a retargeted copy of ${file.path} (it imports nothing UI SDK replaces); run "node scripts/ui-sdk-flavour.mjs sync"`,
@@ -257,7 +275,11 @@ function sync() {
       const abs = join(REGISTRY_ROOT, flavourPath(file.path));
       const current = existsSync(abs) ? read(abs) : null;
       // Never overwrite a port: only missing files, pending seeds and mirrors.
-      const isPort = current !== null && replacedImports(current).length === 0 && replacedImports(base).length > 0;
+      const isPort =
+        current !== null &&
+        replacedImports(current).length === 0 &&
+        (replacedImports(base).length > 0 ||
+          (UI_SDK_PORTS.has(item.name) && importedPackages(current).has("@ui-sdk/react")));
       if (isPort || current === retarget(base)) continue;
       mkdirSync(dirname(abs), { recursive: true });
       writeFileSync(abs, retarget(base));

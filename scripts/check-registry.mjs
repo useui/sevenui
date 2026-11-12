@@ -1,6 +1,14 @@
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { FLAVOUR_URL, REPLACED, SHARED_ITEMS, readFlavour, replacedImports } from "./ui-sdk-flavour.mjs";
+import {
+  FLAVOUR_URL,
+  REPLACED,
+  SHARED_ITEMS,
+  UI_SDK_PORTS,
+  importedPackages,
+  readFlavour,
+  replacedImports,
+} from "./ui-sdk-flavour.mjs";
 
 const errors = [];
 const loadJson = (path) => JSON.parse(readFileSync(path, "utf8"));
@@ -217,6 +225,11 @@ for (const item of flavour.registry.items) {
     if (!file.path.startsWith("registry/ui-sdk/")) errors.push(`${where}: file ${file.path} is outside registry/ui-sdk/`);
     const replaced = existsSync(filePath) ? replacedImports(readFileSync(filePath, "utf8")) : [];
     if (replaced.length > 0) errors.push(`${where}: ${file.path} imports ${replaced.join(", ")}, which UI SDK replaces`);
+    // Markup primitives the flavour builds on a UI SDK component (label,
+    // textarea, input-group) are published only as real ports.
+    if (UI_SDK_PORTS.has(item.name) && !importedPackages(existsSync(filePath) ? readFileSync(filePath, "utf8") : "").has("@ui-sdk/react")) {
+      errors.push(`${where}: ${file.path} must import @ui-sdk/react (a UI SDK port, not a mirror)`);
+    }
   }
   for (const dep of item.dependencies ?? []) {
     const name = dep.slice(0, dep.lastIndexOf("@") > 0 ? dep.lastIndexOf("@") : undefined);
