@@ -41,12 +41,18 @@ Nothing exists yet. Tool list, hosting and auth are all undecided.
 
 ## Release constraint
 
-Owner's requirement, 2026-11-13: v2 goes to production on Vercel from
-`feat/v2` itself, without merging into `main`. How (changing the project's
-production branch, promoting a branch deployment, or a CLI production deploy)
-is undecided, and so is what happens to `main` afterwards. Settle both with the
-owner before releasing. The pro deployment and the `/previews/*` rewrite must
-keep working against whatever becomes production.
+Owner's requirement, 2026-11-13: before v2 is merged, deploy `feat/v2` to the
+production environment on Vercel once, as a trial, so the owner can check it
+on the real domain. `main` stays the production branch for good. If the trial
+is fine, `feat/v2` is merged into `main` and production deploys from `main` as
+usual; if not, production is rolled back to the previous `main` deployment.
+
+This is a one-off, so do not change the project's production branch. Promote
+the `feat/v2` deployment or run a single production deploy from the branch;
+confirm the exact mechanism in Vercel's docs and with the owner first. While
+the trial is live, a push to `main` would redeploy `main` over it. The pro
+deployment and the `/previews/*` rewrite must work during the trial: block
+previews following the customizer is one of the things to check there.
 
 ## Also parked
 
