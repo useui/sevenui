@@ -1,17 +1,32 @@
 "use client";
 
-import { Switch as SwitchPrimitive } from "@base-ui/react/switch";
+import type * as React from "react";
+import {
+  Switch as SwitchPrimitive,
+  SwitchThumb,
+} from "@ui-sdk/react/switch";
 import { cn } from "cn";
+
+type SwitchProps = Omit<React.ComponentProps<typeof SwitchPrimitive>, "className"> & {
+  className?: string;
+  size?: "sm" | "default";
+  // Base UI only: the value submitted while off, a ref to the hidden input,
+  // and a hint for a `render` that is not a <button>. Accepted, not mapped.
+  uncheckedValue?: string;
+  inputRef?: React.Ref<HTMLInputElement>;
+  nativeButton?: boolean;
+};
 
 function Switch({
   className,
   size = "default",
+  uncheckedValue: _uncheckedValue,
+  inputRef: _inputRef,
+  nativeButton: _nativeButton,
   ...props
-}: SwitchPrimitive.Root.Props & {
-  size?: "sm" | "default";
-}) {
+}: SwitchProps) {
   return (
-    <SwitchPrimitive.Root
+    <SwitchPrimitive
       data-slot="switch"
       data-size={size}
       className={cn(
@@ -26,11 +41,11 @@ function Switch({
       )}
       {...props}
     >
-      <SwitchPrimitive.Thumb
+      <SwitchThumb
         data-slot="switch-thumb"
         className="pointer-events-none block size-[calc(var(--switch-h)-4px)] rounded-full bg-white shadow-raised data-checked:bg-primary-foreground transition-transform duration-200 ease-spring motion-reduce:transition-none data-checked:translate-x-[calc(var(--switch-w)-var(--switch-h))] data-unchecked:translate-x-0"
       />
-    </SwitchPrimitive.Root>
+    </SwitchPrimitive>
   );
 }
 
