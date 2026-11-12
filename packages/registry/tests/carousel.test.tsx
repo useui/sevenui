@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import * as React from "react";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
@@ -13,6 +13,7 @@ import {
 } from "@/registry/base/ui/carousel";
 import { buttonVariants } from "@/registry/base/ui/button";
 import { cn } from "cn";
+import { byFlavour, isUiSdk } from "./helpers/flavour";
 import { must } from "./helpers/must";
 
 // Embla needs browser APIs jsdom lacks: matchMedia and IntersectionObserver.
@@ -58,6 +59,8 @@ const originalDescriptors = {
     HTMLElement.prototype,
     "offsetTop",
   ),
+  clientWidth: Object.getOwnPropertyDescriptor(Element.prototype, "clientWidth"),
+  scrollWidth: Object.getOwnPropertyDescriptor(Element.prototype, "scrollWidth"),
 };
 
 beforeAll(() => {
@@ -90,12 +93,28 @@ beforeAll(() => {
       return 0;
     },
   });
+  // UI SDK measures the scrolling viewport (the carousel-content wrapper) by
+  // its clientWidth and scrollWidth: three 400px slides in a 400px window.
+  Object.defineProperty(HTMLElement.prototype, "clientWidth", {
+    configurable: true,
+    get() {
+      return 400;
+    },
+  });
+  Object.defineProperty(HTMLElement.prototype, "scrollWidth", {
+    configurable: true,
+    get(this: HTMLElement) {
+      return this.getAttribute("data-slot") === "carousel-content" ? 1200 : 400;
+    },
+  });
 });
 
 afterAll(() => {
   for (const [name, descriptor] of Object.entries(originalDescriptors)) {
     if (descriptor) {
       Object.defineProperty(HTMLElement.prototype, name, descriptor);
+    } else {
+      delete (HTMLElement.prototype as unknown as Record<string, unknown>)[name];
     }
   }
 });
@@ -118,6 +137,20 @@ function renderCarousel(
   return { ...view, getApi: () => api };
 }
 
+// UI SDK measures the slides a tick after mount; embla measures during it.
+async function measured(getApi: () => CarouselApi) {
+  if (!isUiSdk) return;
+  await waitFor(() => expect(getApi()?.scrollSnapList().length).toBe(3));
+}
+
+// Embla disables Previous and Next natively at the ends. UI SDK keeps them
+// focusable with aria-disabled, so focus never drops to the page.
+function isDisabled(button: HTMLElement) {
+  return isUiSdk
+    ? button.getAttribute("aria-disabled") === "true"
+    : (button as HTMLButtonElement).disabled;
+}
+
 describe("Carousel", () => {
   it("renders carousel/slide accessibility semantics", () => {
     renderCarousel();
@@ -133,48 +166,53 @@ describe("Carousel", () => {
     expect(screen.getByText("Next slide")).toBeDefined();
   });
 
-  it("exposes the embla api via setApi with a snap per slide", () => {
+  it("exposes the embla api via setApi with a snap per slide", async () => {
     const { getApi } = renderCarousel();
+    await measured(getApi);
     const api = getApi();
     expect(api).toBeDefined();
     expect(api?.scrollSnapList().length).toBe(3);
     expect(api?.selectedScrollSnap()).toBe(0);
   });
 
-  it("starts with previous disabled and next enabled on the first slide", () => {
-    renderCarousel();
+  it("starts with previous disabled and next enabled on the first slide", async () => {
+    const { getApi } = renderCarousel();
+    await measured(getApi);
     const previous = screen.getByRole("button", { name: "Previous slide" });
     const next = screen.getByRole("button", { name: "Next slide" });
-    expect((previous as HTMLButtonElement).disabled).toBe(true);
-    expect((next as HTMLButtonElement).disabled).toBe(false);
+    expect(isDisabled(previous)).toBe(true);
+    expect(isDisabled(next)).toBe(false);
   });
 
   it("advances slides with next and disables it on the last slide", async () => {
     const user = userEvent.setup();
     const { getApi } = renderCarousel();
+    await measured(getApi);
     const next = screen.getByRole("button", { name: "Next slide" });
     const previous = screen.getByRole("button", { name: "Previous slide" });
 
     await user.click(next);
     expect(getApi()?.selectedScrollSnap()).toBe(1);
-    expect((previous as HTMLButtonElement).disabled).toBe(false);
+    expect(isDisabled(previous)).toBe(false);
 
     await user.click(next);
     expect(getApi()?.selectedScrollSnap()).toBe(2);
-    expect((next as HTMLButtonElement).disabled).toBe(true);
+    expect(isDisabled(next)).toBe(true);
   });
 
   it("scrolls back with the previous button", async () => {
     const user = userEvent.setup();
     const { getApi } = renderCarousel();
+    await measured(getApi);
     await user.click(screen.getByRole("button", { name: "Next slide" }));
     expect(getApi()?.selectedScrollSnap()).toBe(1);
     await user.click(screen.getByRole("button", { name: "Previous slide" }));
     expect(getApi()?.selectedScrollSnap()).toBe(0);
   });
 
-  it("scrolls with ArrowRight/ArrowLeft on the carousel region", () => {
+  it("scrolls with ArrowRight/ArrowLeft on the carousel region", async () => {
     const { getApi } = renderCarousel();
+    await measured(getApi);
     const region = screen.getByRole("region");
     fireEvent.keyDown(region, { key: "ArrowRight" });
     expect(getApi()?.selectedScrollSnap()).toBe(1);
@@ -224,12 +262,57 @@ describe("Carousel", () => {
         buttonVariants({
           variant: "outline",
           size: "icon-sm",
-          className: `absolute touch-manipulation rounded-full ${position}`,
+          className: `absolute touch-manipulation rounded-full ${byFlavour({
+            base: "",
+            // aria-disabled stands in for the native disabled state (above).
+            "ui-sdk": "aria-disabled:opacity-50 ",
+          })}${position}`,
         }),
       );
       expect(button.className.split(" ").sort()).toEqual(
         want.split(" ").sort(),
       );
     }
+  });
+});
+
+// CarouselApi is embla's in the base flavour and a shim over the UI SDK
+// controller in the other; examples drive both through these calls.
+describe("CarouselApi", () => {
+  it("pages with scrollTo, scrollNext and scrollPrev, and reports canScroll*", async () => {
+    const { getApi } = renderCarousel();
+    await measured(getApi);
+    const api = must(getApi());
+    expect(api.canScrollPrev()).toBe(false);
+    expect(api.canScrollNext()).toBe(true);
+    act(() => api.scrollTo(2));
+    await waitFor(() => expect(api.selectedScrollSnap()).toBe(2));
+    expect(api.canScrollNext()).toBe(false);
+    act(() => api.scrollPrev());
+    await waitFor(() => expect(api.selectedScrollSnap()).toBe(1));
+    act(() => api.scrollNext());
+    await waitFor(() => expect(api.selectedScrollSnap()).toBe(2));
+  });
+
+  it("calls select listeners with the new snap until they are removed", async () => {
+    const { getApi } = renderCarousel();
+    await measured(getApi);
+    const api = must(getApi());
+    const seen: number[] = [];
+    const onSelect = (value: NonNullable<CarouselApi>) =>
+      seen.push(value.selectedScrollSnap());
+    api.on("select", onSelect);
+    act(() => api.scrollTo(1));
+    await waitFor(() => expect(seen).toEqual([1]));
+    api.off("select", onSelect);
+    act(() => api.scrollTo(2));
+    await waitFor(() => expect(api.selectedScrollSnap()).toBe(2));
+    expect(seen).toEqual([1]);
+  });
+
+  it("starts on opts.startIndex", async () => {
+    const { getApi } = renderCarousel({ opts: { startIndex: 2 } });
+    await measured(getApi);
+    await waitFor(() => expect(getApi()?.selectedScrollSnap()).toBe(2));
   });
 });
