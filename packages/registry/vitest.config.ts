@@ -6,14 +6,15 @@ const root = import.meta.dirname;
 const flavourUi = path.join(root, "registry/ui-sdk/ui");
 const testsDir = path.join(root, "tests");
 
-// Same rule as scripts/ui-sdk-flavour.mjs: a flavour file is ported once it
-// no longer imports @base-ui/react.
-const importsBaseUi = (file: string) =>
-  /from\s+["']@base-ui\/react[/"']/.test(fs.readFileSync(file, "utf8"));
+// Same rule as REPLACED_IMPORT in scripts/ui-sdk-flavour.mjs: a flavour file
+// is ported once it imports nothing UI SDK replaces.
+const REPLACED_IMPORT =
+  /from\s+["'](@base-ui\/react|react-day-picker|embla-carousel-react|react-resizable-panels)(?:\/[^"']*)?["']/;
+const importsReplaced = (file: string) => REPLACED_IMPORT.test(fs.readFileSync(file, "utf8"));
 const ported = new Set(
   fs
     .readdirSync(flavourUi)
-    .filter((f) => f.endsWith(".tsx") && !importsBaseUi(path.join(flavourUi, f)))
+    .filter((f) => f.endsWith(".tsx") && !importsReplaced(path.join(flavourUi, f)))
     .map((f) => f.replace(/\.tsx$/, "")),
 );
 

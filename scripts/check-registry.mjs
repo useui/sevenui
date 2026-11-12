@@ -1,6 +1,6 @@
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { FLAVOUR_URL, SHARED_ITEMS, readFlavour } from "./ui-sdk-flavour.mjs";
+import { FLAVOUR_URL, REPLACED, SHARED_ITEMS, readFlavour, replacedImports } from "./ui-sdk-flavour.mjs";
 
 const errors = [];
 const loadJson = (path) => JSON.parse(readFileSync(path, "utf8"));
@@ -215,12 +215,12 @@ for (const item of flavour.registry.items) {
   for (const file of item.files) {
     const filePath = join(UI_ROOT, file.path);
     if (!file.path.startsWith("registry/ui-sdk/")) errors.push(`${where}: file ${file.path} is outside registry/ui-sdk/`);
-    if (existsSync(filePath) && readFileSync(filePath, "utf8").match(/from\s+["']@base-ui\/react[/"']/)) {
-      errors.push(`${where}: ${file.path} imports @base-ui/react`);
-    }
+    const replaced = existsSync(filePath) ? replacedImports(readFileSync(filePath, "utf8")) : [];
+    if (replaced.length > 0) errors.push(`${where}: ${file.path} imports ${replaced.join(", ")}, which UI SDK replaces`);
   }
-  if ((item.dependencies ?? []).some((d) => d.startsWith("@base-ui/react"))) {
-    errors.push(`${where}: depends on @base-ui/react`);
+  for (const dep of item.dependencies ?? []) {
+    const name = dep.slice(0, dep.lastIndexOf("@") > 0 ? dep.lastIndexOf("@") : undefined);
+    if (name in REPLACED) errors.push(`${where}: depends on ${name}, which UI SDK replaces`);
   }
   for (const dep of item.registryDependencies) {
     const own = dep.match(FLAVOUR_URL);

@@ -30,24 +30,17 @@ describe("api freeze", () => {
 
 // The UI SDK flavour exports exactly what the base primitive exports, so the
 // same demo and gallery source works against either flavour. A flavour file is
-// held to this once it is ported (it no longer imports @base-ui/react).
+// held to this once it is ported: it imports nothing UI SDK replaces (same
+// rule as REPLACED_IMPORT in scripts/ui-sdk-flavour.mjs).
 const flavourDir = path.resolve(import.meta.dirname, "../registry/ui-sdk/ui");
+const REPLACED_IMPORT =
+  /from\s+["'](@base-ui\/react|react-day-picker|embla-carousel-react|react-resizable-panels)(?:\/[^"']*)?["']/;
 const portedFlavours = modules.filter((name) => {
   const file = path.join(flavourDir, `${name}.tsx`);
-  return (
-    fs.existsSync(file) &&
-    !/from\s+["']@base-ui\/react[/"']/.test(fs.readFileSync(file, "utf8"))
-  );
+  return fs.existsSync(file) && !REPLACED_IMPORT.test(fs.readFileSync(file, "utf8"));
 });
 
 describe("api freeze: ui-sdk flavour", () => {
-  it("has a flavour file for every primitive", () => {
-    const missing = modules.filter(
-      (name) => !fs.existsSync(path.join(flavourDir, `${name}.tsx`)),
-    );
-    expect(missing).toEqual([]);
-  });
-
   it.each(portedFlavours)("%s exports the same names as base", async (name) => {
     const base = await import(/* @vite-ignore */ path.join(uiDir, `${name}.tsx`));
     const port = await import(/* @vite-ignore */ path.join(flavourDir, `${name}.tsx`));

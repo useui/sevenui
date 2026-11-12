@@ -3,13 +3,21 @@
 // from each flavour file's own imports, so porters only ever edit their own
 // registry/ui-sdk/ui/<name>.tsx.
 //
-// A flavour file is in one of three states, read from the files themselves:
-//   pending  still imports @base-ui/react and is byte-identical to the base
-//            file with its specifiers retargeted (a seed, so imports resolve)
-//   ported   imports no @base-ui/react (the 20 primitives with no Base UI
-//            import are "mirrors": ported by being exact retargeted copies)
-//   blocked  ported, but a registryDependency is still pending, so it stays
-//            out of the published registry until that dependency is ported
+// The flavour builds on UI SDK wherever UI SDK has the component, so a ported
+// flavour file imports none of REPLACED: not Base UI, and not the third-party
+// libraries UI SDK replaces (calendar, carousel, resizable). chart keeps
+// recharts and message-scroller/questionnaire keep @shadcn/react: UI SDK has
+// no equivalent.
+//
+// A primitive is in one of three states, read from the files themselves:
+//   pending  its flavour file is the untouched seed (the base file with its
+//            specifiers retargeted, kept so imports resolve) or, for a library
+//            that gets no seed, is absent
+//   ported   its flavour file imports nothing in REPLACED (a base file that
+//            imports nothing in REPLACED is a "mirror": ported by being an
+//            exact retargeted copy)
+//   blocked  ported, but a registryDependency is not, so it stays out of the
+//            published registry until that dependency is ported
 //
 //   node scripts/ui-sdk-flavour.mjs build    write packages/registry/registry.ui-sdk.json
 //   node scripts/ui-sdk-flavour.mjs sync     re-seed pending files and mirrors from base
@@ -29,7 +37,17 @@ export const FLAVOUR_URL = /^https:\/\/sevenui\.dev\/r\/ui-sdk\/([a-z0-9-]+)\.js
 // Items every flavour shares: never duplicated under /r/ui-sdk/.
 export const SHARED_ITEMS = new Set(["theme", "sevenui-tokens", "animations"]);
 
-const BASE_UI_IMPORT = /from\s+["']@base-ui\/react[/"']/;
+// Package -> whether a pending file may be a seed copy. The third-party
+// wrappers get no seed: their port is a rewrite, not an edit of a copy.
+export const REPLACED = {
+  "@base-ui/react": { seed: true },
+  "react-day-picker": { seed: false },
+  "embla-carousel-react": { seed: false },
+  "react-resizable-panels": { seed: false },
+};
+// Keep in sync with packages/registry/vitest.config.ts and tests/api-freeze.test.ts.
+export const REPLACED_IMPORT =
+  /from\s+["'](@base-ui\/react|react-day-picker|embla-carousel-react|react-resizable-panels)(?:\/[^"']*)?["']/g;
 const PACKAGE_IMPORT = /(?:^|\n)\s*(?:import|export)\s[^"';]*?from\s+["']([^"'./@][^"']*|@[^"'/]+\/[^"']+)["']|(?:^|\n)\s*import\s+["']([^"'./][^"']*)["']/g;
 
 // Base UI names a few primitives differently; descriptions follow UI SDK.
@@ -49,7 +67,9 @@ const DESCRIPTION_OVERRIDES = {
 
 export const retarget = (source) =>
   source.replaceAll("@/registry/base/", "@/registry/ui-sdk/");
-export const importsBaseUi = (source) => BASE_UI_IMPORT.test(source);
+export const replacedImports = (source) =>
+  [...new Set([...source.matchAll(REPLACED_IMPORT)].map((m) => m[1]))];
+const seedable = (base) => replacedImports(base).every((name) => REPLACED[name].seed);
 
 const read = (path) => readFileSync(path, "utf8");
 const loadJson = (path) => JSON.parse(read(path));
@@ -97,34 +117,40 @@ export function readFlavour() {
   for (const item of uiItems) {
     let status = "ported";
     const files = [];
-    const mirror = (item.files ?? []).every((f) => !importsBaseUi(read(join(REGISTRY_ROOT, f.path))));
+    const mirror = (item.files ?? []).every(
+      (f) => replacedImports(read(join(REGISTRY_ROOT, f.path))).length === 0,
+    );
     for (const file of item.files ?? []) {
-      const basePath = join(REGISTRY_ROOT, file.path);
+      const base = read(join(REGISTRY_ROOT, file.path));
       const path = flavourPath(file.path);
       const abs = join(REGISTRY_ROOT, path);
       files.push({ ...file, path });
       if (!existsSync(abs)) {
-        problems.push(`${item.name}: missing flavour file ${path} (run "node scripts/ui-sdk-flavour.mjs sync")`);
-        status = "missing";
+        if (seedable(base)) {
+          problems.push(`${item.name}: missing flavour file ${path} (run "node scripts/ui-sdk-flavour.mjs sync")`);
+        }
+        status = "pending";
         continue;
       }
-      const base = read(basePath);
       const source = read(abs);
       sources.set(path, source);
       const seed = retarget(base);
-      if (importsBaseUi(source)) {
-        if (source !== seed) {
+      const replaced = replacedImports(source);
+      if (replaced.length > 0) {
+        if (!seedable(base)) {
           problems.push(
-            `${item.name}: ${path} still imports @base-ui/react but is not the base seed; finish the port or run "node scripts/ui-sdk-flavour.mjs sync"`,
+            `${item.name}: ${path} imports ${replaced.join(", ")}; the flavour builds this primitive on UI SDK, so it gets no seed copy (delete it, or finish the port)`,
+          );
+        } else if (source !== seed) {
+          problems.push(
+            `${item.name}: ${path} still imports ${replaced.join(", ")} but is not the base seed; finish the port or run "node scripts/ui-sdk-flavour.mjs sync"`,
           );
         }
         status = "pending";
-      } else if (!importsBaseUi(base)) {
-        if (source !== seed) {
-          problems.push(
-            `${item.name}: ${path} must stay a retargeted copy of ${file.path} (it has no Base UI import); run "node scripts/ui-sdk-flavour.mjs sync"`,
-          );
-        }
+      } else if (replacedImports(base).length === 0 && source !== seed) {
+        problems.push(
+          `${item.name}: ${path} must stay a retargeted copy of ${file.path} (it imports nothing UI SDK replaces); run "node scripts/ui-sdk-flavour.mjs sync"`,
+        );
       }
       if (/@\/registry\/base\//.test(source)) {
         problems.push(`${item.name}: ${path} imports from @/registry/base/; flavour files import @/registry/ui-sdk/`);
@@ -220,10 +246,11 @@ function sync() {
   for (const item of root.items.filter((i) => i.type === "registry:ui")) {
     for (const file of item.files ?? []) {
       const base = read(join(REGISTRY_ROOT, file.path));
+      if (!seedable(base)) continue;
       const abs = join(REGISTRY_ROOT, flavourPath(file.path));
       const current = existsSync(abs) ? read(abs) : null;
       // Never overwrite a port: only missing files, pending seeds and mirrors.
-      const isPort = current !== null && !importsBaseUi(current) && importsBaseUi(base);
+      const isPort = current !== null && replacedImports(current).length === 0 && replacedImports(base).length > 0;
       if (isPort || current === retarget(base)) continue;
       mkdirSync(dirname(abs), { recursive: true });
       writeFileSync(abs, retarget(base));
