@@ -7,10 +7,10 @@ globalThis.__UI_SDK_STRICT__ = true;
 
 // jsdom has some of these without the parts UI SDK needs, so assign rather
 // than `??=` (see @ui-sdk/react docs, Testing > jsdom).
-HTMLElement.prototype.showPopover = function () {};
-HTMLElement.prototype.hidePopover = function () {};
+HTMLElement.prototype.showPopover = () => {};
+HTMLElement.prototype.hidePopover = () => {};
 Element.prototype.getAnimations = () => [];
-Element.prototype.scrollIntoView = function () {};
+Element.prototype.scrollIntoView = () => {};
 Element.prototype.checkVisibility = () => true;
 Element.prototype.getClientRects = () => [] as unknown as DOMRectList;
 document.elementFromPoint = () => null;

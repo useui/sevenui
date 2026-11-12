@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/registry/base/ui/tooltip";
+import { expectClosed, movePointerAway } from "./helpers/flavour";
 
 function ExampleTooltip(props: React.ComponentProps<typeof Tooltip>) {
   return (
@@ -24,11 +25,12 @@ function ExampleTooltip(props: React.ComponentProps<typeof Tooltip>) {
 
 // Note: Base UI 1.7 renders the tooltip popup without role="tooltip", so
 // these tests assert on the popup content and data attributes instead.
+// UI SDK keeps a closed tooltip mounted with `hidden`; expectClosed covers both.
 
 describe("Tooltip", () => {
   it("stays closed initially", () => {
     render(<ExampleTooltip />);
-    expect(screen.queryByText("Add to library")).toBeNull();
+    expectClosed(screen.queryByText("Add to library"));
   });
 
   it("opens on hover and closes on unhover", async () => {
@@ -38,9 +40,9 @@ describe("Tooltip", () => {
     await user.hover(trigger);
     const popup = await screen.findByText("Add to library");
     expect(popup.getAttribute("data-open")).toBe("");
-    await user.unhover(trigger);
+    await movePointerAway(user, trigger);
     await waitFor(() => {
-      expect(screen.queryByText("Add to library")).toBeNull();
+      expectClosed(screen.queryByText("Add to library"));
     });
   });
 
@@ -52,7 +54,7 @@ describe("Tooltip", () => {
     await screen.findByText("Add to library");
     await user.tab();
     await waitFor(() => {
-      expect(screen.queryByText("Add to library")).toBeNull();
+      expectClosed(screen.queryByText("Add to library"));
     });
   });
 
@@ -74,7 +76,7 @@ describe("Tooltip", () => {
     await waitFor(() => {
       expect(onOpenChange).toHaveBeenCalledWith(true, expect.anything());
     });
-    await user.unhover(screen.getByText("Hover me"));
+    await movePointerAway(user, screen.getByText("Hover me"));
     await waitFor(() => {
       expect(onOpenChange.mock.calls.at(-1)?.[0]).toBe(false);
     });
@@ -85,7 +87,7 @@ describe("Tooltip", () => {
     await screen.findByText("Add to library");
     rerender(<ExampleTooltip open={false} />);
     await waitFor(() => {
-      expect(screen.queryByText("Add to library")).toBeNull();
+      expectClosed(screen.queryByText("Add to library"));
     });
   });
 });
