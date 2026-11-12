@@ -369,6 +369,29 @@ Check these:
 | toggle-group | `orientation` only sets `data-orientation` (Base UI keeps left/right arrows) | passed to UI SDK, so a vertical group moves with up/down; `loopFocus` → `loop` | UI SDK reads orientation for keys and `data-orientation` |
 | toolbar | `ToolbarButton render={<Toggle />}` | renders the `Toggle` directly with the button's props and classes | a UI SDK toggle joins the toolbar itself; through a toolbar button it registered twice and the toolbar lost its tab stop. The flavour toolbar imports the flavour toggle |
 | toolbar | parts have no `data-slot` | UI SDK's `toolbar`, `toolbar-button`, … slots appear | UI SDK sets them; harmless |
+| popover, hover-card | trigger `openOnHover`/`delay`/`closeDelay` (popover), `delay`/`closeDelay` (hover card) | reported to the root, as in `tooltip.tsx` | UI SDK sets them on the root |
+| popover, hover-card | root children as a function of `{ payload }` | supported: the payload comes from `onPayloadChange` | UI SDK's root takes plain children (`hover-card-07` uses it) |
+| popover, alert-dialog, sheet, drawer | `initialFocus`/`finalFocus` as a boolean, ref or function | mapped: `false` → `"none"`, a ref or function → a getter | UI SDK takes an element, selector or getter |
+| alert-dialog, sheet, drawer | overlay slots `alert-dialog-overlay`, `sheet-overlay`, `drawer-overlay` | kept through `render`, plus `size-auto` | outside UI SDK's slot-keyed popover reset (§4.1) |
+| sheet | Base UI Dialog | UI SDK `Dialog`, not `Drawer` | Drawer would add swipe physics and a full slide; the base sheet is a dialog with a 2.5rem CSS slide |
+| sheet | `sheet-content` is a plain fixed panel | the content is `[popover]` outside the reset, so `inset-auto size-auto overflow-visible` are added before the side classes | UA popover `inset: 0` would pin it to the left, `fit-content` would shrink top/bottom sheets |
+| sheet | a caller's `data-slot` (`sidebar`) on `SheetContent` | honoured through `render` | UI SDK ignores a data-slot prop |
+| drawer | `swipeDirection` | mapped to `side` (`down` → `bottom`, `up` → `top`) | UI SDK naming |
+| drawer | the popup is `fixed` and moved by Base UI's transform variables (swipe movement, snap offset, closed transform, stack height) | a flex child of UI SDK's own viewport, moved by UI SDK's `translate`; those classes are dropped. Nesting pushes back with `scale` from `--drawer-stack` | UI SDK slides the sheet itself |
+| drawer | `data-nested-drawer-open`, `data-swiping`, `data-modal` on the viewport | the first two mirrored from UI SDK's `nestedOpen`/`dragging` onto the popup; `data-modal` set on the popup (UI SDK's viewport takes no props) | keeps the base classes working |
+| drawer | overlay opacity from `--drawer-swipe-progress` | opacity driven inline by UI SDK; the opacity/transition classes are dropped | UI SDK manages backdrop opacity |
+| drawer | a non-modal drawer closes on an outside press | `closeOnOutsidePress` is always passed (`!disablePointerDismissal`) | UI SDK closes a non-modal drawer only when asked |
+| toast | `createToastManager()` (Base UI store) | a manager of the same shape (`add`/`close`/`update`/`promise`) around a UI SDK `createToaster()`; the toast object rides in the UI SDK toast's `data` | UI SDK's toaster API differs |
+| toast | `<ToastViewport>` children map `useToastManager().toasts` | the viewport is a `ToastRegion`, which renders its children once per toast; each `<Toast toast>` renders only for the toast being rendered | UI SDK renders toasts through a per-toast children function |
+| toast | `timeout: 0`, `priority: "high"`, `type` any string | `duration: Infinity`, `"assertive"` (else `"polite"`, errors included), `data-type="default"` for unknown types (the object keeps the original `type`) | UI SDK option names |
+| toast | Base UI stack variables (`--toast-offset-y`, `--toast-frontmost-height`, `--toast-swipe-movement-x/y`) and content `data-behind` | defined from UI SDK's `--toast-offset`, `--toast-front-height`, `--toast-swipe-x/y`; `data-behind`/`data-expanded` set on the content from the toast's state | the base classes stay unchanged |
+| toast | toasts over `limit` stay mounted with `data-limited` | wait in UI SDK's queue unrendered (still listed by `useToastManager()` outside the viewport) | UI SDK `maxVisible` |
+| toast | Toast root is a `div`; `swipeDirection` per toast | an `li` in the region's `ol`; `swipeDirection` accepted, ignored (UI SDK swipes toward the region's edge: bottom-end) | UI SDK markup and behaviour |
+| toast | `onRemove` after the exit animation; `positionerProps` (anchored toasts) | `onRemove` runs with `onClose` on dismissal; `positionerProps` accepted, ignored | no UI SDK counterpart (0 example uses) |
+| toast | `ToastAction` without `actionProps` | a plain button, since UI SDK renders its action part only for a toast with an action; with `actionProps` it is UI SDK's part with `dismiss={false}` | Base UI's action never closes the toast |
+| toast | viewport slot `toast-viewport` | kept through `render`, plus `top-auto overflow-visible bg-transparent text-inherit` | outside UI SDK's slot-keyed popover reset |
+| popover, hover-card | `onOpenChange` details: `event` always present | typed as present (Base UI's type), but undefined at runtime for controller changes | `hover-card-06` reads `event.event.target` after checking the reason |
+| drawer | snap points typed `number \| string` | accepted as such and cast to UI SDK's `SnapPoint` (`px`, `rem`, `%`, `"content"`), the strings Base UI accepts | UI SDK narrows the string type |
 
 ## 9. Third-party wrappers and plain-markup primitives: evidence for the open decisions
 
