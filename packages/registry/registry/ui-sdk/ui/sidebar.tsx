@@ -331,12 +331,6 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
   );
 }
 
-// Input's type has no render prop, but its UI SDK part takes one: that is
-// where the slot has to go (see withSlot).
-const sidebarInputSlot = {
-  render: withSlot("sidebar-input", "input"),
-} as React.ComponentProps<typeof Input>;
-
 function SidebarInput({
   className,
   ...props
@@ -347,7 +341,6 @@ function SidebarInput({
       data-sidebar="input"
       className={cn("h-[var(--control-h,2.125rem)] w-full bg-background shadow-none", className)}
       {...props}
-      {...sidebarInputSlot}
     />
   );
 }
@@ -376,15 +369,13 @@ function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
 
 function SidebarSeparator({
   className,
-  render,
-  "data-slot": slot = "sidebar-separator",
   ...props
-}: React.ComponentProps<typeof Separator> & { "data-slot"?: string }) {
+}: React.ComponentProps<typeof Separator>) {
   return (
     <Separator
+      data-slot="sidebar-separator"
       data-sidebar="separator"
       className={cn("mx-2 w-auto bg-sidebar-border", className)}
-      render={withSlot(slot, "div", render)}
       {...props}
     />
   );

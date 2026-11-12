@@ -19,17 +19,13 @@ function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
 // UI SDK ignores a data-slot prop on a part; one on the rendered element wins.
 function ItemSeparator({
   className,
-  render,
-  "data-slot": slot = "item-separator",
   ...props
-}: React.ComponentProps<typeof Separator> & { "data-slot"?: string }) {
+}: React.ComponentProps<typeof Separator>) {
   return (
     <Separator
+      data-slot="item-separator"
       orientation="horizontal"
       className={cn("my-2", className)}
-      render={(partProps, state) =>
-        renderElement("div", { ...partProps, "data-slot": slot }, render, state)
-      }
       {...props}
     />
   );

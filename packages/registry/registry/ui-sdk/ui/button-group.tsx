@@ -70,16 +70,12 @@ function ButtonGroupText({
 function ButtonGroupSeparator({
   className,
   orientation = "vertical",
-  render,
-  "data-slot": slot = "button-group-separator",
   ...props
-}: React.ComponentProps<typeof Separator> & { "data-slot"?: string }) {
+}: React.ComponentProps<typeof Separator>) {
   return (
     <Separator
+      data-slot="button-group-separator"
       orientation={orientation}
-      render={(partProps, state) =>
-        renderElement("div", { ...partProps, "data-slot": slot }, render, state)
-      }
       className={cn(
         "relative self-stretch bg-input data-[orientation=horizontal]:mx-px data-[orientation=horizontal]:w-auto data-[orientation=vertical]:my-px data-[orientation=vertical]:h-auto",
         className,
