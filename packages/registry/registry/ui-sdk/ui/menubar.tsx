@@ -1,8 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { Menu as MenuPrimitive } from "@base-ui/react/menu";
-import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar";
+import {
+  MenuCheckboxItem,
+  MenuItemIndicator,
+  MenuRadioItem,
+} from "@ui-sdk/react/menu";
+import { Menubar as MenubarPrimitive } from "@ui-sdk/react/menubar";
+import { type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cn } from "cn";
 import { CheckIcon } from "lucide-react";
 
@@ -22,10 +27,38 @@ import {
   DropdownMenuTrigger,
 } from "@/registry/ui-sdk/ui/dropdown-menu";
 
-function Menubar({ className, ...props }: MenubarPrimitive.Props) {
+type BaseRender = React.ReactElement<unknown> | RenderProp<never>;
+
+// UI SDK ignores a data-slot prop on its parts, and the dropdown-menu parts
+// set their own slot on the rendered element; a render function that runs
+// last sets SevenUI's menubar-* slot instead, and still honours the caller's
+// own render.
+function slotted<State extends object>(
+  slot: string,
+  tag: string,
+  render: BaseRender | undefined,
+  extra?: (state: State) => Record<string, unknown>,
+): RenderProp<State> {
+  return (props, state) =>
+    renderElement(
+      tag,
+      { ...props, "data-slot": slot, ...extra?.(state) },
+      render as RenderProp<State> | undefined,
+      state,
+    );
+}
+
+function Menubar({
+  className,
+  render,
+  ...props
+}: Omit<React.ComponentProps<typeof MenubarPrimitive>, "render" | "className"> & {
+  className?: string;
+  render?: BaseRender;
+}) {
   return (
     <MenubarPrimitive
-      data-slot="menubar"
+      render={slotted("menubar", "div", render)}
       className={cn(
         "flex h-[var(--control-h,2.125rem)] items-center gap-0.5 rounded-lg border p-0.5",
         className,
@@ -36,28 +69,30 @@ function Menubar({ className, ...props }: MenubarPrimitive.Props) {
 }
 
 function MenubarMenu({ ...props }: React.ComponentProps<typeof DropdownMenu>) {
-  return <DropdownMenu data-slot="menubar-menu" {...props} />;
+  return <DropdownMenu {...props} />;
 }
 
 function MenubarGroup({
+  render,
   ...props
 }: React.ComponentProps<typeof DropdownMenuGroup>) {
-  return <DropdownMenuGroup data-slot="menubar-group" {...props} />;
+  return <DropdownMenuGroup render={slotted("menubar-group", "div", render)} {...props} />;
 }
 
 function MenubarPortal({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPortal>) {
-  return <DropdownMenuPortal data-slot="menubar-portal" {...props} />;
+  return <DropdownMenuPortal {...props} />;
 }
 
 function MenubarTrigger({
   className,
+  render,
   ...props
 }: React.ComponentProps<typeof DropdownMenuTrigger>) {
   return (
     <DropdownMenuTrigger
-      data-slot="menubar-trigger"
+      render={slotted("menubar-trigger", "button", render)}
       className={cn(
         "relative flex h-full items-center rounded-[max(0px,calc(--theme(--radius-lg)-2px))] px-[var(--control-px,0.75rem)] text-[length:var(--control-text,0.8125rem)] font-medium text-muted-foreground outline-hidden select-none transition-[background-color,color,box-shadow] duration-100 hover:bg-accent hover:text-accent-foreground aria-expanded:text-accent-foreground aria-expanded:bg-accent data-popup-open:bg-accent data-popup-open:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 motion-reduce:transition-none",
         className,
@@ -80,10 +115,7 @@ function MenubarContent({
       align={align}
       alignOffset={alignOffset}
       sideOffset={sideOffset}
-      className={cn(
-        "min-w-36",
-        className,
-      )}
+      className={cn("min-w-36", className)}
       {...props}
     />
   );
@@ -93,17 +125,15 @@ function MenubarItem({
   className,
   inset,
   variant = "default",
+  render,
   ...props
 }: React.ComponentProps<typeof DropdownMenuItem>) {
   return (
     <DropdownMenuItem
-      data-slot="menubar-item"
-      data-inset={inset}
-      data-variant={variant}
-      className={cn(
-        "group/menubar-item",
-        className,
-      )}
+      render={slotted("menubar-item", "div", render)}
+      inset={inset}
+      variant={variant}
+      className={cn("group/menubar-item", className)}
       {...props}
     />
   );
@@ -114,14 +144,26 @@ function MenubarCheckboxItem({
   children,
   checked,
   inset,
+  closeOnClick,
+  render,
+  value,
   ...props
-}: MenuPrimitive.CheckboxItem.Props & {
+}: Omit<React.ComponentProps<typeof MenuCheckboxItem>, "render" | "value" | "children"> & {
   inset?: boolean;
+  closeOnClick?: boolean;
+  render?: BaseRender;
+  children?: React.ReactNode;
+  // UI SDK identifies checkbox items in the menu's onCheckedChange; Base UI
+  // has no value, so a generated one fills in.
+  value?: string;
 }) {
+  const id = React.useId();
   return (
-    <MenuPrimitive.CheckboxItem
-      data-slot="menubar-checkbox-item"
+    <MenuCheckboxItem
+      render={slotted("menubar-checkbox-item", "div", render)}
       data-inset={inset}
+      value={value ?? id}
+      closeOnSelect={closeOnClick}
       className={cn(
         "relative flex min-h-[var(--item-h,2rem)] cursor-default items-center gap-2 rounded-sm px-2 text-[length:var(--control-text,0.8125rem)] outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-highlighted:[&_.text-muted-foreground]:text-accent-foreground data-disabled:data-highlighted:bg-transparent data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 pr-2 pl-8",
         className,
@@ -130,33 +172,42 @@ function MenubarCheckboxItem({
       {...props}
     >
       <span className="pointer-events-none absolute left-2 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
-        <MenuPrimitive.CheckboxItemIndicator>
+        <MenuItemIndicator>
           <CheckIcon />
-        </MenuPrimitive.CheckboxItemIndicator>
+        </MenuItemIndicator>
       </span>
       {children}
-    </MenuPrimitive.CheckboxItem>
+    </MenuCheckboxItem>
   );
 }
 
 function MenubarRadioGroup({
+  render,
   ...props
 }: React.ComponentProps<typeof DropdownMenuRadioGroup>) {
-  return <DropdownMenuRadioGroup data-slot="menubar-radio-group" {...props} />;
+  return (
+    <DropdownMenuRadioGroup render={slotted("menubar-radio-group", "div", render)} {...props} />
+  );
 }
 
 function MenubarRadioItem({
   className,
   children,
   inset,
+  closeOnClick,
+  render,
   ...props
-}: MenuPrimitive.RadioItem.Props & {
+}: Omit<React.ComponentProps<typeof MenuRadioItem>, "render" | "children"> & {
   inset?: boolean;
+  closeOnClick?: boolean;
+  render?: BaseRender;
+  children?: React.ReactNode;
 }) {
   return (
-    <MenuPrimitive.RadioItem
-      data-slot="menubar-radio-item"
+    <MenuRadioItem
+      render={slotted("menubar-radio-item", "div", render)}
       data-inset={inset}
+      closeOnSelect={closeOnClick}
       className={cn(
         "relative flex min-h-[var(--item-h,2rem)] cursor-default items-center gap-2 rounded-sm px-2 text-[length:var(--control-text,0.8125rem)] outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-highlighted:[&_.text-muted-foreground]:text-accent-foreground data-disabled:data-highlighted:bg-transparent data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 pr-2 pl-8",
         className,
@@ -164,30 +215,28 @@ function MenubarRadioItem({
       {...props}
     >
       <span className="pointer-events-none absolute left-2 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
-        <MenuPrimitive.RadioItemIndicator>
+        <MenuItemIndicator>
           <CheckIcon />
-        </MenuPrimitive.RadioItemIndicator>
+        </MenuItemIndicator>
       </span>
       {children}
-    </MenuPrimitive.RadioItem>
+    </MenuRadioItem>
   );
 }
 
 function MenubarLabel({
   className,
   inset,
+  render,
   ...props
 }: React.ComponentProps<typeof DropdownMenuLabel> & {
   inset?: boolean;
 }) {
   return (
     <DropdownMenuLabel
-      data-slot="menubar-label"
-      data-inset={inset}
-      className={cn(
-        "px-2 py-1.5 text-sm font-medium data-inset:pl-8",
-        className,
-      )}
+      render={slotted("menubar-label", "div", render)}
+      inset={inset}
+      className={cn("px-2 py-1.5 text-sm font-medium data-inset:pl-8", className)}
       {...props}
     />
   );
@@ -195,11 +244,12 @@ function MenubarLabel({
 
 function MenubarSeparator({
   className,
+  render,
   ...props
 }: React.ComponentProps<typeof DropdownMenuSeparator>) {
   return (
     <DropdownMenuSeparator
-      data-slot="menubar-separator"
+      render={slotted("menubar-separator", "div", render)}
       className={cn("-mx-1 my-1 h-px bg-border", className)}
       {...props}
     />
@@ -225,24 +275,22 @@ function MenubarShortcut({
 function MenubarSub({
   ...props
 }: React.ComponentProps<typeof DropdownMenuSub>) {
-  return <DropdownMenuSub data-slot="menubar-sub" {...props} />;
+  return <DropdownMenuSub {...props} />;
 }
 
 function MenubarSubTrigger({
   className,
   inset,
+  render,
   ...props
 }: React.ComponentProps<typeof DropdownMenuSubTrigger> & {
   inset?: boolean;
 }) {
   return (
     <DropdownMenuSubTrigger
-      data-slot="menubar-sub-trigger"
-      data-inset={inset}
-      className={cn(
-        "data-inset:pl-8",
-        className,
-      )}
+      render={slotted("menubar-sub-trigger", "div", render)}
+      inset={inset}
+      className={cn("data-inset:pl-8", className)}
       {...props}
     />
   );
@@ -255,10 +303,7 @@ function MenubarSubContent({
   return (
     <DropdownMenuSubContent
       data-slot="menubar-sub-content"
-      className={cn(
-        "min-w-32",
-        className,
-      )}
+      className={cn("min-w-32", className)}
       {...props}
     />
   );
