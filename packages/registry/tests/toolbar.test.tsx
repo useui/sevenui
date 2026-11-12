@@ -10,6 +10,7 @@ import {
   ToolbarLink,
   ToolbarSeparator,
 } from "@/registry/base/ui/toolbar";
+import { Toggle } from "@/registry/base/ui/toggle";
 
 function BasicToolbar() {
   return (
@@ -90,6 +91,30 @@ describe("Toolbar", () => {
     expect(button.getAttribute("aria-disabled")).toBe("true");
     await user.click(button);
     expect(clicks).toBe(0);
+  });
+
+  it("keeps one tab stop when buttons render as toggles", async () => {
+    const user = userEvent.setup();
+    render(
+      <Toolbar>
+        <ToolbarButton render={<Toggle />} aria-label="Bold">
+          B
+        </ToolbarButton>
+        <ToolbarButton render={<Toggle />} aria-label="Italic">
+          I
+        </ToolbarButton>
+        <ToolbarButton>Underline</ToolbarButton>
+      </Toolbar>,
+    );
+    await user.tab();
+    expect(document.activeElement?.textContent).toBe("B");
+    await user.keyboard("{ArrowRight}");
+    expect(document.activeElement?.textContent).toBe("I");
+    await user.keyboard("{ArrowRight}");
+    expect(document.activeElement?.textContent).toBe("Underline");
+    const bold = screen.getByRole("button", { name: "Bold" });
+    await user.click(bold);
+    expect(bold.getAttribute("aria-pressed")).toBe("true");
   });
 
   it("renders a toolbar input that accepts text", async () => {
