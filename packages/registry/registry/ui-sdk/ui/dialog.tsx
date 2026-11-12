@@ -1,37 +1,105 @@
 "use client";
 
 import * as React from "react";
-import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
+import {
+  DialogBackdrop as DialogBackdropPrimitive,
+  DialogClose as DialogClosePrimitive,
+  DialogContent as DialogContentPrimitive,
+  DialogDescription as DialogDescriptionPrimitive,
+  Dialog as DialogPrimitive,
+  DialogTitle as DialogTitlePrimitive,
+  DialogTrigger as DialogTriggerPrimitive,
+} from "@ui-sdk/react/dialog";
+import { type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cn } from "cn";
 import { XIcon } from "lucide-react";
 
 import { Button } from "@/registry/ui-sdk/ui/button";
 
-function Dialog({ ...props }: DialogPrimitive.Root.Props) {
-  return <DialogPrimitive.Root data-slot="dialog" {...props} />;
+// UI SDK ignores a data-slot prop on its parts; one on the rendered element
+// wins. Used where SevenUI's slot name differs from UI SDK's.
+function withSlot<State>(
+  slot: string,
+  tag: string,
+  render?: RenderProp<State>,
+): RenderProp<State> {
+  return (props, state) =>
+    renderElement(tag, { ...props, "data-slot": slot }, render, state);
 }
 
-function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props) {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
+// `disablePointerDismissal` is Base UI's name for UI SDK's
+// `closeOnOutsidePress={false}`.
+function Dialog({
+  disablePointerDismissal,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive> & {
+  disablePointerDismissal?: boolean;
+}) {
+  return (
+    <DialogPrimitive
+      closeOnOutsidePress={
+        disablePointerDismissal === undefined ? undefined : !disablePointerDismissal
+      }
+      {...props}
+    />
+  );
 }
 
-function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
+// Base UI marks an open popup's trigger with data-popup-open and examples
+// style it, so the trigger carries it beside UI SDK's data-open.
+function DialogTrigger({
+  render,
+  ...props
+}: Omit<React.ComponentProps<typeof DialogTriggerPrimitive>, "render"> & {
+  render?: React.ReactElement<unknown> | RenderProp<{ open: boolean }>;
+}) {
+  return (
+    <DialogTriggerPrimitive
+      data-slot="dialog-trigger"
+      render={(triggerProps, state) =>
+        renderElement(
+          "button",
+          { ...triggerProps, "data-popup-open": state.open ? "" : undefined },
+          render as RenderProp<{ open: boolean }> | undefined,
+          state,
+        )
+      }
+      {...props}
+    />
+  );
 }
 
-function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
+// UI SDK renders popups in place in the top layer, so there is nothing to
+// portal; the part stays so composed markup keeps working.
+function DialogPortal({
+  children,
+}: {
+  children?: React.ReactNode;
+  container?: unknown;
+  keepMounted?: boolean;
+}) {
+  return <>{children}</>;
 }
 
+function DialogClose({
+  ...props
+}: React.ComponentProps<typeof DialogClosePrimitive>) {
+  return <DialogClosePrimitive data-slot="dialog-close" {...props} />;
+}
+
+// UI SDK's backdrop is a top-layer popover whose reset is keyed to its own
+// slot (dialog-backdrop). Keeping SevenUI's dialog-overlay slot loses that
+// reset, so size-auto undoes the popover's fit-content size.
 function DialogOverlay({
   className,
+  render,
   ...props
-}: DialogPrimitive.Backdrop.Props) {
+}: React.ComponentProps<typeof DialogBackdropPrimitive>) {
   return (
-    <DialogPrimitive.Backdrop
-      data-slot="dialog-overlay"
+    <DialogBackdropPrimitive
+      render={withSlot("dialog-overlay", "div", render)}
       className={cn(
-        "fixed inset-0 isolate z-50 bg-black/10 supports-backdrop-filter:backdrop-blur-xs transition-opacity duration-150 ease-snappy data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-opacity",
+        "fixed inset-0 isolate z-50 size-auto bg-black/10 supports-backdrop-filter:backdrop-blur-xs transition-opacity duration-150 ease-snappy data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-opacity",
         className,
       )}
       {...props}
@@ -44,13 +112,14 @@ function DialogContent({
   children,
   showCloseButton = true,
   ...props
-}: DialogPrimitive.Popup.Props & {
+}: Omit<React.ComponentProps<typeof DialogContentPrimitive>, "children"> & {
+  children?: React.ReactNode;
   showCloseButton?: boolean;
 }) {
   return (
-    <DialogPortal>
+    <>
       <DialogOverlay />
-      <DialogPrimitive.Popup
+      <DialogContentPrimitive
         data-slot="dialog-content"
         className={cn(
           // The popup parents the consumer's children directly, so layout
@@ -64,7 +133,7 @@ function DialogContent({
       >
         {children}
         {showCloseButton && (
-          <DialogPrimitive.Close
+          <DialogClosePrimitive
             data-slot="dialog-close"
             render={
               <Button
@@ -78,8 +147,8 @@ function DialogContent({
             }
           />
         )}
-      </DialogPrimitive.Popup>
-    </DialogPortal>
+      </DialogContentPrimitive>
+    </>
   );
 }
 
@@ -112,17 +181,24 @@ function DialogFooter({
     >
       {children}
       {showCloseButton && (
-        <DialogPrimitive.Close
-          render={<Button variant="outline">Close</Button>}
+        <DialogClosePrimitive
+          render={
+            <Button data-slot="button" variant="outline">
+              Close
+            </Button>
+          }
         />
       )}
     </div>
   );
 }
 
-function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
+function DialogTitle({
+  className,
+  ...props
+}: React.ComponentProps<typeof DialogTitlePrimitive>) {
   return (
-    <DialogPrimitive.Title
+    <DialogTitlePrimitive
       data-slot="dialog-title"
       className={cn(
         "cn-font-heading text-base leading-none font-semibold tracking-[-0.01em]",
@@ -136,9 +212,9 @@ function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
 function DialogDescription({
   className,
   ...props
-}: DialogPrimitive.Description.Props) {
+}: React.ComponentProps<typeof DialogDescriptionPrimitive>) {
   return (
-    <DialogPrimitive.Description
+    <DialogDescriptionPrimitive
       data-slot="dialog-description"
       className={cn(
         "text-sm text-muted-foreground *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
