@@ -1,34 +1,123 @@
 "use client";
 
-import * as React from "react";
-import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
+import type * as React from "react";
+import {
+  DialogBackdrop as SheetBackdropPrimitive,
+  DialogClose as SheetClosePrimitive,
+  DialogContent as SheetContentPrimitive,
+  DialogDescription as SheetDescriptionPrimitive,
+  Dialog as SheetPrimitive,
+  DialogTitle as SheetTitlePrimitive,
+  DialogTrigger as SheetTriggerPrimitive,
+} from "@ui-sdk/react/dialog";
+import { type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cn } from "cn";
 import { XIcon } from "lucide-react";
 
 import { Button } from "@/registry/ui-sdk/ui/button";
 
-function Sheet({ ...props }: SheetPrimitive.Root.Props) {
-  return <SheetPrimitive.Root data-slot="sheet" {...props} />;
+type BaseRender = React.ReactElement<unknown> | RenderProp<never>;
+type FocusTarget = HTMLElement | null | undefined;
+// Base UI's focus props: a boolean, a ref, or a function of the interaction.
+type BaseFocus =
+  | boolean
+  | React.RefObject<HTMLElement | null>
+  | ((interaction: string) => boolean | undefined | HTMLElement | null);
+
+// UI SDK ignores a data-slot prop on its parts; one on the rendered element
+// wins. Used where SevenUI's slot name differs from UI SDK's, and for a
+// caller's own slot (the mobile sidebar renders a sheet as data-slot=sidebar).
+function withSlot<State>(
+  slot: string,
+  tag: string,
+  render?: BaseRender,
+  extra?: (state: State) => Record<string, unknown>,
+): RenderProp<State> {
+  return (props, state) =>
+    renderElement(
+      tag,
+      { ...props, "data-slot": slot, ...extra?.(state) },
+      render as RenderProp<State> | undefined,
+      state,
+    );
 }
 
-function SheetTrigger({ ...props }: SheetPrimitive.Trigger.Props) {
-  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
+function toFocus(focus: BaseFocus | undefined) {
+  if (focus === undefined || focus === true) return undefined;
+  if (focus === false) return "none" as const;
+  if (typeof focus === "function") {
+    return (): FocusTarget => {
+      const target = focus("mouse");
+      return target instanceof HTMLElement ? target : undefined;
+    };
+  }
+  return (): FocusTarget => focus.current;
 }
 
-function SheetClose({ ...props }: SheetPrimitive.Close.Props) {
-  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />;
-}
-
-function SheetPortal({ ...props }: SheetPrimitive.Portal.Props) {
-  return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />;
-}
-
-function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
+// A sheet is a dialog attached to an edge, as in the base flavour: UI SDK's
+// Drawer would add drag physics and a full-length slide the base sheet does
+// not have. `disablePointerDismissal` is Base UI's `closeOnOutsidePress={false}`.
+function Sheet({
+  disablePointerDismissal,
+  ...props
+}: React.ComponentProps<typeof SheetPrimitive> & {
+  disablePointerDismissal?: boolean;
+}) {
   return (
-    <SheetPrimitive.Backdrop
-      data-slot="sheet-overlay"
+    <SheetPrimitive
+      closeOnOutsidePress={
+        disablePointerDismissal === undefined ? undefined : !disablePointerDismissal
+      }
+      {...props}
+    />
+  );
+}
+
+// Base UI marks an open popup's trigger with data-popup-open and examples
+// style it, so the trigger carries it beside UI SDK's data-open.
+function SheetTrigger({
+  render,
+  ...props
+}: Omit<React.ComponentProps<typeof SheetTriggerPrimitive>, "render"> & {
+  render?: BaseRender;
+}) {
+  return (
+    <SheetTriggerPrimitive
+      render={withSlot<{ open: boolean }>("sheet-trigger", "button", render, (state) => ({
+        "data-popup-open": state.open ? "" : undefined,
+      }))}
+      {...props}
+    />
+  );
+}
+
+function SheetClose({
+  render,
+  ...props
+}: Omit<React.ComponentProps<typeof SheetClosePrimitive>, "render"> & {
+  render?: BaseRender;
+}) {
+  return (
+    <SheetClosePrimitive render={withSlot("sheet-close", "button", render)} {...props} />
+  );
+}
+
+// UI SDK's backdrop is a top-layer popover whose reset is keyed to its own
+// slot (dialog-backdrop). Keeping SevenUI's sheet-overlay slot loses that
+// reset, so size-auto undoes the popover's fit-content size.
+function SheetOverlay({
+  className,
+  render,
+  ...props
+}: Omit<React.ComponentProps<typeof SheetBackdropPrimitive>, "className" | "render"> & {
+  className?: string;
+  render?: BaseRender;
+}) {
+  return (
+    <SheetBackdropPrimitive
+      render={withSlot("sheet-overlay", "div", render)}
       className={cn(
-        "fixed inset-0 z-50 bg-black/10 supports-backdrop-filter:backdrop-blur-xs transition-opacity duration-150 ease-snappy data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-opacity",
+        "fixed inset-0 z-50 size-auto bg-black/10 supports-backdrop-filter:backdrop-blur-xs transition-opacity duration-150 ease-snappy data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-opacity",
         className,
       )}
       {...props}
@@ -41,20 +130,38 @@ function SheetContent({
   children,
   side = "right",
   showCloseButton = true,
+  render,
+  initialFocus,
+  finalFocus,
+  "data-slot": slot = "sheet-content",
   ...props
-}: SheetPrimitive.Popup.Props & {
+}: Omit<
+  React.ComponentProps<typeof SheetContentPrimitive>,
+  "children" | "className" | "render" | "initialFocus" | "finalFocus"
+> & {
+  children?: React.ReactNode;
+  className?: string;
+  render?: BaseRender;
+  initialFocus?: BaseFocus;
+  finalFocus?: BaseFocus;
   side?: "top" | "right" | "bottom" | "left";
   showCloseButton?: boolean;
+  "data-slot"?: string;
 }) {
   return (
-    <SheetPortal>
+    <>
       <SheetOverlay />
-      <SheetPrimitive.Popup
-        data-slot="sheet-content"
+      <SheetContentPrimitive
         data-side={side}
+        render={withSlot(slot, "div", render)}
+        initialFocus={toFocus(initialFocus)}
+        finalFocus={toFocus(finalFocus)}
         className={cn(
           // One panel attached to an edge; the inner edge carries a border.
-          "fixed z-50 flex flex-col gap-4 bg-popover bg-clip-padding text-sm text-popover-foreground shadow-overlay",
+          // The content is a top-layer popover outside UI SDK's slot-keyed
+          // reset, so inset-auto, size-auto and overflow-visible undo the
+          // popover's own inset, fit-content size and scrolling.
+          "fixed inset-auto z-50 flex size-auto flex-col gap-4 overflow-visible bg-popover bg-clip-padding text-sm text-popover-foreground shadow-overlay",
           // Slide 200ms. Reduced motion drops the slide and keeps the fade.
           "transition-[translate,opacity] duration-200 ease-snappy data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-opacity motion-reduce:translate-none!",
           "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-auto data-[side=bottom]:border-t data-[side=bottom]:data-ending-style:translate-y-[2.5rem] data-[side=bottom]:data-starting-style:translate-y-[2.5rem] data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-3/4 data-[side=left]:border-r data-[side=left]:data-ending-style:translate-x-[-2.5rem] data-[side=left]:data-starting-style:translate-x-[-2.5rem] data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-full data-[side=right]:w-3/4 data-[side=right]:border-l data-[side=right]:data-ending-style:translate-x-[2.5rem] data-[side=right]:data-starting-style:translate-x-[2.5rem] data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:h-auto data-[side=top]:border-b data-[side=top]:data-ending-style:translate-y-[-2.5rem] data-[side=top]:data-starting-style:translate-y-[-2.5rem] data-[side=left]:sm:max-w-sm data-[side=right]:sm:max-w-sm",
@@ -64,9 +171,10 @@ function SheetContent({
       >
         {children}
         {showCloseButton && (
-          <SheetPrimitive.Close
-            data-slot="sheet-close"
-            render={
+          <SheetClosePrimitive
+            render={withSlot(
+              "sheet-close",
+              "button",
               <Button
                 variant="ghost"
                 className="absolute top-3 right-3"
@@ -74,12 +182,12 @@ function SheetContent({
               >
                 <XIcon />
                 <span className="sr-only">Close</span>
-              </Button>
-            }
+              </Button>,
+            )}
           />
         )}
-      </SheetPrimitive.Popup>
-    </SheetPortal>
+      </SheetContentPrimitive>
+    </>
   );
 }
 
@@ -109,10 +217,17 @@ function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
+function SheetTitle({
+  className,
+  render,
+  ...props
+}: Omit<React.ComponentProps<typeof SheetTitlePrimitive>, "className" | "render"> & {
+  className?: string;
+  render?: BaseRender;
+}) {
   return (
-    <SheetPrimitive.Title
-      data-slot="sheet-title"
+    <SheetTitlePrimitive
+      render={withSlot("sheet-title", "h2", render)}
       className={cn(
         "cn-font-heading text-base font-semibold tracking-[-0.01em] text-foreground",
         className,
@@ -124,11 +239,15 @@ function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
 
 function SheetDescription({
   className,
+  render,
   ...props
-}: SheetPrimitive.Description.Props) {
+}: Omit<React.ComponentProps<typeof SheetDescriptionPrimitive>, "className" | "render"> & {
+  className?: string;
+  render?: BaseRender;
+}) {
   return (
-    <SheetPrimitive.Description
-      data-slot="sheet-description"
+    <SheetDescriptionPrimitive
+      render={withSlot("sheet-description", "p", render)}
       className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />
