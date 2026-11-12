@@ -320,8 +320,16 @@ function ComboboxInput({
         className,
       )}
     >
+      {/* A render element would take the part's own combobox-input slot, which
+          the flavour Input lets win; the group's focus ring keys on this one. */}
       <ComboboxInputPrimitive
-        render={<InputGroupInput disabled={disabled} />}
+        render={(inputProps) => (
+          <InputGroupInput
+            {...(inputProps as React.ComponentProps<typeof InputGroupInput>)}
+            data-slot="input-group-control"
+            disabled={disabled}
+          />
+        )}
         {...(props as React.ComponentProps<typeof ComboboxInputPrimitive>)}
       />
       <InputGroupAddon align="inline-end">

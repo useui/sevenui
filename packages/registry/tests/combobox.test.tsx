@@ -47,6 +47,13 @@ function getInput() {
 }
 
 describe("Combobox", () => {
+  // The input group draws its focus ring from [data-slot=input-group-control].
+  it("renders the input as the input group's control", () => {
+    render(<FruitCombobox />);
+    expect(getInput().getAttribute("data-slot")).toBe("input-group-control");
+    expect(getInput().closest("[data-slot=input-group]")).not.toBeNull();
+  });
+
   it("opens the popup and lists all options when typing begins", async () => {
     const user = userEvent.setup();
     render(<FruitCombobox />);
