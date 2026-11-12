@@ -3,7 +3,15 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { Slider } from "@/registry/base/ui/slider";
+import { isUiSdk } from "./helpers/flavour";
 import { must } from "./helpers/must";
+
+// Base UI sets aria-valuenow on each thumb's range input. UI SDK leaves the
+// native <input type="range"> to expose its own value, so the flavour reads
+// the input's value instead.
+function valueNow(slider: HTMLInputElement) {
+  return isUiSdk ? slider.value : slider.getAttribute("aria-valuenow");
+}
 
 // The wrapper sets thumbAlignment="edge", which positions thumbs from layout
 // measurements. jsdom has no layout, so thumbs keep their initial
@@ -30,7 +38,7 @@ describe("Slider", () => {
   it("renders a slider with aria value attributes", () => {
     render(<Slider defaultValue={[25]} aria-label="Volume" />);
     const slider = getSlider();
-    expect(slider.getAttribute("aria-valuenow")).toBe("25");
+    expect(valueNow(slider)).toBe("25");
     expect(slider.min).toBe("0");
     expect(slider.max).toBe("100");
   });
@@ -55,12 +63,12 @@ describe("Slider", () => {
     const slider = getSlider();
     await focusSlider(slider);
     await user.keyboard("{ArrowRight}");
-    expect(slider.getAttribute("aria-valuenow")).toBe("51");
+    expect(valueNow(slider)).toBe("51");
     // An array defaultValue makes the slider value an array, so the
     // callback receives [51] rather than a bare number.
     expect(onValueChange).toHaveBeenCalledWith([51], expect.anything());
     await user.keyboard("{ArrowDown}");
-    expect(slider.getAttribute("aria-valuenow")).toBe("50");
+    expect(valueNow(slider)).toBe("50");
   });
 
   it("steps by the given step size", async () => {
@@ -69,7 +77,7 @@ describe("Slider", () => {
     const slider = getSlider();
     await focusSlider(slider);
     await user.keyboard("{ArrowRight}");
-    expect(slider.getAttribute("aria-valuenow")).toBe("60");
+    expect(valueNow(slider)).toBe("60");
   });
 
   it("does not move below min or above max", async () => {
@@ -78,26 +86,26 @@ describe("Slider", () => {
     const slider = getSlider();
     await focusSlider(slider);
     await user.keyboard("{ArrowLeft}");
-    expect(slider.getAttribute("aria-valuenow")).toBe("0");
+    expect(valueNow(slider)).toBe("0");
     await user.keyboard("{Home}");
-    expect(slider.getAttribute("aria-valuenow")).toBe("0");
+    expect(valueNow(slider)).toBe("0");
     await user.keyboard("{End}");
-    expect(slider.getAttribute("aria-valuenow")).toBe("100");
+    expect(valueNow(slider)).toBe("100");
     await user.keyboard("{ArrowRight}");
-    expect(slider.getAttribute("aria-valuenow")).toBe("100");
+    expect(valueNow(slider)).toBe("100");
   });
 
   it("supports a controlled value", () => {
     render(<Slider value={[42]} aria-label="Volume" />);
-    expect(getSlider().getAttribute("aria-valuenow")).toBe("42");
+    expect(valueNow(getSlider())).toBe("42");
   });
 
   it("renders one thumb per value for range sliders", () => {
     render(<Slider defaultValue={[20, 60]} />);
     const sliders = getSliders();
     expect(sliders).toHaveLength(2);
-    expect(sliders[0].getAttribute("aria-valuenow")).toBe("20");
-    expect(sliders[1].getAttribute("aria-valuenow")).toBe("60");
+    expect(valueNow(sliders[0])).toBe("20");
+    expect(valueNow(sliders[1])).toBe("60");
   });
 
   it("renders a single thumb at min when no value is given", () => {
@@ -107,7 +115,7 @@ describe("Slider", () => {
     render(<Slider />);
     const sliders = getSliders();
     expect(sliders).toHaveLength(1);
-    expect(sliders[0].getAttribute("aria-valuenow")).toBe("0");
+    expect(valueNow(sliders[0])).toBe("0");
   });
 
   it("ignores keyboard input when disabled", async () => {
@@ -127,7 +135,7 @@ describe("Slider", () => {
     expect(slider.disabled).toBe(true);
     await focusSlider(slider);
     await user.keyboard("{ArrowRight}");
-    expect(slider.getAttribute("aria-valuenow")).toBe("50");
+    expect(valueNow(slider)).toBe("50");
     expect(onValueChange).not.toHaveBeenCalled();
   });
 });
