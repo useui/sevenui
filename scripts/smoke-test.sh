@@ -37,6 +37,11 @@ for f in "$ROOT"/apps/web/public/r/component/*.json; do
   sed "s|https://sevenui.dev/r/|http://localhost:$PORT/|g" "$f" \
     > "$WORK/registry/component/$(basename "$f")"
 done
+mkdir -p "$WORK/registry/ui-sdk"
+for f in "$ROOT"/apps/web/public/r/ui-sdk/*.json; do
+  sed "s|https://sevenui.dev/r/|http://localhost:$PORT/|g" "$f" \
+    > "$WORK/registry/ui-sdk/$(basename "$f")"
+done
 # Use --directory instead of `(cd ... && python3 ...) &` so that $! is the
 # actual server PID. A backgrounded `(cd X && cmd) &` runs cmd inside a
 # subshell wrapper process; on this machine the subshell PID and the python3
@@ -149,6 +154,11 @@ stock_decls "$TOK/src/styles.css" > "$WORK/tokens-before.txt"
 test "$(wc -l < "$WORK/tokens-before.txt" | tr -d ' ')" -eq 13 \
   || { echo "stock baseline should hold 13 declarations" >&2; cat "$WORK/tokens-before.txt" >&2; exit 1; }
 
+# 2c. UI SDK flavour project: a fresh copy, so no base primitive is present.
+SDK="$WORK/app-ui-sdk"
+cp -R "$APP" "$SDK"
+printf '@layer ui-sdk;\n@import "tailwindcss";\n' > "$SDK/src/styles.css"
+
 # 3. Install representative items through the CLI
 # Pinned to the repo's own installed binary instead of `npx --yes shadcn@latest`:
 # `@latest` would re-resolve to whatever the registry serves at run time, which
@@ -197,6 +207,127 @@ test -f "$APP/src/components/accordion-demo.tsx" || { echo "accordion-demo.tsx (
 test -f "$APP/src/components/accordion-01.tsx" || { echo "accordion-01.tsx (component) missing" >&2; exit 1; }
 grep -q 'from "@/components/ui/accordion"' "$APP/src/components/accordion-demo.tsx" \
   || { echo "demo import not rewritten to consumer alias" >&2; exit 1; }
+
+# UI SDK flavour contract: /r/ui-sdk/ items install into the same ui alias,
+# their registryDependencies stay inside the flavour (dialog pulls the
+# flavour button), the shared tokens still arrive, the exact UI SDK version
+# lands in package.json, and the install prints the cascade-layer step.
+SDK_LOG="$WORK/ui-sdk-install.log"
+(cd "$SDK" && "$SHADCN_BIN" add --yes --overwrite \
+  "http://localhost:$PORT/ui-sdk/dialog.json" \
+  "http://localhost:$PORT/ui-sdk/dropdown-menu.json" \
+  "http://localhost:$PORT/ui-sdk/select.json" \
+  "http://localhost:$PORT/ui-sdk/tooltip.json" \
+  "http://localhost:$PORT/ui-sdk/checkbox.json" \
+  "http://localhost:$PORT/ui-sdk/badge.json") 2>&1 | tee "$SDK_LOG"
+for name in button dialog dropdown-menu select tooltip checkbox badge; do
+  test -f "$SDK/src/components/ui/$name.tsx" || { echo "ui-sdk $name.tsx missing" >&2; exit 1; }
+done
+# The items declare the exact version; npm saves it with a caret, which for a
+# prerelease still only admits 0.1.0 prereleases and 0.1.x.
+grep -Eq '"@ui-sdk/react": "\^?0\.1\.0-beta\.1"' "$SDK/package.json" || { echo "@ui-sdk/react 0.1.0-beta.1 missing from package.json" >&2; grep ui-sdk "$SDK/package.json" >&2; exit 1; }
+grep -Eq '"@ui-sdk/core": "\^?0\.1\.0-beta\.1"' "$SDK/package.json" || { echo "@ui-sdk/core 0.1.0-beta.1 missing from package.json" >&2; grep ui-sdk "$SDK/package.json" >&2; exit 1; }
+if grep -q '@base-ui/react' "$SDK/package.json"; then echo "ui-sdk install pulled @base-ui/react" >&2; exit 1; fi
+grep -q '@ui-sdk/react/button' "$SDK/src/components/ui/button.tsx" || { echo "dialog did not pull the ui-sdk button" >&2; exit 1; }
+grep -q 'from "@/components/ui/button"' "$SDK/src/components/ui/dialog.tsx" \
+  || { echo "ui-sdk import not rewritten to consumer alias" >&2; exit 1; }
+grep -q -- '--surface-tray:' "$SDK/src/styles.css" || { echo "ui-sdk install did not pull sevenui-tokens" >&2; exit 1; }
+test "$(head -n 1 "$SDK/src/styles.css")" = "@layer ui-sdk;" || { echo "@layer ui-sdk; is no longer the first line" >&2; exit 1; }
+grep -q '@layer ui-sdk;' "$SDK_LOG" || { echo "install did not print the cascade-layer step" >&2; exit 1; }
+cat > "$SDK/src/main.tsx" <<'EOF'
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+const fruits = [
+  { value: "apple", label: "Apple" },
+  { value: "banana", label: "Banana" },
+];
+
+// The same JSX the base flavour's examples use, Base UI-only props included.
+export function App() {
+  return (
+    <TooltipProvider delay={0}>
+      <Badge render={<a href="/new" />}>New</Badge>
+      <Checkbox indeterminate onCheckedChange={(checked: boolean) => checked} />
+      <Dialog onOpenChange={(open) => open}>
+        <DialogTrigger render={<Button variant="outline" />}>Open</DialogTrigger>
+        <DialogContent showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle>Title</DialogTitle>
+            <DialogDescription>Description</DialogDescription>
+          </DialogHeader>
+          <DialogFooter showCloseButton />
+        </DialogContent>
+      </Dialog>
+      <DropdownMenu>
+        <DropdownMenuTrigger render={<Button variant="outline" />}>Menu</DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => {}} closeOnClick={false}>
+            Item
+          </DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>More</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Select items={fruits} defaultValue="apple">
+        <SelectTrigger size="sm">
+          <SelectValue placeholder="Fruit" />
+        </SelectTrigger>
+        <SelectContent side="inline-end">
+          <SelectGroup>
+            <SelectLabel>Fruits</SelectLabel>
+            {fruits.map((fruit) => (
+              <SelectItem key={fruit.value} value={fruit.value}>
+                {fruit.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+      <Tooltip>
+        <TooltipTrigger delay={0} render={<Button size="icon" />}>
+          ?
+        </TooltipTrigger>
+        <TooltipContent side="inline-start">Help</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+EOF
+(cd "$SDK" && npx tsc --noEmit)
 
 # 4. The installed code must typecheck in the consumer project
 cat > "$APP/src/main.tsx" <<'EOF'
