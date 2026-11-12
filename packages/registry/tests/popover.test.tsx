@@ -10,6 +10,7 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@/registry/base/ui/popover";
+import { isUiSdk } from "./helpers/flavour";
 
 function ExamplePopover(props: React.ComponentProps<typeof Popover>) {
   return (
@@ -123,6 +124,11 @@ describe("Popover v2 styles", () => {
   it("keeps the positioner's stacking context", async () => {
     render(<ExamplePopover open />);
     await screen.findByText("Dimensions");
-    expect(getContent()?.parentElement?.className).toContain("isolate z-50");
+    if (isUiSdk) {
+      // No Positioner: UI SDK positions the content itself, in the top layer.
+      expect(getContent()?.hasAttribute("popover")).toBe(true);
+    } else {
+      expect(getContent()?.parentElement?.className).toContain("isolate z-50");
+    }
   });
 });
