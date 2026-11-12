@@ -423,6 +423,36 @@ Check these:
 | input-otp | `onValueInvalid`, `autoSubmit` | accepted, ignored | no UI SDK counterpart |
 | input-otp | root `aria-invalid` styles the group through `has-aria-invalid` | goes to the native input, which sits outside the groups, so the group ring does not show; a slot's own `aria-invalid` still works | UI SDK puts aria on the input |
 | input-otp | paste fills the slots | **UI SDK bug (0.1.0-beta.1):** with `__UI_SDK_STRICT__` its dev check throws on its own `paste` reason and the paste is lost; without strict it is a console warning and paste works | test marked `it.fails` for the flavour |
+| calendar | `Date` / `DateRange {from,to}` / `Date[]` values, `month`/`defaultMonth`/`onMonthChange` as `Date` | same; converted to and from ISO strings (local calendar date) | UI SDK values are ISO strings |
+| calendar | react-day-picker selection rules: a range press extends the range (`addToRange`, `min`/`max` nights, `excludeDisabled`, `resetOnSelect`); multiple `min`/`max`/`required` | the same rules, applied by the wrapper: a range press cancels UI SDK's anchor (`onAnchorChange`) and sets the controlled value | keeps every range example working; so there is no UI SDK hover preview or Escape for an unfinished range (react-day-picker has neither) |
+| calendar | a half range `{from, to: undefined}` (`min` > 0) | emitted as in base; shown to UI SDK as `[from, from]` | UI SDK has no half-range value |
+| calendar | `required` single date pressed again calls `onSelect` with the same date | no call (the value does not change) | UI SDK reports changes only |
+| calendar | day is a `<td>` holding a `<button>` named "Friday, June 12th, 2026" | the `<td role="gridcell">` is the focusable day, named "Friday, June 12, 2026", with `aria-selected="false"` on unselected days; the styled day inside is `<span data-slot="calendar-day-button">` (base: `data-slot="button"`) | APG grid; no nested button |
+| calendar | disabled day = disabled `<button>` | `aria-disabled` gridcell, still focusable | UI SDK keeps unavailable days discoverable |
+| calendar | styles that target the day's inner `button` (`[&>button]:…` in `modifiersClassNames`, the `day` class's `_button` selectors) | do not match; the wrapper's own `day` class targets `[data-slot=calendar-day-button]` instead | 3 component examples (calendar-05, -14, -15) lose those inner-button styles |
+| calendar | `startMonth`/`endMonth` limit navigation only | mapped to `min`/`max`, which also make outside days beyond them unselectable | UI SDK has one bound |
+| calendar | outside days of a shown month | focusable with `tabIndex=-1` (set by the wrapper) | UI SDK strict mode throws for a rendered day `<td>` without tabindex; UI SDK itself leaves them out |
+| calendar | `rdp-*` class names, `data-focused`, `data-month` | none; week numbers are `[data-slot=calendar-week-number]` / `-header` | not faked |
+| calendar | `locale` (date-fns object) | only `code` and `options.weekStartsOn` are read | UI SDK takes a locale string |
+| calendar | `animate` | accepted, ignored | no month animation |
+| calendar | `components` beyond `DayButton`, `formatters`/`labels` beyond the mapped ones, `hidden`, `showWeekNumber` custom `WeekNumber`, `timeZone`, `onDayClick`, `styles` | not in the type | no honest mapping (0 example uses) |
+| calendar | `DateRange` type imported from `react-day-picker` by examples | the flavour file exports `type DateRange` (and `Matcher`, `Modifiers`); examples still import it from `react-day-picker` | site phase: point the import at the calendar module or keep `react-day-picker` as a dev type dependency |
+| carousel | embla `CarouselApi` | a shim over the UI SDK controller: `scrollTo`, `scrollPrev/Next`, `canScrollPrev/Next`, `selectedScrollSnap`, `previousScrollSnap`, `scrollSnapList` (length exact, values evenly spaced), `scrollProgress`, `on`/`off` for `select`, `reInit` (page count changed) and `settle` | UI SDK has a controller, not embla |
+| carousel | `opts` | `align` (string), `loop`, `dragFree`, `skipSnaps`, `slidesToScroll`→`slidesPerPage`, `startIndex`→`defaultPage`, `watchDrag` (boolean)→`drag`; `axis`, `containScroll`, `duration` accepted and ignored; `breakpoints`, function `align`/`watchDrag`, `plugins` not in the type | no UI SDK equivalent |
+| carousel | Previous/Next natively `disabled` at the ends | `aria-disabled` + `data-disabled`, still focusable, dimmed with `aria-disabled:opacity-50` | UI SDK keeps focus from dropping |
+| carousel | `-ml-4` on the row and `pl-4` on slides | the row's negative margin is moved onto the scroller in a layout effect and the scroller is clipped back with `clip-path`; slides then line up exactly as embla's (checked in Chrome: 0px offset on every page, 6 pages for 8 thirds like embla's 6 snaps) | a native scroller cannot scroll into the part of the row a negative margin pushes out |
+| carousel | no name required | an unnamed carousel gets `aria-label="Carousel"` | UI SDK strict mode requires the region to be named |
+| carousel | arrow keys anywhere in the region | arrow keys in the viewport (also Up/Down when vertical) are UI SDK's; elsewhere in the region the wrapper pages with Left/Right as base did. An `onKeyDownCapture` override (carousel-07) no longer stops paging from the viewport | UI SDK owns viewport keys |
+| carousel | `useCarousel()` returns embla's `carouselRef` | not returned | embla-only |
+| carousel | slides out of view | `inert` and `aria-hidden` | UI SDK behaviour |
+| resizable | layout map keyed by panel id, bare number = pixels, `"50"` = percent | converted to UI SDK's array and units; panel ids are read from the DOM; `em`/`vh`/`vw` sizes are dropped | UI SDK reads a bare number as percent |
+| resizable | `onLayoutChange`/`onLayoutChanged(map, {isUserInteraction})`, both on mount | emulated: both fire once the first layout is known, keys/collapse/calls report `onLayoutChanged` at once, a drag on release | UI SDK reports only changes, and commits keys on key-up |
+| resizable | arrow key step | 5%, as react-resizable-panels | UI SDK defaults to 1% |
+| resizable | `groupRef`/`panelRef` handles, panel `onResize` | shims over the UI SDK controller; `onResize` from a ResizeObserver on the panel, percent from the controller | UI SDK has a controller |
+| resizable | `data-group`/`data-panel`/`data-separator`, `flex-grow` sizing, inner content wrapper | `data-orientation`/`data-disabled`, `--resizable-panel-size` flex basis, one element per panel (`overflow: auto` inline) | not faked; one example (resizable-05) styles `[data-panel]` |
+| resizable | group `data-slot="resizable-panel-group"` | kept (UI SDK's is `resizable`) | SevenUI slot |
+| resizable | `disableCursor`, `resizeTargetMinimumSize`, panel `disabled`/`groupResizeBehavior`, separator `disableDoubleClick` | not in the type | no UI SDK counterpart (0 example uses) |
+| resizable | `usePanelRef`, `useGroupRef`, `Layout`, `PanelImperativeHandle`, `GroupImperativeHandle` imported from `react-resizable-panels` by 6 examples | the flavour exports matching types (`Layout`, `ResizablePanelHandle`, `ResizablePanelGroupHandle`, …) but no hooks | site phase: flavour variants or `React.useRef` |
 
 ## 9. Third-party wrappers and plain-markup primitives: evidence for the open decisions
 
