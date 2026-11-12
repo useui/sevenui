@@ -4,7 +4,6 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { Checkbox } from "@/registry/base/ui/checkbox";
-import { Field, FieldLabel } from "@/registry/base/ui/field";
 import { must } from "./helpers/must";
 
 describe("Checkbox", () => {
@@ -139,20 +138,5 @@ describe("Checkbox", () => {
       expect(indicator.className).toContain("transition-opacity");
       expect(indicator.className).toContain("motion-reduce:transition-none");
     });
-  });
-
-  it("is labeled automatically inside a Field with FieldLabel", async () => {
-    const user = userEvent.setup();
-    render(
-      <Field name="terms">
-        <FieldLabel>Accept terms</FieldLabel>
-        <Checkbox />
-      </Field>,
-    );
-    // The label is associated with both the checkbox button and its hidden
-    // input, so query by role.
-    const checkbox = screen.getByRole("checkbox", { name: "Accept terms" });
-    await user.click(checkbox);
-    expect(checkbox.getAttribute("aria-checked")).toBe("true");
   });
 });

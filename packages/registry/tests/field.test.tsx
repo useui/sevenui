@@ -9,6 +9,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/registry/base/ui/field";
+import { Checkbox } from "@/registry/base/ui/checkbox";
 import { Input } from "@/registry/base/ui/input";
 
 describe("Field", () => {
@@ -159,5 +160,24 @@ describe("Field v2 styles", () => {
     expect(joined).not.toContain("focus-ring");
     expect(joined).not.toContain("surface-");
     expect(joined).not.toContain("hairline");
+  });
+});
+
+// Field integration lives with Field so checkbox.test.tsx imports only the
+// checkbox, and the ui-sdk run can pick it up before Field is ported.
+describe("Field with a Checkbox", () => {
+  it("is labeled automatically inside a Field with FieldLabel", async () => {
+    const user = userEvent.setup();
+    render(
+      <Field name="terms">
+        <FieldLabel>Accept terms</FieldLabel>
+        <Checkbox />
+      </Field>,
+    );
+    // The label is associated with both the checkbox button and its hidden
+    // input, so query by role.
+    const checkbox = screen.getByRole("checkbox", { name: "Accept terms" });
+    await user.click(checkbox);
+    expect(checkbox.getAttribute("aria-checked")).toBe("true");
   });
 });
