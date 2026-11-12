@@ -326,6 +326,9 @@ Check these:
 | breadcrumb, button-group, item, marker, bubble, attachment, layer-card | `useRender` state → `data-*` (`data-slot`, `data-variant`, `data-size`, …; a `true` boolean as an empty attribute) | the same attributes set explicitly in the first `mergeProps` source; `layer-card-panel` keeps its slot last | `renderElement` derives no attributes |
 | button-group, item | `ButtonGroupSeparator`/`ItemSeparator` pass `data-slot` to `Separator` | the slot is set through `render` on the rendered element | UI SDK ignores a `data-slot` prop on a part (§4.1) |
 | direction | `DirectionProvider` is context only and adds no element | context **plus** a `<div dir style="display: contents">` wrapper (no `dir` without a `direction` prop); `useDirection` reads the context as before | UI SDK reads the computed direction from the page, not from React context |
+| sidebar | `SidebarMenuButton` tooltip hidden with `hidden` on the popup while expanded or mobile | `disabled` on the `Tooltip` root, plus `hidden` (only ever set, never cleared) so a tooltip already open when the sidebar expands disappears | UI SDK manages `hidden` on closed content; `disabled` does not close an open tooltip |
+| sidebar | `SidebarMenuButton` with `tooltip` keeps `data-slot="sidebar-menu-button"` on the trigger | same, put back on the rendered element through the trigger's `render` | the tooltip trigger part would set `tooltip-trigger` |
+| sidebar | `SidebarInput`/`SidebarSeparator` pass `data-slot` to `Input`/`Separator` | the slot is set through `render` (Input's type has no `render`, so it is passed untyped) | the flavour `Input` and `Separator` drop a caller's `data-slot` |
 
 ## 9. Third-party wrappers and plain-markup primitives: evidence for the open decisions
 
