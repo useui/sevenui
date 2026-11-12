@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { mergeProps } from "@base-ui/react/merge-props";
-import { useRender } from "@base-ui/react/use-render";
+import { mergeProps, type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import { PanelLeftIcon } from "lucide-react";
@@ -31,6 +30,23 @@ const SIDEBAR_WIDTH = "16rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
+
+// Base UI's useRender turns state into data attributes (a true boolean as an
+// empty attribute, a false one omitted); renderElement does not, so the
+// parts set them explicitly. ReactElement<unknown> keeps Base UI's render type.
+type SidebarRender<State> = RenderProp<State> | React.ReactElement<unknown>;
+
+const flag = (value: boolean) => (value ? "" : undefined);
+
+// UI SDK ignores a data-slot prop on a part; one on the rendered element wins.
+function withSlot<State>(
+  slot: string,
+  tag: string,
+  render?: SidebarRender<State>,
+): RenderProp<State> {
+  return (props, state) =>
+    renderElement(tag, { ...props, "data-slot": slot }, render as RenderProp<State> | undefined, state);
+}
 
 type SidebarContextProps = {
   state: "expanded" | "collapsed";
@@ -315,6 +331,12 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
   );
 }
 
+// Input's type has no render prop, but its UI SDK part takes one: that is
+// where the slot has to go (see withSlot).
+const sidebarInputSlot = {
+  render: withSlot("sidebar-input", "input"),
+} as React.ComponentProps<typeof Input>;
+
 function SidebarInput({
   className,
   ...props
@@ -325,6 +347,7 @@ function SidebarInput({
       data-sidebar="input"
       className={cn("h-[var(--control-h,2.125rem)] w-full bg-background shadow-none", className)}
       {...props}
+      {...sidebarInputSlot}
     />
   );
 }
@@ -353,13 +376,15 @@ function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
 
 function SidebarSeparator({
   className,
+  render,
+  "data-slot": slot = "sidebar-separator",
   ...props
-}: React.ComponentProps<typeof Separator>) {
+}: React.ComponentProps<typeof Separator> & { "data-slot"?: string }) {
   return (
     <Separator
-      data-slot="sidebar-separator"
       data-sidebar="separator"
       className={cn("mx-2 w-auto bg-sidebar-border", className)}
+      render={withSlot(slot, "div", render)}
       {...props}
     />
   );
@@ -390,15 +415,20 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+type SidebarPartState = { slot: string; sidebar: string };
+
 function SidebarGroupLabel({
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div"> & React.ComponentProps<"div">) {
-  return useRender({
-    defaultTagName: "div",
-    props: mergeProps<"div">(
+}: React.ComponentProps<"div"> & { render?: SidebarRender<SidebarPartState> }) {
+  const state = { slot: "sidebar-group-label", sidebar: "group-label" };
+  return renderElement(
+    "div",
+    mergeProps(
       {
+        "data-slot": state.slot,
+        "data-sidebar": state.sidebar,
         className: cn(
           "flex h-[var(--item-h,2rem)] shrink-0 items-center rounded-md px-2 font-mono text-[11px] font-medium tracking-wider text-muted-foreground uppercase ring-sidebar-ring outline-hidden transition-[margin,opacity] duration-200 ease-linear motion-reduce:transition-none group-data-[collapsible=icon]:-mt-[var(--item-h,2rem)] group-data-[collapsible=icon]:opacity-0 focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
           className,
@@ -406,23 +436,23 @@ function SidebarGroupLabel({
       },
       props,
     ),
-    render,
-    state: {
-      slot: "sidebar-group-label",
-      sidebar: "group-label",
-    },
-  });
+    render as RenderProp<SidebarPartState> | undefined,
+    state,
+  );
 }
 
 function SidebarGroupAction({
   className,
   render,
   ...props
-}: useRender.ComponentProps<"button"> & React.ComponentProps<"button">) {
-  return useRender({
-    defaultTagName: "button",
-    props: mergeProps<"button">(
+}: React.ComponentProps<"button"> & { render?: SidebarRender<SidebarPartState> }) {
+  const state = { slot: "sidebar-group-action", sidebar: "group-action" };
+  return renderElement(
+    "button",
+    mergeProps(
       {
+        "data-slot": state.slot,
+        "data-sidebar": state.sidebar,
         className: cn(
           "absolute top-[calc((var(--item-h,2rem)-1.25rem)/2+0.5rem)] right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-muted-foreground ring-sidebar-ring outline-hidden transition-[color,background-color,border-color] motion-reduce:transition-none group-data-[collapsible=icon]:hidden after:absolute after:-inset-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
           className,
@@ -430,12 +460,9 @@ function SidebarGroupAction({
       },
       props,
     ),
-    render,
-    state: {
-      slot: "sidebar-group-action",
-      sidebar: "group-action",
-    },
-  });
+    render as RenderProp<SidebarPartState> | undefined,
+    state,
+  );
 }
 
 function SidebarGroupContent({
@@ -496,6 +523,11 @@ const sidebarMenuButtonVariants = cva(
   },
 );
 
+type SidebarSizedState<Size> = SidebarPartState & { size: Size; active: boolean };
+type SidebarMenuButtonState = SidebarSizedState<
+  VariantProps<typeof sidebarMenuButtonVariants>["size"]
+>;
+
 function SidebarMenuButton({
   render,
   isActive = false,
@@ -504,28 +536,46 @@ function SidebarMenuButton({
   tooltip,
   className,
   ...props
-}: useRender.ComponentProps<"button"> &
-  React.ComponentProps<"button"> & {
-    isActive?: boolean;
-    tooltip?: string | React.ComponentProps<typeof TooltipContent>;
-  } & VariantProps<typeof sidebarMenuButtonVariants>) {
+}: React.ComponentProps<"button"> & {
+  render?: SidebarRender<SidebarMenuButtonState>;
+  isActive?: boolean;
+  tooltip?: string | React.ComponentProps<typeof TooltipContent>;
+} & VariantProps<typeof sidebarMenuButtonVariants>) {
   const { isMobile, state } = useSidebar();
-  const comp = useRender({
-    defaultTagName: "button",
-    props: mergeProps<"button">(
+  const buttonState: SidebarMenuButtonState = {
+    slot: "sidebar-menu-button",
+    sidebar: "menu-button",
+    size,
+    active: isActive,
+  };
+  const comp = renderElement(
+    "button",
+    mergeProps(
       {
+        "data-slot": buttonState.slot,
+        "data-sidebar": buttonState.sidebar,
+        "data-size": size ?? undefined,
+        "data-active": flag(isActive),
         className: cn(sidebarMenuButtonVariants({ variant, size }), className),
       },
       props,
     ),
-    render: !tooltip ? render : <TooltipTrigger render={render} />,
-    state: {
-      slot: "sidebar-menu-button",
-      sidebar: "menu-button",
-      size,
-      active: isActive,
-    },
-  });
+    // The trigger part would replace the slot with its own (tooltip-trigger),
+    // so the slot that reached the trigger is put back on the rendered element.
+    !tooltip
+      ? (render as RenderProp<SidebarMenuButtonState> | undefined)
+      : (triggerProps) => (
+          <TooltipTrigger
+            {...triggerProps}
+            render={withSlot(
+              triggerProps["data-slot"],
+              "button",
+              render as SidebarRender<{ open: boolean }> | undefined,
+            )}
+          />
+        ),
+    buttonState,
+  );
 
   if (!tooltip) {
     return comp;
@@ -537,15 +587,13 @@ function SidebarMenuButton({
     };
   }
 
+  // UI SDK manages `hidden` on closed content itself, so `hidden` is only ever
+  // set, never cleared, and `disabled` keeps the tooltip from opening.
+  const off = state !== "collapsed" || isMobile;
   return (
-    <Tooltip>
+    <Tooltip disabled={off}>
       {comp}
-      <TooltipContent
-        side="right"
-        align="center"
-        hidden={state !== "collapsed" || isMobile}
-        {...tooltip}
-      />
+      <TooltipContent side="right" align="center" hidden={off || undefined} {...tooltip} />
     </Tooltip>
   );
 }
@@ -555,14 +603,17 @@ function SidebarMenuAction({
   render,
   showOnHover = false,
   ...props
-}: useRender.ComponentProps<"button"> &
-  React.ComponentProps<"button"> & {
-    showOnHover?: boolean;
-  }) {
-  return useRender({
-    defaultTagName: "button",
-    props: mergeProps<"button">(
+}: React.ComponentProps<"button"> & {
+  render?: SidebarRender<SidebarPartState>;
+  showOnHover?: boolean;
+}) {
+  const state = { slot: "sidebar-menu-action", sidebar: "menu-action" };
+  return renderElement(
+    "button",
+    mergeProps(
       {
+        "data-slot": state.slot,
+        "data-sidebar": state.sidebar,
         className: cn(
           "absolute top-[calc((var(--item-h,2rem)-1.25rem)/2)] right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-muted-foreground ring-sidebar-ring outline-hidden transition-[color,background-color,border-color] motion-reduce:transition-none group-data-[collapsible=icon]:hidden peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[size=default]/menu-button:top-[calc((var(--item-h,2rem)-1.25rem)/2)] peer-data-[size=lg]/menu-button:top-2.5 peer-data-[size=sm]/menu-button:top-[calc((var(--item-h,2rem)-1.5rem)/2)] after:absolute after:-inset-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
           showOnHover &&
@@ -572,12 +623,9 @@ function SidebarMenuAction({
       },
       props,
     ),
-    render,
-    state: {
-      slot: "sidebar-menu-action",
-      sidebar: "menu-action",
-    },
-  });
+    render as RenderProp<SidebarPartState> | undefined,
+    state,
+  );
 }
 
 function SidebarMenuBadge({
@@ -669,15 +717,25 @@ function SidebarMenuSubButton({
   isActive = false,
   className,
   ...props
-}: useRender.ComponentProps<"a"> &
-  React.ComponentProps<"a"> & {
-    size?: "sm" | "md";
-    isActive?: boolean;
-  }) {
-  return useRender({
-    defaultTagName: "a",
-    props: mergeProps<"a">(
+}: React.ComponentProps<"a"> & {
+  render?: SidebarRender<SidebarSizedState<"sm" | "md">>;
+  size?: "sm" | "md";
+  isActive?: boolean;
+}) {
+  const state: SidebarSizedState<"sm" | "md"> = {
+    slot: "sidebar-menu-sub-button",
+    sidebar: "menu-sub-button",
+    size,
+    active: isActive,
+  };
+  return renderElement(
+    "a",
+    mergeProps(
       {
+        "data-slot": state.slot,
+        "data-sidebar": state.sidebar,
+        "data-size": size,
+        "data-active": flag(isActive),
         className: cn(
           "flex h-[calc(var(--item-h,2rem)-0.25rem)] min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 text-muted-foreground ring-sidebar-ring outline-hidden transition-[color,background-color,border-color] motion-reduce:transition-none group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-sm data-[size=sm]:text-xs data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-muted-foreground",
           className,
@@ -685,14 +743,9 @@ function SidebarMenuSubButton({
       },
       props,
     ),
-    render,
-    state: {
-      slot: "sidebar-menu-sub-button",
-      sidebar: "menu-sub-button",
-      size,
-      active: isActive,
-    },
-  });
+    render as RenderProp<SidebarSizedState<"sm" | "md">> | undefined,
+    state,
+  );
 }
 
 export {
