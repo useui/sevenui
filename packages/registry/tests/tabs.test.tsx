@@ -194,3 +194,32 @@ describe("Tabs", () => {
     });
   });
 });
+
+describe("Tabs state attributes", () => {
+  it("marks the selected tab with data-active", async () => {
+    const user = userEvent.setup();
+    render(<BasicTabs />);
+    const account = screen.getByRole("tab", { name: "Account" });
+    const billing = screen.getByRole("tab", { name: "Billing" });
+    expect(account.hasAttribute("data-active")).toBe(true);
+    expect(billing.hasAttribute("data-active")).toBe(false);
+    await user.click(billing);
+    expect(billing.hasAttribute("data-active")).toBe(true);
+    expect(account.hasAttribute("data-active")).toBe(false);
+  });
+
+  it("lets a caller's data-slot replace the default", () => {
+    render(
+      <Tabs defaultValue="one" data-slot="panel-tabs">
+        <TabsList>
+          <TabsTrigger value="one" data-slot="panel-tab">
+            One
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>,
+    );
+    expect(screen.getByRole("tab").getAttribute("data-slot")).toBe(
+      "panel-tab",
+    );
+  });
+});
