@@ -1,4 +1,4 @@
-import { fireEvent, render, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, waitFor } from "@testing-library/react";
 import * as React from "react";
 import type { PanelSize } from "react-resizable-panels";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
@@ -8,6 +8,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/registry/base/ui/resizable";
+import { byFlavour, isUiSdk } from "./helpers/flavour";
 import { must } from "./helpers/must";
 
 // react-resizable-panels v4 measures groups and panels via offsetWidth /
@@ -111,16 +112,26 @@ function renderGroup(
 
 describe("ResizablePanelGroup", () => {
   it("renders the library's data attributes on group, panels and handle", () => {
+    // react-resizable-panels marks its parts with data-group, data-panel and
+    // data-separator; UI SDK marks every part with data-orientation instead.
+    const attribute = byFlavour({
+      base: { group: "data-group", panel: "data-panel", handle: "data-separator" },
+      "ui-sdk": {
+        group: "data-orientation",
+        panel: "data-orientation",
+        handle: "data-orientation",
+      },
+    });
     const { container } = renderGroup();
     const group = container.querySelector("[data-slot=resizable-panel-group]");
-    expect(group?.hasAttribute("data-group")).toBe(true);
+    expect(group?.hasAttribute(attribute.group)).toBe(true);
     const panels = container.querySelectorAll("[data-slot=resizable-panel]");
     expect(panels.length).toBe(2);
     for (const panel of panels) {
-      expect(panel.hasAttribute("data-panel")).toBe(true);
+      expect(panel.hasAttribute(attribute.panel)).toBe(true);
     }
     const handle = container.querySelector("[data-slot=resizable-handle]");
-    expect(handle?.hasAttribute("data-separator")).toBe(true);
+    expect(handle?.hasAttribute(attribute.handle)).toBe(true);
   });
 
   it("lays out horizontally by default and vertically with orientation='vertical'", () => {
@@ -147,6 +158,11 @@ describe("ResizablePanelGroup", () => {
 describe("ResizableHandle", () => {
   it("renders a focusable separator with aria value state", async () => {
     const { separator } = renderGroup();
+    // UI SDK measures the group after mount and only then writes the
+    // separator's tabindex and aria values.
+    if (isUiSdk) {
+      await waitFor(() => expect(separator.hasAttribute("aria-valuenow")).toBe(true));
+    }
     expect(separator.getAttribute("role")).toBe("separator");
     expect(separator.getAttribute("tabindex")).toBe("0");
     expect(separator.getAttribute("aria-controls")).toBe("first");
@@ -220,13 +236,26 @@ describe("ResizableHandle", () => {
       "[role=separator]",
     ) as HTMLElement;
     expect(separator.getAttribute("aria-disabled")).toBe("true");
-    expect(separator.getAttribute("data-separator")).toBe("disabled");
+    if (isUiSdk) {
+      await waitFor(() => expect(separator.hasAttribute("aria-valuenow")).toBe(true));
+      expect(separator.hasAttribute("data-disabled")).toBe(true);
+    } else {
+      expect(separator.getAttribute("data-separator")).toBe("disabled");
+    }
     // Not focusable, so keyboard resizing is unreachable for real users.
     // (Synthetic keydown on a disabled separator throws inside the library,
     // but that path cannot be hit through the browser.)
     expect(separator.hasAttribute("tabindex")).toBe(false);
     const firstPanel = container.querySelector("#first") as HTMLElement;
-    await waitFor(() => expect(firstPanel.style.flexGrow).toBe("50"));
+    // react-resizable-panels sizes a panel with flex-grow; UI SDK with
+    // --resizable-panel-size, a percentage.
+    if (isUiSdk) {
+      await waitFor(() =>
+        expect(firstPanel.style.getPropertyValue("--resizable-panel-size")).toBe("50%"),
+      );
+    } else {
+      await waitFor(() => expect(firstPanel.style.flexGrow).toBe("50"));
+    }
   });
 });
 
@@ -327,5 +356,78 @@ describe("ResizableHandle v2 styling", () => {
     expect(grip.className).toContain("shadow-raised");
     expect(grip.className).not.toContain("surface");
     expect(grip.className).not.toContain("hairline");
+  });
+});
+
+// The base API is react-resizable-panels': layouts are maps of panel id to
+// percent and refs expose imperative handles. The UI SDK flavour adapts its
+// array layouts and controller to the same surface, so these run in both.
+describe("Resizable layout API", () => {
+  it("starts from a defaultLayout map keyed by panel id", async () => {
+    const { separator } = renderGroup({ defaultLayout: { first: 30, second: 70 } });
+    await waitFor(() =>
+      expect(separator.getAttribute("aria-valuenow")).toBe("30"),
+    );
+  });
+
+  it("reports onLayoutChange as a map while keys move the handle", async () => {
+    const onLayoutChange = vi.fn();
+    const { separator } = renderGroup({ onLayoutChange });
+    await waitFor(() =>
+      expect(onLayoutChange).toHaveBeenCalledWith({ first: 50, second: 50 }),
+    );
+    fireEvent.keyDown(separator, { key: "ArrowLeft" });
+    await waitFor(() =>
+      expect(onLayoutChange).toHaveBeenLastCalledWith({ first: 45, second: 55 }),
+    );
+  });
+
+  it("reads and sets the layout through groupRef", async () => {
+    const groupRef = React.createRef<{
+      getLayout: () => Record<string, number>;
+      setLayout: (layout: Record<string, number>) => Record<string, number>;
+    }>();
+    const { separator } = renderGroup({ groupRef });
+    await waitFor(() =>
+      expect(separator.getAttribute("aria-valuenow")).toBe("50"),
+    );
+    expect(groupRef.current?.getLayout()).toEqual({ first: 50, second: 50 });
+    groupRef.current?.setLayout({ first: 25, second: 75 });
+    await waitFor(() =>
+      expect(separator.getAttribute("aria-valuenow")).toBe("25"),
+    );
+    expect(groupRef.current?.getLayout()).toEqual({ first: 25, second: 75 });
+  });
+
+  it("collapses, expands and resizes a panel through panelRef", async () => {
+    const panelRef = React.createRef<{
+      collapse: () => void;
+      expand: () => void;
+      isCollapsed: () => boolean;
+      resize: (size: number | string) => void;
+      getSize: () => { asPercentage: number; inPixels: number };
+    }>();
+    const { separator } = renderGroup(
+      {},
+      { panelRef, collapsible: true, minSize: "20%" },
+    );
+    await waitFor(() =>
+      expect(separator.getAttribute("aria-valuenow")).toBe("50"),
+    );
+    expect(panelRef.current?.isCollapsed()).toBe(false);
+    act(() => panelRef.current?.collapse());
+    await waitFor(() =>
+      expect(separator.getAttribute("aria-valuenow")).toBe("0"),
+    );
+    expect(panelRef.current?.isCollapsed()).toBe(true);
+    act(() => panelRef.current?.expand());
+    await waitFor(() =>
+      expect(separator.getAttribute("aria-valuenow")).toBe("50"),
+    );
+    act(() => panelRef.current?.resize("40%"));
+    await waitFor(() =>
+      expect(separator.getAttribute("aria-valuenow")).toBe("40"),
+    );
+    expect(panelRef.current?.getSize().asPercentage).toBe(40);
   });
 });
