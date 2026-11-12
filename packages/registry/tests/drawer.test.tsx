@@ -12,6 +12,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/registry/base/ui/drawer";
+import { isUiSdk } from "./helpers/flavour";
 
 function ExampleDrawer(props: React.ComponentProps<typeof Drawer>) {
   return (
@@ -84,7 +85,11 @@ describe("Drawer", () => {
     render(<ExampleDrawer open modal={false} />);
     await screen.findByRole("dialog");
     expect(document.querySelector('[data-slot="drawer-overlay"]')).toBeNull();
-    const viewport = document.querySelector('[data-slot="drawer-viewport"]');
+    // UI SDK renders its own viewport, which takes no props; the flavour
+    // marks the popup instead.
+    const viewport = document.querySelector(
+      isUiSdk ? '[data-slot="drawer-popup"]' : '[data-slot="drawer-viewport"]',
+    );
     expect(viewport?.getAttribute("data-modal")).toBe("false");
   });
 

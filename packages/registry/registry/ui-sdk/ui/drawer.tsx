@@ -1,14 +1,36 @@
 "use client";
 
 import * as React from "react";
-import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
+import {
+  DrawerBackdrop as DrawerBackdropPrimitive,
+  DrawerClose as DrawerClosePrimitive,
+  DrawerContent as DrawerContentPrimitive,
+  DrawerDescription as DrawerDescriptionPrimitive,
+  Drawer as DrawerPrimitive,
+  DrawerTitle as DrawerTitlePrimitive,
+  DrawerTrigger as DrawerTriggerPrimitive,
+} from "@ui-sdk/react/drawer";
+import { type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cn } from "cn";
+
+type SwipeDirection = "up" | "down" | "left" | "right";
+type DrawerProps = React.ComponentProps<typeof DrawerPrimitive>;
+type SnapPoint = NonNullable<DrawerProps["snapPoint"]>;
+type SnapPointChange = NonNullable<DrawerProps["onSnapPointChange"]>;
+type BaseRender = React.ReactElement<unknown> | RenderProp<never>;
+type FocusTarget = HTMLElement | null | undefined;
+// Base UI's focus props: a boolean, a ref, or a function of the interaction.
+type BaseFocus =
+  | boolean
+  | React.RefObject<HTMLElement | null>
+  | ((interaction: string) => boolean | undefined | HTMLElement | null);
+type ContentState = { nestedOpen: boolean; dragging: boolean };
 
 type DrawerContextProps = {
   hasSnapPoints: boolean;
-  modal: DrawerPrimitive.Root.Props["modal"];
+  modal: React.ComponentProps<typeof DrawerPrimitive>["modal"];
   showSwipeHandle: boolean;
-  swipeDirection: NonNullable<DrawerPrimitive.Root.Props["swipeDirection"]>;
+  swipeDirection: SwipeDirection;
 };
 
 const DrawerContext = React.createContext<DrawerContextProps | null>(null);
@@ -23,14 +45,67 @@ function useDrawer() {
   return context;
 }
 
+// UI SDK ignores a data-slot prop on its parts; one on the rendered element
+// wins. Used where SevenUI's slot name differs from UI SDK's.
+function withSlot<State>(
+  slot: string,
+  tag: string,
+  render?: BaseRender,
+  extra?: (state: State) => Record<string, unknown>,
+): RenderProp<State> {
+  return (props, state) =>
+    renderElement(
+      tag,
+      { ...props, "data-slot": slot, ...extra?.(state) },
+      render as RenderProp<State> | undefined,
+      state,
+    );
+}
+
+function toFocus(focus: BaseFocus | undefined) {
+  if (focus === undefined || focus === true) return undefined;
+  if (focus === false) return "none" as const;
+  if (typeof focus === "function") {
+    return (): FocusTarget => {
+      const target = focus("mouse");
+      return target instanceof HTMLElement ? target : undefined;
+    };
+  }
+  return (): FocusTarget => focus.current;
+}
+
+// Base UI names the edge by the direction a swipe closes it; UI SDK by side.
+const sides = { down: "bottom", up: "top", left: "left", right: "right" } as const;
+
+// `disablePointerDismissal` is Base UI's `closeOnOutsidePress={false}`. Base UI
+// also closes a non-modal drawer on an outside press, which UI SDK only does
+// when asked, so it is always asked.
 function Drawer({
   modal = true,
   showSwipeHandle = false,
   snapPoints,
+  snapPoint,
+  defaultSnapPoint,
+  onSnapPointChange,
   swipeDirection = "down",
+  disablePointerDismissal = false,
   ...props
-}: DrawerPrimitive.Root.Props & {
+}: Omit<
+  DrawerProps,
+  "side" | "snapPoints" | "snapPoint" | "defaultSnapPoint" | "onSnapPointChange"
+> & {
+  // Base UI types snap points as `number | string`; UI SDK narrows the
+  // strings to px, rem, % and "content", which is what Base UI accepts.
+  snapPoints?: (number | string)[];
+  snapPoint?: number | string | null;
+  defaultSnapPoint?: number | string | null;
+  onSnapPointChange?: (
+    snapPoint: number | string | null,
+    details: Parameters<SnapPointChange>[1],
+  ) => void;
   showSwipeHandle?: boolean;
+  swipeDirection?: SwipeDirection;
+  disablePointerDismissal?: boolean;
 }) {
   const hasSnapPoints = snapPoints != null && snapPoints.length > 0;
   const contextValue = React.useMemo(
@@ -40,38 +115,77 @@ function Drawer({
 
   return (
     <DrawerContext.Provider value={contextValue}>
-      <DrawerPrimitive.Root
-        data-slot="drawer"
+      <DrawerPrimitive
         modal={modal}
-        snapPoints={snapPoints}
-        swipeDirection={swipeDirection}
+        snapPoints={snapPoints as SnapPoint[] | undefined}
+        snapPoint={snapPoint as SnapPoint | null | undefined}
+        defaultSnapPoint={(defaultSnapPoint ?? undefined) as SnapPoint | undefined}
+        onSnapPointChange={onSnapPointChange}
+        side={sides[swipeDirection]}
+        closeOnOutsidePress={!disablePointerDismissal}
         {...props}
       />
     </DrawerContext.Provider>
   );
 }
 
-function DrawerTrigger({ ...props }: DrawerPrimitive.Trigger.Props) {
-  return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />;
+// Base UI marks an open popup's trigger with data-popup-open and examples
+// style it, so the trigger carries it beside UI SDK's data-open.
+function DrawerTrigger({
+  render,
+  ...props
+}: Omit<React.ComponentProps<typeof DrawerTriggerPrimitive>, "render"> & {
+  render?: BaseRender;
+}) {
+  return (
+    <DrawerTriggerPrimitive
+      render={withSlot<{ open: boolean }>("drawer-trigger", "button", render, (state) => ({
+        "data-popup-open": state.open ? "" : undefined,
+      }))}
+      {...props}
+    />
+  );
 }
 
-function DrawerPortal({ ...props }: DrawerPrimitive.Portal.Props) {
-  return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />;
+// UI SDK renders popups in place in the top layer, so there is nothing to
+// portal; the part stays so composed markup keeps working.
+function DrawerPortal({
+  children,
+}: {
+  children?: React.ReactNode;
+  container?: unknown;
+  keepMounted?: boolean;
+}) {
+  return <>{children}</>;
 }
 
-function DrawerClose({ ...props }: DrawerPrimitive.Close.Props) {
-  return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />;
+function DrawerClose({
+  render,
+  ...props
+}: Omit<React.ComponentProps<typeof DrawerClosePrimitive>, "render"> & {
+  render?: BaseRender;
+}) {
+  return (
+    <DrawerClosePrimitive render={withSlot("drawer-close", "button", render)} {...props} />
+  );
 }
 
+// UI SDK drives the backdrop's opacity as the drawer moves, so Base UI's
+// opacity classes are left out. Its popover reset is keyed to its own slot
+// (drawer-backdrop), so size-auto undoes the popover's fit-content size.
 function DrawerOverlay({
   className,
+  render,
   ...props
-}: DrawerPrimitive.Backdrop.Props) {
+}: Omit<React.ComponentProps<typeof DrawerBackdropPrimitive>, "className" | "render"> & {
+  className?: string;
+  render?: BaseRender;
+}) {
   return (
-    <DrawerPrimitive.Backdrop
-      data-slot="drawer-overlay"
+    <DrawerBackdropPrimitive
+      render={withSlot("drawer-overlay", "div", render)}
       className={cn(
-        "fixed inset-0 z-50 min-h-dvh bg-black/30 supports-backdrop-filter:backdrop-blur-sm opacity-[max(var(--drawer-overlay-min-opacity,0),calc(1-var(--drawer-swipe-progress)))] transition-opacity duration-200 ease-snappy select-none data-ending-style:pointer-events-none data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)] data-snap-points:[--drawer-overlay-min-opacity:0.5] data-starting-style:opacity-0 data-swiping:duration-0 motion-reduce:transition-opacity supports-[-webkit-touch-callout:none]:absolute",
+        "fixed inset-0 z-50 size-auto min-h-dvh bg-black/30 supports-backdrop-filter:backdrop-blur-sm select-none supports-[-webkit-touch-callout:none]:absolute",
         className,
       )}
       {...props}
@@ -96,73 +210,81 @@ function DrawerSwipeHandle({
   );
 }
 
+// UI SDK places the sheet in its own full-screen viewport and slides it with
+// `translate`, so Base UI's fixed positioning and its transform machinery
+// (swipe movement, snap offset, closed transform, stack height) are left out.
+// The rest of the look is the base flavour's, keyed to the same data
+// attributes: data-swipe-direction/-axis and data-snap-points are set here,
+// and UI SDK's nestedOpen/dragging state is mirrored as Base UI's
+// data-nested-drawer-open/data-swiping.
 function DrawerContent({
   className,
   children,
+  render,
+  initialFocus,
+  finalFocus,
   ...props
-}: DrawerPrimitive.Popup.Props) {
+}: Omit<
+  React.ComponentProps<typeof DrawerContentPrimitive>,
+  "children" | "className" | "render" | "initialFocus" | "finalFocus"
+> & {
+  children?: React.ReactNode;
+  className?: string;
+  render?: BaseRender;
+  initialFocus?: BaseFocus;
+  finalFocus?: BaseFocus;
+}) {
   const { hasSnapPoints, modal, showSwipeHandle, swipeDirection } = useDrawer();
   const swipeAxis =
     swipeDirection === "down" || swipeDirection === "up" ? "y" : "x";
 
   return (
-    <DrawerPortal data-slot="drawer-portal">
+    <>
       {modal === true && (
         <DrawerOverlay data-snap-points={hasSnapPoints ? "" : undefined} />
       )}
-      <DrawerPrimitive.Viewport
-        data-slot="drawer-viewport"
-        data-modal={modal}
-        className="pointer-events-none fixed inset-0 z-50 select-none data-[modal=true]:pointer-events-auto"
+      <DrawerContentPrimitive
+        data-swipe-axis={swipeAxis}
+        data-swipe-direction={swipeDirection}
+        data-snap-points={hasSnapPoints ? "" : undefined}
+        data-modal={String(modal)}
+        render={withSlot<ContentState>("drawer-popup", "div", render, (state) => ({
+          "data-nested-drawer-open": state.nestedOpen ? "" : undefined,
+          "data-swiping": state.dragging ? "" : undefined,
+        }))}
+        initialFocus={toFocus(initialFocus)}
+        finalFocus={toFocus(finalFocus)}
+        className={cn(
+          // Base.
+          "group/drawer-popup pointer-events-auto z-50 m-(--drawer-inset,0px) flex h-(--drawer-content-height) max-h-(--drawer-content-max-height,none) min-h-0 w-(--drawer-content-width,auto) flex-col rounded-[min(var(--radius-4xl),24px)] border border-popover bg-popover text-sm text-popover-foreground shadow-overlay transition-[height,opacity,filter,scale] duration-200 ease-snappy outline-none select-none [--drawer-bleed-background:transparent] [--drawer-inset:--spacing(2)] [--drawer-stacked-shadow:0_-20px_25px_-5px_rgb(0_0_0/0.1),0_-8px_10px_-6px_rgb(0_0_0/0.1)] [interpolate-size:allow-keywords] data-[swipe-direction=down]:data-nested-drawer-open:shadow-(--drawer-stacked-shadow) dark:border-border",
+          // Nested: UI SDK counts the drawers open above this one in
+          // --drawer-stack; each pushes it back by the base step of 0.05.
+          "[scale:calc(1-var(--drawer-stack,0)*0.05)] data-nested-drawer-open:overflow-hidden data-nested-drawer-open:brightness-95",
+          // Bleed.
+          "after:pointer-events-none after:absolute after:bg-(--drawer-bleed-background,var(--color-popover)) data-[swipe-axis=x]:after:inset-y-0 data-[swipe-axis=x]:after:w-(--bleed) data-[swipe-axis=y]:after:inset-x-0 data-[swipe-axis=y]:after:h-(--bleed) data-[swipe-direction=down]:after:top-full data-[swipe-direction=left]:after:right-full data-[swipe-direction=right]:after:left-full data-[swipe-direction=up]:after:bottom-full",
+          // Sizing.
+          "[--drawer-content-height:auto] data-[swipe-axis=x]:[--drawer-content-width:75%] data-[swipe-axis=y]:[--drawer-content-max-height:calc(100dvh-6rem)] data-[swipe-axis=y]:data-snap-points:[--drawer-content-height:100dvh] data-[swipe-axis=x]:sm:[--drawer-content-width:24rem] [--bleed:3rem]",
+          // Axis: x.
+          "data-[swipe-axis=x]:flex-row",
+          // Direction.
+          "data-[swipe-direction=down]:origin-bottom data-[swipe-direction=up]:origin-top data-[swipe-direction=left]:origin-left data-[swipe-direction=right]:origin-right",
+          // Reduced motion: UI SDK fades instead of sliding.
+          "motion-reduce:data-starting-style:opacity-0 motion-reduce:data-ending-style:opacity-0!",
+          className,
+        )}
+        {...props}
       >
-        <DrawerPrimitive.Popup
-          data-slot="drawer-popup"
-          data-swipe-axis={swipeAxis}
-          data-snap-points={hasSnapPoints ? "" : undefined}
+        {showSwipeHandle && <DrawerSwipeHandle />}
+        <div
+          data-slot="drawer-content"
           className={cn(
-            // Base.
-            "group/drawer-popup pointer-events-auto fixed z-50 m-(--drawer-inset,0px) flex h-(--drawer-content-height) max-h-(--drawer-content-max-height,none) min-h-0 w-(--drawer-content-width,auto) transform-[translate3d(var(--translate-x,0px),var(--translate-y,0px),0)_scale(var(--stack-scale))] flex-col rounded-[min(var(--radius-4xl),24px)] border border-popover bg-popover text-sm text-popover-foreground shadow-overlay transition-[transform,height,opacity,filter] duration-200 ease-snappy will-change-transform outline-none select-none [--drawer-bleed-background:transparent] [--drawer-inset:--spacing(2)] [--drawer-stacked-shadow:0_-20px_25px_-5px_rgb(0_0_0/0.1),0_-8px_10px_-6px_rgb(0_0_0/0.1)] [interpolate-size:allow-keywords] data-[swipe-direction=down]:data-nested-drawer-open:shadow-(--drawer-stacked-shadow) dark:border-border",
-            // Nested.
-            "data-nested-drawer-open:overflow-hidden data-nested-drawer-open:brightness-95",
-            // Bleed.
-            "after:pointer-events-none after:absolute after:bg-(--drawer-bleed-background,var(--color-popover)) data-[swipe-axis=x]:after:inset-y-0 data-[swipe-axis=x]:after:w-(--bleed) data-[swipe-axis=y]:after:inset-x-0 data-[swipe-axis=y]:after:h-(--bleed) data-[swipe-direction=down]:after:top-full data-[swipe-direction=left]:after:right-full data-[swipe-direction=right]:after:left-full data-[swipe-direction=up]:after:bottom-full",
-            // Sizing.
-            "[--drawer-content-height:var(--drawer-height,auto)] data-[swipe-axis=x]:[--drawer-content-width:75%] data-[swipe-axis=y]:[--drawer-content-max-height:calc(100dvh-6rem)] data-[swipe-axis=y]:data-snap-points:[--drawer-content-height:100dvh] data-[swipe-axis=x]:sm:[--drawer-content-width:24rem]",
-            // Stack.
-            "[--bleed:3rem] [--peek:1rem] [--stack-height:var(--drawer-frontmost-height,var(--drawer-height,0px))] [--stack-peek-offset:max(0px,calc((var(--nested-drawers)-var(--stack-progress))*var(--peek)))] [--stack-progress:clamp(0,var(--drawer-swipe-progress),1)] [--stack-scale-base:max(0,calc(1-(var(--nested-drawers)*var(--stack-step))))] [--stack-scale:clamp(0,calc(var(--stack-scale-base)+(var(--stack-step)*var(--stack-progress))),1)] [--stack-shrink:calc(1-var(--stack-scale))] [--stack-step:0.05]",
-            // Transitions.
-            "data-ending-style:transform-(--closed-transform) data-ending-style:opacity-[0.9999] data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)] data-nested-drawer-swiping:duration-0 data-ending-style:data-nested-drawer-swiping:duration-[calc(var(--drawer-swipe-strength)*400ms)] data-starting-style:transform-(--closed-transform) data-swiping:duration-0 data-ending-style:data-swiping:duration-[calc(var(--drawer-swipe-strength)*400ms)]",
-            // Axis: y.
-            "data-[swipe-axis=y]:inset-x-0 data-[swipe-axis=y]:data-nested-drawer-open:h-(--stack-height)",
-            // Axis: x.
-            "data-[swipe-axis=x]:inset-y-0 data-[swipe-axis=x]:flex-row",
-            // Direction: down.
-            "data-[swipe-direction=down]:bottom-0 data-[swipe-direction=down]:origin-bottom data-[swipe-direction=down]:[--closed-transform:translate3d(0,calc(100%+var(--drawer-inset,0px)+2px),0)] data-[swipe-direction=down]:[--translate-y:calc(var(--drawer-snap-point-offset,0px)+var(--drawer-swipe-movement-y)-var(--stack-peek-offset)-(var(--stack-shrink)*var(--stack-height)))]",
-            // Direction: up.
-            "data-[swipe-direction=up]:top-0 data-[swipe-direction=up]:origin-top data-[swipe-direction=up]:[--closed-transform:translate3d(0,calc(-100%-var(--drawer-inset,0px)-2px),0)] data-[swipe-direction=up]:[--translate-y:calc(var(--drawer-snap-point-offset,0px)+var(--drawer-swipe-movement-y)+var(--stack-peek-offset)+(var(--stack-shrink)*var(--stack-height)))]",
-            // Direction: left.
-            "data-[swipe-direction=left]:left-0 data-[swipe-direction=left]:origin-left data-[swipe-direction=left]:[--closed-transform:translate3d(calc(-100%-var(--drawer-inset,0px)-2px),0,0)] data-[swipe-direction=left]:[--translate-x:calc(var(--drawer-swipe-movement-x)+var(--stack-peek-offset)+(var(--stack-shrink)*100%))]",
-            // Direction: right.
-            "data-[swipe-direction=right]:right-0 data-[swipe-direction=right]:origin-right data-[swipe-direction=right]:[--closed-transform:translate3d(calc(100%+var(--drawer-inset,0px)+2px),0,0)] data-[swipe-direction=right]:[--translate-x:calc(var(--drawer-swipe-movement-x)-var(--stack-peek-offset)-(var(--stack-shrink)*100%))]",
-            // Reduced motion: the closed transform equals the resting one, so
-            // opening and closing fade in place instead of sliding.
-            "motion-reduce:[--closed-transform:translate3d(var(--translate-x,0px),var(--translate-y,0px),0)_scale(var(--stack-scale))]! motion-reduce:data-starting-style:opacity-0 motion-reduce:data-ending-style:opacity-0!",
-            className,
+            "flex min-h-0 flex-1 flex-col overflow-hidden overscroll-contain rounded-[inherit] transition-opacity duration-300 ease-[cubic-bezier(0.45,1.005,0,1.005)] select-text group-data-nested-drawer-open/drawer-popup:opacity-0 group-data-nested-drawer-swiping/drawer-popup:opacity-100 group-data-swiping/drawer-popup:select-none",
           )}
-          {...props}
         >
-          {showSwipeHandle && <DrawerSwipeHandle />}
-          <DrawerPrimitive.Content
-            data-slot="drawer-content"
-            className={cn(
-              "flex min-h-0 flex-1 flex-col overflow-hidden overscroll-contain rounded-[inherit] transition-opacity duration-300 ease-[cubic-bezier(0.45,1.005,0,1.005)] select-text group-data-nested-drawer-open/drawer-popup:opacity-0 group-data-nested-drawer-swiping/drawer-popup:opacity-100 group-data-swiping/drawer-popup:select-none",
-            )}
-          >
-            {children}
-          </DrawerPrimitive.Content>
-        </DrawerPrimitive.Popup>
-      </DrawerPrimitive.Viewport>
-    </DrawerPortal>
+          {children}
+        </div>
+      </DrawerContentPrimitive>
+    </>
   );
 }
 
@@ -192,9 +314,14 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function DrawerTitle({ className, ...props }: DrawerPrimitive.Title.Props) {
+function DrawerTitle({
+  className,
+  ...props
+}: Omit<React.ComponentProps<typeof DrawerTitlePrimitive>, "className"> & {
+  className?: string;
+}) {
   return (
-    <DrawerPrimitive.Title
+    <DrawerTitlePrimitive
       data-slot="drawer-title"
       className={cn(
         "cn-font-heading text-base font-semibold tracking-[-0.01em] text-foreground",
@@ -208,9 +335,11 @@ function DrawerTitle({ className, ...props }: DrawerPrimitive.Title.Props) {
 function DrawerDescription({
   className,
   ...props
-}: DrawerPrimitive.Description.Props) {
+}: Omit<React.ComponentProps<typeof DrawerDescriptionPrimitive>, "className"> & {
+  className?: string;
+}) {
   return (
-    <DrawerPrimitive.Description
+    <DrawerDescriptionPrimitive
       data-slot="drawer-description"
       className={cn("text-sm text-balance text-muted-foreground", className)}
       {...props}
