@@ -1,6 +1,9 @@
 node_modules/
 dist/
 apps/web/public/r/
+# Derived from the files by scripts/ui-sdk-flavour.mjs at build time, so
+# porters never share an edited file; check-registry validates it in memory.
+packages/registry/registry.ui-sdk.json
 # Task 8.2: the 69 per-page `.md` mirrors, emitted into public/ by
 # `apps/web/scripts/build-md-mirrors.ts` before `next build` — build
 # output, never committed, same treatment as public/r/ above.

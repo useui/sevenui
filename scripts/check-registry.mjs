@@ -1,5 +1,6 @@
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import { FLAVOUR_URL, SHARED_ITEMS, readFlavour } from "./ui-sdk-flavour.mjs";
 
 const errors = [];
 const loadJson = (path) => JSON.parse(readFileSync(path, "utf8"));
@@ -178,8 +179,72 @@ for (const item of components.items) {
   }
 }
 
+// ---- ui-sdk flavour registry (/r/ui-sdk/*) ----
+// Derived from the files, never hand-edited: see scripts/ui-sdk-flavour.mjs.
+const flavour = readFlavour();
+errors.push(...flavour.problems.map((p) => `ui-sdk ${p}`));
+const FLAVOUR_ROOT = join(UI_ROOT, "registry/ui-sdk");
+const flavourItems = new Map(flavour.registry.items.map((i) => [i.name, i]));
+const registeredFlavourFiles = new Set(
+  [...flavour.state.values()].flatMap((e) => e.files.map((f) => f.path)),
+);
+const walkFlavour = (rel) => {
+  for (const entry of readdirSync(join(UI_ROOT, rel), { withFileTypes: true })) {
+    const relPath = `${rel}/${entry.name}`;
+    if (entry.isDirectory()) walkFlavour(relPath);
+    else if (/\.tsx?$/.test(entry.name) && !registeredFlavourFiles.has(relPath)) {
+      errors.push(`ui-sdk file ${relPath} belongs to no primitive`);
+    }
+  }
+};
+if (existsSync(FLAVOUR_ROOT)) walkFlavour("registry/ui-sdk");
+
+const baseUiNames = ui.items.filter((i) => i.type === "registry:ui").map((i) => i.name);
+const accounted = new Set([...flavour.ported, ...flavour.pending, ...flavour.blocked.map((e) => e.item.name)]);
+for (const name of baseUiNames) {
+  if (!accounted.has(name)) errors.push(`ui-sdk: primitive "${name}" is neither ported, blocked nor pending`);
+}
+for (const name of flavourItems.keys()) {
+  if (!uiNames.has(name) || SHARED_ITEMS.has(name)) {
+    errors.push(`ui-sdk item "${name}" is not a base primitive`);
+  }
+}
+
+for (const item of flavour.registry.items) {
+  const where = `ui-sdk item "${item.name}"`;
+  for (const file of item.files) {
+    const filePath = join(UI_ROOT, file.path);
+    if (!file.path.startsWith("registry/ui-sdk/")) errors.push(`${where}: file ${file.path} is outside registry/ui-sdk/`);
+    if (existsSync(filePath) && readFileSync(filePath, "utf8").match(/from\s+["']@base-ui\/react[/"']/)) {
+      errors.push(`${where}: ${file.path} imports @base-ui/react`);
+    }
+  }
+  if ((item.dependencies ?? []).some((d) => d.startsWith("@base-ui/react"))) {
+    errors.push(`${where}: depends on @base-ui/react`);
+  }
+  for (const dep of item.registryDependencies) {
+    const own = dep.match(FLAVOUR_URL);
+    if (own) {
+      if (!flavourItems.has(own[1])) errors.push(`${where}: registryDependency "${dep}" is not a published ui-sdk item`);
+    } else {
+      const shared = dep.match(OWN_URL)?.[1];
+      if (!shared || !SHARED_ITEMS.has(shared)) {
+        errors.push(`${where}: registryDependency "${dep}" must be ${"https://sevenui.dev/r/ui-sdk/<name>.json"} or a shared theme/tokens/animations item`);
+      }
+    }
+  }
+  if (!item.registryDependencies.includes(TOKENS_URL)) errors.push(`${where}: missing sevenui-tokens dependency`);
+  checkLucideDep(item, UI_ROOT, where);
+  checkDepRanges(item, where);
+}
+
 if (errors.length > 0) {
   console.error(`check-registry: ${errors.length} problem(s)\n` + errors.map((e) => `  - ${e}`).join("\n"));
   process.exit(1);
 }
 console.log(`check-registry: ok (${ui.items.length} ui, ${demos.items.length} demos, ${components.items.length} components)`);
+console.log(
+  `check-registry: ui-sdk flavour ${flavour.ported.length}/${baseUiNames.length} published, ` +
+    `${flavour.blocked.length} blocked (${flavour.blocked.map((e) => `${e.item.name} <- ${e.waitingOn.join("+")}`).join(", ") || "none"}), ` +
+    `${flavour.pending.length} pending: ${flavour.pending.join(", ") || "none"}`,
+);
