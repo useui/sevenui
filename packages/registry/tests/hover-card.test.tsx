@@ -7,6 +7,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/registry/base/ui/hover-card";
+import { isUiSdk, movePointerAway } from "./helpers/flavour";
 
 function ExampleHoverCard(props: React.ComponentProps<typeof HoverCard>) {
   return (
@@ -51,7 +52,7 @@ describe("HoverCard", () => {
     await user.hover(trigger);
     await screen.findByText("The Base UI component registry.");
     expect(getContent()).toBeTruthy();
-    await user.unhover(trigger);
+    await movePointerAway(user, trigger);
     await waitFor(() => {
       expect(getContent()).toBeNull();
     });
@@ -66,7 +67,7 @@ describe("HoverCard", () => {
     await waitFor(() => {
       expect(onOpenChange).toHaveBeenCalledWith(true, expect.anything());
     });
-    await user.unhover(trigger);
+    await movePointerAway(user, trigger);
     await waitFor(() => {
       expect(onOpenChange.mock.calls.at(-1)?.[0]).toBe(false);
     });
@@ -119,6 +120,11 @@ describe("HoverCard v2 styles", () => {
   it("keeps the positioner's stacking context", async () => {
     render(<ExampleHoverCard open />);
     await screen.findByText("The Base UI component registry.");
-    expect(getContent()?.parentElement?.className).toContain("isolate z-50");
+    if (isUiSdk) {
+      // No Positioner: UI SDK positions the content itself, in the top layer.
+      expect(getContent()?.hasAttribute("popover")).toBe(true);
+    } else {
+      expect(getContent()?.parentElement?.className).toContain("isolate z-50");
+    }
   });
 });

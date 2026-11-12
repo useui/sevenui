@@ -1,18 +1,102 @@
 "use client";
 
-import { PreviewCard as PreviewCardPrimitive } from "@base-ui/react/preview-card";
+import * as React from "react";
+import {
+  HoverCardContent as HoverCardContentPrimitive,
+  HoverCard as HoverCardPrimitive,
+  HoverCardTrigger as HoverCardTriggerPrimitive,
+} from "@ui-sdk/react/hover-card";
+import { type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cn } from "cn";
 
-function HoverCard({ ...props }: PreviewCardPrimitive.Root.Props) {
-  return <PreviewCardPrimitive.Root data-slot="hover-card" {...props} />;
-}
+type Side = React.ComponentProps<typeof HoverCardContentPrimitive>["side"];
+type OpenChange = NonNullable<React.ComponentProps<typeof HoverCardPrimitive>["onOpenChange"]>;
+// Base UI types `details.event` as always present; UI SDK leaves it undefined
+// for controller changes. Callers written against the base flavour read it
+// unguarded after checking the reason, so the type follows Base UI.
+type OpenChangeDetails = Parameters<OpenChange>[1] & { event: Event };
+type Timing = { delay?: number; closeDelay?: number };
 
-function HoverCardTrigger({ ...props }: PreviewCardPrimitive.Trigger.Props) {
+// Base UI sets the delays on the trigger; UI SDK sets them on the root. The
+// trigger reports its values up so the root can apply them.
+const ReportTiming = React.createContext<((timing: Timing) => void) | null>(null);
+
+// Base UI's root also takes children as a function of the payload of the
+// trigger that opened it (one card for many links); UI SDK reports the
+// payload through onPayloadChange.
+function HoverCard({
+  children,
+  onPayloadChange,
+  onOpenChange,
+  delay,
+  closeDelay,
+  ...props
+}: Omit<React.ComponentProps<typeof HoverCardPrimitive>, "children" | "onOpenChange"> & {
+  onOpenChange?: (open: boolean, details: OpenChangeDetails) => void;
+  children?: React.ReactNode | ((state: { payload: unknown }) => React.ReactNode);
+}) {
+  const [payload, setPayload] = React.useState<unknown>(undefined);
+  const [trigger, setTrigger] = React.useState<Timing>({});
   return (
-    <PreviewCardPrimitive.Trigger data-slot="hover-card-trigger" {...props} />
+    <ReportTiming.Provider value={setTrigger}>
+      <HoverCardPrimitive
+        delay={trigger.delay ?? delay}
+        closeDelay={trigger.closeDelay ?? closeDelay}
+        onOpenChange={onOpenChange as OpenChange | undefined}
+        onPayloadChange={(next, details) => {
+          setPayload(next);
+          onPayloadChange?.(next, details);
+        }}
+        {...props}
+      >
+        {typeof children === "function" ? children({ payload }) : children}
+      </HoverCardPrimitive>
+    </ReportTiming.Provider>
   );
 }
 
+// Base UI marks an open popup's trigger with data-popup-open and examples
+// style it, so the trigger carries it beside UI SDK's data-open.
+function HoverCardTrigger({
+  render,
+  delay,
+  closeDelay,
+  ...props
+}: Omit<React.ComponentProps<typeof HoverCardTriggerPrimitive>, "render"> &
+  Timing & {
+    render?: React.ReactElement<unknown> | RenderProp<{ open: boolean }>;
+  }) {
+  const report = React.useContext(ReportTiming);
+  React.useLayoutEffect(() => {
+    if (delay !== undefined || closeDelay !== undefined) {
+      report?.({ delay, closeDelay });
+    }
+  }, [report, delay, closeDelay]);
+  return (
+    <HoverCardTriggerPrimitive
+      data-slot="hover-card-trigger"
+      render={(triggerProps, state) =>
+        renderElement(
+          "a",
+          { ...triggerProps, "data-popup-open": state.open ? "" : undefined },
+          render as RenderProp<{ open: boolean }> | undefined,
+          state,
+        )
+      }
+      {...props}
+    />
+  );
+}
+
+// Base UI's logical sides map onto UI SDK's start/end.
+function toSide(side: Side | "inline-start" | "inline-end" | undefined): Side {
+  if (side === "inline-start") return "start";
+  if (side === "inline-end") return "end";
+  return side;
+}
+
+// UI SDK has no Positioner or Portal: the content is positioned itself, in
+// the top layer, so the positioning props go straight onto it.
 function HoverCardContent({
   className,
   side = "bottom",
@@ -20,32 +104,25 @@ function HoverCardContent({
   align = "center",
   alignOffset = 4,
   ...props
-}: PreviewCardPrimitive.Popup.Props &
-  Pick<
-    PreviewCardPrimitive.Positioner.Props,
-    "align" | "alignOffset" | "side" | "sideOffset"
-  >) {
+}: Omit<React.ComponentProps<typeof HoverCardContentPrimitive>, "side" | "className"> & {
+  className?: string;
+  side?: Side | "inline-start" | "inline-end";
+}) {
   return (
-    <PreviewCardPrimitive.Portal data-slot="hover-card-portal">
-      <PreviewCardPrimitive.Positioner
-        align={align}
-        alignOffset={alignOffset}
-        side={side}
-        sideOffset={sideOffset}
-        className="isolate z-50"
-      >
-        <PreviewCardPrimitive.Popup
-          data-slot="hover-card-content"
-          className={cn(
-            "z-50 w-64 origin-(--transform-origin) rounded-lg bg-popover p-[var(--panel-pad,1.125rem)] text-sm text-popover-foreground shadow-overlay ring-1 ring-foreground/10 outline-hidden",
-            // Same motion as the select popup; reduced motion shows it instantly.
-            "transition-[scale,opacity] duration-150 ease-snappy data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0 motion-reduce:transition-none",
-            className,
-          )}
-          {...props}
-        />
-      </PreviewCardPrimitive.Positioner>
-    </PreviewCardPrimitive.Portal>
+    <HoverCardContentPrimitive
+      data-slot="hover-card-content"
+      align={align}
+      alignOffset={alignOffset}
+      side={toSide(side)}
+      sideOffset={sideOffset}
+      className={cn(
+        "z-50 w-64 origin-(--transform-origin) rounded-lg bg-popover p-[var(--panel-pad,1.125rem)] text-sm text-popover-foreground shadow-overlay ring-1 ring-foreground/10 outline-hidden",
+        // Same motion as the select popup; reduced motion shows it instantly.
+        "transition-[scale,opacity] duration-150 ease-snappy data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0 motion-reduce:transition-none",
+        className,
+      )}
+      {...props}
+    />
   );
 }
 
