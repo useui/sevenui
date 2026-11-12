@@ -65,6 +65,9 @@ const DESCRIPTION_OVERRIDES = {
     "Displays rich content in the top layer, positioned relative to an anchor element, built on the UI SDK Popover component.",
 };
 
+export const LAYER_DOCS =
+  'UI SDK adds its runtime CSS to a cascade layer named ui-sdk. Put `@layer ui-sdk;` on the first line of your global CSS file, above `@import "tailwindcss"`, so your utilities win over it. Without it, popups such as dialogs can lose their padding and background.';
+
 export const retarget = (source) =>
   source.replaceAll("@/registry/base/", "@/registry/ui-sdk/");
 export const replacedImports = (source) =>
@@ -209,6 +212,9 @@ export function readFlavour() {
       return `${name}@${ranges[name]}`;
     });
     const { name, type, title, cssVars, css } = entry.item;
+    // shadcn can only append CSS, and a late `@layer ui-sdk;` cannot order the
+    // layer below Tailwind's, so the install prints the one manual step.
+    const docs = packages.has("@ui-sdk/react") ? LAYER_DOCS : undefined;
     items.push({
       name,
       type,
@@ -219,6 +225,7 @@ export function readFlavour() {
       files: entry.files,
       ...(cssVars ? { cssVars } : {}),
       ...(css ? { css } : {}),
+      ...(docs ? { docs } : {}),
     });
   }
 

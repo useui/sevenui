@@ -1,3 +1,6 @@
+/* UI SDK (the ui-sdk primitive flavour) adds its runtime CSS to this layer.
+   Declared first so Tailwind's layers, and every utility, win over it. */
+@layer ui-sdk;
 @import "tailwindcss";
 
 @source "../../../packages/registry/registry";
