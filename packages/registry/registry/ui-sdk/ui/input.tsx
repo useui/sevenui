@@ -1,13 +1,30 @@
+"use client";
+
 import * as React from "react";
-import { Input as InputPrimitive } from "@base-ui/react/input";
+import { Input as InputPrimitive } from "@ui-sdk/react/input";
 import { cn } from "cn";
+
+type InputPrimitiveProps = React.ComponentProps<typeof InputPrimitive>;
+
+// UI SDK's text value is a string. The wrapper keeps the native input's
+// props (a number `value`, `onSelect`, …) and maps the value to text.
+function toText(value: React.ComponentProps<"input">["value"]) {
+  if (value === undefined || value === null) return undefined;
+  return Array.isArray(value) ? value.join(",") : String(value);
+}
 
 /**
  * Density tokens are read with an inline fallback (`var(--control-h,…)`)
  * instead of a `[:where(&)]` default: a default declared on the element would
  * beat the value inherited from a `[data-density=compact]` ancestor.
  */
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+function Input({
+  className,
+  type,
+  value,
+  defaultValue,
+  ...props
+}: React.ComponentProps<"input">) {
   return (
     <InputPrimitive
       type={type}
@@ -20,7 +37,9 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
         "aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
         className,
       )}
-      {...props}
+      value={toText(value)}
+      defaultValue={toText(defaultValue)}
+      {...(props as InputPrimitiveProps)}
     />
   );
 }
