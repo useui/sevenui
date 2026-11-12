@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 
 import { ScrollArea, ScrollBar } from "@/registry/base/ui/scroll-area";
 
+import { expectClosed } from "./helpers/flavour";
+
 describe("ScrollArea", () => {
   it("renders children inside the viewport", () => {
     const { container } = render(
@@ -31,12 +33,18 @@ describe("ScrollArea", () => {
   it("hides scrollbars in jsdom because there is no overflow", () => {
     // Base UI unmounts scrollbars when the viewport is not scrollable
     // (jsdom has no layout, so nothing ever overflows).
+    // UI SDK keeps it mounted; the flavour marks it hidden instead.
     const { container } = render(
       <ScrollArea orientation="both">Content</ScrollArea>,
     );
-    expect(
+    for (const scrollbar of container.querySelectorAll(
+      '[data-slot="scroll-area-scrollbar"]',
+    )) {
+      expectClosed(scrollbar);
+    }
+    expectClosed(
       container.querySelector('[data-slot="scroll-area-scrollbar"]'),
-    ).toBeNull();
+    );
   });
 
   it("mounts a vertical scrollbar with a thumb when keepMounted is set", () => {
