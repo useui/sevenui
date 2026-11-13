@@ -3,6 +3,7 @@
 import { Check, Link2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/registry/base/ui/tooltip";
+import { currentFlavour, DEFAULT_FLAVOUR, FLAVOUR_PARAM } from "../../lib/flavour";
 import { useAnnounce } from "../announcer";
 import { InstallControl } from "../blocks/install-control";
 import { ThemeCustomizer } from "../customizer/theme-customizer";
@@ -22,7 +23,10 @@ export function ExampleActions({ id, title }: { id: string; title: string }) {
 
   async function copyLink() {
     try {
-      await navigator.clipboard.writeText(`${location.origin}${location.pathname}#${id}`);
+      // The link opens in the flavour the reader is looking at; Base UI is the default, so it needs no parameter.
+      const flavour = currentFlavour();
+      const query = flavour === DEFAULT_FLAVOUR ? "" : `?${FLAVOUR_PARAM}=${flavour}`;
+      await navigator.clipboard.writeText(`${location.origin}${location.pathname}${query}#${id}`);
       announce(`Copied a link to ${title}.`);
     } catch {
       // Clipboard unavailable (permissions/insecure context); nothing to undo.
