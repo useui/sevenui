@@ -149,6 +149,9 @@ describe("accessible names in the docs demos", () => {
     if (!update) expect(Object.keys(fixture).sort()).toEqual(files.map((f) => path.basename(f, ".tsx")).sort());
   });
 
+  // Each case imports and renders a demo for the first time; on a loaded
+  // machine the heaviest (calendar-demo) took 6 to 10s, past vitest's 5s
+  // default, so the cases get the import timeout api-freeze.test.ts uses.
   it.each(files)("%s", async (file) => {
     const name = path.basename(file, ".tsx");
     const pairs = await namesOf(file);
@@ -159,5 +162,5 @@ describe("accessible names in the docs demos", () => {
     }
     const normalize = KNOWN[name]?.normalize ?? ((list: string[]) => list);
     expect(normalize(pairs).sort()).toEqual(normalize(fixture[name] ?? []).sort());
-  });
+  }, 30_000);
 });
