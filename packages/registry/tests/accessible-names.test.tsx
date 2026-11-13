@@ -56,10 +56,11 @@ window.IntersectionObserver ??= class {
   }
 } as unknown as typeof IntersectionObserver;
 
-const demos = import.meta.glob<{ default: React.ComponentType }>("../demos/**/*.tsx");
-const variants = import.meta.glob<{ default: React.ComponentType }>(
-  "../registry/ui-sdk/examples/demos/**/*.tsx",
-);
+const root = path.join(import.meta.dirname, "..");
+const demoFiles = fs
+  .readdirSync(path.join(root, "demos"), { recursive: true, encoding: "utf8" })
+  .filter((file) => file.endsWith(".tsx"))
+  .map((file) => file.replace(/\\/g, "/"));
 const fixturePath = path.join(import.meta.dirname, "__fixtures__", "accessible-names.json");
 
 // Differences recorded on purpose (guide §8), per demo: a normalisation both
@@ -118,11 +119,10 @@ function implicitRole(element: HTMLElement): string | undefined {
 }
 
 async function namesOf(file: string) {
-  const name = path.basename(file, ".tsx");
-  const primitive = path.basename(path.dirname(file));
-  const variant = `../registry/ui-sdk/examples/demos/${primitive}/${name}.tsx`;
-  const load = isUiSdk && variants[variant] ? variants[variant] : demos[file];
-  const { default: Demo } = await load();
+  // The flavour renders an example's variant where it has one (guide §11).
+  const variant = path.join(root, "registry/ui-sdk/examples/demos", file);
+  const source = isUiSdk && fs.existsSync(variant) ? variant : path.join(root, "demos", file);
+  const { default: Demo } = (await import(source)) as { default: React.ComponentType };
   const { container } = render(<Demo />);
   await act(async () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -133,7 +133,7 @@ async function namesOf(file: string) {
 }
 
 describe("accessible names in the docs demos", () => {
-  const files = Object.keys(demos).sort();
+  const files = [...demoFiles].sort();
   const fixture: Record<string, string[]> = fs.existsSync(fixturePath)
     ? JSON.parse(fs.readFileSync(fixturePath, "utf8"))
     : {};

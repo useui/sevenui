@@ -112,8 +112,8 @@ describe("Command", () => {
   // The filter gets the item, not its key, from the first render on, which
   // on the server is the only one (command-07 reads `item.label`).
   it("hands a custom filter the item during a server render", () => {
-    const filter = vi.fn((item: Item, query: string) =>
-      item.label.toLowerCase().includes(query.toLowerCase()),
+    const filter = vi.fn((item: unknown, query: string) =>
+      (item as Item).label.toLowerCase().includes(query.toLowerCase()),
     );
     const html = renderToString(
       <Command items={groups} filter={filter} defaultValue="cal">
