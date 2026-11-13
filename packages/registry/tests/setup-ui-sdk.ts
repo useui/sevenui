@@ -1,9 +1,17 @@
+import { configure } from "@testing-library/react";
 import "./setup";
 
 declare global {
   var __UI_SDK_STRICT__: boolean | undefined;
 }
 globalThis.__UI_SDK_STRICT__ = true;
+
+// UI SDK announces toasts and field errors through visually hidden live
+// regions ([data-ui-sdk-announcer]) that it fills about 100ms later and never
+// clears. Text queries skip them, as they skip <script> and <style>: a test
+// that checks a toast or an error is gone must not depend on finishing before
+// the announcement lands, which a loaded machine does not.
+configure({ defaultIgnore: "script, style, [data-ui-sdk-announcer]" });
 
 // jsdom has some of these without the parts UI SDK needs, so assign rather
 // than `??=` (see @ui-sdk/react docs, Testing > jsdom).
