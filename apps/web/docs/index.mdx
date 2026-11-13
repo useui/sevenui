@@ -15,13 +15,15 @@ live in [Blocks](/blocks).
 
 ## Why SevenUI
 
-- **Base UI first** — no Radix, anywhere. Every interactive part is built
-  on [Base UI](https://base-ui.com); the only exceptions are four sanctioned,
-  Radix-free specialized libraries (calendar, carousel, chart, resizable).
+- **No Radix, anywhere** — the default flavour builds its interactive
+  parts on [Base UI](https://base-ui.com); calendar, carousel, chart and
+  resizable wrap four sanctioned, Radix-free libraries, and
+  message-scroller and questionnaire build on `@shadcn/react`.
 - **Two flavours, one API** — every primitive also ships on UI SDK
   (`@sevenui/ui-sdk/<name>`, a beta that needs React 19), where UI SDK
-  also replaces react-day-picker, embla-carousel and
-  react-resizable-panels. See
+  replaces Base UI and also react-day-picker, embla-carousel and
+  react-resizable-panels. Behaviour differs in places; each primitive's
+  page lists how. Pro blocks are built on Base UI only. See
   [Choose a flavour](/docs/installation#choose-a-flavour).
 - **Drop-in shadcn compatibility** — works with the `shadcn` CLI and your
   existing `components.json` setup.
@@ -46,13 +48,14 @@ SevenUI ships 66 primitives. The first 53 arrived across five waves:
 
 Navigation and composition are complete — tabs, menus, a shared-popup
 navigation menu, a command palette, and a full sidebar system — with
-zero Radix dependencies. No Radix, no cmdk, no vaul, no sonner: every
-primitive that can be built on Base UI alone uses Base UI and nothing
-else. The third-party wrapper wave adds exactly four specialized,
-Radix-free libraries — react-day-picker, embla-carousel, recharts, and
-react-resizable-panels — for the primitives that genuinely cannot be
-built on Base UI alone, the same sanctioned choices shadcn makes.
-These four are the only non-Base-UI dependencies of the Base UI flavour.
+zero Radix dependencies. No Radix, no cmdk, no vaul, no sonner: in the
+Base UI flavour, every primitive that can be built on Base UI alone uses
+Base UI and nothing else. The third-party wrapper wave adds exactly four
+specialized, Radix-free libraries — react-day-picker, embla-carousel,
+recharts, and react-resizable-panels — for the primitives that genuinely
+cannot be built on Base UI alone, the same sanctioned choices shadcn
+makes. Besides styling utilities, the only other dependency is
+`@shadcn/react`, under message-scroller and questionnaire.
 
 Form primitives use Base UI-native form handling. Libraries like
 [react-hook-form](https://react-hook-form.com) plug into the `Field`

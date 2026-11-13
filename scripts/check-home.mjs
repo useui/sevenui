@@ -38,7 +38,8 @@ const OUTLINE = [
 ];
 const HERO_COPY = [
   "accessible primitives on Base UI or UI SDK, composed into",
-  "components and Pro blocks. Copy the source, or let your agent assemble it.",
+  // Pro blocks are Base UI only; the hero says so rather than implying a UI SDK flavour of them.
+  "components and into Pro blocks built on Base UI. Copy the source, or let your agent assemble it.",
   "Works with",
   "Claude Code · Cursor · VS Code · Codex",
 ];

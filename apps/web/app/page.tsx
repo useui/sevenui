@@ -92,8 +92,8 @@ export default function Home() {
 
           <p className="mt-6 max-w-[34rem] text-base leading-relaxed text-pretty text-muted-foreground sm:text-[1.0625rem]">
             <span className="tabular-nums">{primitiveCount}</span> accessible primitives on Base UI or UI SDK, composed
-            into <span className="tabular-nums">{componentLabel}</span> components and Pro blocks. Copy the
-            source, or let your agent assemble it.
+            into <span className="tabular-nums">{componentLabel}</span> components and into Pro blocks built on Base
+            UI. Copy the source, or let your agent assemble it.
           </p>
 
           <div className="mt-8 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">

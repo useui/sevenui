@@ -53,7 +53,7 @@ export function SizeFigures({
       fig: "Fig 0.3",
       name: "Block",
       terms: "Pro",
-      body: "Full sections and pages. Installed by you, or by your agent with a license key.",
+      body: "Full sections and pages, built on Base UI. Installed by you, or by your agent with a license key.",
       item: "pro/account-02",
       href: "/blocks",
       linkLabel: "Browse Pro blocks",
