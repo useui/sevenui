@@ -42,6 +42,60 @@ type RadioGroupProps = Omit<
   inputRef?: React.Ref<HTMLInputElement>;
 };
 
+// What this control reports to the SevenUI Field around it (field.tsx): the
+// value Base UI hands `validate` and the serialized one `onFormSubmit` gets.
+// Reached through a global symbol, so the exports stay those of base.
+type FieldControlSource = {
+  value: () => unknown;
+  formValue: () => unknown;
+  disabled: () => boolean;
+};
+type RegisterFieldControl = (source: FieldControlSource) => () => void;
+const fieldControlKey = Symbol.for("sevenui.ui-sdk.field-control");
+const fieldControls = globalThis as {
+  [key: symbol]: React.Context<RegisterFieldControl | null> | undefined;
+};
+fieldControls[fieldControlKey] ??= React.createContext<RegisterFieldControl | null>(null);
+const FieldControlContext = fieldControls[
+  fieldControlKey
+] as React.Context<RegisterFieldControl | null>;
+
+function useFieldControl(source: FieldControlSource) {
+  const register = React.useContext(FieldControlContext);
+  const latest = React.useRef(source);
+  React.useLayoutEffect(() => {
+    latest.current = source;
+  });
+  React.useLayoutEffect(
+    () =>
+      register?.({
+        value: () => latest.current.value(),
+        formValue: () => latest.current.formValue(),
+        disabled: () => latest.current.disabled(),
+      }),
+    [register],
+  );
+}
+
+// The value a change leaves the control with, read from its controlled
+// `value` or, uncontrolled, from the last change nobody canceled.
+function useCurrentValue<Value>(
+  value: Value | undefined,
+  defaultValue: Value | undefined,
+) {
+  const uncontrolled = React.useRef(defaultValue);
+  const current = React.useRef(value !== undefined ? value : defaultValue);
+  React.useLayoutEffect(() => {
+    current.current = value !== undefined ? value : uncontrolled.current;
+  });
+  const track = (next: Value, details: { canceled?: boolean } | undefined) => {
+    if (details?.canceled || value !== undefined) return;
+    uncontrolled.current = next;
+    current.current = next;
+  };
+  return { current, track };
+}
+
 // The items' original values by their string, so onValueChange hands back
 // what the item was given (`2`, not `"2"`), as Base UI does.
 const RadioValuesContext = React.createContext<Map<string, unknown> | null>(null);
@@ -55,6 +109,12 @@ function RadioGroup({
   ...props
 }: RadioGroupProps) {
   const [values] = React.useState(() => new Map<string, unknown>());
+  const { current, track } = useCurrentValue<unknown>(value, defaultValue);
+  useFieldControl({
+    value: () => current.current ?? null,
+    formValue: () => current.current ?? null,
+    disabled: () => props.disabled === true,
+  });
   return (
     <RadioValuesContext.Provider value={values}>
       <RadioGroupPrimitive
@@ -62,11 +122,11 @@ function RadioGroup({
         className={cn("grid w-full gap-2", className)}
         value={toValue(value)}
         defaultValue={toValue(defaultValue)}
-        onValueChange={
-          onValueChange &&
-          ((next, details) =>
-            onValueChange(next != null && values.has(next) ? values.get(next) : next, details))
-        }
+        onValueChange={(next, details) => {
+          const original = next != null && values.has(next) ? values.get(next) : next;
+          onValueChange?.(original, details);
+          track(original, details);
+        }}
         {...props}
       />
     </RadioValuesContext.Provider>

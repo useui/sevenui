@@ -51,22 +51,41 @@ const FormContext = contexts[formContextKey] as React.Context<FormContextValue |
 // decides the field is invalid (`validate`, or a Form `errors` entry).
 const FieldMessageContext = React.createContext<string[] | null>(null);
 
-// The value Base UI hands `validate` and `onFormSubmit`: a checkbox or switch
-// gives its checked state, a radio group its checked value, a number field a
-// number, anything else its text.
+// What a control whose value the page cannot show (select, combobox,
+// slider, radio group) reports to the Field around it: the value Base UI
+// hands `validate`, and the serialized one `onFormSubmit` gets. Reached
+// through a global symbol, like the form context, from the control files.
+type FieldControlSource = {
+  value: () => unknown;
+  formValue: () => unknown;
+  disabled: () => boolean;
+};
+type RegisterFieldControl = (source: FieldControlSource) => () => void;
+const fieldControlKey = Symbol.for("sevenui.ui-sdk.field-control");
+const fieldControls = globalThis as {
+  [key: symbol]: React.Context<RegisterFieldControl | null> | undefined;
+};
+fieldControls[fieldControlKey] ??= React.createContext<RegisterFieldControl | null>(null);
+const FieldControlContext = fieldControls[
+  fieldControlKey
+] as React.Context<RegisterFieldControl | null>;
+
+// The value Base UI hands `validate` and `onFormSubmit` for a native
+// control: a checkbox or switch gives its checked state (the last one, when
+// a field holds several), a number field a number, anything else its text.
+// A disabled control reports nothing, as Base UI leaves it out.
 function readValue(root: HTMLElement | null): unknown {
-  const control = root?.querySelector<
+  const controls = root?.querySelectorAll<
     HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
   >("input, textarea, select");
+  const control = controls?.[0];
   if (!root || !control) return undefined;
+  if (control.disabled) return undefined;
   if (control instanceof HTMLInputElement) {
-    if (control.type === "radio") {
-      return (
-        root.querySelector<HTMLInputElement>("input[type=radio]:checked")
-          ?.value ?? null
-      );
+    if (control.type === "checkbox") {
+      const boxes = root.querySelectorAll<HTMLInputElement>("input[type=checkbox]");
+      return boxes[boxes.length - 1].checked;
     }
-    if (control.type === "checkbox") return control.checked;
     // A number input submits its raw number from a hidden input.
     const raw = control
       .closest("[data-slot=number-input]")
@@ -206,11 +225,32 @@ function Field({
   const latest = React.useRef({ validate, form, shown, mode });
   latest.current = { validate, form, shown, mode };
 
+  const source = React.useRef<FieldControlSource | null>(null);
+  const registerControl = React.useCallback<RegisterFieldControl>((next) => {
+    source.current = next;
+    return () => {
+      if (source.current === next) source.current = null;
+    };
+  }, []);
+  const value = React.useCallback(() => {
+    const control = source.current;
+    if (!control) return readValue(rootRef.current);
+    return control.disabled() ? undefined : control.value();
+  }, []);
+  const formValue = React.useCallback(() => {
+    const control = source.current;
+    if (!control) return readValue(rootRef.current);
+    return control.disabled() ? undefined : control.formValue();
+  }, []);
+
   const runValidate = React.useCallback((): Promise<boolean> | boolean => {
     const { validate: check, form: owner } = latest.current;
-    if (!check) return true;
+    // A field without a value to report (a disabled control, or none Base UI
+    // would register) is not validated, as in Base UI.
+    const current = value();
+    if (!check || current === undefined) return true;
     const ticket = ++run.current;
-    const result = check(readValue(rootRef.current), owner?.values() ?? {});
+    const result = check(current, owner?.values() ?? {});
     const settle = (next: string | string[] | null) => {
       if (ticket !== run.current) return true;
       const messages = toMessages(next);
@@ -219,7 +259,7 @@ function Field({
       return messages === null;
     };
     return result instanceof Promise ? result.then(settle) : settle(result);
-  }, []);
+  }, [value]);
 
   React.useImperativeHandle(actionsRef, () => ({
     validate: () => void runValidate(),
@@ -229,12 +269,12 @@ function Field({
     if (!form) return;
     return form.register({
       name,
-      value: () => readValue(rootRef.current),
+      value: formValue,
       validate: runValidate,
       focus: () => focusControl(rootRef.current),
       element: () => rootRef.current,
     });
-  }, [form, name, runValidate]);
+  }, [form, name, runValidate, formValue]);
 
   // Value changes and blur reach the root as native events from whichever
   // control the field holds (input, checkbox, radio group, number field…).
@@ -277,22 +317,24 @@ function Field({
 
   return (
     <FieldMessageContext.Provider value={message}>
-      <FieldPrimitive
-        ref={(node: HTMLDivElement | null) => {
-          rootRef.current = node;
-          if (typeof ref === "function") ref(node);
-          else if (ref) ref.current = node;
-        }}
-        name={name}
-        invalid={forcedInvalid}
-        data-slot="field"
-        data-orientation={orientation}
-        data-dirty={dirty ? "" : undefined}
-        data-touched={touched ? "" : undefined}
-        className={cn(fieldVariants({ orientation }), className)}
-        render={render as FieldPrimitiveProps["render"]}
-        {...props}
-      />
+      <FieldControlContext.Provider value={registerControl}>
+        <FieldPrimitive
+          ref={(node: HTMLDivElement | null) => {
+            rootRef.current = node;
+            if (typeof ref === "function") ref(node);
+            else if (ref) ref.current = node;
+          }}
+          name={name}
+          invalid={forcedInvalid}
+          data-slot="field"
+          data-orientation={orientation}
+          data-dirty={dirty ? "" : undefined}
+          data-touched={touched ? "" : undefined}
+          className={cn(fieldVariants({ orientation }), className)}
+          render={render as FieldPrimitiveProps["render"]}
+          {...props}
+        />
+      </FieldControlContext.Provider>
     </FieldMessageContext.Provider>
   );
 }

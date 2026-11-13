@@ -113,7 +113,8 @@ function Form<FormValues extends Record<string, any> = Record<string, any>>({
   const values = React.useCallback(() => {
     const result: Record<string, unknown> = {};
     for (const field of fields.current) {
-      if (field.name) result[field.name] = field.value();
+      const value = field.name ? field.value() : undefined;
+      if (field.name && value !== undefined) result[field.name] = value;
     }
     return result;
   }, []);

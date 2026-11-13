@@ -62,6 +62,81 @@ function readItems(items: BaseItems | undefined) {
   };
 }
 
+// What this control reports to the SevenUI Field around it (field.tsx): the
+// value Base UI hands `validate` and the serialized one `onFormSubmit` gets.
+// Reached through a global symbol, so the exports stay those of base.
+type FieldControlSource = {
+  value: () => unknown;
+  formValue: () => unknown;
+  disabled: () => boolean;
+};
+type RegisterFieldControl = (source: FieldControlSource) => () => void;
+const fieldControlKey = Symbol.for("sevenui.ui-sdk.field-control");
+const fieldControls = globalThis as {
+  [key: symbol]: React.Context<RegisterFieldControl | null> | undefined;
+};
+fieldControls[fieldControlKey] ??= React.createContext<RegisterFieldControl | null>(null);
+const FieldControlContext = fieldControls[
+  fieldControlKey
+] as React.Context<RegisterFieldControl | null>;
+
+function useFieldControl(source: FieldControlSource) {
+  const register = React.useContext(FieldControlContext);
+  const latest = React.useRef(source);
+  React.useLayoutEffect(() => {
+    latest.current = source;
+  });
+  React.useLayoutEffect(
+    () =>
+      register?.({
+        value: () => latest.current.value(),
+        formValue: () => latest.current.formValue(),
+        disabled: () => latest.current.disabled(),
+      }),
+    [register],
+  );
+}
+
+// The value a change leaves the control with, read from its controlled
+// `value` or, uncontrolled, from the last change nobody canceled.
+function useCurrentValue<Value>(
+  value: Value | undefined,
+  defaultValue: Value | undefined,
+) {
+  const uncontrolled = React.useRef(defaultValue);
+  const current = React.useRef(value !== undefined ? value : defaultValue);
+  React.useLayoutEffect(() => {
+    current.current = value !== undefined ? value : uncontrolled.current;
+  });
+  const track = (next: Value, details: { canceled?: boolean } | undefined) => {
+    if (details?.canceled || value !== undefined) return;
+    uncontrolled.current = next;
+    current.current = next;
+  };
+  return { current, track };
+}
+
+// Base UI's form value for a select or combobox item: `itemToStringValue`,
+// else an object item's `value`, else the item; strings as they are, other
+// values as JSON.
+function serializeValue(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  if (typeof value === "string") return value;
+  try {
+    return JSON.stringify(value) ?? String(value);
+  } catch {
+    return String(value);
+  }
+}
+
+function toFormValue(item: unknown, itemToStringValue?: (item: never) => string): string {
+  if (itemToStringValue && item != null) return itemToStringValue(item as never) ?? "";
+  if (item && typeof item === "object" && "value" in item && "label" in item) {
+    return serializeValue((item as { value: unknown }).value);
+  }
+  return serializeValue(item);
+}
+
 // The value props are typed as Base UI types them, so `T` is inferred from
 // `value` and `onValueChange` gets its parameter type. UI SDK's own props are
 // a union (single, multiple, either) that an Omit would merge.
@@ -85,12 +160,35 @@ function Select<T, Multiple extends boolean | undefined = false>({
   items,
   placeholder,
   itemToLabel,
+  onValueChange,
   ...props
 }: SelectProps<T, Multiple>) {
   const data = React.useMemo(() => readItems(items), [items]);
+  const { current, track } = useCurrentValue<unknown>(
+    props.value,
+    props.defaultValue ?? (props.multiple ? [] : null),
+  );
+  const toString = (props as { itemToStringValue?: (item: never) => string }).itemToStringValue;
+  useFieldControl({
+    value: () => current.current,
+    formValue: () =>
+      Array.isArray(current.current)
+        ? current.current.map((item) => toFormValue(item, toString))
+        : toFormValue(current.current, toString),
+    disabled: () => props.disabled === true,
+  });
   return (
     <SelectPrimitive<T, Multiple>
       {...(props as unknown as SelectPrimitiveProps<T, Multiple>)}
+      onValueChange={
+        ((next: unknown, details: { canceled?: boolean }) => {
+          (onValueChange as ((value: unknown, details: unknown) => void) | undefined)?.(
+            next,
+            details,
+          );
+          track(next, details);
+        }) as SelectPrimitiveProps<T, Multiple>["onValueChange"]
+      }
       itemToLabel={itemToLabel ?? data.itemToLabel}
       placeholder={placeholder ?? data.placeholder}
     />
