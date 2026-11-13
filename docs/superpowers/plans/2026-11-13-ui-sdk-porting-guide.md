@@ -52,13 +52,15 @@ The generator reads each primitive's state from the files themselves:
 | **mirror** | A ported file whose base file imports nothing UI SDK replaces. It must stay a byte-identical retargeted copy of its base file: `kbd`, `card`, `table`, `pagination`, and so on. **Except** the names in `UI_SDK_PORTS` (`label`, `textarea`, `input-group`): plain markup in base that the flavour builds on a UI SDK component (§9.4). Their flavour file must import `@ui-sdk/react`; while it is still the seed copy they count as pending. |
 | **blocked** | Ported, but a registryDependency is not ported yet. It is left out of `/r/ui-sdk/` until that dependency is ported, so the published flavour is always a closed graph. |
 
-These states fail `pnpm check:registry`:
-- a seed that has been edited but still imports a replaced library (a half-done port);
+Every primitive is ported now, so the flavour must stay complete. These states fail `pnpm check:registry`:
+- any primitive pending or blocked, or a published flavour that is not exactly the base primitive set;
+- a seed that has been edited but still imports a replaced library (a half-done port). A replaced library counts in any import form: `from`, `import type`, `export … from`, a side-effect `import`, a dynamic `import()`, `typeof import()`, `require()`, a type reference;
 - a mirror that drifted from its base file;
 - a `UI_SDK_PORTS` file (`label`, `textarea`, `input-group`) that was edited but imports nothing from `@ui-sdk/react`;
 - a seed for `calendar`, `carousel` or `resizable`;
 - a `.tsx` file that belongs to no primitive;
-- an `@/registry/base/` import inside the flavour tree.
+- an `@/registry/base/` import inside the flavour tree;
+- a `@ui-sdk/*` version that is not exact (no `^`, `~`, `>=`), in any workspace `package.json` or published item.
 
 ## 2. Porting one primitive, step by step
 
