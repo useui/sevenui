@@ -12,7 +12,7 @@
     "@ui-sdk/core": "0.1.0-beta.1",
     "@ui-sdk/react": "0.1.0-beta.1",
     "class-variance-authority": "^0.7.1",
-    "cn": "^0.2.5",
+    "cn": "^0.5.2",
     "embla-carousel-react": "^8.6.0",
     "lucide-react": "^1.41.0",
     "react": "^19.2.8",

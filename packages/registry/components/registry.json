@@ -245,7 +245,7 @@
       "title": "Expandable Import Errors",
       "description": "A destructive import alert with a collapsible list of row-level validation errors.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -627,7 +627,7 @@
       "title": "Meeting Video Grid",
       "description": "A video call grid of 16:9 participant tiles with camera-off avatars, a speaking ring, muted badges and a pin toggle that expands a tile to the full row.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -742,7 +742,7 @@
       "title": "Surface Styles",
       "description": "Outline, subtle, elevated, and ghost attachment surfaces side by side, each with a download action.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": ["https://sevenui.dev/r/attachment.json"],
@@ -791,7 +791,7 @@
       "title": "Selectable Files",
       "description": "Attachments as toggleable selections with a custom check indicator and a single or multiple selection mode.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -807,7 +807,7 @@
       "title": "File Picker",
       "description": "A drag-and-drop zone backed by a real file input that lists picked files with type icons, sizes, a per-file size limit, and remove actions.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": ["https://sevenui.dev/r/attachment.json"],
@@ -1015,7 +1015,7 @@
       "type": "registry:component",
       "title": "Contributor Leaderboard",
       "description": "A weekly or monthly reviewer leaderboard with a raised podium of ranked avatars, runners-up below and your own pinned position.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": [
         "https://sevenui.dev/r/avatar.json",
         "https://sevenui.dev/r/toggle-group.json"
@@ -1066,7 +1066,7 @@
       "title": "Shared Files List",
       "description": "A file manager list with owner and collaborator avatars and an avatar row that filters files by owner.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": ["https://sevenui.dev/r/avatar.json"],
@@ -1091,7 +1091,7 @@
       "title": "Live Collaborator Presence",
       "description": "A document header of collaborator avatars you can follow, with presence shown on each section of the outline.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -1374,7 +1374,7 @@
       "type": "registry:component",
       "title": "Grouped thread",
       "description": "Consecutive messages grouped per sender, with squared inner corners and the tail corner kept on each run's last bubble.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": ["https://sevenui.dev/r/bubble.json"],
       "files": [{ "path": "bubble/bubble-01.tsx", "type": "registry:component" }]
     },
@@ -1397,7 +1397,7 @@
       "title": "Quoted replies",
       "description": "Reply to any message with a quote preview in the composer; quoted bubbles jump to and highlight the original.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -1413,7 +1413,7 @@
       "title": "Voice message",
       "description": "A voice note bubble with play and pause, a seekable waveform, playback speed, and an expandable transcript.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -1430,7 +1430,7 @@
       "title": "Selectable messages",
       "description": "Bubbles rendered as toggle buttons for multi-select, with a check badge and a toolbar to copy, delete, or clear.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -1445,7 +1445,7 @@
       "title": "Interactive reactions",
       "description": "Reaction chips in BubbleReactions that toggle your own reaction and count, plus a popover picker for new ones.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -1512,7 +1512,7 @@
       "title": "Ticket with internal notes",
       "description": "A support ticket thread where the composer switches between customer replies and dashed internal notes only the team sees.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -1547,7 +1547,7 @@
       "title": "Poll message",
       "description": "A poll posted in an outline bubble where voting reveals live percentages, with change and retract vote.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -1679,7 +1679,7 @@
       "title": "Copy with icon morph",
       "description": "Copy buttons whose icon and label cross-fade into a check confirmation, with a tooltip and a live announcement.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -1708,7 +1708,7 @@
       "title": "Expanding icon buttons",
       "description": "An icon-only message toolbar whose buttons slide their label open on hover or keyboard focus.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": ["https://sevenui.dev/r/button.json"],
@@ -2121,7 +2121,7 @@
       "title": "Nightly prices",
       "description": "A vacation rental range picker whose day buttons show nightly prices, with reserved nights struck through, a two-night minimum, and a cost breakdown.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0",
         "react-day-picker@^10.0.1"
       ],
@@ -2400,7 +2400,7 @@
       "type": "registry:component",
       "title": "Customer testimonials",
       "description": "Looping center-mode testimonial carousel that dims and scales side quotes, with a row of company names that jumps to each story.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": [
         "https://sevenui.dev/r/avatar.json",
         "https://sevenui.dev/r/carousel.json"
@@ -2413,7 +2413,7 @@
       "title": "Onboarding tour",
       "description": "A first-run product tour with step dots, skip and continue actions, and a completion state.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -2429,7 +2429,7 @@
       "title": "Plan picker",
       "description": "A billing plan chooser with a monthly or yearly toggle, peeking plan cards, and a live upgrade summary.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -2446,7 +2446,7 @@
       "title": "Booking day strip",
       "description": "A demo-booking flow with a scrollable two-week day strip, time slots, and a confirmation state.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -2745,7 +2745,7 @@
       "title": "Store performance overview",
       "description": "Clickable KPI tiles pick the metric of an area chart, with a 30d/90d range toggle and a switch for a dashed previous period line.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0",
         "recharts@^3.10.1"
       ],
@@ -3495,7 +3495,7 @@
       "title": "Playlist track menu",
       "description": "A playlist whose song rows open a menu with an album-art header, play and queue actions, a Liked songs checkbox, an Add to playlist checkbox submenu, and remove.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -3510,7 +3510,7 @@
       "title": "Editor block menu",
       "description": "Document editor blocks with a menu to turn a block into another type, insert text or media blocks below through nested submenus, duplicate, reorder, or delete.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -3562,7 +3562,7 @@
       "title": "Calendar event menu",
       "description": "A day schedule where each event's context menu sets your RSVP, recolors its calendar, copies the meeting link, duplicates, reschedules, or deletes it.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -3577,7 +3577,7 @@
       "title": "Support chat message actions",
       "description": "A support conversation where message context menus reply with a quote, add reactions, pin, mark a solution, or delete your own message.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -3618,7 +3618,7 @@
       "title": "Code explorer menu",
       "description": "An IDE file explorer whose context menu creates files and folders, renames inline, copies paths, stages or discards git changes, and deletes.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -3746,7 +3746,7 @@
       "title": "Domain setup wizard",
       "description": "A three-step domain setup dialog with a segmented progress bar, direction-aware slide transitions, and a reset to the first step on close.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -3986,7 +3986,7 @@
       "title": "Rate Your Delivery",
       "description": "A delivered order card whose drawer collects a star rating, rating-aware feedback tags, a tip and an optional note.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -4034,7 +4034,7 @@
       "title": "Deployment Inspector",
       "description": "A deployments list that opens a snap-point drawer with commit details, build progress, per-step logs, and a simulated redeploy.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -4125,7 +4125,7 @@
       "type": "registry:component",
       "title": "Custom indicators",
       "description": "A status picker whose radio items replace the checkmark with colored status rings that fill when selected, with number-key shortcuts.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": [
         "https://sevenui.dev/r/dropdown-menu.json",
         "https://sevenui.dev/r/button.json"
@@ -4433,7 +4433,7 @@
       "title": "Empty folder drop zone",
       "description": "A file manager folder with breadcrumbs and a drag-and-drop empty state that highlights on drag-over and lists added files.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -4566,7 +4566,7 @@
       "title": "Password rules",
       "description": "A password field with a visibility toggle, strength meter, animated rule checklist, and blur validation.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -5168,7 +5168,7 @@
       "type": "registry:component",
       "title": "Character limit",
       "description": "A controlled input with a remaining-characters counter and a meter that warns near the limit.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": [
         "https://sevenui.dev/r/input.json",
         "https://sevenui.dev/r/label.json"
@@ -5488,7 +5488,7 @@
       "type": "registry:component",
       "title": "Fill progress indicator",
       "description": "Slots that tint and lift as they fill, with a segmented progress track and a live remaining count.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": [
         "https://sevenui.dev/r/field.json",
         "https://sevenui.dev/r/input-otp.json"
@@ -5874,7 +5874,7 @@
       "title": "Pressable Arrow Keycaps",
       "description": "A focusable arrow-key cluster whose keycaps press down while held and move a dot around a 5x5 grid, with reduced-motion support.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": ["https://sevenui.dev/r/kbd.json"],
@@ -6025,7 +6025,7 @@
       "type": "registry:component",
       "title": "Label Sizes and Density",
       "description": "A compact, default and comfortable toggle that scales label text, input height and spacing together in an inventory form.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": [
         "https://sevenui.dev/r/input.json",
         "https://sevenui.dev/r/label.json",
@@ -6075,7 +6075,7 @@
       "title": "File Dropzone",
       "description": "A label that doubles as a keyboard-focusable drag-and-drop zone for a hidden file input, with a removable upload queue.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -6251,7 +6251,7 @@
       "title": "Status Tones",
       "description": "CI build-log markers whose icons use info, success, warning and destructive tokens, with screen-reader tone labels so status is not color-only.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": ["https://sevenui.dev/r/marker.json"],
@@ -6272,7 +6272,7 @@
       "title": "Diff Hunk Expander",
       "description": "A code review diff where separator markers rendered as buttons expand and collapse the unchanged lines between hunks.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": ["https://sevenui.dev/r/marker.json"],
@@ -6389,7 +6389,7 @@
       "type": "registry:component",
       "title": "Menubar densities",
       "description": "The same menubar at compact, default, and comfortable sizes.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": ["https://sevenui.dev/r/menubar.json"],
       "files": [{ "path": "menubar/menubar-03.tsx", "type": "registry:component" }]
     },
@@ -6863,7 +6863,7 @@
       "title": "Interview Transcript Outline",
       "description": "A research transcript with a topic outline that tracks the current section and jumps between topics, plus start and end buttons.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -6878,7 +6878,7 @@
       "type": "registry:component",
       "title": "Meter sizes",
       "description": "Small, default, and large meters with track height and text size scaled together for different densities.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": ["https://sevenui.dev/r/meter.json"],
       "files": [{ "path": "meter/meter-01.tsx", "type": "registry:component" }]
     },
@@ -6904,7 +6904,7 @@
       "title": "Threshold states",
       "description": "CPU, memory, and disk meters that switch between success, warning, and destructive colors, each with a linked status line.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": ["https://sevenui.dev/r/meter.json"],
@@ -6916,7 +6916,7 @@
       "title": "Loyalty stamp card",
       "description": "A segmented meter drawn as ten coffee stamps with the built-in track hidden, plus add-stamp and redeem-reward actions.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -6938,7 +6938,7 @@
       "type": "registry:component",
       "title": "Adjustable budget",
       "description": "A slider sets the budget used as the meter's max, with color escalation and a live over- or under-budget message.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": [
         "https://sevenui.dev/r/meter.json",
         "https://sevenui.dev/r/slider.json"
@@ -7065,7 +7065,7 @@
       "title": "Leading icon and custom indicator",
       "description": "A language select with a leading icon, plus a status select whose colored dot follows the value and swaps the chevron for an up-down icon.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -7217,7 +7217,7 @@
       "type": "registry:component",
       "title": "Link-only bar",
       "description": "A flat row of direct links with the current page marked active.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": ["https://sevenui.dev/r/navigation-menu.json"],
       "files": [{ "path": "navigation-menu/navigation-menu-01.tsx", "type": "registry:component" }]
     },
@@ -7235,7 +7235,7 @@
       "type": "registry:component",
       "title": "Pill navigation",
       "description": "Rounded pill triggers inside a filled, bordered shell with a New badge.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": [
         "https://sevenui.dev/r/badge.json",
         "https://sevenui.dev/r/navigation-menu.json"
@@ -7270,7 +7270,7 @@
       "type": "registry:component",
       "title": "Underline indicator",
       "description": "Transparent triggers with an animated underline for hover, open, and active states.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": ["https://sevenui.dev/r/navigation-menu.json"],
       "files": [{ "path": "navigation-menu/navigation-menu-06.tsx", "type": "registry:component" }]
     },
@@ -7279,7 +7279,7 @@
       "type": "registry:component",
       "title": "Compact with states",
       "description": "A dense console bar with status dots and a disabled coming-soon trigger.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": [
         "https://sevenui.dev/r/badge.json",
         "https://sevenui.dev/r/navigation-menu.json"
@@ -7292,7 +7292,7 @@
       "title": "Analytics app header",
       "description": "A dashboard top bar with active page links and a saved-reports panel that swaps the view below.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": ["https://sevenui.dev/r/navigation-menu.json"],
@@ -7304,7 +7304,7 @@
       "title": "Developer docs header",
       "description": "API reference and SDK panels with color-coded HTTP methods and install commands.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -7319,7 +7319,7 @@
       "title": "Storefront mega menu",
       "description": "Department panels with category links, a featured product, a sale link, and a cart button.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -7344,7 +7344,7 @@
       "title": "Marketing site header",
       "description": "A product panel with feature links and a changelog highlight, plus solutions and trial actions.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -7359,7 +7359,7 @@
       "title": "Help center header",
       "description": "Topic and contact panels with channel availability, a status link, and article search.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -7456,7 +7456,7 @@
       "title": "Save on commit",
       "description": "onValueCommitted drives an inline saving spinner that turns into a success check, ring, and live status line.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -7568,7 +7568,7 @@
       "title": "Segmented pagination",
       "description": "A bordered, joined pager with a filled primary cell for the current page.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": ["https://sevenui.dev/r/pagination.json"],
@@ -7589,7 +7589,7 @@
       "title": "Dot indicator pagination",
       "description": "Dot indicators in a tips card that stretch into a pill for the current tip, each with a 24px hit area.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -7603,7 +7603,7 @@
       "type": "registry:component",
       "title": "Loading pagination",
       "description": "A pager that shows a spinner on the requested page and locks input until it loads.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": [
         "https://sevenui.dev/r/pagination.json",
         "https://sevenui.dev/r/spinner.json"
@@ -7629,7 +7629,7 @@
       "title": "Vertical pagination",
       "description": "A vertical chapter pager with up and down steps beside the chapter summary.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": ["https://sevenui.dev/r/pagination.json"],
@@ -7741,7 +7741,7 @@
       "title": "Breadcrumb rename",
       "description": "The current file in a breadcrumb opens a rename form that focuses the input, rejects empty names, bad characters or duplicates inline, and closes on save.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -7773,7 +7773,7 @@
       "title": "Sidebar storage meter",
       "description": "A usage meter in a workspace sidebar opens sideways into a stacked chart-token breakdown of storage by type, free space and upgrade actions.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -7805,7 +7805,7 @@
       "title": "Multi-view panel",
       "description": "An overview list slides into Language, Time zone or Density subviews built from radio groups, with a back button, managed focus and reduced-motion support.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -7837,7 +7837,7 @@
       "title": "Notification center",
       "description": "A bell button with an unread badge opening a notifications feed with mention filtering and mark-as-read.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -7895,7 +7895,7 @@
       "title": "Dashboard widget settings",
       "description": "An analytics widget whose settings popover switches metric, period, and period comparison.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -7914,7 +7914,7 @@
       "title": "Support chat launcher",
       "description": "A floating chat launcher that opens a support conversation with suggested topics and a composer.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -7998,7 +7998,7 @@
       "type": "registry:component",
       "title": "Quarterly Goals Pace",
       "description": "An OKR widget comparing each key result's progress with an expected-pace marker and a status badge.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": [
         "https://sevenui.dev/r/avatar.json",
         "https://sevenui.dev/r/badge.json",
@@ -8012,7 +8012,7 @@
       "title": "Upload Queue",
       "description": "A file upload queue with an overall size-weighted bar, per-file bars, a scanning state, retry, and cancel.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -8027,7 +8027,7 @@
       "title": "Deployment Pipeline",
       "description": "A deploy card with an overall bar, elapsed time, and a stage list where the active stage shows its own progress.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -8255,7 +8255,7 @@
       "title": "Read-Only Until Edit",
       "description": "A log-retention setting shown read-only until Edit is pressed, with Save and Cancel committing or reverting a draft.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -8306,7 +8306,7 @@
       "title": "Expanding Delivery Options",
       "description": "Delivery-method cards where the checked option animates open to reveal follow-up fields.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -8690,7 +8690,7 @@
       "title": "Streaming build log",
       "description": "A deploy log that scrolls on both axes, streams new lines, follows the newest line, and offers a jump-to-latest button.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -8706,7 +8706,7 @@
       "title": "Support chat thread",
       "description": "A support chat log that scrolls to the newest message, with grouped bubbles and horizontally scrolling quick replies.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -8723,7 +8723,7 @@
       "title": "Settings with scroll spy",
       "description": "An account settings page whose side navigation highlights the section in view and jumps to sections on click.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -9059,7 +9059,7 @@
       "title": "Width Presets",
       "description": "Compact, default and wide sheet widths showing the same invoice, with the wide preset switching to a two-column layout.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -9135,7 +9135,7 @@
       "title": "Multi-Step Sheet",
       "description": "A three-step invite flow inside one sheet with a progress bar, sliding step transitions, validation and a success state.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -9153,7 +9153,7 @@
       "title": "Notification Center",
       "description": "A bell-triggered notifications sheet with All and Mentions tabs, unread markers, and mark-all-read.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -9203,7 +9203,7 @@
       "title": "Mobile Navigation",
       "description": "A mobile app bar with a left navigation sheet of grouped links, badges, current-page state, and an account footer.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -9255,7 +9255,7 @@
       "title": "API Request Inspector",
       "description": "An API log table whose rows open a detail sheet with overview, request and response tabs, copyable JSON, and prev/next navigation.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -9336,7 +9336,7 @@
       "title": "Controlled icon rail",
       "description": "A controlled sidebar that collapses to an icon rail with tooltips and an animated width.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": ["https://sevenui.dev/r/sidebar.json"],
@@ -9488,7 +9488,7 @@
       "type": "registry:component",
       "title": "Surface tones",
       "description": "The same placeholder re-toned for bare, outlined, filled, and elevated surfaces.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": ["https://sevenui.dev/r/skeleton.json"],
       "files": [{ "path": "skeleton/skeleton-02.tsx", "type": "registry:component" }]
     },
@@ -9510,7 +9510,7 @@
       "title": "Inline value placeholders",
       "description": "Character-width skeletons standing in for single values inside ready copy, a badge, and a button.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -9525,7 +9525,7 @@
       "type": "registry:component",
       "title": "Animation modes",
       "description": "A comment thread placeholder switchable between pulse, staggered wave, and static motion.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": [
         "https://sevenui.dev/r/skeleton.json",
         "https://sevenui.dev/r/toggle-group.json"
@@ -9538,7 +9538,7 @@
       "title": "Loading, error, and empty states",
       "description": "Invoice rows that pulse while loading, freeze behind an error, and turn into dashed ghosts when empty.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -9554,7 +9554,7 @@
       "title": "Layout-matched swap",
       "description": "A profile card that crossfades between skeleton and content in one grid cell without layout shift.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -9611,7 +9611,7 @@
       "title": "Chat history backfill",
       "description": "A support chat that prepends bubble-shaped skeletons while earlier messages are loaded.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -9732,7 +9732,7 @@
       "type": "registry:component",
       "title": "Stepped slider with labels",
       "description": "A discrete slider with tick marks and clickable step labels.",
-      "dependencies": ["cn@^0.2.5"],
+      "dependencies": ["cn@^0.5.2"],
       "registryDependencies": ["https://sevenui.dev/r/slider.json"],
       "files": [{ "path": "slider/slider-06.tsx", "type": "registry:component" }]
     },
@@ -10201,7 +10201,7 @@
       "title": "Row density toggle",
       "description": "A segmented control switches the table between compact, default, and comfortable spacing.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -10246,7 +10246,7 @@
       "title": "Sortable columns",
       "description": "A sales leaderboard with header buttons that toggle sort direction, direction icons, and aria-sort.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": ["https://sevenui.dev/r/table.json"],
@@ -10274,7 +10274,7 @@
       "title": "Expandable rows",
       "description": "Rows disclose an animated detail panel listing build steps.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -10368,7 +10368,7 @@
       "title": "API keys",
       "description": "Developer key management with masked secrets, reveal and copy actions, scopes, key creation, and revocation.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -10561,7 +10561,7 @@
       "title": "Metric tabs chart",
       "description": "An analytics widget whose tab triggers are KPI tiles for revenue, orders and conversion, each switching the area chart below.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0",
         "recharts@^3.10.1"
       ],
@@ -10843,7 +10843,7 @@
       "title": "Toast placement",
       "description": "A position picker that moves the toast viewport to any of six screen anchors.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -11032,7 +11032,7 @@
       "title": "Canvas View Shortcuts",
       "description": "A design canvas toolbar whose pixel grid, rulers and snap toggles also respond to Shift-letter shortcuts and redraw the artboard preview.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -11077,7 +11077,7 @@
       "title": "Internal Note Composer",
       "description": "A support reply composer where an Internal toggle turns the reply into a private note, changing its tint, label, placeholder and send action.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -11093,7 +11093,7 @@
       "title": "Reading Preferences",
       "description": "Reader toggles for larger text, relaxed spacing and a serif face that restyle a live article preview.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": ["https://sevenui.dev/r/toggle.json"],
@@ -11131,7 +11131,7 @@
       "title": "Log Level Filter",
       "description": "A log viewer with error, warning, info and debug filter toggles with counts, a line wrap toggle and an empty state.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -11146,7 +11146,7 @@
       "title": "Call Controls",
       "description": "A video call control bar with microphone, camera, present, captions and raise hand toggles in tooltips that drive a live self-view tile.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -11218,7 +11218,7 @@
       "title": "Formatting Toolbar With Tooltips",
       "description": "Style and alignment toggle groups with tooltips, shortcut keys, and a separator driving a live text field.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -11342,7 +11342,7 @@
       "title": "Toolbar Density Scale",
       "description": "One document viewer toolbar with page stepper, zoom and download shown at compact, default and comfortable sizes.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": ["https://sevenui.dev/r/toolbar.json"],
@@ -11377,7 +11377,7 @@
       "title": "Controlled Formatting Toolbar",
       "description": "Controlled multi-select text marks and single-select alignment drive a live preview, with a clear formatting button that disables when there is nothing to reset.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -11407,7 +11407,7 @@
       "title": "Toolbar With Async States",
       "description": "Save draft, sync and publish actions cycle through loading, success and error states, with a failed first publish, a retry and a live status line.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -11652,7 +11652,7 @@
       "title": "Code Blame Gutter",
       "description": "A source file blame view where each commit in the gutter opens a tooltip with its message, hash, author and age.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": ["https://sevenui.dev/r/tooltip.json"],
@@ -11664,7 +11664,7 @@
       "title": "Support Chat Details",
       "description": "A support chat where tooltips reveal exact timestamps, read receipts and who reacted to each message.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [
@@ -11681,7 +11681,7 @@
       "title": "Team Availability Heatmap",
       "description": "A weekly availability grid whose slot tooltips list who is free or busy, with a selectable slot for the invite.",
       "dependencies": [
-        "cn@^0.2.5",
+        "cn@^0.5.2",
         "lucide-react@^1.41.0"
       ],
       "registryDependencies": [

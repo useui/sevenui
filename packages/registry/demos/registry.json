@@ -828,7 +828,7 @@
       "title": "Navigation Menu Demo",
       "description": "Default navigation menu example.",
       "dependencies": [
-        "cn@^0.2.5"
+        "cn@^0.5.2"
       ],
       "registryDependencies": [
         "https://sevenui.dev/r/navigation-menu.json"
