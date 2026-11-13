@@ -48,7 +48,7 @@ export type Release = {
 
 export const UPCOMING: UpcomingRelease = {
   label: "Next",
-  summary: "What we are working on after 1.0. Plans can change; items move to a release once they ship.",
+  summary: "What we are working on after 1.1. Plans can change; items move to a release once they ship.",
   items: [
     {
       title: "New Pro blocks",
@@ -89,6 +89,48 @@ export const UPCOMING: UpcomingRelease = {
 };
 
 export const RELEASES: Release[] = [
+  {
+    version: "1.1.0",
+    date: "2026-11-13",
+    title: "SevenUI 1.1",
+    summary:
+      "Every primitive now comes on Base UI or UI SDK, the primitives share a SevenUI look with a compact density, and the free components grow from 40 to 915.",
+    sections: [
+      {
+        heading: "Primitives",
+        items: [
+          "A second flavour: all 66 primitives are also built on UI SDK (`@ui-sdk/react` 0.1.0-beta.1, a beta that needs React 19) and install with `npx shadcn add @sevenui/ui-sdk/<name>`. Base UI stays the default, and both flavours share the same exports, props, and `data-slot` values.",
+          "A new `layer-card` primitive: a muted tray holding one or more raised panels, for 66 primitives in all.",
+          "A SevenUI look on top of the shadcn theme: layered surfaces, hairlines, raised and overlay shadows, and motion, delivered by a new `sevenui-tokens` item every primitive depends on. It adds variables only; your shadcn variables and colours keep their meaning.",
+          "A compact density: set `data-density=\"compact\"` on any element to tighten the controls, rows, and panels inside it.",
+          "`success` and `warning` badge variants, and destructive text kept at WCAG AA contrast.",
+          "Registry items now require `cn` ^0.5.2, so installing a primitive no longer downgrades the `cn` that `shadcn init` installed.",
+          "148 live examples across the primitive docs pages, each available in both flavours.",
+        ],
+      },
+      {
+        heading: "Components",
+        items: [
+          "915 free components in 65 collections, browsable at /components.",
+          "Every component also installs in the UI SDK flavour with `npx shadcn add @sevenui/ui-sdk/component/<name>`.",
+        ],
+      },
+      {
+        heading: "Blocks",
+        items: [
+          "Pro blocks stay on Base UI. When the site is set to UI SDK, block pages say so before you install.",
+        ],
+      },
+      {
+        heading: "Site",
+        items: [
+          "A flavour switch in the sidebar and above every example: install commands, example source, and live previews follow it, and a link with `?flavour=ui-sdk` opens the site on UI SDK.",
+          "The theme customizer is now a floating dock, built on `layer-card`, on every page with live previews.",
+          "A redesigned home page, and docs, primitives, components, and blocks in one site shell.",
+        ],
+      },
+    ],
+  },
   {
     version: "1.0.0",
     date: "2026-09-25",
