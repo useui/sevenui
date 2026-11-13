@@ -93,8 +93,9 @@ interface ToastManager<Data extends object = any> {
 
 type Manager = ToastManager & {
   toaster: Toaster;
-  // The provider's `timeout`, for toasts that set none (Base UI's default).
-  timeout: number;
+  // The mounted providers' `timeout`s, latest last: a toast that sets none
+  // takes the latest one's (Base UI's default 5000 without a provider).
+  timeouts: { timeout: number }[];
 };
 
 const types = new Set<string>(["success", "error", "info", "warning", "loading"]);
@@ -108,7 +109,7 @@ let counter = 0;
 // biome-ignore lint/suspicious/noExplicitAny: Base UI types toast data as any.
 function createToastManager<Data extends object = any>(): ToastManager<Data> {
   const toaster = createToaster<React.ReactNode>();
-  const manager = { toaster, timeout: 5000 } as Manager;
+  const manager = { toaster, timeouts: [] } as unknown as Manager;
 
   const find = (id: string) => recordOf(toaster.toasts().find((t) => t.id === id));
 
@@ -116,7 +117,7 @@ function createToastManager<Data extends object = any>(): ToastManager<Data> {
   // priorities map onto UI SDK's announcements (Base UI is polite unless
   // told otherwise, errors included).
   const show = (record: ToastObject): ToastOptions<React.ReactNode> => {
-    const timeout = record.timeout ?? manager.timeout;
+    const timeout = record.timeout ?? manager.timeouts.at(-1)?.timeout ?? 5000;
     return {
       id: record.id,
       title: record.title,
@@ -215,7 +216,13 @@ function ToastProvider({
 }) {
   const [own] = React.useState(() => createToastManager());
   const manager = (toastManager ?? own) as Manager;
-  manager.timeout = timeout;
+  React.useLayoutEffect(() => {
+    const entry = { timeout };
+    manager.timeouts.push(entry);
+    return () => {
+      manager.timeouts.splice(manager.timeouts.indexOf(entry), 1);
+    };
+  }, [manager, timeout]);
   const value = React.useMemo(() => ({ manager, limit }), [manager, limit]);
   return <ProviderContext.Provider value={value}>{children}</ProviderContext.Provider>;
 }
