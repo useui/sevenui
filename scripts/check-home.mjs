@@ -10,6 +10,7 @@
 // cannot fail is caught.
 
 import { createRequire } from "node:module";
+import { parseHTML } from "linkedom";
 
 const args = Object.fromEntries(
   process.argv.slice(2).reduce((pairs, arg, i, all) => {
@@ -344,6 +345,34 @@ const CHECKS = {
     },
     breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace("</main>", "<p>One registry, three sizes.</p></main>") }),
   },
+  previewsWithoutScript: {
+    // React's server renderer may send a Suspense boundary's content in a hidden element that a script
+    // reveals; a live preview inside one is invisible without JavaScript. FlavouredPreview keeps its Base UI
+    // preview out of any boundary until the reader picks UI SDK, on every page that uses it.
+    name: "the home, a docs primitive and a gallery page server-render their Base UI previews outside hidden Suspense content",
+    run: ({ previews }) => {
+      const problems = [];
+      for (const [path, page] of Object.entries(previews)) {
+        const { document } = parseHTML(page);
+        const all = [...document.querySelectorAll('[data-preview-flavour="base-ui"]')];
+        const hidden = all.filter((el) => el.closest("[hidden], template"));
+        const pending = (page.match(/<template id="B:/g) ?? []).length;
+        if (all.length === 0) problems.push(`${path}: no Base UI preview in the server HTML`);
+        else if (hidden.length) problems.push(`${path}: ${hidden.length} of ${all.length} Base UI previews are in hidden content`);
+        if (pending) problems.push(`${path}: ${pending} Suspense boundaries left on their fallback`);
+      }
+      return problems.length ? problems.join("; ") : null;
+    },
+    breakIt: (doc) =>
+      replaceDoc(doc, {
+        previews: Object.fromEntries(
+          Object.entries(doc.previews).map(([path, page]) => [
+            path,
+            page.replace('<div data-preview-flavour="base-ui">', '<div hidden id="S:99"><div data-preview-flavour="base-ui">'),
+          ]),
+        ),
+      }),
+  },
 };
 
 const response = await fetch(new URL("/", args.base));
@@ -361,7 +390,11 @@ for (const src of scriptSrcs(html)) {
   if (res.ok) scripts[src] = await res.text();
 }
 const roadmap = await (await fetch(new URL("/roadmap", args.base))).text();
-const doc = { html, css, scripts, roadmap };
+const previews = { "/": html };
+for (const path of ["/docs/components/dialog", "/components/dialog"]) {
+  previews[path] = await (await fetch(new URL(path, args.base))).text();
+}
+const doc = { html, css, scripts, roadmap, previews };
 
 let failed = 0;
 const report = (ok, name, problem) => {
@@ -378,7 +411,7 @@ if (args.controls) {
   console.log("");
   for (const [key, check] of Object.entries(CHECKS)) {
     const broken = check.breakIt(doc);
-    if (broken.html === doc.html && broken.css === doc.css && broken.scripts === doc.scripts) {
+    if (broken.html === doc.html && broken.css === doc.css && broken.scripts === doc.scripts && broken.previews === doc.previews) {
       console.log(`DEAD  ${key}: the control changed nothing`);
       failed++;
     } else if ((await check.run(broken)) === null) {

@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 import { DemoTabs } from "../components/demo/demo-tabs";
 import { LazyCode } from "../components/demo/lazy-code";
 import { FlavourSwitch } from "../components/flavour/flavour-switch";
-import { InlineFlavouredPreview } from "../components/home/inline-preview";
+import { FlavouredPreview } from "../components/flavour/flavoured-preview";
 import { InstallCommand } from "../components/home/install-command";
 import {
   baseUiVersion,
@@ -269,13 +269,13 @@ export default async function Home() {
                 label="Deploy source picker"
                 preview={
                   <div className="flex min-h-[25rem] items-center justify-center bg-background p-4 sm:p-8">
-                    <InlineFlavouredPreview
+                    <FlavouredPreview
                       available={uiSdkAvailable("components", EXAMPLE_FILE)}
                       folder={`components/${EXAMPLE.slug}`}
                       name={EXAMPLE.id}
                     >
                       <Combobox13 />
-                    </InlineFlavouredPreview>
+                    </FlavouredPreview>
                   </div>
                 }
               />

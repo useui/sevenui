@@ -1,6 +1,6 @@
 "use client";
 
-import { InlineFlavouredPreview } from "../inline-preview";
+import { FlavouredPreview } from "../../flavour/flavoured-preview";
 import { baseKit } from "./kit";
 import { createReleasesApp } from "./releases-app";
 
@@ -11,13 +11,12 @@ const loadUiSdk = () => import("./ui-sdk");
 
 /**
  * The live surface in the reader's flavour: the Base UI render is server-rendered, and a UI SDK reader's
- * chunk swaps in through FlavouredPreview (the same loading, failure and retry path as every docs preview),
- * kept out of a Suspense boundary until then so the Base UI render works without JavaScript.
+ * chunk swaps in through FlavouredPreview (the same loading, failure and retry path as every docs preview).
  */
 export function HomeSurface() {
   return (
-    <InlineFlavouredPreview available folder="home/releases" importFolder={loadUiSdk} name="releases">
+    <FlavouredPreview available folder="home/releases" importFolder={loadUiSdk} name="releases">
       <BaseReleasesApp />
-    </InlineFlavouredPreview>
+    </FlavouredPreview>
   );
 }

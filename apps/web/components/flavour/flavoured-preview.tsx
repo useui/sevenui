@@ -212,9 +212,18 @@ export function FlavouredPreview({
   // The flavour on screen trails the chosen one through a transition: while the UI SDK chunk loads, React
   // keeps the Base UI example in place (invisible, so the frame keeps its size) instead of a fallback.
   const [shown, setShown] = React.useState<Flavour>(DEFAULT_FLAVOUR);
+  // The Suspense boundary that transition needs is added only once the flavour first differs from the
+  // default. React's server renderer may send a boundary's content in a hidden element that a script
+  // reveals, so a boundary in the server render left every preview invisible without JavaScript. The
+  // boundary is committed around the Base UI example first; the transition starts on the next run.
+  const [bounded, setBounded] = React.useState(false);
   React.useEffect(() => {
+    if (!bounded) {
+      if (flavour !== DEFAULT_FLAVOUR) setBounded(true);
+      return;
+    }
     React.startTransition(() => setShown(flavour));
-  }, [flavour]);
+  }, [flavour, bounded]);
 
   // A retry remounts the boundary in a transition, so the notice and the Base UI example stay on screen
   // until the new attempt either renders or fails again.
@@ -255,6 +264,8 @@ export function FlavouredPreview({
     );
   }
 
+  // Until then nothing can suspend: the content is the Base UI example, server-rendered as plain markup.
+  if (!bounded) return content;
   // One boundary that already holds the Base UI example, so a transition keeps it on screen while the
   // UI SDK chunk loads (a boundary mounted mid-transition would show its fallback instead).
   return <React.Suspense fallback={<span className="sr-only">Loading the preview…</span>}>{content}</React.Suspense>;
