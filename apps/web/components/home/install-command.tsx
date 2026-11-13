@@ -2,21 +2,27 @@
 
 import { CheckIcon, CopyIcon } from "lucide-react";
 import * as React from "react";
+import { currentFlavour } from "../../lib/flavour";
 import { currentPackageManager, PACKAGE_MANAGERS, type PackageManager } from "../../lib/package-manager";
 import { writeClipboard } from "../pro/copy-button";
 import { cx } from "../../lib/cx";
 
 /**
  * The package-manager-aware install command. Unlike the docs' CopyCommand it
- * wraps on narrow screens, so the package name is never cut off.
+ * wraps on narrow screens, so the package name is never cut off. With
+ * `uiSdkCommands` it also follows the site-wide flavour: both variants are
+ * server-rendered and CSS shows the reader's (`.flavour-only-*`).
  */
 export function InstallCommand({
   commands,
+  uiSdkCommands,
   label = "install command",
   wrap = false,
   className,
 }: {
   commands: Record<PackageManager, string>;
+  /** The UI SDK flavour's commands, for an item that has one. */
+  uiSdkCommands?: Record<PackageManager, string>;
   label?: string;
   /** Wrap long commands at every width instead of truncating from sm up. */
   wrap?: boolean;
@@ -28,10 +34,18 @@ export function InstallCommand({
 
   async function copy() {
     window.clearTimeout(timer.current);
-    const ok = await writeClipboard(commands[currentPackageManager()]);
+    const set = uiSdkCommands && currentFlavour() === "ui-sdk" ? uiSdkCommands : commands;
+    const ok = await writeClipboard(set[currentPackageManager()]);
     setState(ok ? "copied" : "failed");
     timer.current = window.setTimeout(() => setState("idle"), 1800);
   }
+
+  const variants: { flavour?: "base-ui" | "ui-sdk"; set: Record<PackageManager, string> }[] = uiSdkCommands
+    ? [
+        { flavour: "base-ui", set: commands },
+        { flavour: "ui-sdk", set: uiSdkCommands },
+      ]
+    : [{ set: commands }];
 
   return (
     <div
@@ -44,17 +58,20 @@ export function InstallCommand({
       <span aria-hidden="true" className="py-1 leading-5 text-muted-foreground/70 select-none">
         $
       </span>
-      {PACKAGE_MANAGERS.map((pm) => (
-        <code
-          className={cx(
-            `pm-only pm-only-${pm} min-w-0 flex-1 py-1 text-left leading-5 break-words`,
-            !wrap && "sm:truncate",
-          )}
-          key={pm}
-        >
-          {commands[pm]}
-        </code>
-      ))}
+      {variants.map(({ flavour, set }) =>
+        PACKAGE_MANAGERS.map((pm) => (
+          <code
+            className={cx(
+              `pm-only pm-only-${pm} min-w-0 flex-1 py-1 text-left leading-5 break-words`,
+              flavour && `flavour-only-${flavour}`,
+              !wrap && "sm:truncate",
+            )}
+            key={`${flavour}-${pm}`}
+          >
+            {set[pm]}
+          </code>
+        )),
+      )}
       <button
         aria-label={`Copy ${label}`}
         className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground shadow-[inset_0_0_0_1px_var(--hairline)] hover:bg-surface-panel hover:text-foreground focus-visible:focus-ring"
