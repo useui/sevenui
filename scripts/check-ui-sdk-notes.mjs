@@ -160,13 +160,16 @@ function review(refs) {
   const file = join(ROOT, LOCK);
   const lock = existsSync(file) ? JSON.parse(readFileSync(file, "utf8")).rows ?? {} : {};
   for (const ref of refs) {
+    // A retired key first: it may also be a prefix of the row that replaced it.
+    if (lock[ref] !== undefined && !keys.has(ref)) {
+      delete lock[ref];
+      console.log(`review: dropped "${ref}", which is no longer a §8 row`);
+      continue;
+    }
     const { row, error } = resolve(rows, ref);
     if (row) {
       lock[row.key] = row.hash;
       console.log(`review: "${row.key}"`);
-    } else if (lock[ref] !== undefined && !keys.has(ref)) {
-      delete lock[ref];
-      console.log(`review: dropped "${ref}", which is no longer a §8 row`);
     } else {
       console.error(`review: ${error}`);
       process.exit(1);
