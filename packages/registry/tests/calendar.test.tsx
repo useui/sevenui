@@ -365,6 +365,27 @@ describe("Calendar selection API", () => {
     expect(onSelect.mock.calls.every(([value]) => value !== undefined)).toBe(true);
   });
 
+  it("calls onSelect when a required single date is pressed again", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    const { container } = render(
+      <Calendar
+        mode="single"
+        required
+        selected={new Date(2026, 5, 12)}
+        onSelect={onSelect}
+        defaultMonth={june2026}
+      />,
+    );
+    await user.click(must(dayButtonIn(container.querySelector("td[data-day='2026-06-12']")) as HTMLElement | null));
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    const [date, trigger] = onSelect.mock.calls[0] as [Date, Date];
+    expect([date.getDate(), trigger.getDate()]).toEqual([12, 12]);
+    // Enter on the focused day selects it again too.
+    await user.keyboard("{Enter}");
+    expect(onSelect).toHaveBeenCalledTimes(2);
+  });
+
   it("emits a one-day range on the first press and extends it on the second", async () => {
     const user = userEvent.setup();
     const ranges: (DateRange | undefined)[] = [];
@@ -488,6 +509,25 @@ describe("Calendar selection API", () => {
     await user.click(screen.getByRole("button", { name: "Go to the Next Month" }));
     await user.click(screen.getByRole("button", { name: "Go to the Next Month" }));
     expect(screen.getByRole("grid", { name: "July 2026" })).toBeDefined();
+  });
+
+  it("hides outside days past startMonth and endMonth", () => {
+    const { container } = render(
+      <Calendar
+        mode="single"
+        defaultMonth={new Date(2026, 6, 1)}
+        startMonth={new Date(2026, 5, 1)}
+        endMonth={new Date(2026, 6, 1)}
+      />,
+    );
+    // August 1 is an outside day of July, past endMonth: an empty cell, as
+    // react-day-picker renders it, not a day that cannot be picked.
+    const cell = must(container.querySelector('[data-day="2026-08-01"]'));
+    expect(cell.getAttribute("data-hidden")).toBe("true");
+    expect(cell.textContent).toBe("");
+    expect(dayButtonIn(cell)).toBeNull();
+    // June 28 is an outside day of July inside the bounds: still a day.
+    expect(dayButtonIn(container.querySelector('[data-day="2026-06-28"]'))).not.toBeNull();
   });
 
   it("renders the footer, day labels and a custom DayButton", () => {

@@ -570,6 +570,9 @@ function Calendar({
     return result;
   }
 
+  const pressedAgain = (_date: Date, modifiers: Modifiers) =>
+    mode === "single" && !!required && modifiers.selected && !modifiers.disabled;
+
   let value: CalendarValue = null;
   if (mode === "single" && current) value = toISO(current as Date);
   if (mode === "multiple") value = ((current as Date[] | undefined) ?? []).map(toISO);
@@ -786,7 +789,12 @@ function Calendar({
                 </th>
               )}
               {week.map((cell) =>
-                cell.hidden ? (
+                // react-day-picker also hides outside days past its
+                // navigation bounds (startMonth/endMonth).
+                cell.hidden ||
+                (cell.outside &&
+                  ((navStart && fromISO(cell.date) < navStart) ||
+                    (navEnd && fromISO(cell.date) > navEnd))) ? (
                   <td
                     key={cell.date}
                     className={cn(classes.day, classes.hidden)}
@@ -806,6 +814,19 @@ function Calendar({
                           // UI SDK leaves another month's days out of the tab
                           // order but still lets a press select them.
                           tabIndex={partProps.tabIndex ?? -1}
+                          // react-day-picker calls onSelect when a required
+                          // single date is pressed again; UI SDK reports
+                          // changes only.
+                          onClick={(event: React.MouseEvent<HTMLTableCellElement>) => {
+                            partProps.onClick?.(event);
+                            if (pressedAgain(date, modifiers)) commit(date, date, event.nativeEvent);
+                          }}
+                          onKeyDown={(event: React.KeyboardEvent<HTMLTableCellElement>) => {
+                            partProps.onKeyDown?.(event);
+                            if ((event.key === "Enter" || event.key === " ") && pressedAgain(date, modifiers)) {
+                              commit(date, date, event.nativeEvent);
+                            }
+                          }}
                           className={cn(
                             classes.day,
                             ...DAY_FLAGS.filter((flag) => modifiers[flag]).map(
