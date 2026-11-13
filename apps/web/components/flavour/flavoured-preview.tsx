@@ -25,10 +25,10 @@ class FolderLoadError extends Error {
   }
 }
 
-function loadFolder(folder: string): Promise<PreviewFolder> {
+function loadFolder(folder: string, importer?: () => Promise<PreviewFolder>): Promise<PreviewFolder> {
   let load = loads.get(folder);
   if (!load) {
-    const importFolder = uiSdkPreviewFolders[folder];
+    const importFolder = importer ?? uiSdkPreviewFolders[folder];
     const promise = importFolder ? importFolder() : Promise.reject(new Error(`No UI SDK previews for ${folder}`));
     const entry: FolderLoad = {
       promise: promise.catch((cause: unknown) => {
@@ -72,8 +72,16 @@ if (typeof window !== "undefined") {
 // gallery page whose chunk failed does not read out a dozen identical alerts.
 const announcers = new Map<string, string>();
 
-function UiSdkExample({ folder, name }: { folder: string; name: string }) {
-  const Example = React.use(loadFolder(folder)).default[name];
+function UiSdkExample({
+  folder,
+  name,
+  importFolder,
+}: {
+  folder: string;
+  name: string;
+  importFolder?: () => Promise<PreviewFolder>;
+}) {
+  const Example = React.use(loadFolder(folder, importFolder)).default[name];
   if (!Example) throw new Error(`No UI SDK preview "${name}" in ${folder}`);
   return <Example />;
 }
@@ -185,6 +193,7 @@ export function FlavouredPreview({
   folder,
   name,
   available,
+  importFolder,
 }: {
   children: React.ReactNode;
   /** `<kind>/<primitive>`, e.g. `components/dialog`. */
@@ -193,6 +202,11 @@ export function FlavouredPreview({
   name: string;
   /** False when the example has no UI SDK version yet. */
   available: boolean;
+  /**
+   * Loads a folder that is not in the generated map, e.g. a page's own composition. Defaults to the map's
+   * entry for `folder`; the first load of a folder is cached under its name, so keep `folder` unique.
+   */
+  importFolder?: () => Promise<PreviewFolder>;
 }) {
   const flavour = useFlavour();
   // The flavour on screen trails the chosen one through a transition: while the UI SDK chunk loads, React
@@ -235,7 +249,7 @@ export function FlavouredPreview({
           key={attempt}
           label={`${folder}/${name}`}
         >
-          <UiSdkExample folder={folder} name={name} />
+          <UiSdkExample folder={folder} importFolder={importFolder} name={name} />
         </PreviewBoundary>
       </div>
     );
