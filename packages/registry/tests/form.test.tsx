@@ -126,6 +126,35 @@ describe("Form", () => {
     expect(document.activeElement).toBe(email);
   });
 
+  // After a failed submit Base UI re-validates a field as it changes, so the
+  // message goes once the value is fixed, without another submit.
+  it("re-validates a failed field as the user types after a submit", async () => {
+    const user = userEvent.setup();
+    render(
+      <Form onFormSubmit={() => {}}>
+        <Field name="email">
+          <FieldLabel>Email</FieldLabel>
+          <Input type="email" required />
+          <FieldError />
+        </Field>
+        <Field
+          name="nick"
+          validate={(value) => (String(value ?? "").length < 3 ? "Nick needs 3+ chars" : null)}
+        >
+          <FieldLabel>Nick</FieldLabel>
+          <Input />
+          <FieldError />
+        </Field>
+        <button type="submit">Submit</button>
+      </Form>,
+    );
+    await user.click(screen.getByRole("button", { name: "Submit" }));
+    expect(screen.getByText("Nick needs 3+ chars")).toBeTruthy();
+    await user.type(screen.getByLabelText("Nick"), "abc");
+    expect(screen.queryByText("Nick needs 3+ chars")).toBeNull();
+    expect(screen.getByLabelText("Nick").getAttribute("aria-invalid")).not.toBe("true");
+  });
+
   it("shows a native error on a field with invalid={false}", async () => {
     const user = userEvent.setup();
     render(
