@@ -109,8 +109,8 @@ function DialogTrigger({
   );
 }
 
-// UI SDK renders popups in place in the top layer, so there is nothing to
-// portal; the part stays so composed markup keeps working.
+// The content parts render into <body> themselves (usePopupContainer), so
+// there is nothing to portal; the part stays so composed markup keeps working.
 function DialogPortal({
   children,
 }: {

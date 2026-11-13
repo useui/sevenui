@@ -116,8 +116,12 @@ export const UI_SDK_NOTES: Partial<Record<string, UiSdkNote[]>> = {
   ],
   direction: [
     {
-      text: "`DirectionProvider` adds a `display: contents` wrapper with `dir`, because UI SDK reads direction from the page.",
+      text: "`DirectionProvider` adds a `display: contents` wrapper with `dir`, because UI SDK reads direction from the page. With a `direction` the wrapper also holds an empty host after its children, where the popups inside it render.",
       rows: ["direction | `DirectionProvider` is context only"],
+    },
+    {
+      text: "Popups inside an rtl `DirectionProvider` render right-to-left, and `align=\"start\"` lines them up with the trigger's right edge; Base UI's render left-to-right, aligned from the left. Their arrow keys are the same in both.",
+      rows: ["direction | popups under `DirectionProvider direction=\"rtl\"`"],
     },
     {
       text: "Without a `DirectionProvider`, on a page with `dir=\"rtl\"`, arrow keys follow the page's direction (ArrowRight moves a slider thumb right); Base UI reads the direction only from `DirectionProvider`, so its arrows stay left-to-right there.",
@@ -339,7 +343,7 @@ export const POPUP_PRIMITIVES = new Set([
 ]);
 
 export const POPUP_NOTE: UiSdkNote = {
-  text: "Popups open in the browser's top layer (the Popover API) where they are declared, with no portal and no Positioner element; `side=\"inline-start\"`/`\"inline-end\"` map to `start`/`end`. Callback `details.reason` strings are UI SDK's (for example `trigger-press`, `escape-key`, `outside-press`). An `initialFocus` or `finalFocus` function receives `\"mouse\"` as its interaction, and one that returns nothing hands focus back to the trigger.",
+  text: "Popups open in the browser's top layer (the Popover API), rendered into `<body>` as Base UI's are, with no Positioner element; `side=\"inline-start\"`/`\"inline-end\"` map to `start`/`end`. Callback `details.reason` strings are UI SDK's (for example `trigger-press`, `escape-key`, `outside-press`). An `initialFocus` or `finalFocus` function receives `\"mouse\"` as its interaction, and one that returns nothing hands focus back to the trigger.",
   rows: [
     "all popups | `XPortal` portals to `body`",
     "all popups | `side` accepts",
@@ -381,6 +385,7 @@ export const INTERNAL_ROWS: Record<string, string> = {
   "registry | examples": "the registry layout; the installation guide covers the `/r/ui-sdk/` paths",
   "breadcrumb, button-group, item, marker, bubble, attachment, layer-card | `useRender` state": "the same attributes are set explicitly",
   "button-group, item | `ButtonGroupSeparator`/`ItemSeparator`": "no divergence left",
+  "button-group | the end-corner rule rounds": "the same corners as Base UI; only hidden form inputs are skipped",
   "sidebar | `SidebarMenuButton` with `tooltip`": "the slot is kept",
   "sidebar | `SidebarInput`/`SidebarSeparator`": "no divergence left",
   "navigation-menu | content `h-full w-auto`": "the content sizes itself inside the viewport and looks the same",

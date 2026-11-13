@@ -97,7 +97,7 @@ If base changes under a seed, `node scripts/ui-sdk-flavour.mjs sync` re-seeds pe
 
 | Base UI | UI SDK | Notes |
 |---|---|---|
-| `X.Portal` | none | Popups render in place, in the browser top layer (Popover API). Keep a SevenUI `XPortal` export as a pass-through fragment (`dialog.tsx`, `dropdown-menu.tsx`). |
+| `X.Portal` | none | Popups show in the browser top layer (Popover API) and UI SDK renders them in place; the flavour renders them into `<body>` through UI SDK's `container` (§4.6). Keep a SevenUI `XPortal` export as a pass-through fragment (`dialog.tsx`, `dropdown-menu.tsx`). |
 | `X.Positioner` | none | `side`, `align`, `sideOffset`, `alignOffset`, `collisionPadding`, `arrowPadding`, `anchor`, `container`, `keepMounted` go on the Content part. `z-*` classes are inert but harmless; keep them for identical markup. |
 | `X.Popup` | `XContent` | |
 | `X.Backdrop` | `XBackdrop` | A backdrop is itself a `popover="manual"` element in the top layer. |
@@ -214,7 +214,7 @@ Trigger state carries `open` for dialog, menu, submenu, select and tooltip. See 
 | Part | What the flavour does |
 |---|---|
 | `TooltipProvider` | Becomes a context of default delays (`tooltip.tsx`). |
-| `XPortal` | A fragment. |
+| `XPortal` | A fragment; the content parts render into `<body>` themselves (§4.6). |
 | `SelectScrollUp/DownButton` | Render `null`. |
 | `DirectionProvider` | Sets `dir` on a `display: contents` wrapper and keeps `useDirection` working (`direction.tsx`). |
 | Parts that become irrelevant | Keep the export and keep its props in the type, so callers compile. |
@@ -234,6 +234,26 @@ return renderElement("span", mergeProps({ "data-slot": "badge", "data-variant": 
 - UI SDK `className`, `style` and `children` can be functions of state.
 - SevenUI wrappers that run `cn()` over `className` type it as `string`. Base did the same in practice.
 - Where a wrapper appends its own children, as `DialogContent` does with the close button, narrow `children` to `ReactNode`.
+
+### 4.6 Popups render into `<body>`
+
+UI SDK renders a popup in place: the content element is a DOM child of whatever holds its trigger, shown in the top layer. Base UI portals it to `<body>`. So in the flavour every rule on a parent that reaches its children or descendants reached the popup too, rules that never matched in base:
+
+- Field's `*:w-full` stretched a Select, Popover, Combobox, menu or hover card placed directly in a vertical Field to the full viewport (1280px wide in Chrome, where base's select matched its 704px trigger), and pushed a submenu off-screen; a responsive Field's `@md:*:w-auto` shrank a Dialog to 114px.
+- ButtonGroup's corner rules squared the popup and, because the popup (or a select's or tooltip's closed content, which stays mounted) followed the trigger, the trigger lost its rounded end.
+- The class is wider than Field: `in-*` selectors inside popups (`in-data-[slot=button-group]` on Button, `in-data-[slot=dialog-content]` on Command), `**:`/`[&_…]` rules on menus and items, sibling and `:has(~…)` rules, and inherited properties (an invalid Field's `text-destructive`, a card's `text-center`) all reached in-place popups.
+
+**Mechanism.** Every popup part passes UI SDK's own `container` prop: the content part of popover, select, combobox, dropdown-menu (content and sub-content, through `contentPart`), context-menu, tooltip, hover-card, the navigation-menu viewport and the toast region, and the root of dialog, alert-dialog, sheet and drawer (their backdrop takes no `container` and follows the root's). `container` is documented API (popups.md, "Mounting and Containers"): keyboard order still follows the trigger, and focus, Escape, outside presses and scroll locking work from there. This was chosen over excluding popups from the parents' selectors (`:not([popover])` and the like) because no selector on the parent can stop an `in-*` rule inside the popup, inherited styles, or a sibling rule counting the popup, and patching would touch dozens of class strings in many files; rendering where Base UI renders removes the whole class at once and leaves every class string as it was.
+
+Each popup file carries the same small hook, `usePopupContainer()`:
+
+- `document.body` on the client; `null` (in place) on the server and while hydrating, through `useSyncExternalStore`, so a popup rendered open on the server hydrates without a mismatch and moves after;
+- inside a `DirectionProvider` with a `direction`, that provider's host instead: an empty `display: contents` element (`data-slot="direction-popups"`) after the children, inside its `dir` wrapper, so UI SDK, which reads direction from the DOM, keeps right-to-left keys and placement. The provider and the popup files meet through a context stored under `Symbol.for("sevenui.ui-sdk.popup-host")`, the pattern `form.tsx` and `field.tsx` use, so no file imports another;
+- it is passed before the caller's props, so a caller's own `container` (including `null`, in place) still wins. UI SDK keeps submenus inside their parent popup whatever the container.
+
+**Not a popup, same class.** UI SDK leaves a select's, combobox's, checkbox's, switch's and radio's form input beside the control with its own `data-slot` (`select-form-input`, `checkbox-input`, …); Base UI's carry none. They are absolutely positioned 1px boxes, so `*:w-full` and `[&>input]:flex-1` do nothing to them, but ButtonGroup's end-corner rule (`[&>[data-slot]:not(:has(~[data-slot]))]`) counted the select's and squared the trigger, so the flavour's rule skips `input[aria-hidden=true]` and `input[type=hidden]`.
+
+**Checked.** `tests/popup-container.test.tsx` (both projects; 16 cases fail on the in-place flavour): every popup kind opened inside a Field is not inside it, the dialog overlay, a popover inside a dialog's Field, the toast viewport, the ButtonGroup rule against a select, and an rtl submenu opening with ArrowLeft. In Chrome, a lab matrix (Field in each orientation holding Select, Popover, Combobox, DropdownMenu with a submenu, Tooltip, HoverCard, a date picker and a Dialog; ButtonGroup with a menu, select, popover and tooltip; InputGroup addons; Toolbar; Item; a dialog's Fields) gave base's popup box and trigger corners in all 41 cases, and pointer and keyboard paths (selection inside a modal dialog, Tab out of a non-modal popover and back, submenu keys, outside press) matched base. `scripts/check-home.mjs --browser` measures the home surface's select and date popover inside their Fields.
 
 ## 5. The cascade layer
 
@@ -314,7 +334,7 @@ Which examples each row affects is recorded in `packages/registry/ui-sdk-compat.
 
 | Primitive | Base UI behaviour / API | UI SDK flavour | Why |
 |---|---|---|---|
-| all popups | `XPortal` portals to `body` | pass-through fragment; content in the top layer in place | UI SDK has no portals |
+| all popups | `XPortal` portals to `body` | pass-through fragment (its `container` is ignored); the content renders into `<body>` through UI SDK's `container`, in the top layer, so whatever holds the trigger no longer reaches it; under a `DirectionProvider` with a direction, into a host inside its wrapper; in place during the server render and hydration; a caller's `container` on the content wins | UI SDK has no portals and renders popups in place, where Field's `*:w-full` stretched them to the viewport and ButtonGroup squared their corners (§4.6) |
 | all popups | `side` accepts `inline-start`/`inline-end` | mapped to `start`/`end` | UI SDK naming |
 | all popups | Positioner wrapper element (`isolate z-50`) | none; the Content is `[popover]` and carries inline position | UI SDK has no Positioner |
 | all popups | `collisionPadding` defaults to 5 | the same default on every content part (UI SDK's is 8); a caller's value wins | checked in Chrome on popover-demo: x 5 in both |
@@ -339,7 +359,7 @@ Which examples each row affects is recorded in `packages/registry/ui-sdk-compat.
 | tooltip | trigger rendered through a `Button` keeps `data-slot="button"` | gets `data-slot="tooltip-trigger"` | the UI SDK part's slot reaches the render element; not adapted (0 examples style `data-[slot=button]`; checked 2026-11-13) |
 | select | `items` value→label map (array or record) | converted to `itemToLabel`; a `value: null` entry becomes `placeholder` | UI SDK `items` is list data that overrides rendered items |
 | select | opening by pointer highlights nothing | highlights the first or selected option and moves focus into the list a tick later | UI SDK behaviour |
-| select | `alignItemWithTrigger` (default on) lays the selected item over the trigger, or the **first** item while nothing is selected | UI SDK aligns only a selected item (else opens below), and any `anchor` turns its alignment off; so the flavour anchors the content to a zero-height box where its top must go for the selected or first enabled item to sit centred on the trigger, with `sideOffset` 0. No room, or a touch open: the trigger box plus `sideOffset` (normal placement). The anchor also lines the item's text up with the value's text and, near the viewport top, keeps the popup 10px from the edge by scrolling its list, as Base UI does. Checked in Chrome: select-demo, select-groups and select-05 give the same popup frame and item positions as base to the pixel | UI SDK has no placeholder alignment |
+| select | `alignItemWithTrigger` (default on) lays the selected item over the trigger, or the **first** item while nothing is selected | UI SDK aligns only a selected item (else opens below), and any `anchor` turns its alignment off; so the flavour anchors the content to a zero-height box where its top must go for the selected or first enabled item to sit centred on the trigger, with `sideOffset` 0. No room, or a touch open: the trigger box plus `sideOffset` (normal placement). The anchor also lines the item's text up with the value's text and, near the viewport top, keeps the popup 10px from the edge by scrolling its list, as Base UI does. A popup wider than its trigger (`min-w-36` against a short value) starts there too, whatever the `align`: with nothing selected UI SDK applies `align` to the trigger-wide anchor (it centred the popup, 36px left of base), so the anchor undoes that shift. Checked in Chrome: select-demo, select-groups and select-05 give the same popup frame and item positions as base to the pixel; a 71px trigger in a ButtonGroup and a horizontal Field (with and without a selection), field-14 and select-04 open at base's position | UI SDK has no placeholder alignment |
 | select | `SelectScrollUp/DownButton` | render `null` | no scroll arrows; the list scrolls |
 | select | `finalFocus` on `SelectContent`; grouped `items` (`{ items: [...] }[]`) | `finalFocus` accepted, ignored; group items are read for labels | UI SDK's select always returns focus to its trigger and has no focus option |
 | select | `SelectLabel` = group label | `SelectGroupLabel` with slot `select-label` | UI SDK's `SelectLabel` labels the select |
@@ -352,7 +372,9 @@ Which examples each row affects is recorded in `packages/registry/ui-sdk-compat.
 | registry | examples (`/r/demo/*`, `/r/component/*`) depend on `/r/<x>.json` | flavoured copies at `/r/ui-sdk/demo/*` and `/r/ui-sdk/component/*` depend on `/r/ui-sdk/<x>.json`; the base ones are unchanged | §11 |
 | breadcrumb, button-group, item, marker, bubble, attachment, layer-card | `useRender` state → `data-*` (`data-slot`, `data-variant`, `data-size`, …; a `true` boolean as an empty attribute) | the same attributes set explicitly in the first `mergeProps` source; `layer-card-panel` keeps its slot last | `renderElement` derives no attributes |
 | button-group, item | `ButtonGroupSeparator`/`ItemSeparator` pass `data-slot` to `Separator` | same: the flavour `Separator` lets a caller's `data-slot` win | no divergence left (the render workaround was removed once `separator` honoured the slot) |
-| direction | `DirectionProvider` is context only and adds no element | context **plus** a `<div dir style="display: contents">` wrapper (no `dir` without a `direction` prop); `useDirection` reads the context as before | UI SDK reads the computed direction from the page, not from React context |
+| direction | `DirectionProvider` is context only and adds no element | context **plus** a `<div dir style="display: contents">` wrapper (no `dir` without a `direction` prop), which with a `direction` also holds an empty `display: contents` host (`data-slot="direction-popups"`) after the children, where the popups inside render (§4.6); `useDirection` reads the context as before | UI SDK reads the computed direction from the page, not from React context |
+| direction | popups under `DirectionProvider direction="rtl"` render in `<body>` without its `dir`: left-to-right text, `align="start"` measured from the trigger's left edge; their keys follow the context (ArrowLeft opens a submenu) | they render in the provider's host, so the same keys, but right-to-left text and `align="start"` from the trigger's right edge (a menu sat 67px left of base's in Chrome) | UI SDK reads keys and placement from the DOM; keeping the popups under the `dir` wrapper keeps their keys as in base |
+| button-group | the end-corner rule rounds the last child that has a `data-slot` | the same, skipping hidden inputs (`input[aria-hidden=true]`, `input[type=hidden]`) | UI SDK keeps a select's form input beside the trigger with its own slot (`select-form-input`), so a select ending a group lost its rounded end (§4.6) |
 | direction, slider (and every arrow-key part) | without a `DirectionProvider`, a page with `dir="rtl"` mirrors the slider's look but not its arrows: ArrowRight moves the thumb left (Base UI reads direction only from React context) | arrows follow the page's direction, so ArrowRight moves the thumb right. Under `DirectionProvider direction="rtl"` both flavours behave the same (`tests/slider.test.tsx`) | kept: base's behaviour there contradicts its own visuals; UI SDK reads the computed direction |
 | sidebar | `SidebarMenuButton` tooltip hidden with `hidden` on the popup while expanded or mobile, and not part of the button's description | `disabled` on the `Tooltip` root, plus `hidden` (only ever set, never cleared) so a tooltip already open when the sidebar expands disappears; a disabled tooltip adds no `aria-describedby` (see tooltip), so the button is announced once | UI SDK manages `hidden` on closed content; `disabled` does not close an open tooltip |
 | sidebar | `SidebarMenuButton` with `tooltip` keeps `data-slot="sidebar-menu-button"` on the trigger | same, put back on the rendered element through the trigger's `render` | the tooltip trigger part would set `tooltip-trigger` |
