@@ -396,7 +396,7 @@ function ComboboxInput({
   disabled = false,
   showTrigger = true,
   showClear = false,
-  render: _render,
+  render,
   ...props
 }: Omit<React.ComponentProps<typeof ComboboxInputPrimitive>, "render" | "className"> & {
   className?: string;
@@ -416,15 +416,26 @@ function ComboboxInput({
       )}
     >
       {/* A render element would take the part's own combobox-input slot, which
-          the flavour Input lets win; the group's focus ring keys on this one. */}
+          the flavour Input lets win; the group's focus ring keys on this one.
+          A caller's render replaces the input, as in Base UI (no slot). */}
       <ComboboxInputPrimitive
-        render={(inputProps) => (
-          <InputGroupInput
-            {...(inputProps as React.ComponentProps<typeof InputGroupInput>)}
-            data-slot="input-group-control"
-            disabled={disabled}
-          />
-        )}
+        render={
+          render
+            ? (inputProps, state) =>
+                renderElement(
+                  "input",
+                  { ...inputProps, "data-slot": undefined },
+                  render as RenderProp<typeof state>,
+                  state,
+                )
+            : (inputProps) => (
+                <InputGroupInput
+                  {...(inputProps as React.ComponentProps<typeof InputGroupInput>)}
+                  data-slot="input-group-control"
+                  disabled={disabled}
+                />
+              )
+        }
         {...(props as React.ComponentProps<typeof ComboboxInputPrimitive>)}
       />
       <InputGroupAddon align="inline-end">

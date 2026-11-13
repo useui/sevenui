@@ -54,6 +54,17 @@ describe("Combobox", () => {
     expect(getInput().closest("[data-slot=input-group]")).not.toBeNull();
   });
 
+  it("renders a caller's render element as the input", () => {
+    render(
+      <Combobox items={fruits}>
+        <ComboboxInput render={<input data-custom="yes" />} placeholder="Pick a fruit" />
+      </Combobox>,
+    );
+    const input = screen.getByRole("combobox");
+    expect(input.getAttribute("data-custom")).toBe("yes");
+    expect(input.getAttribute("placeholder")).toBe("Pick a fruit");
+  });
+
   it("opens the popup and lists all options when typing begins", async () => {
     const user = userEvent.setup();
     render(<FruitCombobox />);
