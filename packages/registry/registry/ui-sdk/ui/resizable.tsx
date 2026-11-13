@@ -212,7 +212,8 @@ function ResizablePanelGroup({
         render={(partProps, state) =>
           renderElement(
             "div",
-            { ...partProps, "data-slot": "resizable-panel-group" },
+            // react-resizable-panels marks the group data-group="true".
+            { ...partProps, "data-slot": "resizable-panel-group", "data-group": "true" },
             undefined,
             state,
           )
@@ -320,6 +321,9 @@ function ResizablePanel({
         assignRef(elementRef, node);
       }}
       data-slot="resizable-panel"
+      // react-resizable-panels marks every panel data-panel="true";
+      // examples select panels by it.
+      data-panel="true"
       // react-resizable-panels scrolls a panel's content that overflows.
       style={{ overflow: "auto", ...style }}
       id={id === undefined ? undefined : String(id)}
@@ -338,6 +342,8 @@ function ResizableHandle({
   elementRef,
   id,
   children: _children,
+  onFocus,
+  onBlur,
   ...props
 }: Omit<React.HTMLAttributes<HTMLDivElement>, "id"> & {
   withHandle?: boolean;
@@ -345,12 +351,43 @@ function ResizableHandle({
   id?: string | number;
   elementRef?: React.Ref<HTMLDivElement | null>;
 }) {
+  const [focused, setFocused] = React.useState(false);
   return (
     <ResizableHandlePrimitive
       {...(props as React.ComponentProps<typeof ResizableHandlePrimitive>)}
       ref={elementRef as React.Ref<HTMLDivElement>}
       id={id === undefined ? undefined : String(id)}
       data-slot="resizable-handle"
+      onFocus={(event: React.FocusEvent<HTMLDivElement>) => {
+        setFocused(true);
+        onFocus?.(event);
+      }}
+      onBlur={(event: React.FocusEvent<HTMLDivElement>) => {
+        setFocused(false);
+        onBlur?.(event);
+      }}
+      // react-resizable-panels' separator state, which examples style:
+      // disabled, then active (dragging), focus, hover, inactive.
+      render={(partProps, state) =>
+        renderElement(
+          "div",
+          {
+            ...partProps,
+            "data-slot": "resizable-handle",
+            "data-separator": state.disabled
+              ? "disabled"
+              : state.dragging
+                ? "active"
+                : focused
+                  ? "focus"
+                  : state.hovering
+                    ? "hover"
+                    : "inactive",
+          },
+          undefined,
+          state,
+        )
+      }
       className={cn(
         "relative flex w-px items-center justify-center bg-border ring-offset-background after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden aria-[orientation=horizontal]:h-px aria-[orientation=horizontal]:w-full aria-[orientation=horizontal]:after:left-0 aria-[orientation=horizontal]:after:h-1 aria-[orientation=horizontal]:after:w-full aria-[orientation=horizontal]:after:translate-x-0 aria-[orientation=horizontal]:after:-translate-y-1/2 [&[aria-orientation=horizontal]>div]:rotate-90",
         className,

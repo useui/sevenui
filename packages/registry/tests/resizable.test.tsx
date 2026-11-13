@@ -259,6 +259,33 @@ describe("ResizableHandle", () => {
   });
 });
 
+// Examples style react-resizable-panels' data-group, data-panel and
+// data-separator (inactive, hover, focus, active, disabled); the flavour emits
+// the same attributes.
+describe("Resizable data attributes", () => {
+  it("marks the group, panels and separator state", async () => {
+    const { container } = render(
+      <ResizablePanelGroup>
+        <ResizablePanel id="one" defaultSize="50%">One</ResizablePanel>
+        <ResizableHandle />
+        <ResizablePanel id="two" defaultSize="50%">Two</ResizablePanel>
+        <ResizableHandle disabled />
+        <ResizablePanel id="three" defaultSize="50%">Three</ResizablePanel>
+      </ResizablePanelGroup>,
+    );
+    expect(container.querySelector("[data-slot=resizable-panel-group]")?.getAttribute("data-group")).toBe("true");
+    const panels = container.querySelectorAll("[data-slot=resizable-panel]");
+    expect([...panels].map((panel) => panel.getAttribute("data-panel"))).toEqual(["true", "true", "true"]);
+    const [handle, disabled] = container.querySelectorAll<HTMLElement>("[data-slot=resizable-handle]");
+    await waitFor(() => expect(handle.getAttribute("data-separator")).toBe("inactive"));
+    expect(disabled.getAttribute("data-separator")).toBe("disabled");
+    act(() => handle.focus());
+    await waitFor(() => expect(handle.getAttribute("data-separator")).toBe("focus"));
+    act(() => handle.blur());
+    await waitFor(() => expect(handle.getAttribute("data-separator")).toBe("inactive"));
+  });
+});
+
 describe("ResizablePanel", () => {
   it("fires onLayoutChanged on mount and after keyboard resize", async () => {
     const onLayoutChanged = vi.fn();
