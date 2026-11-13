@@ -264,7 +264,7 @@ pnpm test                                               # everything (root)
 How the `ui-sdk` project works:
 - It aliases `@/registry/base/ui/*` → `registry/ui-sdk/ui/*`.
 - Its setup file is `tests/setup-ui-sdk.ts`: the jsdom stubs, plus `__UI_SDK_STRICT__`.
-- It picks up a test file **once every primitive the file imports is ported**, so no file mixes the two flavours. A test that imports a pending primitive waits for it.
+- It runs **every test file that imports a primitive**. During porting it picked a file up only once every primitive the file imports was ported, so no file mixed the two flavours; now that all are ported, `vitest.config.ts` fails, naming the file and the primitive, if a file would be left out.
   - Moving a cross-primitive test to the other primitive's file is fine if the behaviour is the same. The Field + Checkbox labelling test moved to `field.test.tsx`.
 
 The `base` project also runs `api-freeze`, which now requires every ported flavour file to export exactly what its base file exports.

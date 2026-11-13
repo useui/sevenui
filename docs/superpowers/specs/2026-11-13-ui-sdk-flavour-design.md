@@ -29,7 +29,7 @@ The existing Base UI output is untouched: `/r/*.json`, `/r/demo/*.json` and `/r/
 | 5 | Same public API across flavours: export names, props, `data-slot` values, `render`. | As decided. Adapters are documented in the guide §4, divergences in its §8. Export names are enforced by `tests/api-freeze.test.ts`. |
 | 6 | ~~Third-party wrappers stay as they are.~~ | **Reversed by the user (2026-11-13):** where UI SDK ships a component, the flavour uses it. `calendar` → `@ui-sdk/react/calendar`, `carousel` → `@ui-sdk/react/carousel`, `resizable` → `@ui-sdk/react/resizable`. `chart` keeps `recharts`, and `message-scroller`/`questionnaire` keep `@shadcn/react` (no UI SDK equivalent). The three replaced primitives get no seed copy. Their API is still under discussion; the guide's §9 has the evidence. `label`, `textarea` and `input-group` also have UI SDK components; **decided (2026-11-13):** the flavour builds them on UI SDK `Label`, `Textarea` and `InputGroup` with the base API kept, and the generator treats them as real ports (`UI_SDK_PORTS`). `pagination` stays a mirror: UI SDK's is stateful and cannot keep the base API (guide §9.4). |
 | 7 | `@ui-sdk/react` and `@ui-sdk/core` pinned exactly in `packages/registry/package.json`; items declare the exact version. | As decided, and enforced: `check-registry` rejects a range operator on `@ui-sdk/*` in the root, registry and site `package.json` and in every published flavour item and example, and the smoke test checks the served items and the version that lands in `node_modules`. pnpm also added both to `minimumReleaseAgeExclude` in `pnpm-workspace.yaml`. A consumer's npm still saves the exact spec with a caret (`^0.1.0-beta.1`), which admits every later `0.1.0` beta and `0.1.x` release, so the installation guide tells consumers to pin it with `--save-exact`. |
-| 8 | The suite runs a second time against the flavour. | As decided. There is a `ui-sdk` vitest project with its own setup file and an alias of `@/registry/base/ui` → `registry/ui-sdk/ui`. It runs a test file once every primitive it imports is ported. |
+| 8 | The suite runs a second time against the flavour. | As decided. There is a `ui-sdk` vitest project with its own setup file and an alias of `@/registry/base/ui` → `registry/ui-sdk/ui`. It runs every test file that imports a primitive; with every primitive ported, `vitest.config.ts` fails rather than drop a file whose primitive stops counting as ported, and the export-freeze test asserts every primitive is ported. Both use the generator's one ported rule (`importsReplaced`). |
 | 9 | Guards in `check-registry` and the smoke test. | As decided (§5). |
 | 10 | Deliver `@layer ui-sdk;` to consumers. | shadcn cannot place it (§4). It is a printed manual step plus the docs site's `globals.css`. |
 
@@ -132,8 +132,8 @@ Things found on the way, each with its fix, are in the guide:
 
 | Run | Result | What changed |
 |---|---|---|
-| `base` project | 1,024 tests, 71 files | The original tests pass unchanged; the additions are export-freeze checks for every ported file and tests added with the ports. |
-| `ui-sdk` project | 876 tests + 1 expected failure, 66 files | The expected failure is the input-otp paste test (`it.fails`): a UI SDK 0.1.0-beta.1 bug, see the guide's §8. |
+| `base` project | 1,055 tests, 71 files (2026-11-13, at the end of the review fixes) | The original tests pass unchanged; the additions are export-freeze checks for every ported file and tests added with the ports. |
+| `ui-sdk` project | 907 tests, 66 files (every test file that imports a primitive) | The input-otp paste bug of UI SDK 0.1.0-beta.1 is pinned by its exact strict-mode error and proved without strict mode (guide §8). |
 
 Flavour-specific expectations live in `tests/helpers/flavour.ts`. Each states why it exists.
 
