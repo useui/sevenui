@@ -21,13 +21,29 @@
 //   blocked  ported, but a registryDependency is not, so it stays out of the
 //            published registry until that dependency is ported
 //
-//   node scripts/ui-sdk-flavour.mjs build    write packages/registry/registry.ui-sdk.json
-//   node scripts/ui-sdk-flavour.mjs sync     re-seed pending files and mirrors from base
-//   node scripts/ui-sdk-flavour.mjs status   list ported, blocked and pending primitives
-//                                     (--strict exits 1 while any remain)
+// The demos and gallery examples are written once, against
+// `@/registry/base/ui/*`. Their flavour source is the overlay file at the
+// mirrored path, registry/ui-sdk/examples/{demos,components}/<primitive>/<file>.tsx,
+// if one exists (a variant: the same example with only what the flavour
+// requires changed), otherwise the original file. The flavour example
+// registries (/r/ui-sdk/demo/*, /r/ui-sdk/component/*) and the generated
+// example tree are derived from that source with its primitive imports
+// retargeted to `@/registry/ui-sdk/`:
+//   packages/registry/.generated/ui-sdk/{demos,components}/<primitive>/<file>.tsx
+//   packages/registry/.generated/ui-sdk/{demos,components}/registry.json
+// Both are git-ignored build output; the docs site renders its flavour
+// previews from the tree.
+//
+//   node scripts/ui-sdk-flavour.mjs build     write packages/registry/registry.ui-sdk.json
+//                                             and the generated example tree
+//   node scripts/ui-sdk-flavour.mjs examples  write the generated example tree only
+//   node scripts/ui-sdk-flavour.mjs sync      re-seed pending files and mirrors from base
+//   node scripts/ui-sdk-flavour.mjs status    list ported, blocked and pending primitives
+//                                             and the example totals (--strict exits 1
+//                                             while any primitive remains)
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -38,6 +54,15 @@ export const FLAVOUR_URL = /^https:\/\/sevenui\.dev\/r\/ui-sdk\/([a-z0-9-]+)\.js
 
 // Items every flavour shares: never duplicated under /r/ui-sdk/.
 export const SHARED_ITEMS = new Set(["theme", "sevenui-tokens", "animations"]);
+
+// Example source roots (under packages/registry) -> their /r/ route segment.
+export const EXAMPLE_KINDS = { demos: "demo", components: "component" };
+export const OVERLAY_ROOT = join(REGISTRY_ROOT, "registry/ui-sdk/examples");
+export const GENERATED_ROOT = join(REGISTRY_ROOT, ".generated/ui-sdk");
+// Examples that cannot exist in the flavour, as "<route>/<name>": reason.
+// They are left out of /r/ui-sdk/{demo,component}/ and the generated tree,
+// and check-registry prints each one. Every example has a flavour today.
+export const EXCLUDED_EXAMPLES = {};
 
 // Package -> whether a pending file may be a seed copy. The third-party
 // wrappers get no seed: their port is a rewrite, not an edit of a copy.
@@ -265,6 +290,180 @@ export function readFlavour() {
   };
 }
 
+const posix = (p) => p.split(sep).join("/");
+function walkFiles(dir, out = []) {
+  if (!existsSync(dir)) return out;
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = join(dir, entry.name);
+    if (entry.isDirectory()) walkFiles(full, out);
+    else out.push(full);
+  }
+  return out;
+}
+
+const RELATIVE_IMPORT = /(?:from\s+|import\s*\(\s*|import\s+)["'](\.{1,2}\/[^"']+)["']/g;
+
+/**
+ * Derives the flavour example registries and the generated example tree from
+ * demos/registry.json, components/registry.json and the overlay tree. Returns
+ * one registry per kind, the files the tree holds (path relative to the tree
+ * root -> content), every example's flavour source, and the problems the
+ * check must fail on.
+ */
+export function readFlavourExamples(flavour = readFlavour()) {
+  const root = loadJson(join(REGISTRY_ROOT, "registry.json"));
+  const pkg = loadJson(join(REGISTRY_ROOT, "package.json"));
+  const ranges = { ...pkg.devDependencies, ...pkg.dependencies };
+  const uiNames = new Set(root.items.filter((i) => i.type === "registry:ui").map((i) => i.name));
+  const published = new Set(flavour.registry.items.map((i) => i.name));
+  const problems = [];
+  const files = new Map();
+  const examples = new Map();
+  const registries = {};
+  const excluded = [];
+
+  // Overlays first: each must mirror a registered example.
+  const overlays = new Map();
+  for (const abs of walkFiles(OVERLAY_ROOT)) {
+    const rel = posix(relative(OVERLAY_ROOT, abs));
+    const [kind] = rel.split("/");
+    if (!(kind in EXAMPLE_KINDS) || !rel.endsWith(".tsx")) {
+      problems.push(`overlay ${rel}: overlays are registry/ui-sdk/examples/{${Object.keys(EXAMPLE_KINDS).join(",")}}/<primitive>/<file>.tsx`);
+      continue;
+    }
+    overlays.set(rel, read(abs));
+  }
+  const registered = new Set();
+
+  for (const [kind, route] of Object.entries(EXAMPLE_KINDS)) {
+    const kindRoot = join(REGISTRY_ROOT, kind);
+    const registry = loadJson(join(kindRoot, "registry.json"));
+    const items = [];
+    for (const item of registry.items) {
+      const key = `${route}/${item.name}`;
+      for (const file of item.files ?? []) registered.add(`${kind}/${file.path}`);
+      if (EXCLUDED_EXAMPLES[key]) {
+        excluded.push({ key, reason: EXCLUDED_EXAMPLES[key] });
+        continue;
+      }
+      const sources = [];
+      for (const file of item.files ?? []) {
+        const rel = `${kind}/${file.path}`;
+        const original = read(join(kindRoot, file.path));
+        const overlay = overlays.get(rel);
+        const source = retarget(overlay ?? original);
+        if (overlay !== undefined) {
+          if (/@\/registry\/base\//.test(overlay)) {
+            problems.push(`overlay ${rel}: imports @/registry/base/; a variant imports @/registry/ui-sdk/`);
+          }
+          if (retarget(original) === source) {
+            problems.push(`overlay ${rel}: is the original with only its imports retargeted, which the generator does by itself; delete it`);
+          }
+        }
+        const replaced = replacedImports(source);
+        if (replaced.length) {
+          problems.push(`${key}: the flavour source of ${rel} imports ${replaced.join(", ")}; write a variant at registry/ui-sdk/examples/${rel}`);
+        }
+        for (const m of source.matchAll(RELATIVE_IMPORT)) {
+          const base = join(overlay !== undefined ? join(OVERLAY_ROOT, kind) : kindRoot, dirname(file.path), m[1]);
+          const found = [base, `${base}.tsx`, `${base}.ts`].find((p) => existsSync(p) && !p.endsWith(sep));
+          if (!found) {
+            problems.push(`${key}: ${rel} imports "${m[1]}", which does not exist`);
+            continue;
+          }
+          const siblingRel = posix(join(kind, relative(overlay !== undefined ? join(OVERLAY_ROOT, kind) : kindRoot, found)));
+          const content = read(found);
+          files.set(siblingRel, /\.tsx?$/.test(found) ? retarget(content) : content);
+        }
+        files.set(rel, source);
+        examples.set(rel.replace(/\.tsx$/, ""), { key, rel, source, original, overlay: overlay !== undefined });
+        sources.push(source);
+      }
+
+      const deps = new Set();
+      for (const dep of item.registryDependencies ?? []) {
+        const name = dep.match(/\/r\/([a-z0-9-]+)\.json$/)?.[1];
+        deps.add(name && uiNames.has(name) && !SHARED_ITEMS.has(name) ? `${SITE}/ui-sdk/${name}.json` : dep);
+      }
+      for (const source of sources) {
+        for (const m of source.matchAll(/@\/registry\/ui-sdk\/ui\/([a-z0-9-]+)/g)) deps.add(`${SITE}/ui-sdk/${m[1]}.json`);
+      }
+      for (const dep of deps) {
+        const name = dep.match(FLAVOUR_URL)?.[1];
+        if (name && !published.has(name)) problems.push(`${key}: depends on the flavour primitive "${name}", which is not published`);
+      }
+      const packages = new Set();
+      for (const source of sources) for (const name of importedPackages(source)) packages.add(name);
+      packages.delete("react");
+      packages.delete("react-dom");
+      const dependencies = [...packages].sort().map((name) => {
+        if (name in REPLACED) return name;
+        if (!ranges[name]) {
+          problems.push(`${key}: imports "${name}", which packages/registry/package.json does not declare`);
+          return name;
+        }
+        return `${name}@${ranges[name]}`;
+      });
+      const { name, type, title, description } = item;
+      items.push({
+        name,
+        type,
+        title,
+        description,
+        ...(dependencies.length ? { dependencies } : {}),
+        registryDependencies: [...deps].sort((a, b) => Number(!FLAVOUR_URL.test(a)) - Number(!FLAVOUR_URL.test(b))),
+        files: (item.files ?? []).map(({ path, type: fileType }) => ({ path, type: fileType })),
+      });
+    }
+    registries[kind] = {
+      $schema: "https://ui.shadcn.com/schema/registry.json",
+      name: `sevenui-ui-sdk-${kind}`,
+      homepage: "https://sevenui.dev",
+      items,
+    };
+    files.set(`${kind}/registry.json`, `${JSON.stringify(registries[kind], null, 2)}\n`);
+  }
+
+  for (const rel of overlays.keys()) {
+    if (!registered.has(rel)) {
+      problems.push(`overlay ${rel}: no registered example at packages/registry/${rel}; an overlay mirrors an example's path`);
+    }
+  }
+  for (const key of Object.keys(EXCLUDED_EXAMPLES)) {
+    if (!excluded.some((e) => e.key === key)) problems.push(`EXCLUDED_EXAMPLES lists ${key}, which is not an example`);
+  }
+  return { registries, files, examples, overlays: [...overlays.keys()], excluded, problems };
+}
+
+// Writes the generated tree, touching only files whose content changed so a
+// running dev server sees real changes only, and removing stale files.
+function writeExamples(derived) {
+  const { files, problems } = derived;
+  if (problems.length) {
+    console.error(`ui-sdk-flavour: ${problems.length} example problem(s)\n${problems.map((p) => `  - ${p}`).join("\n")}`);
+    process.exit(1);
+  }
+  let written = 0;
+  let removed = 0;
+  for (const [rel, content] of files) {
+    const abs = join(GENERATED_ROOT, rel);
+    if (existsSync(abs) && read(abs) === content) continue;
+    mkdirSync(dirname(abs), { recursive: true });
+    writeFileSync(abs, content);
+    written++;
+  }
+  for (const abs of walkFiles(GENERATED_ROOT)) {
+    if (!files.has(posix(relative(GENERATED_ROOT, abs)))) {
+      rmSync(abs);
+      removed++;
+    }
+  }
+  const counts = Object.entries(derived.registries).map(([kind, r]) => `${r.items.length} ${kind}`).join(", ");
+  console.log(
+    `ui-sdk-flavour: example tree packages/registry/.generated/ui-sdk up to date (${counts}, ${derived.overlays.length} variant(s); ${written} written, ${removed} removed)`,
+  );
+}
+
 function sync() {
   const root = loadJson(join(REGISTRY_ROOT, "registry.json"));
   let written = 0;
@@ -297,27 +496,37 @@ function status() {
   console.log(`blocked (${blocked.length}): ${blocked.map((e) => `${e.item.name} <- ${e.waitingOn.join("+")}`).join(", ")}`);
   console.log(`pending (${pending.length}): ${pending.join(", ")}`);
   if (problems.length) console.log(`problems:\n${problems.map((p) => `  - ${p}`).join("\n")}`);
+  const examples = readFlavourExamples();
+  const counts = Object.entries(examples.registries).map(([kind, r]) => `${r.items.length} ${kind}`).join(", ");
+  console.log(`examples: ${counts} published in the flavour, ${examples.overlays.length} variant(s), ${examples.excluded.length} excluded`);
+  for (const e of examples.excluded) console.log(`  excluded ${e.key}: ${e.reason}`);
+  if (examples.problems.length) console.log(`example problems:\n${examples.problems.map((p) => `  - ${p}`).join("\n")}`);
   // --strict is the finish line of the porting programme: nothing left to port.
-  if (process.argv.includes("--strict") && (pending.length || blocked.length || problems.length)) process.exit(1);
+  if (process.argv.includes("--strict") && (pending.length || blocked.length || problems.length || examples.problems.length)) {
+    process.exit(1);
+  }
 }
 
 function build() {
-  const { registry, problems } = readFlavour();
+  const flavour = readFlavour();
+  const { registry, problems } = flavour;
   if (problems.length) {
     console.error(`ui-sdk-flavour: ${problems.length} problem(s)\n${problems.map((p) => `  - ${p}`).join("\n")}`);
     process.exit(1);
   }
   writeFileSync(FLAVOUR_REGISTRY, `${JSON.stringify(registry, null, 2)}\n`);
   console.log(`ui-sdk-flavour: wrote ${registry.items.length} item(s) to packages/registry/registry.ui-sdk.json`);
+  writeExamples(readFlavourExamples(flavour));
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const command = process.argv[2] ?? "status";
   if (command === "build") build();
+  else if (command === "examples") writeExamples(readFlavourExamples());
   else if (command === "sync") sync();
   else if (command === "status") status();
   else {
-    console.error(`unknown command "${command}" (build, sync, status)`);
+    console.error(`unknown command "${command}" (build, examples, sync, status)`);
     process.exit(1);
   }
 }

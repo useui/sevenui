@@ -1,19 +1,26 @@
 // Classifies every demo and gallery example against the UI SDK flavour and
 // keeps packages/registry/ui-sdk-compat.json honest.
 //
-// The examples import `@/registry/base/ui/*`. A consumer who installed the UI
-// SDK flavour has the flavour files under that alias and none of the libraries
-// the flavour replaces. This script rebuilds exactly that view: it copies the
-// flavour tree and the examples into a temporary project whose node_modules
-// links every registry dependency EXCEPT the replaced ones, maps
-// `@/registry/base/ui/*` to the flavour files, and typechecks all of it at once.
+// The examples import `@/registry/base/ui/*`. Each one's flavour source is
+// its overlay (a variant under registry/ui-sdk/examples/) or, without one,
+// the original, with primitive imports retargeted to the flavour: exactly
+// what /r/ui-sdk/{demo,component}/* publish and the generated tree holds
+// (scripts/ui-sdk-flavour.mjs readFlavourExamples). A consumer who installed
+// the flavour has the flavour files and none of the libraries the flavour
+// replaces. This script rebuilds exactly that view: it copies the flavour
+// tree and every flavour source into a temporary project whose node_modules
+// links every registry dependency EXCEPT the replaced ones, and typechecks
+// all of it at once. The original of each overlaid example is typechecked
+// beside it, so the manifest records why the variant exists.
 // Copies, not symlinks: a symlinked file resolves bare imports from its real
 // location, where Base UI is installed, and the check would pass by accident.
 //
 // Each example is then:
-//   ok             typechecks, no recorded behaviour difference;
-//   differs        typechecks, a recorded difference (DIFFERS below) applies;
-//   needs-variant  does not typecheck as a UI SDK consumer would see it.
+//   ok        its flavour source typechecks, no recorded behaviour difference;
+//   differs   it typechecks, a recorded difference (DIFFERS below) applies;
+//   variant   it has an overlay; `replaces` says what the original hit.
+// An example whose flavour source does not typecheck fails the check: it
+// needs a variant (or an EXCLUDED_EXAMPLES entry with a reason).
 //
 //   node scripts/check-ui-sdk-compat.mjs           validate the committed manifest
 //   node scripts/check-ui-sdk-compat.mjs --write   regenerate it
@@ -31,12 +38,12 @@ import {
   readFileSync,
   realpathSync,
   rmSync,
-  statSync,
   symlinkSync,
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, relative, sep } from "node:path";
+import { EXAMPLE_KINDS, readFlavourExamples } from "./ui-sdk-flavour.mjs";
 
 const ROOT = join(import.meta.dirname, "..");
 const REG = join(ROOT, "packages/registry");
@@ -47,18 +54,9 @@ const WRITE = process.argv.includes("--write");
 const REPLACED = ["@base-ui/react", "react-day-picker", "embla-carousel-react", "react-resizable-panels"];
 // Test tooling is not something an example may lean on.
 const NOT_LINKED = new Set([...REPLACED, "typescript", "vitest", "jsdom", "@testing-library/react", "@testing-library/user-event"]);
-const EXAMPLE_ROOTS = ["demos", "components"];
+const EXAMPLE_ROOTS = Object.keys(EXAMPLE_KINDS);
 
 const posix = (p) => p.split(sep).join("/");
-
-function walk(dir, out = []) {
-  for (const entry of readdirSync(dir)) {
-    const full = join(dir, entry);
-    if (statSync(full).isDirectory()) walk(full, out);
-    else if (/\.tsx?$/.test(entry)) out.push(full);
-  }
-  return out;
-}
 
 // ---------------------------------------------------------------------------
 // Recorded behaviour differences (guide §8). Each rule names the §8 row it
@@ -70,12 +68,6 @@ function walk(dir, out = []) {
 const GUIDE = "docs/superpowers/plans/2026-11-13-ui-sdk-porting-guide.md §8";
 const DIFFERS = [
   {
-    primitive: "avatar",
-    files: ["components/avatar/avatar-05.tsx"],
-    reason: "the image is rendered at once, so its data-starting-style fade-in never runs",
-    row: "avatar",
-  },
-  {
     primitive: "calendar",
     match: /\[&>button\]|_button/,
     reason: "styles the day's inner <button>, which the UI SDK day (a gridcell with a span) does not have",
@@ -83,20 +75,8 @@ const DIFFERS = [
   },
   {
     primitive: "calendar",
-    files: ["components/calendar/calendar-11.tsx"],
-    reason: "pressing the selected date again does not call onSelect, so the chosen time slot is not reset",
-    row: "calendar",
-  },
-  {
-    primitive: "calendar",
     match: /<Calendar\b[^>]*?\banimate\b/,
     reason: "`animate` is ignored: no month transition",
-    row: "calendar",
-  },
-  {
-    primitive: "calendar",
-    match: /\b(startMonth|endMonth)=/,
-    reason: "startMonth/endMonth also make outside days beyond them unselectable",
     row: "calendar",
   },
   {
@@ -113,8 +93,8 @@ const DIFFERS = [
   },
   {
     primitive: "resizable",
-    match: /data-\[separator|\[data-separator|\[data-panel\]/,
-    reason: "styles react-resizable-panels' data-separator/data-panel attributes, which the flavour does not emit",
+    match: /transition-\[flex-grow\]/,
+    reason: "animates flex-grow, which react-resizable-panels sizes panels by; the flavour sizes them by flex-basis",
     row: "resizable",
   },
   {
@@ -122,12 +102,6 @@ const DIFFERS = [
     match: /swipeDirection|data-limited|data-\[limited/,
     reason: "per-toast swipeDirection is ignored and toasts over the limit wait unrendered (no data-limited)",
     row: "toast",
-  },
-  {
-    primitive: "command",
-    match: /./,
-    reason: "the first item is highlighted once the input is used, not on mount (base sets autoHighlight=\"always\")",
-    row: "command",
   },
   {
     primitive: "command",
@@ -142,22 +116,10 @@ const DIFFERS = [
     row: "command",
   },
   {
-    primitive: "slider",
-    match: /./,
-    reason: "thumbs centre on their value, so at 0% and 100% half a thumb overhangs the track (base uses thumbAlignment=\"edge\")",
-    row: "slider",
-  },
-  {
     primitive: "tooltip",
-    match: /\b(trackCursorAxis|disableHoverablePopup)\b|<TooltipProvider\b[^>]*?\btimeout=/,
-    reason: "trackCursorAxis, disableHoverablePopup or the provider timeout are ignored",
+    match: /<TooltipProvider\b[^>]*?\btimeout=/,
+    reason: "the provider `timeout` is ignored: UI SDK opens a neighbouring tooltip at once for a fixed moment after one closes",
     row: "tooltip",
-  },
-  {
-    primitive: "switch",
-    match: /\buncheckedValue\b/,
-    reason: "uncheckedValue is ignored, so Base UI's value for an unchecked switch is not submitted",
-    row: "switch",
   },
   {
     primitive: "drawer",
@@ -171,9 +133,16 @@ const DIFFERS = [
 // 1. The consumer view.
 // ---------------------------------------------------------------------------
 
-const examples = EXAMPLE_ROOTS.flatMap((r) => walk(join(REG, r)))
-  .map((f) => posix(relative(REG, f)))
-  .sort();
+const derived = readFlavourExamples();
+if (derived.problems.length > 0) {
+  for (const p of derived.problems) console.error(`check-ui-sdk-compat: ${p}`);
+  process.exit(1);
+}
+// "<kind>/<primitive>/<file>" -> { rel, source, original, overlay }
+const flavourOf = derived.examples;
+const examples = [...flavourOf.values()].map((e) => e.rel).sort();
+const overlaid = examples.filter((rel) => flavourOf.get(rel.replace(/\.tsx$/, "")).overlay);
+const ORIGINALS = "controls/originals";
 
 const work = mkdtempSync(join(tmpdir(), "sevenui-ui-sdk-compat-"));
 let ancestor = dirname(work);
@@ -189,9 +158,20 @@ const errors = [];
 let diagnostics;
 let listed;
 try {
-  cpSync(join(REG, "registry/ui-sdk"), join(work, "registry/ui-sdk"), { recursive: true });
-  for (const r of EXAMPLE_ROOTS) {
-    cpSync(join(REG, r), join(work, r), { recursive: true, filter: (src) => statSync(src).isDirectory() || /\.tsx?$/.test(src) });
+  // The flavour primitives only: overlays are written below as the examples
+  // they replace.
+  cpSync(join(REG, "registry/ui-sdk"), join(work, "registry/ui-sdk"), {
+    recursive: true,
+    filter: (src) => !posix(relative(join(REG, "registry/ui-sdk"), src)).startsWith("examples"),
+  });
+  for (const [rel, content] of derived.files) {
+    if (!/\.tsx?$/.test(rel)) continue;
+    mkdirSync(dirname(join(work, rel)), { recursive: true });
+    writeFileSync(join(work, rel), content);
+  }
+  for (const rel of overlaid) {
+    mkdirSync(dirname(join(work, ORIGINALS, rel)), { recursive: true });
+    writeFileSync(join(work, ORIGINALS, rel), flavourOf.get(rel.replace(/\.tsx$/, "")).original);
   }
 
   const modules = join(REG, "node_modules");
@@ -210,7 +190,7 @@ try {
   // Controls. One must fail (a replaced library is really unresolvable); one
   // must pass only if `@/registry/base/ui/*` really is the flavour: the base
   // calendar exports no `DateRange`, the flavour calendar does.
-  mkdirSync(join(work, "controls"));
+  mkdirSync(join(work, "controls"), { recursive: true });
   writeFileSync(join(work, "controls/replaced.tsx"), `import { Tabs } from "@base-ui/react/tabs";\nexport const control = Tabs;\n`);
   writeFileSync(
     join(work, "controls/flavour.tsx"),
@@ -282,6 +262,14 @@ try {
   // none is the base tree or a replaced library.
   const leaked = listed.filter((f) => f.includes("/registry/base/") || REPLACED.some((r) => f.includes(`/node_modules/${r}/`) || f.includes(`/${r.replace("/", "+")}@`)));
   if (leaked.length > 0) errors.push(`the program reached base or replaced files:\n  ${leaked.slice(0, 10).join("\n  ")}`);
+  // The program holds the flavour sources, not the originals: an overlaid
+  // example's file must be its overlay.
+  for (const rel of overlaid) {
+    if (readFileSync(join(work, rel), "utf8") !== flavourOf.get(rel.replace(/\.tsx$/, "")).source) {
+      errors.push(`${rel} in the program is not its overlay`);
+    }
+    if (!listed.includes(`${ORIGINALS}/${rel}`)) errors.push(`${ORIGINALS}/${rel} is not in the program`);
+  }
   const flavourUsed = listed.filter((f) => f.startsWith("registry/ui-sdk/ui/"));
   if (flavourUsed.length === 0) errors.push("no flavour file is in the program; the alias is not in effect");
   for (const f of examples) if (!listed.includes(f)) errors.push(`${f} is not in the program`);
@@ -309,7 +297,8 @@ const REPLACED_ROW = {
   "embla-carousel-react": "carousel",
   "react-resizable-panels": "resizable",
 };
-const importsOf = (source) => new Set([...source.matchAll(/@\/registry\/base\/ui\/([a-z0-9-]+)/g)].map((m) => m[1]));
+const importsOf = (source) =>
+  new Set([...source.matchAll(/@\/registry\/(?:base|ui-sdk)\/ui\/([a-z0-9-]+)/g)].map((m) => m[1]));
 
 // What a file imports from a module, for a reason a reader can act on.
 function importedNames(source, specifier) {
@@ -320,12 +309,11 @@ function importedNames(source, specifier) {
 }
 
 const used = DIFFERS.map(() => 0);
-const items = {};
-for (const file of examples) {
-  const source = readFileSync(join(REG, file), "utf8");
-  const primitives = importsOf(source);
+// Every reason a source hits: its diagnostics in the program, then the
+// recorded differences that apply to it.
+function reasonsOf(programFile, source) {
   const reasons = [];
-  for (const d of diagnostics.get(file) ?? []) {
+  for (const d of diagnostics.get(programFile) ?? []) {
     const missing = d.code === "TS2307" ? d.message.match(/Cannot find module '([^']+)'/)?.[1] : undefined;
     if (missing) {
       const root = REPLACED.find((r) => missing === r || missing.startsWith(`${r}/`));
@@ -338,28 +326,48 @@ for (const file of examples) {
     }
   }
   const typechecks = reasons.length === 0;
+  const primitives = importsOf(source);
   DIFFERS.forEach((rule, i) => {
-    if (!primitives.has(rule.primitive)) return;
-    if (rule.files ? !rule.files.includes(file) : !rule.match.test(source)) return;
+    if (!primitives.has(rule.primitive) || !rule.match.test(source)) return;
     used[i]++;
     reasons.push({ reason: rule.reason, ref: `${GUIDE} ${rule.row}` });
   });
-  const unique = reasons.filter((r, i) => reasons.findIndex((o) => o.reason === r.reason) === i);
-  items[file.replace(/\.tsx$/, "")] = typechecks
-    ? unique.length === 0
-      ? { status: "ok" }
-      : { status: "differs", reasons: unique }
-    : { status: "needs-variant", reasons: unique };
+  return { typechecks, reasons: reasons.filter((r, i) => reasons.findIndex((o) => o.reason === r.reason) === i) };
+}
+
+const items = {};
+for (const rel of examples) {
+  const key = rel.replace(/\.tsx$/, "");
+  const example = flavourOf.get(key);
+  const { typechecks, reasons } = reasonsOf(rel, example.source);
+  if (!typechecks) {
+    const fix = example.overlay
+      ? `fix its variant, packages/registry/registry/ui-sdk/examples/${rel}`
+      : `write a variant at packages/registry/registry/ui-sdk/examples/${rel}`;
+    errors.push(`${rel} does not typecheck in the flavour (${reasons.map((r) => r.reason).join("; ")}); ${fix}`);
+  }
+  if (example.overlay) {
+    const original = reasonsOf(`${ORIGINALS}/${rel}`, example.original);
+    if (original.reasons.length === 0) {
+      errors.push(`the variant of ${rel} replaces an original that typechecks with no recorded difference; delete registry/ui-sdk/examples/${rel}`);
+    }
+    items[key] = {
+      status: "variant",
+      replaces: original.reasons,
+      ...(reasons.length ? { reasons } : {}),
+    };
+  } else {
+    items[key] = reasons.length === 0 ? { status: "ok" } : { status: "differs", reasons };
+  }
+}
+for (const e of derived.excluded) {
+  console.log(`check-ui-sdk-compat: ${e.key} is excluded from the flavour: ${e.reason}`);
 }
 DIFFERS.forEach((rule, i) => {
   if (used[i] === 0) errors.push(`DIFFERS rule for ${rule.primitive} ("${rule.reason}") applies to no example; it is stale`);
-  for (const f of rule.files ?? []) {
-    if (!examples.includes(f)) errors.push(`DIFFERS rule lists ${f}, which does not exist`);
-    else if (!importsOf(readFileSync(join(REG, f), "utf8")).has(rule.primitive)) errors.push(`DIFFERS rule lists ${f}, which does not import ${rule.primitive}`);
-  }
 });
 
-const STATUSES = ["ok", "differs", "needs-variant"];
+const STATUSES = ["ok", "differs", "variant"];
 const count = (keys) => Object.fromEntries(STATUSES.map((s) => [s, keys.filter((k) => items[k].status === s).length]));
 const keys = Object.keys(items);
 const folders = {};
@@ -370,9 +378,10 @@ const manifest = {
   description:
     "How each demo and gallery example fares against the UI SDK flavour, as a project that installed the flavour sees it. Generated by `node scripts/check-ui-sdk-compat.mjs --write`; `pnpm check:ui-sdk-compat` fails when it is stale.",
   statuses: {
-    ok: "typechecks, no recorded behaviour difference",
-    differs: "typechecks, a recorded behaviour or visual difference applies",
-    "needs-variant": "does not typecheck against the flavour without the replaced libraries",
+    ok: "its flavour source is the original; it typechecks, no recorded behaviour difference",
+    differs: "its flavour source is the original; it typechecks, a recorded behaviour or visual difference applies",
+    variant:
+      "its flavour source is the overlay at packages/registry/registry/ui-sdk/examples/<path>; `replaces` lists what the original hits in the flavour, `reasons` any difference the variant keeps",
   },
   totals: count(keys),
   folders,
@@ -409,4 +418,6 @@ if (readFileSync(MANIFEST, "utf8") !== text) {
   console.error("check-ui-sdk-compat: the manifest is stale; review the changes above, then run node scripts/check-ui-sdk-compat.mjs --write");
   process.exit(1);
 }
-console.log(`check-ui-sdk-compat: ok (${summary}; ${listed.filter((f) => f.startsWith("registry/ui-sdk/")).length} flavour files in the program, both controls held)`);
+console.log(
+  `check-ui-sdk-compat: ok (${summary}; ${derived.excluded.length} excluded; ${listed.filter((f) => f.startsWith("registry/ui-sdk/")).length} flavour files and ${overlaid.length} variant originals in the program, both controls held)`,
+);

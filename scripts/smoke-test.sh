@@ -42,6 +42,13 @@ for f in "$ROOT"/apps/web/public/r/ui-sdk/*.json; do
   sed "s|https://sevenui.dev/r/|http://localhost:$PORT/|g" "$f" \
     > "$WORK/registry/ui-sdk/$(basename "$f")"
 done
+for ns in demo component; do
+  mkdir -p "$WORK/registry/ui-sdk/$ns"
+  for f in "$ROOT"/apps/web/public/r/ui-sdk/$ns/*.json; do
+    sed "s|https://sevenui.dev/r/|http://localhost:$PORT/|g" "$f" \
+      > "$WORK/registry/ui-sdk/$ns/$(basename "$f")"
+  done
+done
 # Use --directory instead of `(cd ... && python3 ...) &` so that $! is the
 # actual server PID. A backgrounded `(cd X && cmd) &` runs cmd inside a
 # subshell wrapper process; on this machine the subshell PID and the python3
@@ -241,6 +248,36 @@ grep -q 'from "@/components/ui/button"' "$SDK/src/components/ui/dialog.tsx" \
 grep -q -- '--surface-tray:' "$SDK/src/styles.css" || { echo "ui-sdk install did not pull sevenui-tokens" >&2; exit 1; }
 test "$(head -n 1 "$SDK/src/styles.css")" = "@layer ui-sdk;" || { echo "@layer ui-sdk; is no longer the first line" >&2; exit 1; }
 grep -q '@layer ui-sdk;' "$SDK_LOG" || { echo "install did not print the cascade-layer step" >&2; exit 1; }
+
+# UI SDK flavour examples: /r/ui-sdk/demo/* and /r/ui-sdk/component/* land as
+# single files under components/ like their base counterparts, and pull only
+# flavour primitives. calendar-range and tabs-05 are variants (overlays): the
+# first imports DateRange from the flavour calendar instead of
+# react-day-picker, the second UI SDK's TabsIndicator instead of Base UI's.
+(cd "$SDK" && "$SHADCN_BIN" add --yes --overwrite \
+  "http://localhost:$PORT/ui-sdk/demo/command-demo.json" \
+  "http://localhost:$PORT/ui-sdk/component/accordion-01.json" \
+  "http://localhost:$PORT/ui-sdk/demo/calendar-range.json" \
+  "http://localhost:$PORT/ui-sdk/component/tabs-05.json")
+for name in command-demo accordion-01 calendar-range tabs-05; do
+  test -f "$SDK/src/components/$name.tsx" || { echo "ui-sdk example $name.tsx missing" >&2; exit 1; }
+done
+grep -q 'from "@/components/ui/command"' "$SDK/src/components/command-demo.tsx" \
+  || { echo "ui-sdk demo import not rewritten to consumer alias" >&2; exit 1; }
+grep -q 'import type { DateRange } from "@/components/ui/calendar"' "$SDK/src/components/calendar-range.tsx" \
+  || { echo "calendar-range variant does not take DateRange from the flavour calendar" >&2; exit 1; }
+grep -q 'from "@ui-sdk/react/tabs"' "$SDK/src/components/tabs-05.tsx" \
+  || { echo "tabs-05 variant does not use UI SDK's TabsIndicator" >&2; exit 1; }
+for name in command accordion calendar tabs; do
+  grep -q "@ui-sdk/react/$name" "$SDK/src/components/ui/$name.tsx" \
+    || { echo "a flavour example pulled the base $name primitive" >&2; exit 1; }
+done
+for pkg in @base-ui/react react-day-picker react-resizable-panels embla-carousel-react; do
+  if grep -q "\"$pkg\"" "$SDK/package.json"; then echo "a ui-sdk install pulled $pkg" >&2; exit 1; fi
+done
+if grep -rqE 'from "(@base-ui/react|react-day-picker|react-resizable-panels|embla-carousel-react)' "$SDK/src"; then
+  echo "an installed ui-sdk file imports a library UI SDK replaces" >&2; exit 1
+fi
 cat > "$SDK/src/main.tsx" <<'EOF'
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
