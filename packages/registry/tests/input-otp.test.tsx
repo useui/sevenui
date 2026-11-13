@@ -94,13 +94,45 @@ describe("InputOTP", () => {
     expect(onValueComplete).toHaveBeenCalledWith("123456", expect.anything());
   });
 
-  // UI SDK 0.1.0-beta.1 bug: under __UI_SDK_STRICT__ its own dev check
-  // rejects the `paste` reason with a ClipboardEvent and the paste is lost.
-  (isUiSdk ? it.fails : it)("fills all slots from a paste", async () => {
-    // Keep that thrown dev error inside this case instead of the run.
-    const swallow = (event: ErrorEvent) => event.preventDefault();
-    if (isUiSdk) window.addEventListener("error", swallow);
-    onTestFinished(() => window.removeEventListener("error", swallow));
+  // UI SDK 0.1.0-beta.1 bug: under __UI_SDK_STRICT__ its dev check throws on
+  // its own `paste` reason and the paste is lost. Asserted exactly, so the
+  // case fails once UI SDK fixes it, and for no other reason. It runs before
+  // the next case: UI SDK reports a dev message once per page, so a warning
+  // there would keep this one from throwing.
+  it("pastes under strict mode (UI SDK: the dev check rejects its own paste reason)", async () => {
+    const errors: string[] = [];
+    const capture = (event: ErrorEvent) => {
+      errors.push(String(event.error?.message ?? event.message));
+      event.preventDefault();
+    };
+    window.addEventListener("error", capture);
+    onTestFinished(() => window.removeEventListener("error", capture));
+    const user = userEvent.setup();
+    const { container } = render(<OTP />);
+    await user.click(typingTarget(container));
+    await user.paste("987654");
+    const pasted = getSlots(container).map(slotValue).join("");
+    if (isUiSdk) {
+      expect(errors).toHaveLength(1);
+      expect(errors[0]).toMatch(/reported `paste` with a ClipboardEvent \(`paste`\), which the vocabulary doesn't list/);
+      expect(pasted).toBe("");
+    } else {
+      expect(errors).toEqual([]);
+      expect(pasted).toBe("987654");
+    }
+  });
+
+  // Strict mode is off for this case in the flavour: UI SDK 0.1.0-beta.1's
+  // dev check rejects its own `paste` reason (the case above pins that bug).
+  it("fills all slots from a paste", async () => {
+    if (isUiSdk) {
+      globalThis.__UI_SDK_STRICT__ = false;
+      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+      onTestFinished(() => {
+        globalThis.__UI_SDK_STRICT__ = true;
+        warn.mockRestore();
+      });
+    }
     const user = userEvent.setup();
     const onValueComplete = vi.fn();
     const { container } = render(<OTP onValueComplete={onValueComplete} />);
