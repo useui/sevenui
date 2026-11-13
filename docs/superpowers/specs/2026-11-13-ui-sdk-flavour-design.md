@@ -122,8 +122,8 @@ Things found on the way, each with its fix, are in the guide:
 
 | Run | Result | What changed |
 |---|---|---|
-| `base` project | 1,022 tests, 71 files | The original tests pass unchanged; the additions are export-freeze checks for every ported file and tests added with the ports. |
-| `ui-sdk` project | 874 tests + 1 expected failure, 66 files | The expected failure is the input-otp paste test (`it.fails`): a UI SDK 0.1.0-beta.1 bug, see the guide's §8. |
+| `base` project | 1,024 tests, 71 files | The original tests pass unchanged; the additions are export-freeze checks for every ported file and tests added with the ports. |
+| `ui-sdk` project | 876 tests + 1 expected failure, 66 files | The expected failure is the input-otp paste test (`it.fails`): a UI SDK 0.1.0-beta.1 bug, see the guide's §8. |
 
 Flavour-specific expectations live in `tests/helpers/flavour.ts`. Each states why it exists.
 
@@ -141,4 +141,4 @@ Examples are written once, against `@/registry/base/ui/*`. Their flavour is deri
 - **Generated example tree.** The same command writes every flavour source to `packages/registry/.generated/ui-sdk/{demos,components}/<primitive>/<file>.tsx` (git-ignored). The docs site renders flavour previews from it; root `pnpm dev`, `pnpm typecheck` and `pnpm ui-sdk:examples` refresh it.
 - The published flavour example source imports `@/registry/ui-sdk/ui/<x>`, like the flavour primitives; the shadcn CLI rewrites it to the consumer's `ui` alias exactly as it rewrites `@/registry/base/ui/<x>` (the smoke test proves it).
 
-**Port fixes made instead of variants (2026-11-13).** slider edge alignment, avatar `data-starting-style`, switch `uncheckedValue`, tooltip `trackCursorAxis`/`disableHoverablePopup`, calendar re-press `onSelect` and hidden outside days past `startMonth`/`endMonth`, resizable `data-group`/`data-panel`/`data-separator`. The command "no highlight on mount" difference turned out to be a jsdom artefact (guide §8).
+**Port fixes made instead of variants (2026-11-13).** select `alignItemWithTrigger` with nothing selected, drawer initial focus on the popup, slider edge alignment, avatar `data-starting-style`, switch `uncheckedValue`, tooltip `trackCursorAxis`/`disableHoverablePopup`, calendar re-press `onSelect` and hidden outside days past `startMonth`/`endMonth`, resizable `data-group`/`data-panel`/`data-separator`. The command "no highlight on mount" difference turned out to be a jsdom artefact (guide §8).
