@@ -99,6 +99,20 @@ describe("Command", () => {
     expect(onSelect).toHaveBeenCalledWith("calendar");
   });
 
+  // Base UI ignores a Promise from onClick; UI SDK would mark the command
+  // busy and ignore presses until it settled.
+  it("runs an item again while its onClick's Promise is pending", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn(() => new Promise<void>(() => {}));
+    render(<Palette onSelect={onSelect} />);
+    const item = screen.getByRole("option", { name: "Calendar" });
+    await user.click(item);
+    await user.click(item);
+    expect(onSelect).toHaveBeenCalledTimes(2);
+    expect(item.hasAttribute("aria-busy")).toBe(false);
+    expect(item.getAttribute("aria-disabled")).not.toBe("true");
+  });
+
   it("moves the highlight with arrow keys before activating", async () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();

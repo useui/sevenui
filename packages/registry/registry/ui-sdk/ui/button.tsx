@@ -74,7 +74,13 @@ function Button({
   return (
     <ButtonPrimitive
       className={cn(buttonVariants({ variant, size, className }))}
-      onClick={onClick as ButtonPrimitiveProps["onClick"]}
+      // UI SDK keeps a button pending while a returned Promise runs; Base UI
+      // ignores it, so the result is dropped.
+      onClick={
+        onClick &&
+        (((event: React.MouseEvent<HTMLButtonElement>, details?: ButtonActionDetails) =>
+          void onClick(event, details)) as unknown as ButtonPrimitiveProps["onClick"])
+      }
       // UI SDK ignores a data-slot prop on a part; one on the rendered
       // element wins, so a caller's slot (carousel-next) goes there.
       render={

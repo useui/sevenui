@@ -78,6 +78,21 @@ describe("ContextMenu", () => {
     });
   });
 
+  it("closes at once when an item's onClick returns a pending Promise", async () => {
+    const user = userEvent.setup();
+    const onBack = vi.fn(() => new Promise<void>(() => {}));
+    render(<BasicContextMenu onBack={onBack} />);
+    await openContextMenu();
+    const item = screen.getByRole("menuitem", { name: "Back" });
+    await user.click(item);
+    expect(onBack).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(screen.queryByRole("menu")).toBeNull();
+    });
+    expect(item.hasAttribute("aria-busy")).toBe(false);
+    expect(item.hasAttribute("data-pending")).toBe(false);
+  });
+
   it("does not activate a disabled item", async () => {
     const user = userEvent.setup();
     const onDisabled = vi.fn();

@@ -221,7 +221,9 @@ function DropdownMenuItem({
       render={part("dropdown-menu-item", "div", render)}
       data-inset={inset}
       data-variant={variant}
-      onSelect={onClick}
+      // UI SDK treats a returned Promise as a pending item that keeps the
+      // menu open; Base UI ignores it, so the result is dropped.
+      onSelect={onClick && ((event) => void onClick(event))}
       closeOnSelect={closeOnClick}
       className={cn(
         "group/dropdown-menu-item relative flex min-h-[var(--item-h,2rem)] cursor-default items-center gap-2 rounded-sm px-2 text-[length:var(--control-text,0.8125rem)] outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground data-disabled:data-highlighted:bg-transparent data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-[variant=destructive]:text-[color:color-mix(in_oklch,var(--foreground)_10%,var(--destructive))] data-[variant=destructive]:data-highlighted:bg-destructive/10 data-[variant=destructive]:data-highlighted:text-[color:color-mix(in_oklch,var(--foreground)_15%,var(--destructive))] dark:data-[variant=destructive]:data-highlighted:bg-destructive/20 data-[variant=destructive]:data-disabled:data-highlighted:bg-transparent data-[variant=destructive]:*:[svg]:text-destructive",

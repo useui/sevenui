@@ -89,6 +89,23 @@ describe("DropdownMenu", () => {
     });
   });
 
+  // An async handler (item-12's copy link) must not hold the menu open: Base
+  // UI ignores the returned Promise, where UI SDK would mark the item busy.
+  it("closes at once when an item's onClick returns a pending Promise", async () => {
+    const user = userEvent.setup();
+    const onProfile = vi.fn(() => new Promise<void>(() => {}));
+    render(<BasicMenu onProfile={onProfile} />);
+    await user.click(screen.getByText("Open menu"));
+    const item = await screen.findByRole("menuitem", { name: /Profile/ });
+    await user.click(item);
+    expect(onProfile).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(screen.queryByRole("menu")).toBeNull();
+    });
+    expect(item.hasAttribute("aria-busy")).toBe(false);
+    expect(item.hasAttribute("data-pending")).toBe(false);
+  });
+
   it("highlights items with arrow keys and activates with Enter", async () => {
     const user = userEvent.setup();
     const onProfile = vi.fn();

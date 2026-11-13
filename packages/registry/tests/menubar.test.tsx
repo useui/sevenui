@@ -103,6 +103,21 @@ describe("Menubar", () => {
     });
   });
 
+  it("closes at once when an item's onClick returns a pending Promise", async () => {
+    const user = userEvent.setup();
+    const onNewTab = vi.fn(() => new Promise<void>(() => {}));
+    render(<BasicMenubar onNewTab={onNewTab} />);
+    await user.click(screen.getByRole("menuitem", { name: "File" }));
+    const item = await screen.findByRole("menuitem", { name: /New Tab/ });
+    await user.click(item);
+    expect(onNewTab).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(screen.queryByRole("menu")).toBeNull();
+    });
+    expect(item.hasAttribute("aria-busy")).toBe(false);
+    expect(item.hasAttribute("data-pending")).toBe(false);
+  });
+
   it("closes the open menu on Escape", async () => {
     const user = userEvent.setup();
     render(<BasicMenubar />);

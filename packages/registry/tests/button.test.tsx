@@ -155,6 +155,21 @@ describe("Button", () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
+  // Base UI's Button ignores a Promise from onClick; UI SDK's would turn
+  // pending (aria-busy, aria-disabled) and ignore presses until it settled.
+  it("stays pressable while a Promise its onClick returned is pending", async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn(() => new Promise<void>(() => {}));
+    render(<Button onClick={onClick}>Save</Button>);
+    const button = screen.getByRole("button", { name: "Save" });
+    await user.click(button);
+    await user.click(button);
+    expect(onClick).toHaveBeenCalledTimes(2);
+    expect(button.hasAttribute("aria-busy")).toBe(false);
+    expect(button.hasAttribute("data-pending")).toBe(false);
+    expect(button.getAttribute("aria-disabled")).not.toBe("true");
+  });
+
   it("does not call onClick when disabled", async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
