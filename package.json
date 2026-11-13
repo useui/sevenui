@@ -20,6 +20,7 @@
     "check:ui-sdk-notes": "node scripts/check-ui-sdk-notes.mjs",
     "ui-sdk:examples": "node scripts/ui-sdk-flavour.mjs examples",
     "check:home": "node scripts/check-home.mjs",
+    "check:previews": "node scripts/check-previews.mjs",
     "test": "pnpm --filter @sevenui/registry test && pnpm --filter @sevenui/presets test",
     "test:smoke": "bash scripts/smoke-test.sh",
     "inventory": "node scripts/route-inventory.mjs",

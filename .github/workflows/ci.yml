@@ -22,7 +22,8 @@ jobs:
 
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # 15 before the browser layout check (a Chromium install and a minute of measuring) joined the job.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -81,3 +82,14 @@ jobs:
       - run: pnpm check:docs-imports
       - run: node scripts/check-pro-manifest.mjs apps/web/lib/pro-manifest.fixture.json
       - run: pnpm test:smoke
+      # Layout needs a browser: no HTML check can see that a preview's example renders 0px wide. A flavour
+      # wrapper with a box once sat between every example and its frame and collapsed `@container` and
+      # `w-full` roots on 712 of 1063 previews while every other gate stayed green. This serves the build
+      # above and requires each preview on a few pages to lay out the same with and without its wrapper, in
+      # both flavours; --controls gives the wrappers a box again and requires the check to fail.
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: |
+          pnpm --filter @sevenui/web start -p 3210 &
+          pnpm check:previews --base http://localhost:3210 --controls
+        env:
+          PRO_MANIFEST_URL: lib/pro-manifest.fixture.json
