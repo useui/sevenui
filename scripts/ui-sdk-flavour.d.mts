@@ -8,3 +8,7 @@ export const REPLACED_IMPORT: RegExp;
 export function replacedImports(source: string): string[];
 /** Whether a source imports, in any form, a library UI SDK replaces. */
 export function importsReplaced(source: string): boolean;
+/** A primitive description in UI SDK terms ("the Base UI X primitive" -> "the UI SDK X component"). */
+export function describeUiSdk(description: string): string;
+/** Docs page ledes describeUiSdk cannot rewrite, keyed by primitive. */
+export const UI_SDK_LEDES: Record<string, string>;

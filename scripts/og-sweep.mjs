@@ -116,7 +116,7 @@ const BLOCKS_CHILD = /^\/blocks\/.+$/u;
 // The search-facing titles of lib/metadata.tsx's documentTitle(), restated.
 const HUB_TITLES = {
   "/": "SevenUI — Base UI components for shadcn/ui",
-  "/docs/components": `React Primitives built on Base UI${SUFFIX}`,
+  "/docs/components": `React Primitives on Base UI or UI SDK${SUFFIX}`,
   "/components": `Free React Components for shadcn/ui${SUFFIX}`,
   "/blocks": `Pro React Blocks for shadcn/ui${SUFFIX}`,
 };
@@ -136,7 +136,7 @@ function expectedTitle(route, registryTitle) {
     case "hub":
       return HUB_TITLES[route];
     case "primitive":
-      return `React ${registryTitle} built on Base UI${SUFFIX}`;
+      return `React ${registryTitle} on Base UI or UI SDK${SUFFIX}`;
     case "gallery":
       return `React ${registryTitle} Examples, shadcn compatible${SUFFIX}`;
     case "blocks":

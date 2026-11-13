@@ -162,11 +162,28 @@ export function importedPackages(source) {
 function describe(item) {
   if (DESCRIPTION_OVERRIDES[item.name]) return DESCRIPTION_OVERRIDES[item.name];
   if (!item.description) return item.description;
-  return item.description.replace(
+  return describeUiSdk(item.description);
+}
+
+/**
+ * A primitive description in UI SDK terms: "the Base UI X primitive" becomes
+ * "the UI SDK X component". The docs site shows it as the lede of a primitive
+ * page to UI SDK readers, from the page's own description, so a sentence it
+ * cannot rewrite is listed in UI_SDK_LEDES by the page's route name.
+ */
+export function describeUiSdk(description) {
+  return description.replace(
     /the Base UI (.+?) primitive/g,
     (_, name) => `the UI SDK ${PRIMITIVE_NAMES[name] ?? name} component`,
   );
 }
+/** Docs page ledes whose wording describeUiSdk cannot rewrite, keyed by primitive. */
+export const UI_SDK_LEDES = {
+  collapsible: "An interactive primitive which expands/collapses a panel, built on the UI SDK Collapsible component.",
+  direction:
+    "Sets the reading direction for RTL support, so every SevenUI primitive below it follows right-to-left layouts; UI SDK components read it from the page.",
+  toast: "Stacked, swipe-dismissable notifications driven by a UI SDK toaster.",
+};
 
 /**
  * Reads the root registry, the base tree and the flavour tree, and returns the

@@ -10,6 +10,24 @@ import { getDoc, getDocIndex } from "../../../lib/docs";
 import { docsTrail, getNavTree } from "../../../lib/docs/nav";
 import { pageMetadataOrNotFound } from "../../../lib/metadata";
 import { getPageMeta } from "../../../lib/page-meta";
+import { describeUiSdk, UI_SDK_LEDES } from "../../../../../scripts/ui-sdk-flavour.mjs";
+
+const PRIMITIVE_PAGE = /^\/docs\/components\/([a-z0-9-]+)$/;
+
+/**
+ * A primitive page's lede for UI SDK readers, or undefined when the Base UI one already holds for both.
+ * Fails the build when a Base UI-specific lede has no UI SDK wording, so the page never tells a UI SDK
+ * reader the primitive is built on Base UI.
+ */
+function uiSdkLede(route: string, description: string): string | undefined {
+  const name = route.match(PRIMITIVE_PAGE)?.[1];
+  if (!name || !description.includes("Base UI")) return undefined;
+  const lede = UI_SDK_LEDES[name] ?? describeUiSdk(description);
+  if (lede.includes("Base UI")) {
+    throw new Error(`${route}: its description names Base UI and has no UI SDK wording; add one to UI_SDK_LEDES in scripts/ui-sdk-flavour.mjs`);
+  }
+  return lede;
+}
 
 type Params = { slug?: string[] };
 
@@ -51,7 +69,19 @@ export default async function DocPage({ params }: { params: Promise<Params> }) {
           <h1 className="mt-6 mb-0 font-display font-medium text-2xl text-foreground leading-[34px] tracking-normal break-words">
             {doc.title}
           </h1>
-          <p className="mt-3 mb-8 font-medium text-base text-muted-foreground leading-[22px]">{doc.description}</p>
+          {(() => {
+            const lede = uiSdkLede(route, doc.description);
+            const className = "mt-3 mb-8 font-medium text-base text-muted-foreground leading-[22px]";
+            return lede === undefined ? (
+              <p className={className}>{doc.description}</p>
+            ) : (
+              // Both are server-rendered; CSS shows the reader's flavour (globals.css), Base UI without scripts.
+              <>
+                <p className={`${className} flavour-only-base-ui`}>{doc.description}</p>
+                <p className={`${className} flavour-only-ui-sdk`}>{lede}</p>
+              </>
+            );
+          })()}
           <MDXContent />
         </article>
         <DocsFeedback title={meta?.title ?? doc.title} />
