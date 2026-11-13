@@ -165,15 +165,17 @@ export function SiteFooter({
     </>
   );
 
-  // A soft tinted surface inset from the viewport edges, in place of hairline rules above and inside it.
-  const SURFACE = "mx-3 mb-3 rounded-3xl bg-muted/50 sm:mx-4 sm:mb-4";
-  const legalRow = "flex flex-col gap-3 py-4 text-docs-tertiary text-xs sm:flex-row sm:items-center sm:justify-between";
+  // A soft tinted surface inset from the viewport edges on all four sides, in place of hairline rules above and
+  // inside it: the top inset keeps it off whatever the page ends on, even a full-bleed band.
+  const SURFACE = "m-3 rounded-3xl bg-muted/50 sm:m-4";
+  const legalRow =
+    "flex flex-col gap-3 pt-4 pb-6 text-docs-tertiary text-xs sm:flex-row sm:items-center sm:justify-between sm:pb-5";
 
   if (framed) {
     return (
       <footer className={SURFACE}>
         <div className="l-row">
-          <div className="px-6 pt-14 pb-10">{body}</div>
+          <div className="px-6 pt-16 pb-10 sm:pt-20">{body}</div>
         </div>
         <div>
           <div className={`l-row px-6 ${legalRow}`}>{legal}</div>
@@ -184,7 +186,7 @@ export function SiteFooter({
 
   return (
     <footer className={SURFACE}>
-      <div className="mx-auto max-w-6xl px-6 pt-14 pb-10">{body}</div>
+      <div className="mx-auto max-w-6xl px-6 pt-16 pb-10 sm:pt-20">{body}</div>
       <div>
         <div className={`mx-auto max-w-6xl px-6 ${legalRow}`}>{legal}</div>
       </div>

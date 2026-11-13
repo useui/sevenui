@@ -220,8 +220,8 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 5 — The way in. */}
-      <section aria-labelledby="start-title" className="bg-surface-tray">
+      {/* 5 — The way in. Inset like the footer below it, so the page ends on two framed surfaces, not a band. */}
+      <section aria-labelledby="start-title" className="mx-3 rounded-3xl bg-surface-tray sm:mx-4">
         <div className={`${SECTION} flex flex-col items-center text-center`}>
           <h2 className={H2} id="start-title">
             Two commands. <span className={MUTED}>Then it&apos;s yours.</span>
