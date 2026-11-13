@@ -39,7 +39,7 @@ function FruitSelect({
       onValueChange={onValueChange}
       name={name}
     >
-      <SelectTrigger>
+      <SelectTrigger aria-label="Fruit">
         <SelectValue placeholder="Pick a fruit" />
       </SelectTrigger>
       <SelectContent>
@@ -135,7 +135,7 @@ describe("Select", () => {
         <div>
           <button type="button" onClick={() => setValue("cherry")}>Set cherry</button>
           <Select items={fruits} value={value} onValueChange={setValue}>
-            <SelectTrigger>
+            <SelectTrigger aria-label="Fruit">
               <SelectValue placeholder="Pick a fruit" />
             </SelectTrigger>
             <SelectContent>
@@ -162,7 +162,7 @@ describe("Select", () => {
   it("labels the trigger from grouped items", () => {
     render(
       <Select items={[{ label: "Fruits", items: fruits }]} defaultValue="banana">
-        <SelectTrigger>
+        <SelectTrigger aria-label="Fruit">
           <SelectValue placeholder="Pick a fruit" />
         </SelectTrigger>
         <SelectContent>

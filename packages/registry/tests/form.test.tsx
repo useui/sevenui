@@ -340,7 +340,7 @@ describe("Form field values", () => {
       name: "combobox",
       control: (
         <Combobox items={countries} defaultValue={countries[1]}>
-          <ComboboxInput placeholder="Country" />
+          <ComboboxInput placeholder="Country" aria-label="Country" />
           <ComboboxContent>
             <ComboboxList>
               {(item: Country) => (
@@ -365,7 +365,7 @@ describe("Form field values", () => {
                 values.map((item) => <ComboboxChip key={item.value}>{item.label}</ComboboxChip>)
               }
             </ComboboxValue>
-            <ComboboxChipsInput placeholder="Countries" />
+            <ComboboxChipsInput placeholder="Countries" aria-label="Countries" />
           </ComboboxChips>
           <ComboboxContent>
             <ComboboxList>

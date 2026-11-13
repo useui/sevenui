@@ -40,7 +40,7 @@ const groups: Group[] = [
 function Palette({ onSelect = () => {} }: { onSelect?: (value: string) => void }) {
   return (
     <Command items={groups}>
-      <CommandInput placeholder="Type a command or search..." />
+      <CommandInput placeholder="Type a command or search..." aria-label="Command" />
       <CommandList>
         {(group: Group) => (
           <CommandGroup key={group.value} heading={group.value} items={group.items}>
@@ -84,7 +84,7 @@ describe("Command", () => {
     ];
     const palette = () => (
       <Command items={teams()}>
-        <CommandInput placeholder="Search" />
+        <CommandInput placeholder="Search" aria-label="Command" />
         <CommandList>
           {(team: ReturnType<typeof teams>[number]) => (
             <CommandGroup key={team.value} heading={team.value} items={team.items}>
@@ -225,7 +225,7 @@ describe("Command v2 styles", () => {
   function ShortcutPalette() {
     return (
       <Command items={groups}>
-        <CommandInput placeholder="Type a command or search..." />
+        <CommandInput placeholder="Type a command or search..." aria-label="Command" />
         <CommandList>
           {(group: Group) => (
             <CommandGroup key={group.value} heading={group.value} items={group.items}>

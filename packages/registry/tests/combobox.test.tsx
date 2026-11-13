@@ -27,7 +27,7 @@ function FruitCombobox({
 }) {
   return (
     <Combobox items={fruits} defaultValue={defaultValue} onValueChange={onValueChange}>
-      <ComboboxInput placeholder="Search fruit" />
+      <ComboboxInput placeholder="Search fruit" aria-label="Fruit" />
       <ComboboxContent>
         <ComboboxEmpty>No fruit found.</ComboboxEmpty>
         <ComboboxList>
@@ -57,7 +57,11 @@ describe("Combobox", () => {
   it("renders a caller's render element as the input", () => {
     render(
       <Combobox items={fruits}>
-        <ComboboxInput render={<input data-custom="yes" />} placeholder="Pick a fruit" />
+        <ComboboxInput
+          render={<input data-custom="yes" />}
+          placeholder="Pick a fruit"
+          aria-label="Fruit"
+        />
       </Combobox>,
     );
     const input = screen.getByRole("combobox");
@@ -224,7 +228,7 @@ describe("Combobox v2 styles", () => {
   it("keeps the className on the input-group root", () => {
     render(
       <Combobox items={fruits}>
-        <ComboboxInput placeholder="Search fruit" className="w-64" />
+        <ComboboxInput placeholder="Search fruit" aria-label="Fruit" className="w-64" />
       </Combobox>,
     );
     const group = getInput().closest("[data-slot=input-group]") as HTMLElement;
@@ -285,7 +289,7 @@ describe("Combobox v2 styles", () => {
                 ))
               }
             </ComboboxValue>
-            <ComboboxChipsInput placeholder="Add fruit" />
+            <ComboboxChipsInput placeholder="Add fruit" aria-label="Fruits" />
           </ComboboxChips>
         </Combobox>
       );
