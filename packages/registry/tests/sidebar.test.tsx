@@ -64,6 +64,26 @@ describe("SidebarProvider + Sidebar (desktop)", () => {
     expect(screen.getByText("Sidebar body")).toBeTruthy();
   });
 
+  // The tooltip only labels the collapsed icon rail. While expanded, Base UI
+  // hides it and describes nothing, so "Home" is not announced twice.
+  it("gives an expanded menu button's tooltip no description", () => {
+    render(
+      <SidebarProvider>
+        <Sidebar>
+          <SidebarContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip="Home">Home</SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarContent>
+        </Sidebar>
+      </SidebarProvider>,
+    );
+    const button = screen.getByRole("button", { name: "Home" });
+    expect(button.hasAttribute("aria-describedby")).toBe(false);
+  });
+
   it("starts collapsed when defaultOpen is false", () => {
     const { container } = render(<App defaultOpen={false} />);
     expect(getSidebar(container)?.getAttribute("data-state")).toBe("collapsed");

@@ -49,6 +49,9 @@ type Tracking = {
 };
 const TrackingContext = React.createContext<Tracking | null>(null);
 
+// Whether the root is disabled, for the trigger's description below.
+const DisabledContext = React.createContext(false);
+
 function Tooltip({
   delay,
   closeDelay,
@@ -76,12 +79,14 @@ function Tooltip({
   return (
     <ReportTiming.Provider value={setTrigger}>
       <TrackingContext.Provider value={tracking}>
-        <TooltipPrimitive
-          delay={trigger.delay ?? delay ?? provider.delay}
-          closeDelay={trigger.closeDelay ?? closeDelay ?? provider.closeDelay}
-          closeOnPress={trigger.closeOnClick ?? closeOnPress}
-          {...props}
-        />
+        <DisabledContext.Provider value={props.disabled === true}>
+          <TooltipPrimitive
+            delay={trigger.delay ?? delay ?? provider.delay}
+            closeDelay={trigger.closeDelay ?? closeDelay ?? provider.closeDelay}
+            closeOnPress={trigger.closeOnClick ?? closeOnPress}
+            {...props}
+          />
+        </DisabledContext.Provider>
       </TrackingContext.Provider>
     </ReportTiming.Provider>
   );
@@ -96,14 +101,31 @@ type TriggerProps = Omit<React.ComponentProps<typeof TooltipTriggerPrimitive>, "
 
 // Base UI marks an open popup's trigger with data-popup-open and examples
 // style it; UI SDK gives a tooltip trigger no state attribute, so add it.
-function popupOpen(render: TriggerProps["render"]): RenderProp<TriggerState> {
-  return (props, state) =>
-    renderElement(
+// UI SDK also points aria-describedby at the content from the start (hidden
+// content still describes), replacing the caller's own; Base UI describes
+// nothing. So the trigger keeps the caller's description, and adds the
+// tooltip's only while it is open and not disabled: a closed or disabled
+// tooltip (an expanded sidebar's "Home" on a "Home" button) is not read out.
+function popupOpen(
+  render: TriggerProps["render"],
+  own: string | undefined,
+  disabled: boolean,
+): RenderProp<TriggerState> {
+  return (props, state) => {
+    const tip = props["aria-describedby"] as string | undefined;
+    const described =
+      state.open && !disabled && tip && tip !== own ? [own, tip].filter(Boolean).join(" ") : own;
+    return renderElement(
       "button",
-      { ...props, "data-popup-open": state.open ? "" : undefined },
+      {
+        ...props,
+        "aria-describedby": described,
+        "data-popup-open": state.open ? "" : undefined,
+      },
       render as RenderProp<TriggerState> | undefined,
       state,
     );
+  };
 }
 
 function TooltipTrigger({
@@ -115,6 +137,7 @@ function TooltipTrigger({
 }: TriggerProps & Timing) {
   const report = React.useContext(ReportTiming);
   const tracking = React.useContext(TrackingContext);
+  const disabled = React.useContext(DisabledContext);
   React.useLayoutEffect(() => {
     report?.({ delay, closeDelay, closeOnClick });
   }, [report, delay, closeDelay, closeOnClick]);
@@ -127,7 +150,7 @@ function TooltipTrigger({
       : undefined;
   return (
     <TooltipTriggerPrimitive
-      render={popupOpen(render)}
+      render={popupOpen(render, props["aria-describedby"], disabled)}
       {...props}
       onPointerEnter={(event: React.PointerEvent<HTMLElement>) => {
         track?.(event);

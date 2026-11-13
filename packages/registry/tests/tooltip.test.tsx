@@ -33,6 +33,37 @@ describe("Tooltip", () => {
     expectClosed(screen.queryByText("Add to library"));
   });
 
+  // Base UI describes nothing while closed. Hidden content referenced by
+  // aria-describedby is still read out (accname), so a closed tooltip whose
+  // text repeats the trigger's would be announced twice.
+  it("does not describe its trigger while closed, and keeps the caller's description", () => {
+    render(
+      <>
+        <span id="hint">Saves a copy</span>
+        <ExampleTooltip />
+        <Tooltip>
+          <TooltipTrigger aria-describedby="hint">Save</TooltipTrigger>
+          <TooltipContent>Save the file</TooltipContent>
+        </Tooltip>
+      </>,
+    );
+    expect(screen.getByRole("button", { name: "Hover me" }).hasAttribute("aria-describedby")).toBe(
+      false,
+    );
+    expect(screen.getByRole("button", { name: "Save" }).getAttribute("aria-describedby")).toBe(
+      "hint",
+    );
+  });
+
+  it("never describes its trigger while disabled", async () => {
+    const user = userEvent.setup();
+    render(<ExampleTooltip disabled />);
+    const trigger = screen.getByRole("button", { name: "Hover me" });
+    await user.hover(trigger);
+    await user.tab();
+    expect(trigger.hasAttribute("aria-describedby")).toBe(false);
+  });
+
   it("opens on hover and closes on unhover", async () => {
     const user = userEvent.setup();
     render(<ExampleTooltip />);
