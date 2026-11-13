@@ -1,4 +1,4 @@
-import { act, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
@@ -9,6 +9,8 @@ import {
   AvatarGroupCount,
   AvatarImage,
 } from "@/registry/base/ui/avatar";
+
+import { isUiSdk } from "./helpers/flavour";
 
 /**
  * jsdom never fires load events for images created via `new window.Image()`,
@@ -44,7 +46,14 @@ describe("Avatar", () => {
       </Avatar>,
     );
     expect(screen.getByText("AL")).not.toBeNull();
-    expect(screen.queryByAltText("Ada Lovelace")).toBeNull();
+    const image = screen.queryByAltText("Ada Lovelace");
+    if (isUiSdk) {
+      // UI SDK renders the <img> at once so it can load before hydration,
+      // hidden from assistive tech until it loads.
+      expect(image?.getAttribute("aria-hidden")).toBe("true");
+    } else {
+      expect(image).toBeNull();
+    }
   });
 
   it("renders the fallback when no image is provided", () => {
@@ -65,11 +74,39 @@ describe("Avatar", () => {
         <AvatarFallback>AL</AvatarFallback>
       </Avatar>,
     );
+    if (isUiSdk) {
+      // UI SDK watches the rendered <img>, not a preloading Image object.
+      const image = screen.getByAltText("Ada Lovelace");
+      Object.defineProperty(image, "complete", { value: true });
+      Object.defineProperty(image, "naturalWidth", { value: 128 });
+      fireEvent.load(image);
+    }
     expect(screen.getByAltText("Ada Lovelace")).not.toBeNull();
     expect(screen.queryByText("AL")).toBeNull();
   });
 
-  it("delays fallback rendering when a delay is set", () => {
+  it("marks the first frame of a loaded image with data-starting-style", async () => {
+    window.Image = LoadedImage as unknown as typeof Image;
+    render(
+      <Avatar>
+        <AvatarImage src="https://example.com/a.png" alt="Ada Lovelace" />
+        <AvatarFallback>AL</AvatarFallback>
+      </Avatar>,
+    );
+    if (isUiSdk) {
+      const image = screen.getByAltText("Ada Lovelace");
+      expect(image.hasAttribute("data-starting-style")).toBe(false);
+      Object.defineProperty(image, "complete", { value: true });
+      Object.defineProperty(image, "naturalWidth", { value: 128 });
+      fireEvent.load(image);
+    }
+    // A transition from data-[starting-style]:opacity-0 fades the image in.
+    const image = screen.getByAltText("Ada Lovelace");
+    expect(image.hasAttribute("data-starting-style")).toBe(true);
+    await waitFor(() => expect(image.hasAttribute("data-starting-style")).toBe(false));
+  });
+
+  it("delays fallback rendering when a delay is set", async () => {
     vi.useFakeTimers();
     render(
       <Avatar>
@@ -78,8 +115,10 @@ describe("Avatar", () => {
       </Avatar>,
     );
     expect(screen.queryByText("AL")).toBeNull();
-    act(() => {
-      vi.advanceTimersByTime(300);
+    // UI SDK's delay timer is not reached by a synchronous advance; the
+    // async advance flushes pending work between timers in both flavours.
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
     });
     expect(screen.getByText("AL")).not.toBeNull();
   });

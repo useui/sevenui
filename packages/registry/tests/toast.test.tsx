@@ -23,6 +23,21 @@ describe("Toaster", () => {
     expect(getToasts().length).toBe(0);
   });
 
+  // A toast without its own timeout takes the provider's. Another Toaster on
+  // the same manager mounting and unmounting must not leave its timeout
+  // behind for the one still shown.
+  it("closes a toast after the mounted Toaster's timeout", async () => {
+    const manager = createToastManager();
+    render(<Toaster toastManager={manager} timeout={100} />);
+    const other = render(<Toaster toastManager={manager} timeout={60_000} />);
+    other.unmount();
+    act(() => {
+      manager.add({ title: "Quick" });
+    });
+    await screen.findByText("Quick");
+    await waitFor(() => expect(screen.queryByText("Quick")).toBeNull(), { timeout: 2000 });
+  });
+
   it("shows a toast with title and description when added imperatively", async () => {
     const manager = createToastManager();
     render(<Toaster toastManager={manager} />);

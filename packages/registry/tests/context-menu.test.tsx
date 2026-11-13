@@ -55,6 +55,20 @@ describe("ContextMenu", () => {
     expect(screen.queryByRole("menu")).toBeNull();
   });
 
+  it("does not open while the root is disabled", async () => {
+    render(
+      <ContextMenu disabled>
+        <ContextMenuTrigger>Right click here</ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem>Back</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>,
+    );
+    fireEvent.contextMenu(screen.getByText("Right click here"));
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(screen.queryByRole("menu")).toBeNull();
+  });
+
   it("opens on right-click (contextmenu event) and lists items", async () => {
     render(<BasicContextMenu />);
     const menu = await openContextMenu();
@@ -76,6 +90,21 @@ describe("ContextMenu", () => {
     await waitFor(() => {
       expect(screen.queryByRole("menu")).toBeNull();
     });
+  });
+
+  it("closes at once when an item's onClick returns a pending Promise", async () => {
+    const user = userEvent.setup();
+    const onBack = vi.fn(() => new Promise<void>(() => {}));
+    render(<BasicContextMenu onBack={onBack} />);
+    await openContextMenu();
+    const item = screen.getByRole("menuitem", { name: "Back" });
+    await user.click(item);
+    expect(onBack).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(screen.queryByRole("menu")).toBeNull();
+    });
+    expect(item.hasAttribute("aria-busy")).toBe(false);
+    expect(item.hasAttribute("data-pending")).toBe(false);
   });
 
   it("does not activate a disabled item", async () => {

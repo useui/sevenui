@@ -12,10 +12,11 @@ import { pageTitle, site } from "./site";
  */
 export function documentTitle(route: string, title: string): string {
   if (route === "/") return `${site.name} — Base UI components for shadcn/ui`;
-  if (route === "/docs/components") return pageTitle("React Primitives built on Base UI");
+  if (route === "/docs/components") return pageTitle("React Primitives on Base UI or UI SDK");
   if (route === "/components") return pageTitle("Free React Components for shadcn/ui");
   if (route === "/blocks") return pageTitle("Pro React Blocks for shadcn/ui");
-  if (route.startsWith("/docs/components/")) return pageTitle(`React ${title} built on Base UI`);
+  // A static title cannot follow the reader's flavour, so it names both.
+  if (route.startsWith("/docs/components/")) return pageTitle(`React ${title} on Base UI or UI SDK`);
   if (route.startsWith("/components/")) return pageTitle(`React ${title} Examples, shadcn compatible`);
   if (route.startsWith("/blocks/")) return pageTitle(`${title.replace(/ blocks$/, "")} Blocks for React and shadcn/ui`);
   return pageTitle(title);

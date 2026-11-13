@@ -22,7 +22,13 @@ const nextConfig: NextConfig = {
 
 const withMDX = createMDX({
   options: {
-    remarkPlugins: [["remark-frontmatter", ["yaml"]], "remark-gfm", "remark-smartypants"],
+    remarkPlugins: [
+      ["remark-frontmatter", ["yaml"]],
+      "remark-gfm",
+      "remark-smartypants",
+      // An absolute path: Turbopack takes plugins by name or path, never as functions.
+      resolve(dirname(fileURLToPath(import.meta.url)), "lib/mdx/remark-flavour-api.mjs"),
+    ],
     rehypePlugins: [
       "rehype-slug",
       ["rehype-autolink-headings", { behavior: "wrap" }],

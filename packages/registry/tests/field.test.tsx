@@ -9,6 +9,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/registry/base/ui/field";
+import { Checkbox } from "@/registry/base/ui/checkbox";
 import { Input } from "@/registry/base/ui/input";
 
 describe("Field", () => {
@@ -99,6 +100,27 @@ describe("FieldError", () => {
     expect(await screen.findByText("Too short.")).toBeTruthy();
   });
 
+  // Base UI treats `invalid={false}` as "not forced": a failing validator
+  // still marks the control invalid for assistive technology.
+  it("still marks the control invalid when invalid={false} and validate fails", async () => {
+    const user = userEvent.setup();
+    render(
+      <Field
+        name="username"
+        invalid={false}
+        validationMode="onChange"
+        validate={(value) => (String(value ?? "").length >= 3 ? null : "Too short.")}
+      >
+        <FieldLabel>Username</FieldLabel>
+        <Input />
+        <FieldError />
+      </Field>,
+    );
+    await user.type(screen.getByLabelText("Username"), "a");
+    expect(await screen.findByText("Too short.")).toBeTruthy();
+    expect(screen.getByLabelText("Username").getAttribute("aria-invalid")).toBe("true");
+  });
+
   it("renders children when given", () => {
     render(
       <Field invalid>
@@ -159,5 +181,24 @@ describe("Field v2 styles", () => {
     expect(joined).not.toContain("focus-ring");
     expect(joined).not.toContain("surface-");
     expect(joined).not.toContain("hairline");
+  });
+});
+
+// Field integration lives with Field so checkbox.test.tsx imports only the
+// checkbox, and the ui-sdk run can pick it up before Field is ported.
+describe("Field with a Checkbox", () => {
+  it("is labeled automatically inside a Field with FieldLabel", async () => {
+    const user = userEvent.setup();
+    render(
+      <Field name="terms">
+        <FieldLabel>Accept terms</FieldLabel>
+        <Checkbox />
+      </Field>,
+    );
+    // The label is associated with both the checkbox button and its hidden
+    // input, so query by role.
+    const checkbox = screen.getByRole("checkbox", { name: "Accept terms" });
+    await user.click(checkbox);
+    expect(checkbox.getAttribute("aria-checked")).toBe("true");
   });
 });

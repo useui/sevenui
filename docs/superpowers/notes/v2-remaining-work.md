@@ -1,8 +1,11 @@
 # v2 remaining work
 
 Parked on 2026-11-13. Pick this up when the owner asks what is left to do for
-v2. Everything here happens on `feat/v2`; nothing merges to `main` until v2
-ships. Neither project has a spec yet: each starts with a spec, then a plan.
+v2. `feat/v2` (projects 1 and 2) is already merged into `main`; the work below
+is still to come. Neither project has a spec yet: each starts with a spec, then a plan.
+
+"v2" is the program's working name. The release it produces is version 1.1
+(owner's decision, 2026-11-13), not 2.0.
 
 Order is fixed: project 3, then project 4, then the release (project 5).
 

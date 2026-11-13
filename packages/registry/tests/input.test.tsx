@@ -13,6 +13,26 @@ describe("Input", () => {
     expect(input.getAttribute("data-slot")).toBe("input");
   });
 
+  it("lets a caller's data-slot replace the default", () => {
+    // Wrappers re-slot the input (sidebar-input, input-group-control).
+    render(<Input placeholder="Search" data-slot="sidebar-input" />);
+    expect(
+      screen.getByPlaceholderText("Search").getAttribute("data-slot"),
+    ).toBe("sidebar-input");
+  });
+
+  it("keeps a caller's data-slot inside a Field", () => {
+    render(
+      <Field name="q">
+        <FieldLabel>Query</FieldLabel>
+        <Input data-slot="input-group-control" />
+      </Field>,
+    );
+    expect(screen.getByLabelText("Query").getAttribute("data-slot")).toBe(
+      "input-group-control",
+    );
+  });
+
   it("passes the type through", () => {
     render(<Input type="password" placeholder="Password" />);
     expect(

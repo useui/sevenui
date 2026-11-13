@@ -37,6 +37,18 @@ for f in "$ROOT"/apps/web/public/r/component/*.json; do
   sed "s|https://sevenui.dev/r/|http://localhost:$PORT/|g" "$f" \
     > "$WORK/registry/component/$(basename "$f")"
 done
+mkdir -p "$WORK/registry/ui-sdk"
+for f in "$ROOT"/apps/web/public/r/ui-sdk/*.json; do
+  sed "s|https://sevenui.dev/r/|http://localhost:$PORT/|g" "$f" \
+    > "$WORK/registry/ui-sdk/$(basename "$f")"
+done
+for ns in demo component; do
+  mkdir -p "$WORK/registry/ui-sdk/$ns"
+  for f in "$ROOT"/apps/web/public/r/ui-sdk/$ns/*.json; do
+    sed "s|https://sevenui.dev/r/|http://localhost:$PORT/|g" "$f" \
+      > "$WORK/registry/ui-sdk/$ns/$(basename "$f")"
+  done
+done
 # Use --directory instead of `(cd ... && python3 ...) &` so that $! is the
 # actual server PID. A backgrounded `(cd X && cmd) &` runs cmd inside a
 # subshell wrapper process; on this machine the subshell PID and the python3
@@ -149,6 +161,11 @@ stock_decls "$TOK/src/styles.css" > "$WORK/tokens-before.txt"
 test "$(wc -l < "$WORK/tokens-before.txt" | tr -d ' ')" -eq 13 \
   || { echo "stock baseline should hold 13 declarations" >&2; cat "$WORK/tokens-before.txt" >&2; exit 1; }
 
+# 2c. UI SDK flavour project: a fresh copy, so no base primitive is present.
+SDK="$WORK/app-ui-sdk"
+cp -R "$APP" "$SDK"
+printf '@layer ui-sdk;\n@import "tailwindcss";\n' > "$SDK/src/styles.css"
+
 # 3. Install representative items through the CLI
 # Pinned to the repo's own installed binary instead of `npx --yes shadcn@latest`:
 # `@latest` would re-resolve to whatever the registry serves at run time, which
@@ -171,12 +188,19 @@ TOK_CSS="$TOK/src/styles.css"
 (cd "$TOK" && "$SHADCN_BIN" add --yes --overwrite "http://localhost:$PORT/button.json")
 grep -q -- '--surface-tray:' "$TOK_CSS" || { echo "--surface-tray: missing after button install" >&2; exit 1; }
 grep -q '@utility focus-ring' "$TOK_CSS" || { echo "@utility focus-ring missing after button install" >&2; exit 1; }
+# shadcn also writes `--surface-tray: var(--surface-tray);` into @theme inline,
+# because it does not read a color-mix() value as a colour; so count the
+# theme-block declarations (their value is the color-mix) and every match.
+tray_values() { grep -c -- '--surface-tray: color-mix' "$TOK_CSS"; }
+tray_after_one="$(grep -c -- '--surface-tray:' "$TOK_CSS")"
 (cd "$TOK" && "$SHADCN_BIN" add --yes --overwrite \
   "http://localhost:$PORT/select.json" "http://localhost:$PORT/dialog.json")
 # Each shared dependency installs once: --surface-tray is declared once per theme
 # block (:root and .dark), never duplicated by the second install.
-test "$(grep -c -- '--surface-tray:' "$TOK_CSS")" -eq 2 \
+test "$(tray_values)" -eq 2 \
   || { echo "--surface-tray: should be declared exactly twice (:root + .dark) after select+dialog" >&2; exit 1; }
+test "$(grep -c -- '--surface-tray:' "$TOK_CSS")" -eq "$tray_after_one" \
+  || { echo "--surface-tray: the select+dialog install added declarations" >&2; exit 1; }
 test "$(grep -c '@utility focus-ring' "$TOK_CSS")" -eq 1 \
   || { echo "@utility focus-ring should appear exactly once" >&2; exit 1; }
 stock_decls "$TOK_CSS" > "$WORK/tokens-after.txt"
@@ -197,6 +221,179 @@ test -f "$APP/src/components/accordion-demo.tsx" || { echo "accordion-demo.tsx (
 test -f "$APP/src/components/accordion-01.tsx" || { echo "accordion-01.tsx (component) missing" >&2; exit 1; }
 grep -q 'from "@/components/ui/accordion"' "$APP/src/components/accordion-demo.tsx" \
   || { echo "demo import not rewritten to consumer alias" >&2; exit 1; }
+
+# UI SDK flavour contract: /r/ui-sdk/ items install into the same ui alias,
+# their registryDependencies stay inside the flavour (dialog pulls the
+# flavour button), the shared tokens still arrive, the exact UI SDK version
+# lands in package.json, and the install prints the cascade-layer step.
+SDK_LOG="$WORK/ui-sdk-install.log"
+(cd "$SDK" && "$SHADCN_BIN" add --yes --overwrite \
+  "http://localhost:$PORT/ui-sdk/dialog.json" \
+  "http://localhost:$PORT/ui-sdk/dropdown-menu.json" \
+  "http://localhost:$PORT/ui-sdk/select.json" \
+  "http://localhost:$PORT/ui-sdk/tooltip.json" \
+  "http://localhost:$PORT/ui-sdk/checkbox.json" \
+  "http://localhost:$PORT/ui-sdk/badge.json") 2>&1 | tee "$SDK_LOG"
+for name in button dialog dropdown-menu select tooltip checkbox badge; do
+  test -f "$SDK/src/components/ui/$name.tsx" || { echo "ui-sdk $name.tsx missing" >&2; exit 1; }
+done
+# The items declare the exact version; npm saves it with a caret, which for a
+# prerelease still only admits 0.1.0 prereleases and 0.1.x.
+# The pin is exact at the source: the served items name the version with no
+# range operator (npm then writes its own save prefix into the consumer's
+# package.json, so that file cannot show it), and exactly that version is
+# what lands in node_modules. UI SDK is a beta; a range would float across
+# betas. check-registry enforces the same on the workspace and every item.
+UI_SDK_PIN="$(node -p 'require(process.argv[1]).dependencies["@ui-sdk/react"]' "$ROOT/packages/registry/package.json")"
+echo "$UI_SDK_PIN" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$' \
+  || { echo "packages/registry/package.json pins @ui-sdk/react to \"$UI_SDK_PIN\", not an exact version" >&2; exit 1; }
+for pkg in react core; do
+  grep -Fq "\"@ui-sdk/$pkg@$UI_SDK_PIN\"" "$WORK/registry/ui-sdk/dialog.json" \
+    || { echo "ui-sdk/dialog.json does not depend on @ui-sdk/$pkg@$UI_SDK_PIN exactly" >&2; grep -o '"@ui-sdk/[^"]*"' "$WORK/registry/ui-sdk/dialog.json" >&2; exit 1; }
+  grep -Eq "\"@ui-sdk/$pkg\": \"\\^?${UI_SDK_PIN//./\\.}\"" "$SDK/package.json" \
+    || { echo "@ui-sdk/$pkg $UI_SDK_PIN missing from package.json" >&2; grep ui-sdk "$SDK/package.json" >&2; exit 1; }
+  installed="$(node -p 'require(process.argv[1]).version' "$SDK/node_modules/@ui-sdk/$pkg/package.json")"
+  test "$installed" = "$UI_SDK_PIN" || { echo "installed @ui-sdk/$pkg is $installed, not $UI_SDK_PIN" >&2; exit 1; }
+done
+if grep -rhoE '"@ui-sdk/[a-z-]+@[^"0-9][^"]*"' "$WORK/registry/ui-sdk" | grep -q .; then
+  echo "a served ui-sdk item names @ui-sdk/* with a range operator:" >&2
+  grep -rhoE '"@ui-sdk/[a-z-]+@[^"0-9][^"]*"' "$WORK/registry/ui-sdk" | sort -u >&2; exit 1
+fi
+if grep -q '@base-ui/react' "$SDK/package.json"; then echo "ui-sdk install pulled @base-ui/react" >&2; exit 1; fi
+grep -q '@ui-sdk/react/button' "$SDK/src/components/ui/button.tsx" || { echo "dialog did not pull the ui-sdk button" >&2; exit 1; }
+grep -q 'from "@/components/ui/button"' "$SDK/src/components/ui/dialog.tsx" \
+  || { echo "ui-sdk import not rewritten to consumer alias" >&2; exit 1; }
+grep -q -- '--surface-tray:' "$SDK/src/styles.css" || { echo "ui-sdk install did not pull sevenui-tokens" >&2; exit 1; }
+test "$(head -n 1 "$SDK/src/styles.css")" = "@layer ui-sdk;" || { echo "@layer ui-sdk; is no longer the first line" >&2; exit 1; }
+# The setup message lives on one shared item (ui-sdk-setup), so a six-item
+# install prints it once, not once per item and dependency.
+test "$(grep -c 'cascade layer named ui-sdk' "$SDK_LOG")" -eq 1 \
+  || { echo "install should print the cascade-layer step exactly once, printed $(grep -c 'cascade layer named ui-sdk' "$SDK_LOG")" >&2; exit 1; }
+grep -q 'npm install --save-exact @ui-sdk/react@' "$SDK_LOG" || { echo "install did not print how to pin UI SDK" >&2; exit 1; }
+
+# UI SDK flavour examples: /r/ui-sdk/demo/* and /r/ui-sdk/component/* land as
+# single files under components/ like their base counterparts, and pull only
+# flavour primitives. calendar-range and tabs-05 are variants (overlays): the
+# first imports DateRange from the flavour calendar instead of
+# react-day-picker, the second UI SDK's TabsIndicator instead of Base UI's.
+(cd "$SDK" && "$SHADCN_BIN" add --yes --overwrite \
+  "http://localhost:$PORT/ui-sdk/demo/command-demo.json" \
+  "http://localhost:$PORT/ui-sdk/component/accordion-01.json" \
+  "http://localhost:$PORT/ui-sdk/demo/calendar-range.json" \
+  "http://localhost:$PORT/ui-sdk/component/tabs-05.json")
+for name in command-demo accordion-01 calendar-range tabs-05; do
+  test -f "$SDK/src/components/$name.tsx" || { echo "ui-sdk example $name.tsx missing" >&2; exit 1; }
+done
+grep -q 'from "@/components/ui/command"' "$SDK/src/components/command-demo.tsx" \
+  || { echo "ui-sdk demo import not rewritten to consumer alias" >&2; exit 1; }
+grep -q 'import type { DateRange } from "@/components/ui/calendar"' "$SDK/src/components/calendar-range.tsx" \
+  || { echo "calendar-range variant does not take DateRange from the flavour calendar" >&2; exit 1; }
+grep -q 'from "@ui-sdk/react/tabs"' "$SDK/src/components/tabs-05.tsx" \
+  || { echo "tabs-05 variant does not use UI SDK's TabsIndicator" >&2; exit 1; }
+for name in command accordion calendar tabs; do
+  grep -q "@ui-sdk/react/$name" "$SDK/src/components/ui/$name.tsx" \
+    || { echo "a flavour example pulled the base $name primitive" >&2; exit 1; }
+done
+for pkg in @base-ui/react react-day-picker react-resizable-panels embla-carousel-react; do
+  if grep -q "\"$pkg\"" "$SDK/package.json"; then echo "a ui-sdk install pulled $pkg" >&2; exit 1; fi
+done
+if grep -rqE 'from "(@base-ui/react|react-day-picker|react-resizable-panels|embla-carousel-react)' "$SDK/src"; then
+  echo "an installed ui-sdk file imports a library UI SDK replaces" >&2; exit 1
+fi
+cat > "$SDK/src/main.tsx" <<'EOF'
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+const fruits = [
+  { value: "apple", label: "Apple" },
+  { value: "banana", label: "Banana" },
+];
+
+// The same JSX the base flavour's examples use, Base UI-only props included.
+export function App() {
+  return (
+    <TooltipProvider delay={0}>
+      <Badge render={<a href="/new" />}>New</Badge>
+      <Checkbox indeterminate onCheckedChange={(checked: boolean) => checked} />
+      <Dialog onOpenChange={(open) => open}>
+        <DialogTrigger render={<Button variant="outline" />}>Open</DialogTrigger>
+        <DialogContent showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle>Title</DialogTitle>
+            <DialogDescription>Description</DialogDescription>
+          </DialogHeader>
+          <DialogFooter showCloseButton />
+        </DialogContent>
+      </Dialog>
+      <DropdownMenu>
+        <DropdownMenuTrigger render={<Button variant="outline" />}>Menu</DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => {}} closeOnClick={false}>
+            Item
+          </DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>More</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Select items={fruits} defaultValue="apple">
+        <SelectTrigger size="sm">
+          <SelectValue placeholder="Fruit" />
+        </SelectTrigger>
+        <SelectContent side="inline-end">
+          <SelectGroup>
+            <SelectLabel>Fruits</SelectLabel>
+            {fruits.map((fruit) => (
+              <SelectItem key={fruit.value} value={fruit.value}>
+                {fruit.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+      <Tooltip>
+        <TooltipTrigger delay={0} render={<Button size="icon" />}>
+          ?
+        </TooltipTrigger>
+        <TooltipContent side="inline-start">Help</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+EOF
+(cd "$SDK" && npx tsc --noEmit)
 
 # 4. The installed code must typecheck in the consumer project
 cat > "$APP/src/main.tsx" <<'EOF'

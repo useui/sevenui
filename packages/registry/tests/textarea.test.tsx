@@ -12,6 +12,34 @@ describe("Textarea", () => {
     expect(textarea.getAttribute("data-slot")).toBe("textarea");
   });
 
+  it("lets a caller's data-slot replace the default", () => {
+    // InputGroupTextarea re-slots it as input-group-control.
+    render(<Textarea placeholder="Note" data-slot="input-group-control" />);
+    expect(screen.getByPlaceholderText("Note").getAttribute("data-slot")).toBe(
+      "input-group-control",
+    );
+  });
+
+  it("keeps a controlled value and fires onSelect", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    render(
+      <Textarea
+        placeholder="Fixed"
+        value="Hello"
+        onChange={() => {}}
+        onSelect={onSelect}
+      />,
+    );
+    const textarea = screen.getByPlaceholderText(
+      "Fixed",
+    ) as HTMLTextAreaElement;
+    await user.click(textarea);
+    await user.keyboard("x");
+    expect(textarea.value).toBe("Hello");
+    expect(onSelect).toHaveBeenCalled();
+  });
+
   it("updates its value and fires onChange as the user types", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();

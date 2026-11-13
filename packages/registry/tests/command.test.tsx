@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -13,6 +14,7 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/registry/base/ui/command";
+import { expectFilteredOut } from "./helpers/flavour";
 
 type Item = { value: string; label: string };
 type Group = { value: string; items: Item[] };
@@ -38,7 +40,7 @@ const groups: Group[] = [
 function Palette({ onSelect = () => {} }: { onSelect?: (value: string) => void }) {
   return (
     <Command items={groups}>
-      <CommandInput placeholder="Type a command or search..." />
+      <CommandInput placeholder="Type a command or search..." aria-label="Command" />
       <CommandList>
         {(group: Group) => (
           <CommandGroup key={group.value} heading={group.value} items={group.items}>
@@ -68,6 +70,71 @@ describe("Command", () => {
     expect(screen.getByText("Settings")).toBeTruthy();
   });
 
+  // Base UI tells object items apart by identity, so two groups may each
+  // hold an item labelled "Settings" without a string value or id.
+  it("keeps object items apart when they share a label", async () => {
+    const user = userEvent.setup();
+    const onTeamA = vi.fn();
+    const onTeamB = vi.fn();
+    type Entry = { label: string; run: () => void };
+    // Fresh objects on every render, as an inline literal gives.
+    const teams = (): { value: string; items: Entry[] }[] => [
+      { value: "Team A", items: [{ label: "Settings", run: onTeamA }] },
+      { value: "Team B", items: [{ label: "Settings", run: onTeamB }] },
+    ];
+    const palette = () => (
+      <Command items={teams()}>
+        <CommandInput placeholder="Search" aria-label="Command" />
+        <CommandList>
+          {(team: ReturnType<typeof teams>[number]) => (
+            <CommandGroup key={team.value} heading={team.value} items={team.items}>
+              {(item: Entry) => (
+                <CommandItem key={team.value} value={item} onClick={item.run}>
+                  {item.label}
+                </CommandItem>
+              )}
+            </CommandGroup>
+          )}
+        </CommandList>
+      </Command>
+    );
+    const { rerender } = render(palette());
+    rerender(palette());
+    const options = screen.getAllByRole("option", { name: "Settings" });
+    expect(options).toHaveLength(2);
+    await user.click(options[1]);
+    expect(onTeamB).toHaveBeenCalledTimes(1);
+    expect(onTeamA).not.toHaveBeenCalled();
+    await user.click(options[0]);
+    expect(onTeamA).toHaveBeenCalledTimes(1);
+  });
+
+  // The filter gets the item, not its key, from the first render on, which
+  // on the server is the only one (command-07 reads `item.label`).
+  it("hands a custom filter the item during a server render", () => {
+    const filter = vi.fn((item: unknown, query: string) =>
+      (item as Item).label.toLowerCase().includes(query.toLowerCase()),
+    );
+    const html = renderToString(
+      <Command items={groups} filter={filter} defaultValue="cal">
+        <CommandInput placeholder="Search" />
+        <CommandList>
+          {(group: Group) => (
+            <CommandGroup key={group.value} heading={group.value} items={group.items}>
+              {(item: Item) => (
+                <CommandItem key={item.value} value={item}>
+                  {item.label}
+                </CommandItem>
+              )}
+            </CommandGroup>
+          )}
+        </CommandList>
+      </Command>,
+    );
+    expect(html).toContain("Calendar");
+    for (const [item] of filter.mock.calls) expect(typeof item).toBe("object");
+  });
+
   it("filters items as the user types", async () => {
     const user = userEvent.setup();
     render(<Palette />);
@@ -75,8 +142,8 @@ describe("Command", () => {
     await user.keyboard("cal");
     expect(screen.getByText("Calendar")).toBeTruthy();
     expect(screen.getByText("Calculator")).toBeTruthy();
-    expect(screen.queryByText("Profile")).toBeNull();
-    expect(screen.queryByText("Settings")).toBeNull();
+    expectFilteredOut(screen.queryByText("Profile"));
+    expectFilteredOut(screen.queryByText("Settings"));
   });
 
   it("shows the empty state when nothing matches", async () => {
@@ -85,7 +152,7 @@ describe("Command", () => {
     await user.click(screen.getByPlaceholderText("Type a command or search..."));
     await user.keyboard("zzzz");
     expect(screen.getByText("No results found.")).toBeTruthy();
-    expect(screen.queryByText("Calendar")).toBeNull();
+    expectFilteredOut(screen.queryByText("Calendar"));
   });
 
   it("activates the highlighted item with Enter", async () => {
@@ -96,6 +163,20 @@ describe("Command", () => {
     await user.keyboard("cal");
     await user.keyboard("{Enter}");
     expect(onSelect).toHaveBeenCalledWith("calendar");
+  });
+
+  // Base UI ignores a Promise from onClick; UI SDK would mark the command
+  // busy and ignore presses until it settled.
+  it("runs an item again while its onClick's Promise is pending", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn(() => new Promise<void>(() => {}));
+    render(<Palette onSelect={onSelect} />);
+    const item = screen.getByRole("option", { name: "Calendar" });
+    await user.click(item);
+    await user.click(item);
+    expect(onSelect).toHaveBeenCalledTimes(2);
+    expect(item.hasAttribute("aria-busy")).toBe(false);
+    expect(item.getAttribute("aria-disabled")).not.toBe("true");
   });
 
   it("moves the highlight with arrow keys before activating", async () => {
@@ -144,7 +225,7 @@ describe("Command v2 styles", () => {
   function ShortcutPalette() {
     return (
       <Command items={groups}>
-        <CommandInput placeholder="Type a command or search..." />
+        <CommandInput placeholder="Type a command or search..." aria-label="Command" />
         <CommandList>
           {(group: Group) => (
             <CommandGroup key={group.value} heading={group.value} items={group.items}>

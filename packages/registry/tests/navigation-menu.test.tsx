@@ -10,6 +10,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/registry/base/ui/navigation-menu";
+import { isUiSdk } from "./helpers/flavour";
 
 function BasicMenu(props: React.ComponentProps<typeof NavigationMenu>) {
   return (
@@ -126,7 +127,9 @@ describe("NavigationMenu v2 styles", () => {
     const viewport = screen.getByRole("link", { name: "Analytics" }).closest(
       '[data-slot="navigation-menu-content"]',
     )?.parentElement;
-    const surface = viewport?.parentElement;
+    // UI SDK has no Positioner/Popup/Viewport stack: its viewport is the
+    // top-layer popup surface itself.
+    const surface = isUiSdk ? viewport : viewport?.parentElement;
     expect(cls(surface)).toContain("bg-popover");
     expect(cls(surface)).toContain("ring-1 ring-foreground/10");
     expect(cls(surface)).toContain("shadow-overlay");

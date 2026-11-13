@@ -93,3 +93,29 @@ describe("Collapsible v2 style", () => {
     expect(panel?.className).toContain("motion-reduce:animate-none");
   });
 });
+
+describe("Collapsible state attributes", () => {
+  it("marks the trigger of an open panel with data-panel-open", async () => {
+    const user = userEvent.setup();
+    render(<BasicCollapsible />);
+    const trigger = screen.getByRole("button", { name: "Toggle details" });
+    expect(trigger.hasAttribute("data-panel-open")).toBe(false);
+    await user.click(trigger);
+    expect(trigger.hasAttribute("data-panel-open")).toBe(true);
+  });
+
+  it("lets a caller's data-slot replace the default", () => {
+    render(
+      <Collapsible data-slot="menu-collapsible" defaultOpen>
+        <CollapsibleTrigger data-slot="menu-button">Toggle</CollapsibleTrigger>
+        <CollapsibleContent data-slot="menu-sub">Details</CollapsibleContent>
+      </Collapsible>,
+    );
+    expect(
+      screen.getByRole("button", { name: "Toggle" }).getAttribute("data-slot"),
+    ).toBe("menu-button");
+    expect(screen.getByText("Details").getAttribute("data-slot")).toBe(
+      "menu-sub",
+    );
+  });
+});

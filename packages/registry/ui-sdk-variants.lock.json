@@ -1,0 +1,50 @@
+{
+  "description": "The original each UI SDK example variant (registry/ui-sdk/examples/) was last reviewed against. When an original changes, the checks fail until the change is carried into its variant and `node scripts/ui-sdk-flavour.mjs review <path>` records the new hash. Never edit by hand.",
+  "variants": {
+    "components/calendar/calendar-04.tsx": {
+      "original": "sha256-c868149b1772cd42f6e2e995d2959121ce6d210625a107b4134923370005875e"
+    },
+    "components/calendar/calendar-05.tsx": {
+      "original": "sha256-8c613d2e6759cb09721327a5e6b29589486596d2a2b2be1a8e9f38e458d3de85"
+    },
+    "components/calendar/calendar-10.tsx": {
+      "original": "sha256-a13bf0391e04371fefcd382dfdc8584381a741372cd420de75f30100e501637c"
+    },
+    "components/calendar/calendar-12.tsx": {
+      "original": "sha256-9c4e95af57915e9ce7abeaf56790f79affd9cc743b24794af02ef28c3aa261c8"
+    },
+    "components/calendar/calendar-14.tsx": {
+      "original": "sha256-77c37ab1518d389d6302db2f905bbfc8a82de554ea121ff346131b0feffa1a56"
+    },
+    "components/calendar/calendar-15.tsx": {
+      "original": "sha256-099e0adf5acb763363c2f5bd1508095906e1feaca71e1a35f1171d242419cef1"
+    },
+    "components/resizable/resizable-04.tsx": {
+      "original": "sha256-01290e2c6639b1b38dd5a589c70df650034d0318b0bcc640d6ce041d29ae7283"
+    },
+    "components/resizable/resizable-05.tsx": {
+      "original": "sha256-598089e1651437f62e2258df9772930cfa7e9b1af2be7bb27c8ed475373f6c8b"
+    },
+    "components/resizable/resizable-08.tsx": {
+      "original": "sha256-2ebb5219c046277c448e87cf085b52db7226fbdb6026320196b984b6ecfb6440"
+    },
+    "components/resizable/resizable-10.tsx": {
+      "original": "sha256-45d0e9ada46e4f60c3143251562681d613d1bfda93c08d8f3c5941106f151548"
+    },
+    "components/resizable/resizable-13.tsx": {
+      "original": "sha256-99ddbf4935873faa4f5becb349c54f8094b5660945c9c93a6f5c8b145e7defbd"
+    },
+    "components/resizable/resizable-14.tsx": {
+      "original": "sha256-a83ca529683528d49f140d1f246de00727a0f7f11ff2fb0126652e801aaddf8e"
+    },
+    "components/tabs/tabs-05.tsx": {
+      "original": "sha256-5df63fda9dde097d9c112825f14ab8326c80b7bd82324df7d6b137b2d6ea883f"
+    },
+    "demos/calendar/calendar-range.tsx": {
+      "original": "sha256-f3f175477d3ead1eaeda1a4c34eacaa909d1ec1aee930b74bb3d3e557bde9412"
+    },
+    "demos/tabs/tabs-indicator.tsx": {
+      "original": "sha256-b0f9716fe68be33d01a7e684834f93f47a1cb073381dddc2d6f318e1f84b0a19"
+    }
+  }
+}

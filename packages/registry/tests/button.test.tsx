@@ -4,6 +4,7 @@ import type * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import { Button, buttonVariants } from "@/registry/base/ui/button";
+import { isUiSdk } from "./helpers/flavour";
 import { AA, contrastOn, destructivePull, destructiveTint, mix, palette } from "./helpers/palette";
 
 function tokens(element: HTMLElement) {
@@ -16,6 +17,41 @@ describe("Button", () => {
     const button = screen.getByRole("button", { name: "Save" });
     expect(button.tagName).toBe("BUTTON");
     expect(button.getAttribute("data-slot")).toBe("button");
+  });
+
+  // Button has no "use client", so a Server Component runs it. What it hands
+  // on must cross into the client: no functions, and no render element
+  // (React delivers one lazily, which the flavour's UI SDK part cannot
+  // render). React's server build has no useState, so the module is loaded
+  // here with that hook removed. Also checked as a real RSC render in Next.js.
+  it("renders from a Server Component with a custom slot or a render element", async () => {
+    vi.resetModules();
+    vi.doMock("react", async (importOriginal) => ({
+      ...(await importOriginal<typeof import("react")>()),
+      useState: undefined,
+    }));
+    try {
+      const { Button: ServerButton } = await import("@/registry/base/ui/button");
+      const run = ServerButton as unknown as (props: object) => React.ReactElement;
+      const cases: [object, string][] = [
+        [{ "data-slot": "carousel-next", children: "Next" }, "carousel-next"],
+        [{ render: <a href="#next">Next</a> }, "button"],
+      ];
+      for (const [props, slot] of cases) {
+        const element = run(props);
+        const passed = element.props as Record<string, unknown>;
+        expect(Object.keys(passed).filter((key) => typeof passed[key] === "function")).toEqual([]);
+        if (typeof element.type === "string") {
+          expect(passed["data-slot"]).toBe(slot);
+        } else {
+          expect(passed.render === undefined || typeof passed.render === "object").toBe(true);
+          if (isUiSdk) throw new Error("the flavour must not hand UI SDK's part a server render");
+        }
+      }
+    } finally {
+      vi.doUnmock("react");
+      vi.resetModules();
+    }
   });
 
   it("applies the default variant and size tokens", () => {
@@ -153,6 +189,21 @@ describe("Button", () => {
     render(<Button onClick={onClick}>Save</Button>);
     await user.click(screen.getByRole("button", { name: "Save" }));
     expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  // Base UI's Button ignores a Promise from onClick; UI SDK's would turn
+  // pending (aria-busy, aria-disabled) and ignore presses until it settled.
+  it("stays pressable while a Promise its onClick returned is pending", async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn(() => new Promise<void>(() => {}));
+    render(<Button onClick={onClick}>Save</Button>);
+    const button = screen.getByRole("button", { name: "Save" });
+    await user.click(button);
+    await user.click(button);
+    expect(onClick).toHaveBeenCalledTimes(2);
+    expect(button.hasAttribute("aria-busy")).toBe(false);
+    expect(button.hasAttribute("data-pending")).toBe(false);
+    expect(button.getAttribute("aria-disabled")).not.toBe("true");
   });
 
   it("does not call onClick when disabled", async () => {

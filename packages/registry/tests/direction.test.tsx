@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { DirectionProvider, useDirection } from "@/registry/base/ui/direction";
+import { isUiSdk } from "./helpers/flavour";
 
 function ShowDirection({ id = "direction" }: { id?: string }) {
   const direction = useDirection();
@@ -54,6 +55,22 @@ describe("DirectionProvider", () => {
       </DirectionProvider>,
     );
     expect(container.children).toHaveLength(1);
+    if (isUiSdk) {
+      // UI SDK reads direction from the page, so the flavour's provider sets
+      // dir on a display: contents wrapper, which adds no box. After the
+      // children it holds the host its popups render into (also no box), so
+      // they keep the dir.
+      const wrapper = container.firstElementChild as HTMLElement;
+      expect(wrapper.getAttribute("dir")).toBe("rtl");
+      expect(wrapper.style.display).toBe("contents");
+      expect(wrapper.children).toHaveLength(2);
+      expect(wrapper.firstElementChild).toBe(screen.getByTestId("only-child"));
+      const host = wrapper.lastElementChild as HTMLElement;
+      expect(host.getAttribute("data-slot")).toBe("direction-popups");
+      expect(host.style.display).toBe("contents");
+      expect(host.children).toHaveLength(0);
+      return;
+    }
     expect(container.firstElementChild).toBe(
       screen.getByTestId("only-child"),
     );

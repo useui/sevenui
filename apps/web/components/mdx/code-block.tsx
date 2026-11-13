@@ -4,6 +4,7 @@ import * as React from "react";
 import { LayerCard, LayerCardHeader, LayerCardPanel } from "@/registry/base/ui/layer-card";
 import { ScrollArea } from "@/registry/base/ui/scroll-area";
 import { CopyButton } from "./copy-button";
+import { currentFlavour, type Flavour } from "../../lib/flavour";
 import { currentPackageManager, type PackageManager } from "../../lib/package-manager";
 
 function cx(...values: Array<string | false | null | undefined>): string {
@@ -37,7 +38,8 @@ function LanguageIcon({ language }: { language: string }) {
 export type CodeBlockProps = React.ComponentPropsWithoutRef<"pre"> & {
   language?: string;
   headerRight?: React.ReactNode;
-  installCommands?: Record<PackageManager, string>;
+  /** Copy text per flavour and package manager; the reader's current pair is copied. */
+  installCommands?: Record<Flavour, Record<PackageManager, string>>;
   /**
    * Only the code and a floating copy button, for a pane that already sits in a frame (the Code tab of a
    * demo, which is itself a LayerCard panel). Without it the block is its own LayerCard.
@@ -62,9 +64,14 @@ export function CodeBlock({
 
   const label = language ? (LANGUAGE_LABELS[language] ?? language.toUpperCase()) : undefined;
 
+  // A pane can hold one <code> per flavour, with CSS hiding the others: copy the one on screen.
   const getCopyText = installCommands
-    ? () => installCommands[currentPackageManager()] ?? ""
-    : () => preRef.current?.querySelector("code")?.textContent ?? "";
+    ? () => installCommands[currentFlavour()]?.[currentPackageManager()] ?? ""
+    : () => {
+        const codes = [...(preRef.current?.querySelectorAll("code") ?? [])];
+        const shown = codes.find((code) => code.getClientRects().length > 0) ?? codes[0];
+        return shown?.textContent ?? "";
+      };
 
   // The viewport scrolls (and takes the tab stop once it overflows), so the header and copy button stay put.
   const scroller = (

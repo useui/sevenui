@@ -44,4 +44,11 @@ describe("Separator", () => {
       screen.getByTestId("separator").getAttribute("aria-label"),
     ).toBe("Section divider");
   });
+
+  it("lets a caller's data-slot replace the default", () => {
+    render(<Separator data-slot="sidebar-separator" data-testid="separator" />);
+    expect(screen.getByTestId("separator").getAttribute("data-slot")).toBe(
+      "sidebar-separator",
+    );
+  });
 });

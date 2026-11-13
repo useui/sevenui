@@ -20,6 +20,7 @@ import { usePathname } from "next/navigation";
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
 import type { BlocksNav, ShellBranch, ShellItem, ShellNav } from "../../lib/shell-nav";
 import { useDrawer } from "../drawer-context";
+import { FlavourSwitch } from "../flavour/flavour-switch";
 
 const ICONS: Record<string, LucideIcon> = {
   "/docs": BookOpen,
@@ -142,6 +143,15 @@ export function SiteSidebar({ blocks: blocksFromServer, nav }: { blocks?: Blocks
         }`}
         inert={!desktop && !open}
       >
+        {/* The primitive flavour applies to every primitive, demo and component; Pro blocks have one flavour. */}
+        {!pathname.startsWith("/blocks") && (
+          <div className="flex items-center justify-between gap-2 px-2.5 pt-2 pb-1">
+            <span aria-hidden="true" className="font-semibold text-docs-tertiary text-xs uppercase tracking-[0.3px]">
+              Built on
+            </span>
+            <FlavourSwitch />
+          </div>
+        )}
         {/* Soft fades at both ends instead of hard edges where the list scrolls under the card. */}
         <div
           className="flex-1 overflow-y-auto px-1 py-2 [mask-image:linear-gradient(to_bottom,transparent,#000_12px,#000_calc(100%-16px),transparent)] scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent"

@@ -1,5 +1,19 @@
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import {
+  EXAMPLE_KINDS,
+  FLAVOUR_URL,
+  LAYER_DOCS,
+  REPLACED,
+  SETUP_ITEM,
+  SHARED_ITEMS,
+  UI_SDK_PORTS,
+  importedPackages,
+  readFlavour,
+  readFlavourExamples,
+  replacedImports,
+  retarget,
+} from "./ui-sdk-flavour.mjs";
 
 const errors = [];
 const loadJson = (path) => JSON.parse(readFileSync(path, "utf8"));
@@ -178,8 +192,263 @@ for (const item of components.items) {
   }
 }
 
+// ---- ui-sdk flavour registry (/r/ui-sdk/*) ----
+// Derived from the files, never hand-edited: see scripts/ui-sdk-flavour.mjs.
+const flavour = readFlavour();
+errors.push(...flavour.problems.map((p) => `ui-sdk ${p}`));
+const FLAVOUR_ROOT = join(UI_ROOT, "registry/ui-sdk");
+const flavourItems = new Map(flavour.registry.items.map((i) => [i.name, i]));
+const registeredFlavourFiles = new Set(
+  [...flavour.state.values()].flatMap((e) => e.files.map((f) => f.path)),
+);
+// registry/ui-sdk/examples holds the example overlays, checked below.
+const walkFlavour = (rel) => {
+  for (const entry of readdirSync(join(UI_ROOT, rel), { withFileTypes: true })) {
+    const relPath = `${rel}/${entry.name}`;
+    if (relPath === "registry/ui-sdk/examples") continue;
+    if (entry.isDirectory()) walkFlavour(relPath);
+    else if (/\.tsx?$/.test(entry.name)) {
+      if (registeredFlavourFiles.has(relPath)) walkedFlavourFiles++;
+      else errors.push(`ui-sdk file ${relPath} belongs to no primitive`);
+    }
+  }
+};
+let walkedFlavourFiles = 0;
+if (existsSync(FLAVOUR_ROOT)) walkFlavour("registry/ui-sdk");
+else errors.push(`ui-sdk: ${FLAVOUR_ROOT} does not exist`);
+// The walk must have seen every registered flavour file, or it walked
+// somewhere else.
+if (walkedFlavourFiles !== registeredFlavourFiles.size) {
+  errors.push(`ui-sdk: the stray-file walk saw ${walkedFlavourFiles} registered flavour file(s), expected ${registeredFlavourFiles.size}`);
+}
+
+const baseUiNames = ui.items.filter((i) => i.type === "registry:ui").map((i) => i.name);
+// Every primitive is ported and published: the porting programme is finished,
+// so the flavour is complete, not merely "accounted for" (every primitive is
+// always ported, blocked or pending, so a rule saying that could never fail).
+// Compared with the root registry read here, not with the generator's own
+// state, so a primitive the generator stopped seeing is caught too.
+if (baseUiNames.length === 0) errors.push("ui-sdk: the root registry has no registry:ui items; nothing to compare the flavour with");
+for (const name of baseUiNames) {
+  if (!flavourItems.has(name)) {
+    const status = flavour.state.get(name)?.status ?? "unknown to the generator";
+    errors.push(`ui-sdk: primitive "${name}" is not published in the flavour (${status}); every primitive has a UI SDK flavour`);
+  }
+}
+if (flavour.pending.length > 0) errors.push(`ui-sdk: ${flavour.pending.length} primitive(s) pending: ${flavour.pending.join(", ")}`);
+if (flavour.blocked.length > 0) errors.push(`ui-sdk: ${flavour.blocked.length} primitive(s) blocked: ${flavour.blocked.map((e) => e.item.name).join(", ")}`);
+const primitiveFlavourItems = [...flavourItems.keys()].filter((name) => name !== SETUP_ITEM);
+if (primitiveFlavourItems.length !== baseUiNames.length) {
+  errors.push(`ui-sdk: ${primitiveFlavourItems.length} flavour item(s) published for ${baseUiNames.length} base primitive(s)`);
+}
+// The one flavour item that is not a primitive: it carries the setup message,
+// which the CLI prints once per resolved item, so every item that imports UI
+// SDK depends on it and no other item carries `docs`.
+const setupItem = flavourItems.get(SETUP_ITEM);
+const SETUP_URL = `https://sevenui.dev/r/ui-sdk/${SETUP_ITEM}.json`;
+if (!setupItem) errors.push(`ui-sdk: no "${SETUP_ITEM}" item; the layer step would never be printed`);
+else {
+  if (setupItem.docs !== LAYER_DOCS) errors.push(`ui-sdk item "${SETUP_ITEM}": its docs are not the setup message`);
+  if ((setupItem.files ?? []).length || (setupItem.registryDependencies ?? []).length || (setupItem.dependencies ?? []).length) {
+    errors.push(`ui-sdk item "${SETUP_ITEM}": carries files or dependencies; it exists only for its message`);
+  }
+  if (uiNames.has(SETUP_ITEM)) errors.push(`ui-sdk: "${SETUP_ITEM}" collides with a base registry item`);
+}
+let setupDependents = 0;
+for (const item of flavour.registry.items) {
+  if (item.name === SETUP_ITEM) continue;
+  if (item.docs !== undefined) errors.push(`ui-sdk item "${item.name}": carries docs; the setup message lives on "${SETUP_ITEM}" so it prints once`);
+  const usesUiSdk = item.files.some((f) => readFileSync(join(UI_ROOT, f.path), "utf8").includes('"@ui-sdk/react/'));
+  const dependsOnSetup = (item.registryDependencies ?? []).includes(SETUP_URL);
+  if (usesUiSdk !== dependsOnSetup) {
+    errors.push(`ui-sdk item "${item.name}": ${usesUiSdk ? "imports UI SDK but does not depend on" : "depends on"} ${SETUP_ITEM}${usesUiSdk ? "" : " without importing UI SDK"}`);
+  }
+  if (dependsOnSetup) setupDependents++;
+}
+if (setupDependents === 0) errors.push(`ui-sdk: no item depends on "${SETUP_ITEM}"`);
+for (const name of flavourItems.keys()) {
+  if (name === SETUP_ITEM) continue;
+  if (!uiNames.has(name) || SHARED_ITEMS.has(name)) {
+    errors.push(`ui-sdk item "${name}" is not a base primitive`);
+  }
+}
+
+for (const item of flavour.registry.items) {
+  if (item.name === SETUP_ITEM) continue;
+  const where = `ui-sdk item "${item.name}"`;
+  for (const file of item.files) {
+    const filePath = join(UI_ROOT, file.path);
+    if (!file.path.startsWith("registry/ui-sdk/")) errors.push(`${where}: file ${file.path} is outside registry/ui-sdk/`);
+    const replaced = existsSync(filePath) ? replacedImports(readFileSync(filePath, "utf8")) : [];
+    if (replaced.length > 0) errors.push(`${where}: ${file.path} imports ${replaced.join(", ")}, which UI SDK replaces`);
+    // Markup primitives the flavour builds on a UI SDK component (label,
+    // textarea, input-group) are published only as real ports.
+    if (UI_SDK_PORTS.has(item.name) && !importedPackages(existsSync(filePath) ? readFileSync(filePath, "utf8") : "").has("@ui-sdk/react")) {
+      errors.push(`${where}: ${file.path} must import @ui-sdk/react (a UI SDK port, not a mirror)`);
+    }
+  }
+  for (const dep of item.dependencies ?? []) {
+    const name = dep.slice(0, dep.lastIndexOf("@") > 0 ? dep.lastIndexOf("@") : undefined);
+    if (name in REPLACED) errors.push(`${where}: depends on ${name}, which UI SDK replaces`);
+  }
+  for (const dep of item.registryDependencies) {
+    const own = dep.match(FLAVOUR_URL);
+    if (own) {
+      if (!flavourItems.has(own[1])) errors.push(`${where}: registryDependency "${dep}" is not a published ui-sdk item`);
+    } else {
+      const shared = dep.match(OWN_URL)?.[1];
+      if (!shared || !SHARED_ITEMS.has(shared)) {
+        errors.push(`${where}: registryDependency "${dep}" must be ${"https://sevenui.dev/r/ui-sdk/<name>.json"} or a shared theme/tokens/animations item`);
+      }
+    }
+  }
+  if (!item.registryDependencies.includes(TOKENS_URL)) errors.push(`${where}: missing sevenui-tokens dependency`);
+  checkLucideDep(item, UI_ROOT, where);
+  checkDepRanges(item, where);
+}
+
+// ---- the UI SDK version is exact everywhere ----
+// UI SDK is a beta. A range operator on a prerelease (`^0.1.0-beta.1`) admits
+// every later 0.1.0 beta and every 0.1.x release, whose API can change under
+// the flavour, so the version is pinned exactly where the workspace declares
+// it and in every published flavour item. checkDepRanges cannot see this: it
+// compares items with packages/registry/package.json, so a caret there passes.
+const EXACT_VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
+const UI_SDK_PACKAGES = ["@ui-sdk/react", "@ui-sdk/core"];
+const PIN_REASON =
+  "UI SDK is a beta, and a range on a prerelease floats across betas, so @ui-sdk/* is pinned to an exact version (no ^, ~, >=, x or *)";
+const uiSdkPins = new Map();
+for (const file of ["package.json", "packages/registry/package.json", "apps/web/package.json"]) {
+  const pkg = loadJson(file);
+  for (const field of ["dependencies", "devDependencies", "peerDependencies", "optionalDependencies"]) {
+    for (const [name, range] of Object.entries(pkg[field] ?? {})) {
+      if (!name.startsWith("@ui-sdk/")) continue;
+      if (!EXACT_VERSION.test(range)) errors.push(`${file} ${field}: "${name}": "${range}" is not an exact version. ${PIN_REASON}`);
+      uiSdkPins.set(`${file} ${name}`, range);
+    }
+  }
+}
+// The domain: the registry package and the site both declare both packages.
+for (const file of ["packages/registry/package.json", "apps/web/package.json"]) {
+  for (const name of UI_SDK_PACKAGES) {
+    if (!uiSdkPins.has(`${file} ${name}`)) errors.push(`${file} does not declare ${name}; the UI SDK pin check has nothing to check there`);
+  }
+}
+const UI_SDK_VERSION = uiSdkPins.get("packages/registry/package.json @ui-sdk/react");
+for (const [where, range] of uiSdkPins) {
+  if (range !== UI_SDK_VERSION) errors.push(`${where} is "${range}" but packages/registry/package.json pins @ui-sdk/react to "${UI_SDK_VERSION}"; the workspace uses one UI SDK version`);
+}
+let uiSdkItemPins = 0;
+const checkItemUiSdkPins = (items, label) => {
+  for (const item of items) {
+    for (const dep of item.dependencies ?? []) {
+      if (!dep.startsWith("@ui-sdk/")) continue;
+      const at = dep.lastIndexOf("@");
+      const range = at > 0 ? dep.slice(at + 1) : "";
+      if (range !== UI_SDK_VERSION || !EXACT_VERSION.test(range)) {
+        errors.push(`${label} item "${item.name}": dependency "${dep}" must be "${dep.slice(0, at > 0 ? at : undefined)}@${UI_SDK_VERSION}". ${PIN_REASON}`);
+      }
+      uiSdkItemPins++;
+    }
+  }
+};
+checkItemUiSdkPins(flavour.registry.items, "ui-sdk");
+// Read from the files, not from the derived dependencies, so an item that
+// lost its pin entirely is caught too.
+for (const item of flavour.registry.items) {
+  const usesUiSdk = item.files.some((f) => readFileSync(join(UI_ROOT, f.path), "utf8").includes('"@ui-sdk/react/'));
+  if (!usesUiSdk) continue;
+  for (const name of UI_SDK_PACKAGES) {
+    if (!(item.dependencies ?? []).includes(`${name}@${UI_SDK_VERSION}`)) {
+      errors.push(`ui-sdk item "${item.name}": imports @ui-sdk/react but does not depend on ${name}@${UI_SDK_VERSION}`);
+    }
+  }
+}
+
+// ---- ui-sdk flavour example registries (/r/ui-sdk/{demo,component}/*) ----
+// Derived from demos/ and components/ plus the overlays in
+// registry/ui-sdk/examples/: see readFlavourExamples.
+const flavourExamples = readFlavourExamples(flavour);
+errors.push(...flavourExamples.problems.map((p) => `ui-sdk examples: ${p}`));
+const excludedKeys = new Set(flavourExamples.excluded.map((e) => e.key));
+const exampleRegistries = { demos, components };
+for (const [kind, route] of Object.entries(EXAMPLE_KINDS)) {
+  const original = exampleRegistries[kind];
+  const derived = flavourExamples.registries[kind];
+  const label = `ui-sdk ${route}`;
+  const derivedNames = new Set(derived.items.map((i) => i.name));
+  // Closed and complete: the same items as the original registry, minus the
+  // recorded exclusions, and nothing else.
+  for (const item of original.items) {
+    const key = `${route}/${item.name}`;
+    if (!derivedNames.has(item.name) && !excludedKeys.has(key)) errors.push(`${label}: "${item.name}" is not published in the flavour`);
+    if (derivedNames.has(item.name) && excludedKeys.has(key)) errors.push(`${label}: "${item.name}" is excluded but published`);
+  }
+  const originalNames = new Set(original.items.map((i) => i.name));
+  for (const item of derived.items) {
+    const where = `${label} item "${item.name}"`;
+    if (!originalNames.has(item.name)) errors.push(`${where}: no such item in ${kind}/registry.json`);
+    const originalItem = original.items.find((i) => i.name === item.name);
+    if (originalItem && JSON.stringify(originalItem.files) !== JSON.stringify(item.files)) {
+      errors.push(`${where}: files differ from ${kind}/registry.json, so the install target would move`);
+    }
+    for (const file of item.files) {
+      const rel = `${kind}/${file.path}`;
+      const content = flavourExamples.files.get(rel);
+      if (content === undefined) {
+        errors.push(`${where}: ${rel} is missing from the generated tree`);
+        continue;
+      }
+      const overlayPath = join(FLAVOUR_ROOT, "examples", rel);
+      const source = existsSync(overlayPath) ? readFileSync(overlayPath, "utf8") : readFileSync(join(UI_ROOT, rel), "utf8");
+      if (content !== retarget(source)) errors.push(`${where}: generated ${rel} is not its ${existsSync(overlayPath) ? "overlay" : "original"} retargeted`);
+      if (/@\/registry\/base\//.test(content)) errors.push(`${where}: ${rel} still imports @/registry/base/`);
+      const replaced = replacedImports(content);
+      if (replaced.length) errors.push(`${where}: ${rel} imports ${replaced.join(", ")}, which UI SDK replaces`);
+      for (const m of content.matchAll(/@\/registry\/ui-sdk\/ui\/([a-z0-9-]+)/g)) {
+        const url = `https://sevenui.dev/r/ui-sdk/${m[1]}.json`;
+        if (!item.registryDependencies.includes(url)) errors.push(`${where}: ${rel} imports "${m[1]}" but registryDependencies is missing "${url}"`);
+      }
+      if (content.includes('from "lucide-react"') && !(item.dependencies ?? []).some((d) => d.startsWith("lucide-react@"))) {
+        errors.push(`${where}: imports lucide-react but dependencies is missing "lucide-react"`);
+      }
+    }
+    for (const dep of item.registryDependencies) {
+      const own = dep.match(FLAVOUR_URL);
+      if (own) {
+        if (!flavourItems.has(own[1])) errors.push(`${where}: registryDependency "${dep}" is not a published ui-sdk item`);
+      } else if (!SHARED_ITEMS.has(dep.match(OWN_URL)?.[1])) {
+        errors.push(`${where}: registryDependency "${dep}" must be https://sevenui.dev/r/ui-sdk/<name>.json or a shared theme/tokens/animations item`);
+      }
+    }
+    for (const dep of item.dependencies ?? []) {
+      const name = dep.slice(0, dep.lastIndexOf("@") > 0 ? dep.lastIndexOf("@") : undefined);
+      if (name in REPLACED) errors.push(`${where}: depends on ${name}, which UI SDK replaces`);
+    }
+    checkDepRanges(item, where);
+  }
+  checkItemUiSdkPins(derived.items, label);
+}
+// Every overlay mirrors a registered example (readFlavourExamples reports
+// orphans) and is what that example publishes.
+for (const rel of flavourExamples.overlays) {
+  if (!flavourExamples.files.has(rel)) errors.push(`ui-sdk overlay ${rel} is not published`);
+}
+
 if (errors.length > 0) {
   console.error(`check-registry: ${errors.length} problem(s)\n` + errors.map((e) => `  - ${e}`).join("\n"));
   process.exit(1);
 }
 console.log(`check-registry: ok (${ui.items.length} ui, ${demos.items.length} demos, ${components.items.length} components)`);
+console.log(
+  `check-registry: ui-sdk flavour ${flavour.ported.length}/${baseUiNames.length} published, ` +
+    `${flavour.blocked.length} blocked (${flavour.blocked.map((e) => `${e.item.name} <- ${e.waitingOn.join("+")}`).join(", ") || "none"}), ` +
+    `${flavour.pending.length} pending: ${flavour.pending.join(", ") || "none"}`,
+);
+console.log(
+  `check-registry: ui-sdk examples ${Object.entries(flavourExamples.registries)
+    .map(([kind, r]) => `${r.items.length}/${exampleRegistries[kind].items.length} ${kind}`)
+    .join(", ")} published, ${flavourExamples.overlays.length} variant(s), ${flavourExamples.excluded.length} excluded`,
+);
+console.log(`check-registry: @ui-sdk/* pinned exactly to ${UI_SDK_VERSION} in ${uiSdkPins.size} workspace declarations and ${uiSdkItemPins} item dependencies`);
+for (const e of flavourExamples.excluded) console.log(`check-registry: ui-sdk example ${e.key} excluded: ${e.reason}`);

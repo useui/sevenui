@@ -96,6 +96,25 @@ describe("Tabs", () => {
     expect(screen.getByText("Account panel")).toBeTruthy();
   });
 
+  it("hands onValueChange a numeric tab value as a number", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(
+      <Tabs defaultValue={1} onValueChange={onValueChange}>
+        <TabsList>
+          <TabsTrigger value={1}>One</TabsTrigger>
+          <TabsTrigger value={2}>Two</TabsTrigger>
+        </TabsList>
+        <TabsContent value={1}>First</TabsContent>
+        <TabsContent value={2}>Second</TabsContent>
+      </Tabs>,
+    );
+    await user.click(screen.getByRole("tab", { name: "Two" }));
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+    expect(onValueChange.mock.calls[0][0]).toBe(2);
+    expect(screen.getByRole("tabpanel").textContent).toBe("Second");
+  });
+
   it("does not activate a disabled tab", async () => {
     const user = userEvent.setup();
     render(
@@ -160,11 +179,18 @@ describe("Tabs", () => {
       }
     });
 
-    it("lifts the active tab onto the background with a foreground bottom indicator", () => {
+    it("lifts the active tab onto the background as a plain pill, with no bottom indicator", () => {
       render(<BasicTabs />);
       const tab = screen.getByRole("tab", { name: "Account" });
       expect(tab.className).toContain("data-active:bg-background");
-      expect(tab.className).toContain("inset_0_-2px_0_var(--foreground)");
+      // The underline belongs to the line variant only: an inset shadow on
+      // the default pill draws a bar clipped by its rounded corners.
+      expect(tab.className).not.toMatch(/inset_/);
+      expect(tab.className).toContain(
+        "group-data-[variant=default]/tabs-list:data-active:shadow-[0_1px_3px_0_rgb(0_0_0/0.1),0_1px_2px_-1px_rgb(0_0_0/0.1)]",
+      );
+      expect(tab.className).not.toContain("group-data-[variant=default]/tabs-list:data-active:after:opacity-100");
+      expect(tab.className).toContain("group-data-[variant=line]/tabs-list:data-active:after:opacity-100");
       expect(tab.className).not.toContain("surface");
       expect(tab.className).not.toContain("hairline");
       expect(tab.className).not.toContain("highlight");
@@ -192,5 +218,34 @@ describe("Tabs", () => {
       expect(tab.className).toContain("motion-reduce:transition-none");
       expect(tab.className).toContain("motion-reduce:after:transition-none");
     });
+  });
+});
+
+describe("Tabs state attributes", () => {
+  it("marks the selected tab with data-active", async () => {
+    const user = userEvent.setup();
+    render(<BasicTabs />);
+    const account = screen.getByRole("tab", { name: "Account" });
+    const billing = screen.getByRole("tab", { name: "Billing" });
+    expect(account.hasAttribute("data-active")).toBe(true);
+    expect(billing.hasAttribute("data-active")).toBe(false);
+    await user.click(billing);
+    expect(billing.hasAttribute("data-active")).toBe(true);
+    expect(account.hasAttribute("data-active")).toBe(false);
+  });
+
+  it("lets a caller's data-slot replace the default", () => {
+    render(
+      <Tabs defaultValue="one" data-slot="panel-tabs">
+        <TabsList>
+          <TabsTrigger value="one" data-slot="panel-tab">
+            One
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>,
+    );
+    expect(screen.getByRole("tab").getAttribute("data-slot")).toBe(
+      "panel-tab",
+    );
   });
 });

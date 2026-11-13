@@ -1,0 +1,79 @@
+import type * as React from "react";
+import { mergeProps, type RenderProp, renderElement } from "@ui-sdk/react/primitive";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "cn";
+
+const markerVariants = cva(
+  "group/marker relative flex min-h-4 w-full items-center gap-2 text-left text-sm text-muted-foreground [&_svg:not([class*='size-'])]:size-4 [a]:underline [a]:underline-offset-3 [a]:hover:text-foreground",
+  {
+    variants: {
+      variant: {
+        default: "",
+        separator:
+          "before:mr-1 before:h-px before:min-w-0 before:flex-1 before:bg-border after:ml-1 after:h-px after:min-w-0 after:flex-1 after:bg-border",
+        border: "border-b border-border pb-2",
+      },
+    },
+  },
+);
+
+type MarkerState = {
+  slot: "marker";
+  variant: VariantProps<typeof markerVariants>["variant"];
+};
+
+// Base UI's useRender turns state into data attributes; renderElement does not,
+// so data-slot and data-variant are set explicitly. ReactElement<unknown>
+// keeps Base UI's render type.
+function Marker({
+  className,
+  variant = "default",
+  render,
+  ...props
+}: React.ComponentProps<"div"> &
+  VariantProps<typeof markerVariants> & {
+    render?: RenderProp<MarkerState> | React.ReactElement<unknown>;
+  }) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "marker",
+        "data-variant": variant ?? undefined,
+        className: cn(markerVariants({ variant, className })),
+      },
+      props,
+    ),
+    render as RenderProp<MarkerState> | undefined,
+    { slot: "marker", variant } satisfies MarkerState,
+  );
+}
+
+function MarkerIcon({ className, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span
+      data-slot="marker-icon"
+      aria-hidden="true"
+      className={cn(
+        "size-4 shrink-0 text-muted-foreground [&_svg:not([class*='size-'])]:size-4",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+function MarkerContent({ className, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span
+      data-slot="marker-content"
+      className={cn(
+        "min-w-0 wrap-break-word group-data-[variant=separator]/marker:flex-none group-data-[variant=separator]/marker:text-center *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export { Marker, MarkerIcon, MarkerContent, markerVariants };

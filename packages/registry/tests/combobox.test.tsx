@@ -27,7 +27,7 @@ function FruitCombobox({
 }) {
   return (
     <Combobox items={fruits} defaultValue={defaultValue} onValueChange={onValueChange}>
-      <ComboboxInput placeholder="Search fruit" />
+      <ComboboxInput placeholder="Search fruit" aria-label="Fruit" />
       <ComboboxContent>
         <ComboboxEmpty>No fruit found.</ComboboxEmpty>
         <ComboboxList>
@@ -47,6 +47,53 @@ function getInput() {
 }
 
 describe("Combobox", () => {
+  // The input group draws its focus ring from [data-slot=input-group-control].
+  it("renders the input as the input group's control", () => {
+    render(<FruitCombobox />);
+    expect(getInput().getAttribute("data-slot")).toBe("input-group-control");
+    expect(getInput().closest("[data-slot=input-group]")).not.toBeNull();
+  });
+
+  it("renders a caller's render element as the input", () => {
+    render(
+      <Combobox items={fruits}>
+        <ComboboxInput
+          render={<input data-custom="yes" />}
+          placeholder="Pick a fruit"
+          aria-label="Fruit"
+        />
+      </Combobox>,
+    );
+    const input = screen.getByRole("combobox");
+    expect(input.getAttribute("data-custom")).toBe("yes");
+    expect(input.getAttribute("placeholder")).toBe("Pick a fruit");
+  });
+
+  // Base UI highlights the selected item when the list opens, so ArrowDown
+  // moves on from it (combobox-multiple: ArrowDown + Enter adds the next
+  // language instead of removing the selected one). Nothing is highlighted
+  // while nothing is selected.
+  it("highlights the selected item when the list opens", async () => {
+    const user = userEvent.setup();
+    render(<FruitCombobox defaultValue="Banana" />);
+    await user.click(getInput());
+    await screen.findByRole("listbox");
+    await waitFor(() =>
+      expect(document.querySelector("[data-highlighted]")?.textContent).toBe("Banana"),
+    );
+    await user.keyboard("{ArrowDown}");
+    expect(document.querySelector("[data-highlighted]")?.textContent).toBe("Cherry");
+  });
+
+  it("highlights nothing on open while nothing is selected", async () => {
+    const user = userEvent.setup();
+    render(<FruitCombobox />);
+    await user.click(getInput());
+    await screen.findByRole("listbox");
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(document.querySelector("[data-highlighted]")).toBeNull();
+  });
+
   it("opens the popup and lists all options when typing begins", async () => {
     const user = userEvent.setup();
     render(<FruitCombobox />);
@@ -181,7 +228,7 @@ describe("Combobox v2 styles", () => {
   it("keeps the className on the input-group root", () => {
     render(
       <Combobox items={fruits}>
-        <ComboboxInput placeholder="Search fruit" className="w-64" />
+        <ComboboxInput placeholder="Search fruit" aria-label="Fruit" className="w-64" />
       </Combobox>,
     );
     const group = getInput().closest("[data-slot=input-group]") as HTMLElement;
@@ -242,7 +289,7 @@ describe("Combobox v2 styles", () => {
                 ))
               }
             </ComboboxValue>
-            <ComboboxChipsInput placeholder="Add fruit" />
+            <ComboboxChipsInput placeholder="Add fruit" aria-label="Fruits" />
           </ComboboxChips>
         </Combobox>
       );

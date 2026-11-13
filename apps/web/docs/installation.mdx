@@ -1,23 +1,24 @@
 ---
 title: Installation
-description: Install SevenUI primitives with the shadcn CLI. The @sevenui registry is in the shadcn registry index, so any primitive installs by name.
+description: Install SevenUI primitives with the shadcn CLI, on Base UI or UI SDK. The @sevenui registry is in the shadcn registry index, so any primitive installs by name.
 ---
 
 SevenUI requires a project already set up with the shadcn CLI and
 Tailwind CSS v4. If you have not initialized one yet, pick the Base UI
-base, since every SevenUI primitive is built on it:
+base. The default flavour of every SevenUI primitive is built on it, and
+it is also the starting point for the UI SDK flavour (see
+[Choose a flavour](#choose-a-flavour)):
 
 ```bash
 npx shadcn@latest init --base base
 ```
 
-`init` can write starter primitives of its own, such as
+`init` writes starter primitives of its own, such as
 `components/ui/button.tsx`. The first time you add SevenUI primitives
-over those files, pass `--overwrite`:
+over those files, pass `--overwrite` (the command follows the flavour
+you pick below):
 
-```bash
-npx shadcn@latest add @sevenui/button @sevenui/dialog --overwrite
-```
+<InstallCommand item="button dialog" flags="--overwrite" plain />
 
 Without it the CLI asks before replacing each existing file. In a
 non-interactive shell (CI, an AI agent) there is no one to answer, and
@@ -25,13 +26,100 @@ the command exits with "Done" having written none of the requested
 files. Leave `--overwrite` off later on, once you have edited primitives
 you want to keep.
 
+## Choose a flavour
+
+Every primitive comes in two flavours with the same API: the same
+exports, props, `data-slot` values and `render` prop, so code that uses
+only the SevenUI exports compiles against either. Some behaviour
+differs; each primitive's page lists how.
+
+- **Base UI** (the default) is built on [Base UI](https://base-ui.com)
+  and installs as `@sevenui/<name>`.
+- **UI SDK** is built on [UI SDK](https://ui-sdk.dev)
+  (`@ui-sdk/react` 0.1.0-beta.1, a beta from Vercel Labs) and installs
+  as `@sevenui/ui-sdk/<name>`. It needs React 19.
+
+The flavour switch in the sidebar (also shown above every example) sets
+which one this site shows: install commands, example source and live
+previews follow it, and a link with `?flavour=ui-sdk` opens the site on
+UI SDK. Each primitive's page lists what behaves differently on UI SDK.
+Pro blocks are built on Base UI only.
+
+### Set up a UI SDK project
+
+Start with `shadcn init --base base` as above; it installs
+`@base-ui/react` and writes a Base UI `components/ui/button.tsx`, which
+the next steps replace.
+
+**Declare the cascade layer.** UI SDK keeps its runtime styles in a
+cascade layer named `ui-sdk`. Put this on the first line of your global
+stylesheet, above `@import "tailwindcss"`:
+
+```css
+@layer ui-sdk;
+@import "tailwindcss";
+```
+
+UI SDK normally inserts its styles first, so a default setup also works
+without the line. The line keeps your utilities winning when UI SDK's
+styles end up after yours, for example under a Content Security Policy
+without a nonce, where they arrive as constructed stylesheets; there,
+popups such as dialogs would lose their padding and background. The
+shadcn CLI can only append CSS, so it prints this step once per install
+instead of adding the line itself.
+
+**Pin UI SDK exactly.** SevenUI's UI SDK flavour is built and tested
+against `@ui-sdk/react` and `@ui-sdk/core` `0.1.0-beta.1`, and the
+registry asks for that exact version. pnpm, yarn and bun save it as
+given. npm saves `^0.1.0-beta.1`, which also accepts later betas and
+0.1.x releases, whose API may change under the flavour. With npm, add
+`save-exact=true` to `.npmrc` before the first install, or pin it
+afterwards:
+
+```bash
+npm install --save-exact @ui-sdk/react@0.1.0-beta.1 @ui-sdk/core@0.1.0-beta.1
+```
+
+**Install over the starter files.** Add the UI SDK primitives with
+`--overwrite` the first time, so they replace the starter Base UI files:
+
+```bash
+npx shadcn@latest add @sevenui/ui-sdk/button @sevenui/ui-sdk/dialog --overwrite
+```
+
+**Remove Base UI.** Once no file under your `ui` alias imports
+`@base-ui/react` (the starter files were the only ones that did),
+remove it with `npm uninstall @base-ui/react` (or your package
+manager's equivalent).
+
+### One flavour per project
+
+Primitives of both flavours install to the same files under your `ui`
+alias, so the flavours do not mix:
+
+- A UI SDK primitive depends on the UI SDK flavour of the primitives it
+  uses, and a UI SDK component depends on UI SDK primitives. Adding one
+  to a Base UI project with `--overwrite` silently replaces the shared
+  files (a UI SDK dialog replaces your `button.tsx`; a gallery
+  component can replace `label` and `select`). The reverse is the same.
+- Without `--overwrite`, in a non-interactive shell, the CLI still
+  installs the other flavour's npm packages, writes none of the files,
+  and exits successfully.
+
+A mixed project still builds, but it ships both libraries and its
+primitives behave differently from one another. To switch a project
+deliberately, reinstall every primitive under your `ui` alias in the
+other flavour with `--overwrite`, then remove the library you left
+(`@base-ui/react` or `@ui-sdk/react` and `@ui-sdk/core`) once nothing
+imports it. Edits you made to those files are overwritten.
+
 ## Add primitives
 
 `@sevenui` is listed in the
 [shadcn registry index](https://ui.shadcn.com/docs/registry/registry-index),
 so the CLI resolves the namespace with no extra configuration:
 
-<InstallCommand item="button" />
+<InstallCommand item="button" plain />
 
 Primitives install as source files under your `ui` alias.
 
@@ -65,7 +153,8 @@ The registry is namespaced by kind, one namespace per tier: primitives at
 `/r/<name>.json`, components — the composed examples on
 [sevenui.dev/components](/components) — at
 `/r/component/<name>.json`, docs demos at `/r/demo/<name>.json`, and pro
-blocks at `/r/pro/<name>.json`.
+blocks at `/r/pro/<name>.json`. The UI SDK flavour mirrors the first three
+under `/r/ui-sdk/`; pro blocks are built on Base UI only.
 
 A component installs the same way as a primitive:
 
@@ -75,6 +164,8 @@ The `@sevenui` namespace form works the same way:
 
 ```bash
 npx shadcn@latest add @sevenui/component/accordion-01
+# UI SDK flavour
+npx shadcn@latest add @sevenui/ui-sdk/component/accordion-01
 ```
 
 The file lands in your `components/` directory as a single self-contained
@@ -130,6 +221,19 @@ Registry "@sevenui" requires the following environment variables:
 Set it everywhere `shadcn add` runs: each teammate's machine and CI.
 A 401 means no key reached the registry; a 403 means the key was
 rejected. The [support FAQ](/support) covers both.
+
+## Known issues
+
+These apply to both flavours:
+
+- **Next.js `cacheComponents`.** With `cacheComponents: true` (the
+  `create-next-app` default in Next.js 16.4), `next build` fails on the
+  calendar examples that compute a date at render time (`new Date()` in
+  a Client Component). Wrap such an example in `<Suspense>`, or compute
+  the date in an effect.
+- **Example images.** Examples that show an image or the logo load
+  `/placeholder.svg` or `/logomark.svg` from your site, which a new
+  project does not have. Replace them with your own images.
 
 ## Troubleshooting
 

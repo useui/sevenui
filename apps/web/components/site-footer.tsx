@@ -33,6 +33,7 @@ const resourceLinks: FooterLink[] = [
 
 const builtOnLinks: FooterLink[] = [
   { label: "Base UI", href: "https://base-ui.com", external: true },
+  { label: "UI SDK", href: "https://ui-sdk.dev", external: true },
   { label: "shadcn registry", href: "https://ui.shadcn.com/docs/registry", external: true },
   { label: "Tailwind CSS", href: "https://tailwindcss.com", external: true },
 ];
@@ -113,7 +114,7 @@ export function SiteFooter({
             <Logomark className="h-6 w-auto" />
           </Link>
           <p className="mt-3.5 max-w-[27rem] font-medium text-muted-foreground text-sm">
-            SevenUI is a set of Base UI components for shadcn/ui, built for teams and their agents and
+            SevenUI is a set of Base UI and UI SDK components for shadcn/ui, built for teams and their agents and
             distributed through the shadcn registry.
           </p>
         </div>
@@ -164,15 +165,17 @@ export function SiteFooter({
     </>
   );
 
-  // A soft tinted surface inset from the viewport edges, in place of hairline rules above and inside it.
-  const SURFACE = "mx-3 mb-3 rounded-3xl bg-muted/50 sm:mx-4 sm:mb-4";
-  const legalRow = "flex flex-col gap-3 py-4 text-docs-tertiary text-xs sm:flex-row sm:items-center sm:justify-between";
+  // A soft tinted surface inset from the viewport edges on all four sides, in place of hairline rules above and
+  // inside it: the top inset keeps it off whatever the page ends on, even a full-bleed band.
+  const SURFACE = "m-3 rounded-3xl bg-muted/50 sm:m-4";
+  const legalRow =
+    "flex flex-col gap-3 pt-4 pb-6 text-docs-tertiary text-xs sm:flex-row sm:items-center sm:justify-between sm:pb-5";
 
   if (framed) {
     return (
       <footer className={SURFACE}>
         <div className="l-row">
-          <div className="px-6 pt-14 pb-10">{body}</div>
+          <div className="px-6 pt-16 pb-10 sm:pt-20">{body}</div>
         </div>
         <div>
           <div className={`l-row px-6 ${legalRow}`}>{legal}</div>
@@ -183,7 +186,7 @@ export function SiteFooter({
 
   return (
     <footer className={SURFACE}>
-      <div className="mx-auto max-w-6xl px-6 pt-14 pb-10">{body}</div>
+      <div className="mx-auto max-w-6xl px-6 pt-16 pb-10 sm:pt-20">{body}</div>
       <div>
         <div className={`mx-auto max-w-6xl px-6 ${legalRow}`}>{legal}</div>
       </div>

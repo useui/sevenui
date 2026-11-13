@@ -84,6 +84,26 @@ describe("Accordion", () => {
     expect(onValueChange.mock.calls[0][0]).toEqual(["shipping"]);
   });
 
+  it("hands onValueChange numeric item values as numbers", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(
+      <Accordion onValueChange={onValueChange}>
+        <AccordionItem value={1}>
+          <AccordionTrigger>One</AccordionTrigger>
+          <AccordionContent>First</AccordionContent>
+        </AccordionItem>
+        <AccordionItem value={2}>
+          <AccordionTrigger>Two</AccordionTrigger>
+          <AccordionContent>Second</AccordionContent>
+        </AccordionItem>
+      </Accordion>,
+    );
+    await user.click(screen.getByRole("button", { name: "Two" }));
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+    expect(onValueChange.mock.calls[0][0]).toEqual([2]);
+  });
+
   it("toggles the focused trigger with Enter and Space", async () => {
     const user = userEvent.setup();
     render(<BasicAccordion />);
@@ -144,5 +164,16 @@ describe("Accordion v2 style", () => {
     const panel = container.querySelector('[data-slot="accordion-content"]');
     expect(panel?.className).toContain("data-open:animate-accordion-down");
     expect(panel?.className).toContain("motion-reduce:animate-none");
+  });
+});
+
+describe("Accordion state attributes", () => {
+  it("marks the trigger of an open item with data-panel-open", async () => {
+    const user = userEvent.setup();
+    render(<BasicAccordion />);
+    const trigger = screen.getByRole("button", { name: "Shipping" });
+    expect(trigger.hasAttribute("data-panel-open")).toBe(false);
+    await user.click(trigger);
+    expect(trigger.hasAttribute("data-panel-open")).toBe(true);
   });
 });

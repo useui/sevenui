@@ -11,6 +11,13 @@ describe("Label", () => {
     expect(label.getAttribute("data-slot")).toBe("label");
   });
 
+  it("lets a caller's data-slot replace the default", () => {
+    render(<Label data-slot="field-label">Email</Label>);
+    expect(screen.getByText("Email").getAttribute("data-slot")).toBe(
+      "field-label",
+    );
+  });
+
   it("passes htmlFor through to the label element", () => {
     render(
       <>

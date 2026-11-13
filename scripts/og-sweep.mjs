@@ -67,13 +67,13 @@ const MISSING_PAGES = [
   "/blocks/marketing/not-a-category", // §10's category `notFound()`
 ];
 
-const SITE_DESCRIPTION = "Base UI components for shadcn/ui, built for teams and their agents. Copy the source, or let your agent assemble it.";
+const SITE_DESCRIPTION = "Base UI and UI SDK components for shadcn/ui, built for teams and their agents. Copy the source, or let your agent assemble it.";
 
 const UNLISTED_PAGE_META = {
   "/": {
     title: "SevenUI",
     description:
-      "Base UI components for shadcn/ui, built for teams and their agents: 66 primitives, 900+ components, Pro blocks. Copy the source or let your agent assemble it.",
+      "Base UI and UI SDK components for shadcn/ui, built for teams and their agents: 66 primitives, 900+ components, Pro blocks. Copy the source or let agents do it.",
   },
   "/pro": {
     title: "Pro",
@@ -116,7 +116,7 @@ const BLOCKS_CHILD = /^\/blocks\/.+$/u;
 // The search-facing titles of lib/metadata.tsx's documentTitle(), restated.
 const HUB_TITLES = {
   "/": "SevenUI — Base UI components for shadcn/ui",
-  "/docs/components": `React Primitives built on Base UI${SUFFIX}`,
+  "/docs/components": `React Primitives on Base UI or UI SDK${SUFFIX}`,
   "/components": `Free React Components for shadcn/ui${SUFFIX}`,
   "/blocks": `Pro React Blocks for shadcn/ui${SUFFIX}`,
 };
@@ -136,7 +136,7 @@ function expectedTitle(route, registryTitle) {
     case "hub":
       return HUB_TITLES[route];
     case "primitive":
-      return `React ${registryTitle} built on Base UI${SUFFIX}`;
+      return `React ${registryTitle} on Base UI or UI SDK${SUFFIX}`;
     case "gallery":
       return `React ${registryTitle} Examples, shadcn compatible${SUFFIX}`;
     case "blocks":

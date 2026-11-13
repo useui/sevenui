@@ -1,3 +1,4 @@
+import type * as React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -116,6 +117,91 @@ describe("Dialog", () => {
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull();
     });
+  });
+});
+
+// Base UI's initialFocus/finalFocus forms: a boolean, a ref, or a function
+// returning an element, true (the default) or false (leave focus).
+describe("Dialog focus targets", () => {
+  function FocusDialog({
+    emailRef,
+    ...props
+  }: Pick<React.ComponentProps<typeof DialogContent>, "initialFocus" | "finalFocus"> & {
+    emailRef?: React.RefObject<HTMLElement | null>;
+  }) {
+    return (
+      <>
+        <Dialog>
+          <DialogTrigger>Open dialog</DialogTrigger>
+          <DialogContent {...props}>
+            <DialogTitle>Invite</DialogTitle>
+            <button type="button">First</button>
+            <input aria-label="Email" ref={emailRef as React.RefObject<HTMLInputElement | null>} />
+          </DialogContent>
+        </Dialog>
+        <button type="button" id="elsewhere">
+          Elsewhere
+        </button>
+      </>
+    );
+  }
+
+  it("focuses the initialFocus ref on open", async () => {
+    const user = userEvent.setup();
+    const ref = { current: null as HTMLElement | null };
+    render(<FocusDialog initialFocus={ref} emailRef={ref} />);
+    await user.click(screen.getByText("Open dialog"));
+    await screen.findByRole("dialog");
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByLabelText("Email")));
+  });
+
+  it("sends focus where finalFocus says on close", async () => {
+    const user = userEvent.setup();
+    render(<FocusDialog finalFocus={() => document.getElementById("elsewhere")} />);
+    await user.click(screen.getByText("Open dialog"));
+    const dialog = await screen.findByRole("dialog");
+    await waitFor(() => expect(dialog.contains(document.activeElement)).toBe(true));
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(document.activeElement).toBe(document.getElementById("elsewhere")));
+  });
+
+  it("does not return focus to the trigger for finalFocus={false}", async () => {
+    const user = userEvent.setup();
+    render(<FocusDialog finalFocus={false} />);
+    const trigger = screen.getByText("Open dialog");
+    await user.click(trigger);
+    const dialog = await screen.findByRole("dialog");
+    await waitFor(() => expect(dialog.contains(document.activeElement)).toBe(true));
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(document.activeElement).not.toBe(trigger.closest("button"));
+  });
+});
+
+describe("Nested dialogs", () => {
+  it("marks the parent with data-nested-dialog-open while a nested dialog is open", async () => {
+    const user = userEvent.setup();
+    render(
+      <Dialog>
+        <DialogTrigger>Open outer</DialogTrigger>
+        <DialogContent data-testid="outer">
+          <DialogTitle>Outer</DialogTitle>
+          <Dialog>
+            <DialogTrigger>Open inner</DialogTrigger>
+            <DialogContent>
+              <DialogTitle>Inner</DialogTitle>
+            </DialogContent>
+          </Dialog>
+        </DialogContent>
+      </Dialog>,
+    );
+    await user.click(screen.getByText("Open outer"));
+    const outer = await screen.findByTestId("outer");
+    expect(outer.hasAttribute("data-nested-dialog-open")).toBe(false);
+    await user.click(screen.getByText("Open inner"));
+    await screen.findByText("Inner");
+    await waitFor(() => expect(outer.hasAttribute("data-nested-dialog-open")).toBe(true));
   });
 });
 

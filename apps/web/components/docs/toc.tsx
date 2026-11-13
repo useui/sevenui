@@ -49,7 +49,7 @@ export function DocsTocMobile({ className = "mt-6 max-w-docs" }: { className?: s
       </summary>
       <ul className="m-0 list-none border-border border-t p-2">
         {headings.map((heading) => (
-          <li key={heading.id} style={indent(heading.depth)}>
+          <li className={heading.flavour ? `flavour-only-${heading.flavour}` : undefined} key={heading.id} style={indent(heading.depth)}>
             <a
               aria-current={ariaCurrent(heading.id === activeId)}
               className="block rounded-md px-2 py-1.5 text-muted-foreground text-sm transition-colors hover:text-foreground aria-[current=location]:font-medium aria-[current=location]:text-foreground"
@@ -77,7 +77,7 @@ export function DocsTocDesktop() {
       {/* A rail on the left; the active entry draws a 2px bar over it. */}
       <ul className="m-0 mt-3 list-none border-border border-s p-0">
         {headings.map((heading) => (
-          <li key={heading.id}>
+          <li className={heading.flavour ? `flavour-only-${heading.flavour}` : undefined} key={heading.id}>
             <a
               aria-current={ariaCurrent(heading.id === activeId)}
               className="relative block py-1.5 pe-1 font-medium text-docs-tertiary transition-colors before:absolute before:-start-px before:inset-y-0 before:w-0.5 before:bg-transparent hover:text-foreground aria-[current=location]:text-foreground aria-[current=location]:before:bg-foreground"

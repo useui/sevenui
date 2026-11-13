@@ -53,6 +53,38 @@ describe("Menubar", () => {
     expect(screen.queryByRole("menu")).toBeNull();
   });
 
+  it("opens no menu while the menubar is disabled", async () => {
+    const user = userEvent.setup();
+    render(
+      <Menubar disabled>
+        <MenubarMenu>
+          <MenubarTrigger>File</MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem>New Tab</MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+      </Menubar>,
+    );
+    await user.click(screen.getByRole("menuitem", { name: "File" }));
+    expect(screen.queryByRole("menu")).toBeNull();
+  });
+
+  it("opens no menu from a disabled MenubarMenu", async () => {
+    const user = userEvent.setup();
+    render(
+      <Menubar>
+        <MenubarMenu disabled>
+          <MenubarTrigger>File</MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem>New Tab</MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+      </Menubar>,
+    );
+    await user.click(screen.getByRole("menuitem", { name: "File" }));
+    expect(screen.queryByRole("menu")).toBeNull();
+  });
+
   it("opens a menu on trigger click and shows its items", async () => {
     const user = userEvent.setup();
     render(<BasicMenubar />);
@@ -101,6 +133,21 @@ describe("Menubar", () => {
     await waitFor(() => {
       expect(screen.queryByRole("menu")).toBeNull();
     });
+  });
+
+  it("closes at once when an item's onClick returns a pending Promise", async () => {
+    const user = userEvent.setup();
+    const onNewTab = vi.fn(() => new Promise<void>(() => {}));
+    render(<BasicMenubar onNewTab={onNewTab} />);
+    await user.click(screen.getByRole("menuitem", { name: "File" }));
+    const item = await screen.findByRole("menuitem", { name: /New Tab/ });
+    await user.click(item);
+    expect(onNewTab).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(screen.queryByRole("menu")).toBeNull();
+    });
+    expect(item.hasAttribute("aria-busy")).toBe(false);
+    expect(item.hasAttribute("data-pending")).toBe(false);
   });
 
   it("closes the open menu on Escape", async () => {

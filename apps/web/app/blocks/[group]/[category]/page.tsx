@@ -1,3 +1,4 @@
+import { BlocksFlavourNote } from "../../../../components/flavour/blocks-flavour-note";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BlockCard } from "../../../../components/blocks/block-card";
@@ -55,6 +56,7 @@ export default async function BlocksCategoryPage({ params }: { params: Promise<P
           text={`${category.label}: ${category.items.length} Pro blocks for React, built on Base UI.`}
         />
       </PageIntro>
+      <BlocksFlavourNote />
       <ProOffer />
       <div className="py-12">
         <div className="divide-y divide-border">

@@ -45,8 +45,14 @@ export default async function GalleryComponentPage({ params }: { params: Promise
 
   return (
     <DocsTocProvider headings={headings}>
-      {/* The rail sits at the viewport edge; header and examples share one column centered in the rest. */}
-      <div className="xl:grid xl:grid-cols-[minmax(0,56rem)_16.25rem] xl:gap-x-10">
+      {/*
+        The rail takes the docs shell's geometry (app/docs/layout.tsx, app/docs/[[...slug]]/page.tsx): a
+        16.25rem column flush with the viewport edge, 2.5rem after the content column. The gallery's <main>
+        comes from its layout and keeps lg:pe-8 for the index page, so this grid gives that padding back
+        at xl, and the rail's -mt-10 pt-10 cancels <main>'s top padding so it sticks under the header
+        exactly where the docs rail does.
+      */}
+      <div className="xl:-me-8 xl:grid xl:grid-cols-[minmax(0,1fr)_16.25rem] xl:gap-x-10">
         <div className="min-w-0">
           <div className="max-w-4xl">
             <PageIntro crumbs={crumbs} description={meta.description} title={`${component.label} components`}>
@@ -60,7 +66,7 @@ export default async function GalleryComponentPage({ params }: { params: Promise
               </ActionLink>
               <ShareOnX
                 route={route}
-                text={`${component.count} ${component.label} components for React, built on Base UI. Copy the code, own it.`}
+                text={`${component.count} ${component.label} components for React, built on Base UI or UI SDK. Copy the code, own it.`}
               />
             </PageIntro>
           </div>
@@ -80,7 +86,7 @@ export default async function GalleryComponentPage({ params }: { params: Promise
         </div>
         <aside
           aria-label="On this page"
-          className="sticky top-[calc(var(--header-h)+2.5rem)] hidden h-[calc(100dvh-var(--header-h)-2.5rem)] scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent overflow-y-auto pb-10 text-sm xl:block"
+          className="sticky top-(--header-h) -mt-10 hidden h-[calc(100dvh-var(--header-h))] scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent overflow-y-auto pe-7 pt-10 pb-10 text-sm xl:block"
         >
           <DocsTocDesktop />
         </aside>

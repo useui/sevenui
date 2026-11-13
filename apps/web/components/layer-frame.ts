@@ -8,11 +8,13 @@
 export const LAYER_FRAME_LG = "[--layer-card-radius:1.25rem]";
 
 /**
- * A header that holds controls rather than text. The controls bring their own padding, so the bar adds only
- * a small vertical inset and no side padding: the first and last control line up with the panel's outer edge.
+ * A header that holds controls rather than text. One inset runs through the whole tray: the tray's padding
+ * puts the controls as far from its top, left and right edges as the panel is from its sides, and the tray's
+ * gap puts the panel that same distance below them. So the bar adds no padding of its own and is exactly
+ * one control tall (2rem, `--toolbar-h`, which a segmented control reads to fill the bar's height).
  * `@container/toolbar` keeps the existing container queries in the toolbar actions working.
  */
-export const LAYER_TOOLBAR = "@container/toolbar flex min-h-10 items-center gap-2 px-0 py-0.5";
+export const LAYER_TOOLBAR = "@container/toolbar flex min-h-(--toolbar-h) items-center gap-2 px-0 py-0 [--toolbar-h:2rem]";
 
 /**
  * A panel that is only a window onto its content (a live preview, an iframe, code): no padding, and clipped

@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/registry/base/ui/select";
+import { byFlavour, isUiSdk, waitForPopupFocus } from "./helpers/flavour";
 import { must } from "./helpers/must";
 
 const fruits = [
@@ -38,7 +39,7 @@ function FruitSelect({
       onValueChange={onValueChange}
       name={name}
     >
-      <SelectTrigger>
+      <SelectTrigger aria-label="Fruit">
         <SelectValue placeholder="Pick a fruit" />
       </SelectTrigger>
       <SelectContent>
@@ -100,9 +101,15 @@ describe("Select", () => {
     render(<FruitSelect onValueChange={onValueChange} />);
     const trigger = screen.getByRole("combobox");
     await user.click(trigger);
-    await screen.findByRole("listbox");
+    await waitForPopupFocus(await screen.findByRole("listbox"));
     await user.keyboard("{ArrowDown}{Enter}");
-    expect(onValueChange).toHaveBeenCalledWith("apple", expect.anything());
+    // Opening with a pointer highlights nothing in Base UI, so ArrowDown
+    // reaches the first option; UI SDK highlights the first option on open,
+    // so ArrowDown moves on to the second.
+    expect(onValueChange).toHaveBeenCalledWith(
+      byFlavour({ base: "apple", "ui-sdk": "banana" }),
+      expect.anything(),
+    );
     await waitFor(() => {
       expect(screen.queryByRole("listbox")).toBeNull();
     });
@@ -128,7 +135,7 @@ describe("Select", () => {
         <div>
           <button type="button" onClick={() => setValue("cherry")}>Set cherry</button>
           <Select items={fruits} value={value} onValueChange={setValue}>
-            <SelectTrigger>
+            <SelectTrigger aria-label="Fruit">
               <SelectValue placeholder="Pick a fruit" />
             </SelectTrigger>
             <SelectContent>
@@ -150,6 +157,24 @@ describe("Select", () => {
     await waitFor(() => {
       expect(screen.getByRole("combobox").textContent).toContain("Cherry");
     });
+  });
+
+  it("labels the trigger from grouped items", () => {
+    render(
+      <Select items={[{ label: "Fruits", items: fruits }]} defaultValue="banana">
+        <SelectTrigger aria-label="Fruit">
+          <SelectValue placeholder="Pick a fruit" />
+        </SelectTrigger>
+        <SelectContent>
+          {fruits.map((fruit) => (
+            <SelectItem key={fruit.value} value={fruit.value}>
+              {fruit.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>,
+    );
+    expect(screen.getByRole("combobox").textContent).toContain("Banana");
   });
 
   it("does not select a disabled option", async () => {
@@ -191,6 +216,109 @@ describe("Select", () => {
     });
     expect(onValueChange).not.toHaveBeenCalled();
     expect(screen.getByRole("combobox").textContent).toContain("Pick a fruit");
+  });
+});
+
+// alignItemWithTrigger (the default) lays the selected item, or the first
+// item while nothing is selected, over the trigger. Base UI measures and
+// positions it (data-align-trigger drives it); the flavour anchors UI SDK's
+// content to where its top must go. jsdom has no layout, so the rects are
+// stubbed; the placement was compared with Base UI's in Chrome (guide §8).
+describe("Select alignItemWithTrigger", () => {
+  // A caller's ref on the content reaches the popup, and the wrapper's own
+  // measuring ref keeps working beside it.
+  it.each([
+    ["without a ref", false],
+    ["with a caller ref on the content", true],
+  ])("lays the first item over the trigger while nothing is selected (%s)", async (_, withRef) => {
+    const user = userEvent.setup();
+    const contentRef = React.createRef<HTMLDivElement>();
+    const original = Element.prototype.getBoundingClientRect;
+    Element.prototype.getBoundingClientRect = function (this: Element) {
+      const slot = this.getAttribute("data-slot");
+      if (slot === "select-trigger") return new DOMRect(0, 300, 180, 34);
+      if (slot === "select-content") return new DOMRect(0, 0, 180, 200);
+      if (slot === "select-item") {
+        const index = [...document.querySelectorAll("[data-slot=select-item]")].indexOf(this);
+        return new DOMRect(0, 28 + 32 * index, 180, 32);
+      }
+      return original.call(this);
+    };
+    try {
+      render(
+        <Select items={fruits}>
+          <SelectTrigger aria-label="Fruit">
+            <SelectValue placeholder="Pick a fruit" />
+          </SelectTrigger>
+          <SelectContent ref={withRef ? contentRef : undefined}>
+            {fruits.map((fruit) => (
+              <SelectItem key={fruit.value} value={fruit.value}>
+                {fruit.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>,
+      );
+      await user.click(screen.getByRole("combobox", { name: "Fruit" }));
+      const popup = must(document.querySelector<HTMLElement>("[data-slot=select-content]"));
+      expect(popup.getAttribute("data-align-trigger")).toBe("true");
+      if (withRef) expect(contentRef.current).toBe(popup);
+      if (isUiSdk) {
+        // trigger top 300 + (34 - item height, 0 in jsdom) / 2 - first item offset 28
+        await waitFor(() => expect(popup.style.top).toBe("289px"));
+      }
+    } finally {
+      Element.prototype.getBoundingClientRect = original;
+    }
+  });
+});
+
+describe("Select alignItemWithTrigger geometry", () => {
+  // Base UI lines the item's text up with the value's text, and near the top
+  // of the viewport keeps the popup 10px from the edge (scrolling its list by
+  // the difference). Both compared with base in Chrome to the pixel.
+  it("lines up the text and keeps 10px from the viewport top", async () => {
+    const user = userEvent.setup();
+    const original = Element.prototype.getBoundingClientRect;
+    Element.prototype.getBoundingClientRect = function (this: Element) {
+      const slot = this.getAttribute("data-slot");
+      if (slot === "select-trigger") return new DOMRect(32, 20, 180, 34);
+      if (slot === "select-value") return new DOMRect(45, 28, 150, 18);
+      if (slot === "select-content") return new DOMRect(0, 0, 180, 200);
+      if (slot === "select-item") {
+        const index = [...document.querySelectorAll("[data-slot=select-item]")].indexOf(this);
+        return new DOMRect(4, 28 + 32 * index, 172, 32);
+      }
+      if (slot === "select-item-text") return new DOMRect(12, 0, 100, 18);
+      return original.call(this);
+    };
+    try {
+      render(
+        <Select items={fruits}>
+          <SelectTrigger aria-label="Fruit">
+            <SelectValue placeholder="Pick a fruit" />
+          </SelectTrigger>
+          <SelectContent>
+            {fruits.map((fruit) => (
+              <SelectItem key={fruit.value} value={fruit.value}>
+                {fruit.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>,
+      );
+      await user.click(screen.getByRole("combobox", { name: "Fruit" }));
+      const popup = must(document.querySelector<HTMLElement>("[data-slot=select-content]"));
+      expect(popup.getAttribute("data-align-trigger")).toBe("true");
+      if (isUiSdk) {
+        // trigger top 20 + 34 / 2 - first item offset 28 = 9, below the 10px margin
+        await waitFor(() => expect(popup.style.top).toBe("10px"));
+        // value text at 45, item text 12px into the popup
+        expect(popup.style.left).toBe("33px");
+      }
+    } finally {
+      Element.prototype.getBoundingClientRect = original;
+    }
   });
 });
 
@@ -243,7 +371,12 @@ describe("Select v2 styles", () => {
     // Base UI positioning classes stay.
     expect(cls).toContain("max-h-(--available-height)");
     expect(cls).toContain("origin-(--transform-origin)");
-    expect(must(popup.parentElement).className).toContain("isolate z-50");
+    if (isUiSdk) {
+      // No Positioner: UI SDK positions the content itself, in the top layer.
+      expect(popup.hasAttribute("popover")).toBe(true);
+    } else {
+      expect(must(popup.parentElement).className).toContain("isolate z-50");
+    }
   });
 
   it("sizes items from --item-h, highlights with the accent and checks in the item colour", async () => {

@@ -540,7 +540,7 @@ export function BlockPreview({
           aria-valuemin={available === undefined ? MIN_WIDTH : Math.min(MIN_WIDTH, available)}
           aria-valuenow={width}
           aria-valuetext={width === undefined ? undefined : `${width} pixels`}
-          className="group absolute top-1/2 z-10 flex h-12 w-4 -translate-y-1/2 cursor-ew-resize touch-none items-center justify-center outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+          className="group absolute top-1/2 z-10 flex h-12 w-4 -translate-y-1/2 cursor-ew-resize touch-none items-center justify-center outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-ring"
           data-resize-handle=""
           onKeyDown={onHandleKeyDown}
           onPointerDown={onHandlePointerDown}

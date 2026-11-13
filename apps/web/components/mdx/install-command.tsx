@@ -1,34 +1,63 @@
+import { FLAVOURS, type Flavour } from "../../lib/flavour";
+import { isFlavouredItem, isPrimitive } from "../../lib/flavour-items";
 import { PACKAGE_MANAGERS, type PackageManager } from "../../lib/package-manager";
 import { installCommand } from "../../lib/registry";
 import { highlight } from "../../lib/shiki";
+import { FlavourSwitch } from "../flavour/flavour-switch";
+import { UiSdkPrimitiveNote } from "../flavour/ui-sdk-primitive-note";
 import { PackageManagerMenu } from "../package-manager-menu";
 import { CodeBlock } from "./code-block";
 import { CODE_CLASS, cx } from "./code-element";
 
-export async function InstallCommand({ item }: { item: string }) {
+/**
+ * `plain` leaves out the UI SDK notes a primitive's own page shows under its command (the guides use it).
+ * `item` may name several items separated by spaces; `flags` (e.g. `--overwrite`) follow them.
+ */
+export async function InstallCommand({ item, plain = false, flags = "" }: { item: string; plain?: boolean; flags?: string }) {
+  const items = item.trim().split(/\s+/);
+  const flavoured = items.every(isFlavouredItem);
+  // Every flavour × package manager pair is rendered; CSS shows the reader's pair (globals.css).
   const variants = await Promise.all(
-    PACKAGE_MANAGERS.map(async (pm) => {
-      const command = installCommand(item, pm);
-      const html = await highlight(command, "bash", "inline");
-      return { pm, command, html };
-    }),
+    FLAVOURS.flatMap((flavour) =>
+      PACKAGE_MANAGERS.map(async (pm) => {
+        const command = installCommand(item, pm, flavour, flavoured, flags);
+        const html = await highlight(command, "bash", "inline");
+        return { flavour, pm, command, html };
+      }),
+    ),
   );
 
-  const commands = Object.fromEntries(variants.map(({ pm, command }) => [pm, command])) as Record<
-    PackageManager,
-    string
-  >;
+  const commands = Object.fromEntries(
+    FLAVOURS.map((flavour) => [
+      flavour,
+      Object.fromEntries(variants.filter((v) => v.flavour === flavour).map(({ pm, command }) => [pm, command])),
+    ]),
+  ) as Record<Flavour, Record<PackageManager, string>>;
 
   return (
-    <CodeBlock language="bash" headerRight={<PackageManagerMenu />} installCommands={commands}>
-      {variants.map(({ pm, html }) => (
-        <code
-          key={pm}
-          className={cx(CODE_CLASS, `pm-only pm-only-${pm} shiki`)}
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: build-time Shiki output from our own sources
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
-      ))}
-    </CodeBlock>
+    <>
+      <CodeBlock
+        language="bash"
+        headerRight={
+          <>
+            {flavoured && <FlavourSwitch className="me-1" mirror />}
+            <PackageManagerMenu />
+          </>
+        }
+        installCommands={commands}
+      >
+        {variants
+          .filter(({ flavour }) => flavoured || flavour === "base-ui")
+          .map(({ flavour, pm, html }) => (
+            <code
+              key={`${flavour}-${pm}`}
+              className={cx(CODE_CLASS, `pm-only pm-only-${pm} shiki`, flavoured && `flavour-only-${flavour}`)}
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: build-time Shiki output from our own sources
+              dangerouslySetInnerHTML={{ __html: html }}
+            />
+          ))}
+      </CodeBlock>
+      {items.length === 1 && isPrimitive(item) && !plain && <UiSdkPrimitiveNote />}
+    </>
   );
 }

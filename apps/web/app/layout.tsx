@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, Inter } from "next/font/google";
 import { CookieConsentBanner } from "../components/cookie-consent";
 import { DrawerProvider } from "../components/drawer-context";
+import { FlavourScript } from "../components/flavour-script";
 import { PackageManagerScript } from "../components/package-manager-script";
 import { SiteDrawer } from "../components/site-drawer";
 import { SiteFooter } from "../components/site-footer";
@@ -54,6 +55,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     >
       <head>
         <PackageManagerScript />
+        <FlavourScript />
       </head>
       <body className="bg-background font-sans text-foreground antialiased">
         <ThemeProvider>

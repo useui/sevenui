@@ -1,6 +1,13 @@
 node_modules/
 dist/
 apps/web/public/r/
+# Derived from the files by scripts/ui-sdk-flavour.mjs at build time, so
+# porters never share an edited file; check-registry validates it in memory.
+packages/registry/registry.ui-sdk.json
+# The UI SDK flavour of every demo and gallery example (overlay or original,
+# primitive imports retargeted) and its two registries, written by
+# `node scripts/ui-sdk-flavour.mjs examples` (also run by build:registry).
+packages/registry/.generated/
 # Task 8.2: the 69 per-page `.md` mirrors, emitted into public/ by
 # `apps/web/scripts/build-md-mirrors.ts` before `next build` — build
 # output, never committed, same treatment as public/r/ above.
@@ -9,6 +16,9 @@ apps/web/public/*.md
 # Generated from packages/registry/demos/registry.json by
 # apps/web/scripts/build-demo-map.ts before dev, build and typecheck.
 apps/web/components/mdx/demo-map.generated.ts
+# Generated from the UI SDK flavour example tree by
+# apps/web/scripts/build-flavour-map.ts before dev, build and typecheck.
+apps/web/components/flavour/generated/
 # Generated from git history by apps/web/scripts/build-lastmod.ts before dev,
 # build and typecheck.
 apps/web/lib/lastmod.generated.json

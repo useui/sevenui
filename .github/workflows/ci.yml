@@ -22,7 +22,8 @@ jobs:
 
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # 15 before the browser layout check (a Chromium install and a minute of measuring) joined the job.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -41,6 +42,21 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm check:registry
+      # The UI SDK flavour's finish line: nothing pending or blocked and no
+      # problem in the flavour or its examples. check:registry asserts the
+      # same since it checks completeness directly; this states it on its own.
+      - run: node scripts/ui-sdk-flavour.mjs status --strict
+      # Typechecks every example's flavour source as a UI SDK project sees it
+      # and fails when packages/registry/ui-sdk-compat.json is stale. Before
+      # pnpm build, because the site reads that manifest at build time (which
+      # examples have a UI SDK preview, the per-example notes). Only this
+      # catches a deleted manifest entry, an example newly matching a recorded
+      # difference, or a flavour source that no longer typechecks.
+      - run: pnpm check:ui-sdk-compat
+      # The UI SDK notes on the primitive pages and in their .md mirrors condense §8 of the porting guide;
+      # this fails when a §8 row is covered by no note or internal reason, or changed since its note was
+      # reviewed, so a difference a port has fixed cannot stay published.
+      - run: pnpm check:ui-sdk-notes
       - run: pnpm test
       - run: pnpm build
         env:
@@ -66,3 +82,14 @@ jobs:
       - run: pnpm check:docs-imports
       - run: node scripts/check-pro-manifest.mjs apps/web/lib/pro-manifest.fixture.json
       - run: pnpm test:smoke
+      # Layout needs a browser: no HTML check can see that a preview's example renders 0px wide. A flavour
+      # wrapper with a box once sat between every example and its frame and collapsed `@container` and
+      # `w-full` roots on 712 of 1063 previews while every other gate stayed green. This serves the build
+      # above and requires each preview on a few pages to lay out the same with and without its wrapper, in
+      # both flavours; --controls gives the wrappers a box again and requires the check to fail.
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: |
+          pnpm --filter @sevenui/web start -p 3210 &
+          pnpm check:previews --base http://localhost:3210 --controls
+        env:
+          PRO_MANIFEST_URL: lib/pro-manifest.fixture.json

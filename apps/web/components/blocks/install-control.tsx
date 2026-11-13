@@ -10,12 +10,14 @@ import {
   packageManagerCommands,
   type PackageManager,
 } from "../../lib/package-manager";
+import { FLAVOURS, currentFlavour, type Flavour } from "../../lib/flavour";
 import { installCommand } from "../../lib/registry";
+import { useFlavour } from "../flavour/use-flavour";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/registry/base/ui/tooltip";
 import { useAnnounce } from "../announcer";
 
 const KEY =
-  "relative inline-flex cursor-pointer items-center text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:z-[1] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring";
+  "relative inline-flex cursor-pointer items-center text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:z-[1] focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-ring";
 
 const COPIED_MS = 1600;
 
@@ -24,9 +26,14 @@ export interface InstallControlProps {
   item: string;
   /** Block title, used only to make the copy announcement specific. */
   title: string;
+  /**
+   * A primitive example (`component/…`) installs from the reader's flavour. Pro blocks have one flavour
+   * and leave this off.
+   */
+  flavoured?: boolean;
 }
 
-export function InstallControl({ item, title }: InstallControlProps) {
+export function InstallControl({ item, title, flavoured = false }: InstallControlProps) {
   const announce = useAnnounce();
   const [open, setOpen] = useState(false);
   const [checked, setChecked] = useState<PackageManager | null>(null);
@@ -36,11 +43,16 @@ export function InstallControl({ item, title }: InstallControlProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const commands = useMemo(
-    () => packageManagerCommands((pm) => installCommand(item, pm)),
-    [item],
+  const flavour = useFlavour();
+  const byFlavour = useMemo(
+    () =>
+      Object.fromEntries(
+        FLAVOURS.map((f) => [f, packageManagerCommands((pm) => installCommand(item, pm, f, flavoured))]),
+      ) as Record<Flavour, Record<PackageManager, string>>,
+    [item, flavoured],
   );
-  const tail = `… ${commands.npm.replace(/^.*?shadcn@latest\s+/, "")}`;
+  const commands = byFlavour[flavour];
+  const tails = FLAVOURS.map((f) => ({ f, tail: `… ${byFlavour[f].npm.replace(/^.*?shadcn@latest\s+/, "")}` }));
 
   useEffect(() => () => {
     if (copyTimer.current) clearTimeout(copyTimer.current);
@@ -90,7 +102,7 @@ export function InstallControl({ item, title }: InstallControlProps) {
   async function copy() {
     const pm = currentPackageManager();
     try {
-      await navigator.clipboard.writeText(commands[pm]);
+      await navigator.clipboard.writeText(byFlavour[currentFlavour()][pm]);
       announce(`Copied the ${pm} install command for ${title}.`);
     } catch {
       // Clipboard unavailable (permissions/insecure context); nothing to undo.
@@ -155,9 +167,16 @@ export function InstallControl({ item, title }: InstallControlProps) {
       <span aria-hidden="true" className="w-px shrink-0 bg-border" />
 
       <code className="flex min-w-0 flex-1 items-center px-2 font-mono text-muted-foreground">
-        <span className="block min-w-0 flex-1 truncate text-left" dir="rtl">
-          <bdi>{tail}</bdi>
-        </span>
+        {/* One tail per flavour, switched by CSS so it is right before hydration. */}
+        {(flavoured ? tails : tails.slice(0, 1)).map(({ f, tail }) => (
+          <span
+            className={`block min-w-0 flex-1 truncate text-left ${flavoured ? `flavour-only-${f}` : ""}`}
+            dir="rtl"
+            key={f}
+          >
+            <bdi>{tail}</bdi>
+          </span>
+        ))}
       </code>
 
       <span aria-hidden="true" className="w-px shrink-0 bg-border" />

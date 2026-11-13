@@ -1,3 +1,6 @@
+/* UI SDK (the ui-sdk primitive flavour) adds its runtime CSS to this layer.
+   Declared first so Tailwind's layers, and every utility, win over it. */
+@layer ui-sdk;
 @import "tailwindcss";
 
 @source "../../../packages/registry/registry";
@@ -379,6 +382,50 @@ html {
 [data-pm="yarn"] .pm-only-yarn.shiki,
 [data-pm="bun"] .pm-only-bun.shiki {
   display: block;
+}
+
+/* The primitive flavour (lib/flavour.ts). Both variants are server-rendered; this only hides the one
+   that does not match, so it composes with .pm-only. No attribute (scripts off) means Base UI. */
+:root:not([data-flavour="ui-sdk"]) .flavour-only-ui-sdk,
+[data-flavour="ui-sdk"] .flavour-only-base-ui {
+  display: none !important;
+}
+/* FlavouredPreview's wrappers must not take part in layout: an example is written to be the direct child of
+   its preview frame ([data-sevenui-example], a grid that centres its items), and a wrapper box in between
+   became the shrink-to-fit grid item instead, so a `w-full` or `@container` root resolved its width against
+   that box and collapsed (to 0px for a container root). Without a box, the example is the grid item again.
+   `visibility` is inherited, so the rule below still hides the example inside a box-less wrapper. */
+[data-preview-flavour="base-ui"],
+[data-preview-flavour="ui-sdk"] {
+  display: contents;
+}
+/* A server-rendered Base UI preview stays in place, invisible, until a UI SDK reader's preview loads. */
+[data-flavour="ui-sdk"] [data-preview-flavour="base-ui"] {
+  visibility: hidden;
+}
+
+/* Without scripts nothing sets data-flavour, the page shows Base UI and a switch could not work: hide the
+   switches and show which flavour the page is in instead (FlavourSwitch's static label). */
+:root:not([data-flavour]) .flavour-switch {
+  display: none;
+}
+:root[data-flavour] .flavour-switch-static {
+  display: none;
+}
+
+/* FlavourSwitch: the selected option is drawn like a LayerCard tab (a small raised panel), from the
+   <html> attribute so it is right before hydration. Outside a LayerCard the variables fall back. */
+.flavour-switch {
+  background: color-mix(in oklch, var(--muted) 70%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--foreground) 6%, transparent);
+}
+:root:not([data-flavour="ui-sdk"]) .flavour-switch-option[data-option="base-ui"],
+[data-flavour="ui-sdk"] .flavour-switch-option[data-option="ui-sdk"] {
+  background: var(--layer-card-panel-bg, var(--card));
+  color: var(--foreground);
+  box-shadow:
+    var(--elevation-raised, 0 1px 2px 0 rgb(0 0 0 / 0.05)),
+    0 0 0 1px var(--layer-card-border-color, color-mix(in oklch, var(--foreground) 10%, transparent));
 }
 
 [data-block-preview] [data-preview-wrap][data-dragging="true"] iframe {

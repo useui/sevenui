@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, onTestFinished, vi } from "vitest";
 
 import {
   Drawer,
@@ -12,6 +12,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/registry/base/ui/drawer";
+import { isUiSdk } from "./helpers/flavour";
 
 function ExampleDrawer(props: React.ComponentProps<typeof Drawer>) {
   return (
@@ -42,6 +43,69 @@ describe("Drawer", () => {
     await user.click(screen.getByText("Open drawer"));
     const drawer = await screen.findByRole("dialog");
     expect(drawer.getAttribute("data-slot")).toBe("drawer-popup");
+  });
+
+  it("focuses the popup itself on open, not its first control", async () => {
+    // So a pointer open shows no focus style on the first button; Tab then
+    // moves to it.
+    const user = userEvent.setup();
+    render(<ExampleDrawer />);
+    await user.click(screen.getByText("Open drawer"));
+    const drawer = await screen.findByRole("dialog");
+    await waitFor(() => expect(document.activeElement).toBe(drawer));
+    await user.tab();
+    expect(document.activeElement?.textContent).toBe("Dismiss");
+  });
+
+  // A modal drawer keeps Tab inside: from its last control to its first, and
+  // Shift+Tab back. (UI SDK's own trap misses content re-slotted as
+  // drawer-popup; checked in Chrome as well.)
+  it("wraps Tab and Shift+Tab inside the open drawer", async () => {
+    const user = userEvent.setup();
+    render(
+      <Drawer defaultOpen>
+        <DrawerTrigger>Open drawer</DrawerTrigger>
+        <DrawerContent>
+          <DrawerTitle>Move goal</DrawerTitle>
+          <button type="button">Submit</button>
+          <DrawerClose>Cancel</DrawerClose>
+        </DrawerContent>
+      </Drawer>,
+    );
+    await screen.findByRole("dialog");
+    const submit = screen.getByRole("button", { name: "Submit" });
+    const cancel = screen.getByRole("button", { name: "Cancel" });
+    cancel.focus();
+    await user.tab();
+    // Base UI routes it through a focus guard inside the popup first.
+    await waitFor(() => expect(document.activeElement).toBe(submit));
+    await user.tab({ shift: true });
+    await waitFor(() => expect(document.activeElement).toBe(cancel));
+  });
+
+  it("still focuses the popup when the content has a caller ref", async () => {
+    // The flavour's setup reports no client rects, so UI SDK would find no
+    // tabbable control to fall back to; give every element a box here.
+    const rects = Element.prototype.getClientRects;
+    Element.prototype.getClientRects = () => [new DOMRect(0, 0, 10, 10)] as unknown as DOMRectList;
+    onTestFinished(() => {
+      Element.prototype.getClientRects = rects;
+    });
+    const user = userEvent.setup();
+    const contentRef = { current: null as HTMLDivElement | null };
+    render(
+      <Drawer>
+        <DrawerTrigger>Open drawer</DrawerTrigger>
+        <DrawerContent ref={contentRef}>
+          <DrawerTitle>Move goal</DrawerTitle>
+          <DrawerClose>Dismiss</DrawerClose>
+        </DrawerContent>
+      </Drawer>,
+    );
+    await user.click(screen.getByText("Open drawer"));
+    const drawer = await screen.findByRole("dialog");
+    expect(contentRef.current).toBe(drawer);
+    await waitFor(() => expect(document.activeElement).toBe(drawer));
   });
 
   it("wires the title and description via aria attributes", async () => {
@@ -84,7 +148,11 @@ describe("Drawer", () => {
     render(<ExampleDrawer open modal={false} />);
     await screen.findByRole("dialog");
     expect(document.querySelector('[data-slot="drawer-overlay"]')).toBeNull();
-    const viewport = document.querySelector('[data-slot="drawer-viewport"]');
+    // UI SDK renders its own viewport, which takes no props; the flavour
+    // marks the popup instead.
+    const viewport = document.querySelector(
+      isUiSdk ? '[data-slot="drawer-popup"]' : '[data-slot="drawer-viewport"]',
+    );
     expect(viewport?.getAttribute("data-modal")).toBe("false");
   });
 
@@ -166,6 +234,15 @@ describe("Drawer v2 styles", () => {
     expect(popup?.className).not.toContain("surface-");
     expect(popup?.className).not.toContain("hairline");
     expect(popup?.className).not.toContain("ring-3");
+  });
+
+  // drawer-12 caps the sheet with a --drawer-height it sets itself.
+  it("sizes the content from a caller's --drawer-height", async () => {
+    const user = userEvent.setup();
+    render(<ExampleDrawer />);
+    await user.click(screen.getByText("Open drawer"));
+    await screen.findByRole("dialog");
+    expect(getPopup()?.className).toContain("[--drawer-content-height:var(--drawer-height,auto)]");
   });
 
   it("colours the swipe handle with the muted token", async () => {

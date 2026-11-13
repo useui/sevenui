@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { Switch } from "@/registry/base/ui/switch";
+import { byFlavour } from "./helpers/flavour";
 import { must } from "./helpers/must";
 
 describe("Switch", () => {
@@ -39,7 +40,11 @@ describe("Switch", () => {
     const control = screen.getByRole("switch");
     control.focus();
     await user.keyboard("{Enter}");
-    expect(control.getAttribute("aria-checked")).toBe("true");
+    // UI SDK follows the native checkbox: Enter submits the form and never
+    // toggles a switch; only Space does.
+    expect(control.getAttribute("aria-checked")).toBe(
+      byFlavour({ base: "true", "ui-sdk": "false" }),
+    );
   });
 
   it("starts on with defaultChecked", () => {
@@ -110,6 +115,19 @@ describe("Switch", () => {
     expect(screen.getByRole("switch").getAttribute("data-size")).toBe(
       "default",
     );
+  });
+
+  it("submits uncheckedValue while off and value while on", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <form>
+        <Switch aria-label="Marketing" name="marketing" value="yes" uncheckedValue="no" />
+      </form>,
+    );
+    const form = must(container.querySelector("form"));
+    expect(new FormData(form).getAll("marketing")).toEqual(["no"]);
+    await user.click(screen.getByRole("switch"));
+    expect(new FormData(form).getAll("marketing")).toEqual(["yes"]);
   });
 });
 

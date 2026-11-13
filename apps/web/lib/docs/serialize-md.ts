@@ -1,9 +1,12 @@
+import { readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { DocPage } from "./index.ts";
 import { rewriteRegistryImports } from "../registry-imports.ts";
 import { installCommand } from "../registry.ts";
 import { PACKAGE_MANAGERS } from "../package-manager.ts";
+import { UI_SDK_VERSION } from "../flavour.ts";
+import { POPUP_NOTE, POPUP_PRIMITIVES, UI_SDK_NOTES } from "../ui-sdk-notes.ts";
 
 const REGISTRY_DIR = path.join(process.cwd(), "../../packages/registry");
 
@@ -188,8 +191,56 @@ function renderInstallCommand(attrs: Record<string, string | true>, sourcePath: 
       `lib/docs/serialize-md.ts: ${sourcePath} has an <InstallCommand> tag with no "item" attribute.`,
     );
   }
-  const commands = PACKAGE_MANAGERS.map((pm) => installCommand(item, pm));
-  return fence("bash", commands.join("\n"));
+  const flags = typeof attrs.flags === "string" ? attrs.flags : "";
+  const base = PACKAGE_MANAGERS.map((pm) => installCommand(item, pm, "base-ui", true, flags));
+  if (!item.trim().split(/\s+/).every(isFlavouredItem)) return fence("bash", base.join("\n"));
+  // A primitive or an example of one comes in both flavours; the page shows the reader's, a mirror shows both.
+  const uiSdk = PACKAGE_MANAGERS.map((pm) => installCommand(item, pm, "ui-sdk", true, flags));
+  const commands = fence(
+    "bash",
+    [
+      "# Base UI flavour (the default)",
+      ...base,
+      "",
+      `# UI SDK flavour (@ui-sdk/react ${UI_SDK_VERSION}, beta; React 19; put \`@layer ui-sdk;\` above \`@import "tailwindcss"\`)`,
+      ...uiSdk,
+    ].join("\n"),
+  );
+  // A primitive's own page shows the UI SDK setup and differences only to UI SDK readers; a mirror has no
+  // reader to switch, so it carries them in full (the same data the page renders, lib/ui-sdk-notes.ts).
+  return isPrimitiveItem(item) && attrs.plain === undefined ? `${commands}\n\n${uiSdkSection(item)}` : commands;
+}
+
+function uiSdkSection(item: string): string {
+  const notes = [...(POPUP_PRIMITIVES.has(item) ? [POPUP_NOTE] : []), ...(UI_SDK_NOTES[item] ?? [])];
+  return [
+    "### UI SDK flavour",
+    "",
+    `Setup: React 19. Put \`@layer ui-sdk;\` on the first line of the global stylesheet, above \`@import "tailwindcss"\` (the CLI prints this step once but cannot add it): UI SDK normally inserts its styles first, and the line keeps your utilities winning when they arrive later, for example under a Content Security Policy without a nonce. The flavour is built and tested against \`@ui-sdk/react\` and \`@ui-sdk/core\` \`${UI_SDK_VERSION}\`; pnpm, yarn and bun save that exact version, npm saves a caret range, so with npm pin it (\`npm install --save-exact @ui-sdk/react@${UI_SDK_VERSION} @ui-sdk/core@${UI_SDK_VERSION}\`). See [Set up a UI SDK project](/docs/installation#set-up-a-ui-sdk-project).`,
+    "",
+    "The API is the same in both flavours (exports, props, `data-slot` values, `render`), so code that uses only the SevenUI exports compiles against either.",
+    "",
+    notes.length > 0
+      ? ["Differences on UI SDK:", "", ...notes.map((note) => `- ${note.text}`)].join("\n")
+      : "Nothing a reader would notice behaves differently on UI SDK.",
+  ].join("\n");
+}
+
+let primitiveNames: Set<string> | undefined;
+
+function isPrimitiveItem(item: string): boolean {
+  isFlavouredItem(item);
+  return primitiveNames?.has(item) ?? false;
+}
+
+/** Mirrors lib/flavour-items.ts, which is server-only; this module also runs off-graph under plain node. */
+function isFlavouredItem(item: string): boolean {
+  primitiveNames ??= new Set(
+    (JSON.parse(readFileSync(path.join(REGISTRY_DIR, "registry.json"), "utf8")) as { items: { name: string; type: string }[] }).items
+      .filter((entry) => entry.type === "registry:ui")
+      .map((entry) => entry.name),
+  );
+  return primitiveNames.has(item) || item.startsWith("component/") || item.startsWith("demo/");
 }
 
 export type DocPageSummary = Pick<DocPage, "route" | "title" | "description">;

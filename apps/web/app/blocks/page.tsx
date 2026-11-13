@@ -1,3 +1,4 @@
+import { BlocksFlavourNote } from "../../components/flavour/blocks-flavour-note";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -43,6 +44,7 @@ export default async function BlocksPage() {
           text={`${totalBlocks} Pro blocks for React, built on Base UI: full sections and pages, ready to ship.`}
         />
       </PageIntro>
+      <BlocksFlavourNote />
       <ProOffer />
       <div className="py-12">
         <div className="flex max-w-5xl flex-col gap-12">

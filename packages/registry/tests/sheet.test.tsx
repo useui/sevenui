@@ -45,6 +45,24 @@ describe("Sheet", () => {
     expect(sheet.getAttribute("data-slot")).toBe("sheet-content");
   });
 
+  // A modal sheet keeps Tab inside: from its last control to its first, and
+  // Shift+Tab back. (UI SDK's own trap misses content re-slotted as
+  // sheet-content; checked in Chrome as well.)
+  it("wraps Tab and Shift+Tab inside the open sheet", async () => {
+    const user = userEvent.setup();
+    render(<ExampleSheet defaultOpen />);
+    const sheet = await screen.findByRole("dialog");
+    const buttons = Array.from(sheet.querySelectorAll<HTMLElement>("button"));
+    const first = buttons[0];
+    const last = buttons[buttons.length - 1];
+    last.focus();
+    await user.tab();
+    // Base UI routes it through a focus guard inside the popup first.
+    await waitFor(() => expect(document.activeElement).toBe(first));
+    await user.tab({ shift: true });
+    await waitFor(() => expect(document.activeElement).toBe(last));
+  });
+
   it("wires the title and description via aria attributes", async () => {
     const user = userEvent.setup();
     render(<ExampleSheet />);

@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/registry/base/ui/tooltip";
+import { expectClosed, isUiSdk, movePointerAway } from "./helpers/flavour";
 
 function ExampleTooltip(props: React.ComponentProps<typeof Tooltip>) {
   return (
@@ -24,11 +25,43 @@ function ExampleTooltip(props: React.ComponentProps<typeof Tooltip>) {
 
 // Note: Base UI 1.7 renders the tooltip popup without role="tooltip", so
 // these tests assert on the popup content and data attributes instead.
+// UI SDK keeps a closed tooltip mounted with `hidden`; expectClosed covers both.
 
 describe("Tooltip", () => {
   it("stays closed initially", () => {
     render(<ExampleTooltip />);
-    expect(screen.queryByText("Add to library")).toBeNull();
+    expectClosed(screen.queryByText("Add to library"));
+  });
+
+  // Base UI describes nothing while closed. Hidden content referenced by
+  // aria-describedby is still read out (accname), so a closed tooltip whose
+  // text repeats the trigger's would be announced twice.
+  it("does not describe its trigger while closed, and keeps the caller's description", () => {
+    render(
+      <>
+        <span id="hint">Saves a copy</span>
+        <ExampleTooltip />
+        <Tooltip>
+          <TooltipTrigger aria-describedby="hint">Save</TooltipTrigger>
+          <TooltipContent>Save the file</TooltipContent>
+        </Tooltip>
+      </>,
+    );
+    expect(screen.getByRole("button", { name: "Hover me" }).hasAttribute("aria-describedby")).toBe(
+      false,
+    );
+    expect(screen.getByRole("button", { name: "Save" }).getAttribute("aria-describedby")).toBe(
+      "hint",
+    );
+  });
+
+  it("never describes its trigger while disabled", async () => {
+    const user = userEvent.setup();
+    render(<ExampleTooltip disabled />);
+    const trigger = screen.getByRole("button", { name: "Hover me" });
+    await user.hover(trigger);
+    await user.tab();
+    expect(trigger.hasAttribute("aria-describedby")).toBe(false);
   });
 
   it("opens on hover and closes on unhover", async () => {
@@ -38,9 +71,9 @@ describe("Tooltip", () => {
     await user.hover(trigger);
     const popup = await screen.findByText("Add to library");
     expect(popup.getAttribute("data-open")).toBe("");
-    await user.unhover(trigger);
+    await movePointerAway(user, trigger);
     await waitFor(() => {
-      expect(screen.queryByText("Add to library")).toBeNull();
+      expectClosed(screen.queryByText("Add to library"));
     });
   });
 
@@ -52,7 +85,7 @@ describe("Tooltip", () => {
     await screen.findByText("Add to library");
     await user.tab();
     await waitFor(() => {
-      expect(screen.queryByText("Add to library")).toBeNull();
+      expectClosed(screen.queryByText("Add to library"));
     });
   });
 
@@ -74,7 +107,7 @@ describe("Tooltip", () => {
     await waitFor(() => {
       expect(onOpenChange).toHaveBeenCalledWith(true, expect.anything());
     });
-    await user.unhover(screen.getByText("Hover me"));
+    await movePointerAway(user, screen.getByText("Hover me"));
     await waitFor(() => {
       expect(onOpenChange.mock.calls.at(-1)?.[0]).toBe(false);
     });
@@ -85,8 +118,61 @@ describe("Tooltip", () => {
     await screen.findByText("Add to library");
     rerender(<ExampleTooltip open={false} />);
     await waitFor(() => {
-      expect(screen.queryByText("Add to library")).toBeNull();
+      expectClosed(screen.queryByText("Add to library"));
     });
+  });
+});
+
+// Base UI options UI SDK has no counterpart for, which the flavour emulates.
+describe("Tooltip pointer options", () => {
+  // The element that carries the popup's position: Base UI's positioner, or
+  // UI SDK's content.
+  const positioned = (text: string) =>
+    screen.getByText(text).closest<HTMLElement>('[style*="position"]');
+
+  it("follows the pointer along trackCursorAxis", async () => {
+    const user = userEvent.setup();
+    render(
+      <TooltipProvider delay={0} closeDelay={0}>
+        <Tooltip trackCursorAxis="x">
+          <TooltipTrigger delay={0}>Hover me</TooltipTrigger>
+          <TooltipContent>Tip</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>,
+    );
+    const trigger = screen.getByText("Hover me");
+    trigger.getBoundingClientRect = () => new DOMRect(100, 100, 200, 20);
+    await user.pointer({ target: trigger, coords: { clientX: 120, clientY: 110 } });
+    await screen.findByText("Tip");
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    });
+    const before = positioned("Tip")?.style.cssText;
+    await user.pointer({ target: trigger, coords: { clientX: 260, clientY: 110 } });
+    await waitFor(() => expect(positioned("Tip")?.style.cssText).not.toBe(before));
+  });
+
+  it("lets the pointer through the popup with disableHoverablePopup", async () => {
+    const user = userEvent.setup();
+    render(
+      <TooltipProvider delay={0} closeDelay={0}>
+        <Tooltip disableHoverablePopup>
+          <TooltipTrigger delay={0}>Hover me</TooltipTrigger>
+          <TooltipContent>Tip</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>,
+    );
+    await user.hover(screen.getByText("Hover me"));
+    const popup = await screen.findByText("Tip");
+    // Base UI sets pointer-events: none on the popup; the flavour sets the
+    // class (jsdom applies no Tailwind). Moving onto the popup then closes it,
+    // checked in Chrome (guide §8).
+    const passThrough = (el: HTMLElement | null): boolean =>
+      el !== null &&
+      (getComputedStyle(el).pointerEvents === "none" ||
+        (isUiSdk && el.className.includes("pointer-events-none")) ||
+        passThrough(el.parentElement));
+    expect(passThrough(popup)).toBe(true);
   });
 });
 
