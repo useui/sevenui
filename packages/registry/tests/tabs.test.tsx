@@ -96,6 +96,25 @@ describe("Tabs", () => {
     expect(screen.getByText("Account panel")).toBeTruthy();
   });
 
+  it("hands onValueChange a numeric tab value as a number", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(
+      <Tabs defaultValue={1} onValueChange={onValueChange}>
+        <TabsList>
+          <TabsTrigger value={1}>One</TabsTrigger>
+          <TabsTrigger value={2}>Two</TabsTrigger>
+        </TabsList>
+        <TabsContent value={1}>First</TabsContent>
+        <TabsContent value={2}>Second</TabsContent>
+      </Tabs>,
+    );
+    await user.click(screen.getByRole("tab", { name: "Two" }));
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+    expect(onValueChange.mock.calls[0][0]).toBe(2);
+    expect(screen.getByRole("tabpanel").textContent).toBe("Second");
+  });
+
   it("does not activate a disabled tab", async () => {
     const user = userEvent.setup();
     render(

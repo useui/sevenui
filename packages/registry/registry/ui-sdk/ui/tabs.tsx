@@ -38,6 +38,10 @@ const TabsOptionsContext = React.createContext<
   ((options: ListOptions) => void) | null
 >(null);
 
+// The tabs' original values by their string, so onValueChange hands back
+// what the tab was given (`2`, not `"2"`), as Base UI does.
+const TabsValuesContext = React.createContext<Map<string, unknown> | null>(null);
+
 type TabsRootProps = React.ComponentProps<typeof TabsPrimitive>;
 type TabsChangeDetails = Parameters<
   NonNullable<TabsRootProps["onValueChange"]>
@@ -81,23 +85,33 @@ function Tabs({
         : next,
     );
   }, []);
+  const [values] = React.useState(() => new Map<string, unknown>());
   return (
     <TabsOptionsContext.Provider value={report}>
-      <TabsPrimitive
-        render={part(slot, "div", render)}
-        data-orientation={orientation}
-        orientation={orientation}
-        // Base UI lets `value` win over `defaultValue`; UI SDK rejects both.
-        {...(value !== undefined ? { value } : { defaultValue })}
-        onValueChange={onValueChange}
-        activation={options.activateOnFocus ? "automatic" : "manual"}
-        loop={options.loopFocus}
-        className={cn(
-          "group/tabs flex gap-2 data-[orientation=horizontal]:flex-col",
-          className,
-        )}
-        {...props}
-      />
+      <TabsValuesContext.Provider value={values}>
+        <TabsPrimitive
+          render={part(slot, "div", render)}
+          data-orientation={orientation}
+          orientation={orientation}
+          // Base UI lets `value` win over `defaultValue`; UI SDK rejects both.
+          {...(value !== undefined ? { value } : { defaultValue })}
+          onValueChange={
+            onValueChange &&
+            ((next: unknown, details: TabsChangeDetails) =>
+              onValueChange(
+                typeof next === "string" && values.has(next) ? values.get(next) : next,
+                details,
+              ))
+          }
+          activation={options.activateOnFocus ? "automatic" : "manual"}
+          loop={options.loopFocus}
+          className={cn(
+            "group/tabs flex gap-2 data-[orientation=horizontal]:flex-col",
+            className,
+          )}
+          {...props}
+        />
+      </TabsValuesContext.Provider>
     </TabsOptionsContext.Provider>
   );
 }
@@ -168,6 +182,16 @@ function TabsTrigger({
   // Base UI's hint for a `render` that is not a <button>; UI SDK needs none.
   nativeButton?: boolean;
 }) {
+  const values = React.useContext(TabsValuesContext);
+  const { value } = props;
+  React.useLayoutEffect(() => {
+    if (!values) return;
+    const key = String(value);
+    values.set(key, value);
+    return () => {
+      if (values.get(key) === value) values.delete(key);
+    };
+  }, [values, value]);
   return (
     <TabsTabPrimitive
       render={part<{ selected: boolean }>(slot, "button", render, (state) => ({

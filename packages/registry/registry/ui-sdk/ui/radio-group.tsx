@@ -1,6 +1,6 @@
 "use client";
 
-import type * as React from "react";
+import * as React from "react";
 import {
   Radio as RadioPrimitive,
   RadioGroup as RadioGroupPrimitive,
@@ -42,21 +42,34 @@ type RadioGroupProps = Omit<
   inputRef?: React.Ref<HTMLInputElement>;
 };
 
+// The items' original values by their string, so onValueChange hands back
+// what the item was given (`2`, not `"2"`), as Base UI does.
+const RadioValuesContext = React.createContext<Map<string, unknown> | null>(null);
+
 function RadioGroup({
   className,
   value,
   defaultValue,
+  onValueChange,
   inputRef: _inputRef,
   ...props
 }: RadioGroupProps) {
+  const [values] = React.useState(() => new Map<string, unknown>());
   return (
-    <RadioGroupPrimitive
-      data-slot="radio-group"
-      className={cn("grid w-full gap-2", className)}
-      value={toValue(value)}
-      defaultValue={toValue(defaultValue)}
-      {...props}
-    />
+    <RadioValuesContext.Provider value={values}>
+      <RadioGroupPrimitive
+        data-slot="radio-group"
+        className={cn("grid w-full gap-2", className)}
+        value={toValue(value)}
+        defaultValue={toValue(defaultValue)}
+        onValueChange={
+          onValueChange &&
+          ((next, details) =>
+            onValueChange(next != null && values.has(next) ? values.get(next) : next, details))
+        }
+        {...props}
+      />
+    </RadioValuesContext.Provider>
   );
 }
 
@@ -82,6 +95,15 @@ function RadioGroupItem({
   render,
   ...props
 }: RadioGroupItemProps) {
+  const values = React.useContext(RadioValuesContext);
+  React.useLayoutEffect(() => {
+    if (!values) return;
+    const key = String(value);
+    values.set(key, value);
+    return () => {
+      if (values.get(key) === value) values.delete(key);
+    };
+  }, [values, value]);
   return (
     <RadioPrimitive
       data-slot="radio-group-item"

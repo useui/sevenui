@@ -43,15 +43,14 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, relative, sep } from "node:path";
-import { EXAMPLE_KINDS, readFlavourExamples } from "./ui-sdk-flavour.mjs";
+import { EXAMPLE_KINDS, REPLACED as REPLACED_LIBRARIES, readFlavourExamples } from "./ui-sdk-flavour.mjs";
 
 const ROOT = join(import.meta.dirname, "..");
 const REG = join(ROOT, "packages/registry");
 const MANIFEST = join(REG, "ui-sdk-compat.json");
 const WRITE = process.argv.includes("--write");
 
-// Keep in step with REPLACED in scripts/ui-sdk-flavour.mjs.
-const REPLACED = ["@base-ui/react", "react-day-picker", "embla-carousel-react", "react-resizable-panels"];
+const REPLACED = Object.keys(REPLACED_LIBRARIES);
 // Test tooling is not something an example may lean on.
 const NOT_LINKED = new Set([...REPLACED, "typescript", "vitest", "jsdom", "@testing-library/react", "@testing-library/user-event"]);
 const EXAMPLE_ROOTS = Object.keys(EXAMPLE_KINDS);

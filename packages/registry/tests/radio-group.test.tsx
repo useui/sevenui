@@ -57,6 +57,21 @@ describe("RadioGroup", () => {
     expect(onValueChange.mock.calls[0][0]).toBe("lg");
   });
 
+  // Base UI takes values of any type and hands back the item's own value.
+  it("hands onValueChange a numeric item value as a number", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(
+      <RadioGroup defaultValue={1} onValueChange={onValueChange}>
+        <RadioGroupItem value={1} aria-label="One" />
+        <RadioGroupItem value={2} aria-label="Two" />
+      </RadioGroup>,
+    );
+    await user.click(screen.getByRole("radio", { name: "Two" }));
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+    expect(onValueChange.mock.calls[0][0]).toBe(2);
+  });
+
   it("moves selection with arrow keys", async () => {
     const user = userEvent.setup();
     render(<Sizes defaultValue="sm" />);

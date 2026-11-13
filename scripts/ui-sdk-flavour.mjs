@@ -77,10 +77,24 @@ export const REPLACED = {
 // and cannot keep the base API.
 export const UI_SDK_PORTS = new Set(["label", "textarea", "input-group"]);
 
-// Keep in sync with packages/registry/vitest.config.ts and tests/api-freeze.test.ts.
-export const REPLACED_IMPORT =
-  /from\s+["'](@base-ui\/react|react-day-picker|embla-carousel-react|react-resizable-panels)(?:\/[^"']*)?["']/g;
-const PACKAGE_IMPORT = /(?:^|\n)\s*(?:import|export)\s[^"';]*?from\s+["']([^"'./@][^"']*|@[^"'/]+\/[^"']+)["']|(?:^|\n)\s*import\s+["']([^"'./][^"']*)["']/g;
+// Every way a module can name another one: `import … from "x"`, `import type
+// … from "x"`, `export … from "x"`, a side-effect `import "x"`, a dynamic
+// `import("x")` (also with a template literal, and as `typeof import("x")`),
+// `require("x")` (also TypeScript's `import x = require("x")`) and a
+// `/// <reference types="x" />`. A rule that recognised only `from "x"` let a
+// file with `await import("@base-ui/react/tabs")` count as ported.
+// Group 2 is the specifier. A template literal is only valid after
+// `import(`, so prose in comments ("from `items`") is not read as an import.
+const SPECIFIER = String.raw`(?:\bfrom|\bimport|\brequire|<reference\s+types\s*=)\s*\(?\s*(["']|(?<=\bimport\s*\(\s*)\x60)`;
+const specifierRegExp = (body) => new RegExp(`${SPECIFIER}(${body})\\1`, "g");
+const REPLACED_NAMES = String.raw`@base-ui\/react|react-day-picker|embla-carousel-react|react-resizable-panels`;
+// The one definition of "imports something UI SDK replaces"; group 2 is the
+// package. packages/registry/vitest.config.ts and tests/api-freeze.test.ts use
+// it through importsReplaced (scripts/ui-sdk-flavour.d.mts types it).
+export const REPLACED_IMPORT = specifierRegExp(String.raw`(?:${REPLACED_NAMES})(?:\/[^"'\x60]*)?`);
+// A bare package specifier: not relative, not absolute, not the `@/` alias,
+// not a `node:` builtin.
+const PACKAGE_IMPORT = specifierRegExp(String.raw`(?![./]|@\/|node:)(?:@[^"'\x60/\s]+\/)?[^"'\x60/\s]+(?:\/[^"'\x60\s]*)?`);
 
 // Base UI names a few primitives differently; descriptions follow UI SDK.
 const PRIMITIVE_NAMES = {
@@ -103,7 +117,9 @@ export const LAYER_DOCS =
 export const retarget = (source) =>
   source.replaceAll("@/registry/base/", "@/registry/ui-sdk/");
 export const replacedImports = (source) =>
-  [...new Set([...source.matchAll(REPLACED_IMPORT)].map((m) => m[1]))];
+  [...new Set([...source.matchAll(REPLACED_IMPORT)].map((m) => m[2].match(new RegExp(REPLACED_NAMES))[0]))];
+/** Whether a source imports, in any form, a library UI SDK replaces. */
+export const importsReplaced = (source) => replacedImports(source).length > 0;
 const seedable = (base) => replacedImports(base).every((name) => REPLACED[name].seed);
 
 const read = (path) => readFileSync(path, "utf8");
@@ -118,10 +134,7 @@ function packageName(specifier) {
 
 export function importedPackages(source) {
   const names = new Set();
-  for (const match of source.matchAll(PACKAGE_IMPORT)) {
-    const spec = match[1] ?? match[2];
-    if (spec) names.add(packageName(spec));
-  }
+  for (const match of source.matchAll(PACKAGE_IMPORT)) names.add(packageName(match[2]));
   return names;
 }
 

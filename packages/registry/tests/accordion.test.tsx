@@ -84,6 +84,26 @@ describe("Accordion", () => {
     expect(onValueChange.mock.calls[0][0]).toEqual(["shipping"]);
   });
 
+  it("hands onValueChange numeric item values as numbers", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(
+      <Accordion onValueChange={onValueChange}>
+        <AccordionItem value={1}>
+          <AccordionTrigger>One</AccordionTrigger>
+          <AccordionContent>First</AccordionContent>
+        </AccordionItem>
+        <AccordionItem value={2}>
+          <AccordionTrigger>Two</AccordionTrigger>
+          <AccordionContent>Second</AccordionContent>
+        </AccordionItem>
+      </Accordion>,
+    );
+    await user.click(screen.getByRole("button", { name: "Two" }));
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+    expect(onValueChange.mock.calls[0][0]).toEqual([2]);
+  });
+
   it("toggles the focused trigger with Enter and Space", async () => {
     const user = userEvent.setup();
     render(<BasicAccordion />);

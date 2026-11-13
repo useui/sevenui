@@ -1,6 +1,6 @@
 "use client";
 
-import type * as React from "react";
+import * as React from "react";
 import {
   AccordionHeader as AccordionHeaderPrimitive,
   AccordionItem as AccordionItemPrimitive,
@@ -32,12 +32,21 @@ function part<State extends object>(
     );
 }
 
+// The items' original values by their string, so onValueChange hands back
+// what the item was given (`2`, not `"2"`), as Base UI does.
+type AccordionChangeDetails = Parameters<
+  NonNullable<React.ComponentProps<typeof AccordionPrimitive>["onValueChange"]>
+>[1];
+
+const AccordionValuesContext = React.createContext<Map<string, unknown> | null>(null);
+
 // `orientation` and `loopFocus` are Base UI root props with no UI SDK
 // counterpart; they are accepted for API parity and dropped.
 function Accordion({
   className,
   value,
   defaultValue,
+  onValueChange,
   orientation: _orientation,
   loopFocus: _loopFocus,
   "data-slot": slot = "accordion",
@@ -45,22 +54,42 @@ function Accordion({
   ...props
 }: Omit<
   React.ComponentProps<typeof AccordionPrimitive>,
-  "className" | "render"
+  "className" | "render" | "value" | "defaultValue" | "onValueChange"
 > & {
   className?: string;
   "data-slot"?: string;
   render?: BaseRender;
   orientation?: "vertical" | "horizontal";
   loopFocus?: boolean;
+  // Base UI types item values as any; UI SDK holds strings.
+  // biome-ignore lint/suspicious/noExplicitAny: Base UI's AccordionValue is any[].
+  value?: any[];
+  // biome-ignore lint/suspicious/noExplicitAny: Base UI's AccordionValue is any[].
+  defaultValue?: any[];
+  // biome-ignore lint/suspicious/noExplicitAny: Base UI's AccordionValue is any[].
+  onValueChange?: (value: any[], details: AccordionChangeDetails) => void;
 }) {
+  const [values] = React.useState(() => new Map<string, unknown>());
   return (
-    <AccordionPrimitive
-      render={part(slot, "div", render)}
-      // Base UI lets `value` win over `defaultValue`; UI SDK rejects both.
-      {...(value !== undefined ? { value } : { defaultValue })}
-      className={cn("flex w-full flex-col", className)}
-      {...props}
-    />
+    <AccordionValuesContext.Provider value={values}>
+      <AccordionPrimitive
+        render={part(slot, "div", render)}
+        // Base UI lets `value` win over `defaultValue`; UI SDK rejects both.
+        {...(value !== undefined ? { value } : { defaultValue })}
+        onValueChange={
+          onValueChange &&
+          ((next: string[], details: AccordionChangeDetails) =>
+            onValueChange(
+              next.map((item) =>
+                typeof item === "string" && values.has(item) ? values.get(item) : item,
+              ),
+              details,
+            ))
+        }
+        className={cn("flex w-full flex-col", className)}
+        {...props}
+      />
+    </AccordionValuesContext.Provider>
   );
 }
 
@@ -77,6 +106,16 @@ function AccordionItem({
   "data-slot"?: string;
   render?: BaseRender;
 }) {
+  const values = React.useContext(AccordionValuesContext);
+  const { value } = props;
+  React.useLayoutEffect(() => {
+    if (!values || value === undefined) return;
+    const key = String(value);
+    values.set(key, value);
+    return () => {
+      if (values.get(key) === value) values.delete(key);
+    };
+  }, [values, value]);
   return (
     <AccordionItemPrimitive
       render={part(slot, "div", render)}
