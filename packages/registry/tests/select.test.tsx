@@ -219,6 +219,53 @@ describe("Select", () => {
   });
 });
 
+// alignItemWithTrigger (the default) lays the selected item, or the first
+// item while nothing is selected, over the trigger. Base UI measures and
+// positions it (data-align-trigger drives it); the flavour anchors UI SDK's
+// content to where its top must go. jsdom has no layout, so the rects are
+// stubbed; the placement was compared with Base UI's in Chrome (guide §8).
+describe("Select alignItemWithTrigger", () => {
+  it("lays the first item over the trigger while nothing is selected", async () => {
+    const user = userEvent.setup();
+    const original = Element.prototype.getBoundingClientRect;
+    Element.prototype.getBoundingClientRect = function (this: Element) {
+      const slot = this.getAttribute("data-slot");
+      if (slot === "select-trigger") return new DOMRect(0, 300, 180, 34);
+      if (slot === "select-content") return new DOMRect(0, 0, 180, 200);
+      if (slot === "select-item") {
+        const index = [...document.querySelectorAll("[data-slot=select-item]")].indexOf(this);
+        return new DOMRect(0, 28 + 32 * index, 180, 32);
+      }
+      return original.call(this);
+    };
+    try {
+      render(
+        <Select items={fruits}>
+          <SelectTrigger aria-label="Fruit">
+            <SelectValue placeholder="Pick a fruit" />
+          </SelectTrigger>
+          <SelectContent>
+            {fruits.map((fruit) => (
+              <SelectItem key={fruit.value} value={fruit.value}>
+                {fruit.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>,
+      );
+      await user.click(screen.getByRole("combobox", { name: "Fruit" }));
+      const popup = must(document.querySelector<HTMLElement>("[data-slot=select-content]"));
+      expect(popup.getAttribute("data-align-trigger")).toBe("true");
+      if (isUiSdk) {
+        // trigger top 300 + (34 - item height, 0 in jsdom) / 2 - first item offset 28
+        await waitFor(() => expect(popup.style.top).toBe("289px"));
+      }
+    } finally {
+      Element.prototype.getBoundingClientRect = original;
+    }
+  });
+});
+
 describe("Select v2 styles", () => {
   it("renders a bordered trigger with the halo focus ring and control scale", () => {
     render(<FruitSelect />);

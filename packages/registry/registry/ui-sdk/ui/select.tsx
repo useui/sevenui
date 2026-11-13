@@ -172,6 +172,42 @@ function SelectTrigger({
   );
 }
 
+// Base UI's alignItemWithTrigger lays the selected item over the trigger, or
+// the first item while nothing is selected; UI SDK aligns only a selected
+// item and otherwise opens below, and an anchor turns its alignment off. So
+// the flavour aligns both cases itself: the content is anchored to a
+// zero-height box where its top must go for that item to sit on the trigger
+// (UI SDK re-reads an anchor on every check). Like Base UI it falls back to
+// the trigger when there is no room, and for touch.
+function placeholderAnchor(
+  content: React.RefObject<HTMLElement | null>,
+  touch: React.RefObject<boolean>,
+  sideOffset: number,
+) {
+  return {
+    getBoundingClientRect: () => {
+      const popup = content.current;
+      const trigger = popup?.id
+        ? popup.ownerDocument.querySelector<HTMLElement>(`[aria-controls="${CSS.escape(popup.id)}"]`)
+        : null;
+      if (!popup || !trigger) return new DOMRect();
+      const box = trigger.getBoundingClientRect();
+      const item =
+        popup.querySelector<HTMLElement>("[data-slot=select-item][data-selected]:not([hidden])") ??
+        popup.querySelector<HTMLElement>("[data-slot=select-item]:not([data-disabled]):not([hidden])");
+      // The content gets sideOffset 0 here (UI SDK drops it while a selected
+      // item could align), so the offset is added to the fallback box.
+      const below = new DOMRect(box.left, box.top, box.width, box.height + sideOffset);
+      if (touch.current || !item) return below;
+      const offset = item.getBoundingClientRect().top - popup.getBoundingClientRect().top + popup.scrollTop;
+      const top = box.top + (box.height - item.offsetHeight) / 2 - offset;
+      const view = popup.ownerDocument.defaultView?.innerHeight ?? 0;
+      if (top < 0 || top + popup.offsetHeight > view) return below;
+      return new DOMRect(box.left, top, box.width, 0);
+    },
+  };
+}
+
 // No Positioner: UI SDK positions the content itself, in the top layer, so
 // placement props sit on this part and Base UI's `inline-start`/`inline-end`
 // map to `start`/`end`. UI SDK has no scroll arrows; the list scrolls.
@@ -194,12 +230,27 @@ function SelectContent({
     | React.RefObject<HTMLElement | null>
     | ((closeType: string) => boolean | HTMLElement | null | undefined);
 }) {
+  const content = React.useRef<HTMLDivElement | null>(null);
+  const touch = React.useRef(false);
+  React.useEffect(() => {
+    const record = (event: PointerEvent) => {
+      touch.current = event.pointerType === "touch";
+    };
+    document.addEventListener("pointerdown", record, true);
+    return () => document.removeEventListener("pointerdown", record, true);
+  }, []);
+  const anchor = React.useMemo(
+    () => (alignItemWithTrigger ? placeholderAnchor(content, touch, sideOffset) : undefined),
+    [alignItemWithTrigger, sideOffset],
+  );
   return (
     <SelectContentPrimitive
+      ref={content}
+      anchor={anchor}
       data-slot="select-content"
       data-align-trigger={alignItemWithTrigger}
       side={side === "inline-start" ? "start" : side === "inline-end" ? "end" : side}
-      sideOffset={sideOffset}
+      sideOffset={anchor ? 0 : sideOffset}
       align={align}
       alignOffset={alignOffset}
       alignItemWithTrigger={alignItemWithTrigger}
