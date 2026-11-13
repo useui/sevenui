@@ -1,3 +1,4 @@
+import { BlocksFlavourNote } from "../../../components/flavour/blocks-flavour-note";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProOffer } from "../../../components/blocks/pro-offer";
@@ -45,6 +46,7 @@ export default async function BlocksGroupPage({ params }: { params: Promise<Para
           text={`${group.label}: ${group.items.length} Pro blocks for React, built on Base UI.`}
         />
       </PageIntro>
+      <BlocksFlavourNote />
       <ProOffer />
       <div className="py-12">
         <div className="grid max-w-5xl gap-6 sm:grid-cols-2 xl:grid-cols-3">
