@@ -9,14 +9,18 @@ import { PackageManagerMenu } from "../package-manager-menu";
 import { CodeBlock } from "./code-block";
 import { CODE_CLASS, cx } from "./code-element";
 
-/** `plain` leaves out the UI SDK notes a primitive's own page shows under its command (the guides use it). */
-export async function InstallCommand({ item, plain = false }: { item: string; plain?: boolean }) {
-  const flavoured = isFlavouredItem(item);
+/**
+ * `plain` leaves out the UI SDK notes a primitive's own page shows under its command (the guides use it).
+ * `item` may name several items separated by spaces; `flags` (e.g. `--overwrite`) follow them.
+ */
+export async function InstallCommand({ item, plain = false, flags = "" }: { item: string; plain?: boolean; flags?: string }) {
+  const items = item.trim().split(/\s+/);
+  const flavoured = items.every(isFlavouredItem);
   // Every flavour × package manager pair is rendered; CSS shows the reader's pair (globals.css).
   const variants = await Promise.all(
     FLAVOURS.flatMap((flavour) =>
       PACKAGE_MANAGERS.map(async (pm) => {
-        const command = installCommand(item, pm, flavour, flavoured);
+        const command = installCommand(item, pm, flavour, flavoured, flags);
         const html = await highlight(command, "bash", "inline");
         return { flavour, pm, command, html };
       }),
@@ -53,7 +57,7 @@ export async function InstallCommand({ item, plain = false }: { item: string; pl
             />
           ))}
       </CodeBlock>
-      {isPrimitive(item) && !plain && <UiSdkPrimitiveNote />}
+      {items.length === 1 && isPrimitive(item) && !plain && <UiSdkPrimitiveNote />}
     </>
   );
 }

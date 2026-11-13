@@ -13,13 +13,12 @@ it is also the starting point for the UI SDK flavour (see
 npx shadcn@latest init --base base
 ```
 
-`init` can write starter primitives of its own, such as
+`init` writes starter primitives of its own, such as
 `components/ui/button.tsx`. The first time you add SevenUI primitives
-over those files, pass `--overwrite`:
+over those files, pass `--overwrite` (the command follows the flavour
+you pick below):
 
-```bash
-npx shadcn@latest add @sevenui/button @sevenui/dialog --overwrite
-```
+<InstallCommand item="button dialog" flags="--overwrite" plain />
 
 Without it the CLI asks before replacing each existing file. In a
 non-interactive shell (CI, an AI agent) there is no one to answer, and
@@ -44,15 +43,16 @@ The flavour switch in the sidebar (also shown above every example) sets
 which one this site shows: install commands, example source and live
 previews follow it, and a link with `?flavour=ui-sdk` opens the site on
 UI SDK. Each primitive's page lists what behaves differently on UI SDK.
+Pro blocks are built on Base UI only.
 
 ### Set up a UI SDK project
 
-`shadcn init --base base` installs `@base-ui/react` and writes a Base UI
-`components/ui/button.tsx`. A project on the UI SDK flavour replaces both:
+Start with `shadcn init --base base` as above; it installs
+`@base-ui/react` and writes a Base UI `components/ui/button.tsx`, which
+the next steps replace.
 
 **Declare the cascade layer.** UI SDK keeps its runtime styles in a
-cascade layer that has to be declared before Tailwind's, so your
-utilities win over it. Put this on the first line of your global
+cascade layer named `ui-sdk`. Put this on the first line of your global
 stylesheet, above `@import "tailwindcss"`:
 
 ```css
@@ -60,33 +60,58 @@ stylesheet, above `@import "tailwindcss"`:
 @import "tailwindcss";
 ```
 
-The shadcn CLI can only append CSS, so it prints this step after
-installing a UI SDK primitive instead of adding the line itself.
+UI SDK normally inserts its styles first, so a default setup also works
+without the line. The line keeps your utilities winning when UI SDK's
+styles end up after yours, for example under a Content Security Policy
+without a nonce, where they arrive as constructed stylesheets; there,
+popups such as dialogs would lose their padding and background. The
+shadcn CLI can only append CSS, so it prints this step once per install
+instead of adding the line itself.
 
-**Overwrite the starter files.** Install UI SDK primitives with
-`--overwrite` the first time, so they replace the starter Base UI files
-(without it, a non-interactive install writes nothing):
-
-```bash
-npx shadcn@latest add @sevenui/ui-sdk/button @sevenui/ui-sdk/dialog --overwrite
-```
-
-**Pin UI SDK exactly.** The registry asks for `0.1.0-beta.1`, but npm
-saves it as `^0.1.0-beta.1`, and a caret on a prerelease accepts every
-later 0.1.0 beta and 0.1.x release, whose API may change under the
-flavour:
+**Pin UI SDK exactly.** SevenUI's UI SDK flavour is built and tested
+against `@ui-sdk/react` and `@ui-sdk/core` `0.1.0-beta.1`, and the
+registry asks for that exact version. pnpm, yarn and bun save it as
+given. npm saves `^0.1.0-beta.1`, which also accepts later betas and
+0.1.x releases, whose API may change under the flavour. With npm, add
+`save-exact=true` to `.npmrc` before the first install, or pin it
+afterwards:
 
 ```bash
 npm install --save-exact @ui-sdk/react@0.1.0-beta.1 @ui-sdk/core@0.1.0-beta.1
 ```
 
-**Remove Base UI.** Once no file under your `ui` alias imports
-`@base-ui/react` (the starter files are the only ones that do), remove
-it with `npm uninstall @base-ui/react`.
+**Install over the starter files.** Add the UI SDK primitives with
+`--overwrite` the first time, so they replace the starter Base UI files:
 
-Pick one flavour per project: a UI SDK primitive depends on the UI SDK
-flavour of the primitives it uses, and UI SDK components (examples)
-depend on UI SDK primitives.
+```bash
+npx shadcn@latest add @sevenui/ui-sdk/button @sevenui/ui-sdk/dialog --overwrite
+```
+
+**Remove Base UI.** Once no file under your `ui` alias imports
+`@base-ui/react` (the starter files were the only ones that did),
+remove it with `npm uninstall @base-ui/react` (or your package
+manager's equivalent).
+
+### One flavour per project
+
+Primitives of both flavours install to the same files under your `ui`
+alias, so the flavours do not mix:
+
+- A UI SDK primitive depends on the UI SDK flavour of the primitives it
+  uses, and a UI SDK component depends on UI SDK primitives. Adding one
+  to a Base UI project with `--overwrite` silently replaces the shared
+  files (a UI SDK dialog replaces your `button.tsx`; a gallery
+  component can replace `label` and `select`). The reverse is the same.
+- Without `--overwrite`, in a non-interactive shell, the CLI still
+  installs the other flavour's npm packages, writes none of the files,
+  and exits successfully.
+
+A mixed project still builds, but it ships both libraries and its
+primitives behave differently from one another. To switch a project
+deliberately, reinstall every primitive under your `ui` alias in the
+other flavour with `--overwrite`, then remove the library you left
+(`@base-ui/react` or `@ui-sdk/react` and `@ui-sdk/core`) once nothing
+imports it. Edits you made to those files are overwritten.
 
 ## Add primitives
 
@@ -196,6 +221,19 @@ Registry "@sevenui" requires the following environment variables:
 Set it everywhere `shadcn add` runs: each teammate's machine and CI.
 A 401 means no key reached the registry; a 403 means the key was
 rejected. The [support FAQ](/support) covers both.
+
+## Known issues
+
+These apply to both flavours:
+
+- **Next.js `cacheComponents`.** With `cacheComponents: true` (the
+  `create-next-app` default in Next.js 16.4), `next build` fails on the
+  calendar examples that compute a date at render time (`new Date()` in
+  a Client Component). Wrap such an example in `<Suspense>`, or compute
+  the date in an effect.
+- **Example images.** Examples that show an image or the logo load
+  `/placeholder.svg` or `/logomark.svg` from your site, which a new
+  project does not have. Replace them with your own images.
 
 ## Troubleshooting
 

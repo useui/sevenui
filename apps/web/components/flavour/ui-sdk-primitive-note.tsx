@@ -34,9 +34,11 @@ export function UiSdkPrimitiveNote() {
       </p>
       <p className="mt-1 text-muted-foreground">
         Needs React 19. Put <code className={INLINE_CODE}>@layer ui-sdk;</code> on the first line of your global stylesheet,
-        above <code className={INLINE_CODE}>@import "tailwindcss"</code>, so your utilities win over UI SDK&apos;s popup reset. The
-        CLI prints this step; it cannot add it for you.{" "}
-        <Link className={LINK} href="/docs/installation#choose-a-flavour">
+        above <code className={INLINE_CODE}>@import "tailwindcss"</code>: UI SDK normally inserts its styles first, and the line
+        keeps your utilities winning when they arrive later (for example under a Content Security Policy without a nonce).
+        Built and tested against {UI_SDK_VERSION}; npm saves it with a caret, so pin it with{" "}
+        <code className={INLINE_CODE}>--save-exact</code>.{" "}
+        <Link className={LINK} href="/docs/installation#set-up-a-ui-sdk-project">
           Set up UI SDK
         </Link>
       </p>

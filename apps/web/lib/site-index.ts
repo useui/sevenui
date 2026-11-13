@@ -50,7 +50,7 @@ export const FLAVOURS_NOTE =
   "Every primitive comes in two flavours with one API. Base UI (the default): `npx shadcn@latest add @sevenui/<name>`. " +
   `UI SDK (@ui-sdk/react ${UI_SDK_VERSION}, beta, React 19; declare \`@layer ui-sdk;\` above \`@import "tailwindcss"\`): ` +
   "`npx shadcn@latest add @sevenui/ui-sdk/<name>`. Components install the same way, as `@sevenui/component/<name>` or " +
-  "`@sevenui/ui-sdk/component/<name>`. Pin `@ui-sdk/*` to exactly that version (a caret on a beta floats across betas). " +
+  "`@sevenui/ui-sdk/component/<name>`. The flavour is tested against that exact version; npm saves a caret range, so pin it with `npm install --save-exact`. " +
   "Each primitive page's .md mirror (the page URL plus `.md`) lists what behaves differently on UI SDK, under " +
   '"UI SDK flavour"; llms-full.txt carries the same sections. Pro blocks are built on Base UI only.';
 

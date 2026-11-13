@@ -191,10 +191,11 @@ function renderInstallCommand(attrs: Record<string, string | true>, sourcePath: 
       `lib/docs/serialize-md.ts: ${sourcePath} has an <InstallCommand> tag with no "item" attribute.`,
     );
   }
-  const base = PACKAGE_MANAGERS.map((pm) => installCommand(item, pm));
-  if (!isFlavouredItem(item)) return fence("bash", base.join("\n"));
+  const flags = typeof attrs.flags === "string" ? attrs.flags : "";
+  const base = PACKAGE_MANAGERS.map((pm) => installCommand(item, pm, "base-ui", true, flags));
+  if (!item.trim().split(/\s+/).every(isFlavouredItem)) return fence("bash", base.join("\n"));
   // A primitive or an example of one comes in both flavours; the page shows the reader's, a mirror shows both.
-  const uiSdk = PACKAGE_MANAGERS.map((pm) => installCommand(item, pm, "ui-sdk"));
+  const uiSdk = PACKAGE_MANAGERS.map((pm) => installCommand(item, pm, "ui-sdk", true, flags));
   const commands = fence(
     "bash",
     [
@@ -215,7 +216,7 @@ function uiSdkSection(item: string): string {
   return [
     "### UI SDK flavour",
     "",
-    `Setup: React 19; \`@ui-sdk/react\` and \`@ui-sdk/core\` pinned exactly to \`${UI_SDK_VERSION}\` (a beta: a caret range floats across betas); and \`@layer ui-sdk;\` as the first line of the global stylesheet, above \`@import "tailwindcss"\` (the CLI prints this step but cannot add it). See [Choose a flavour](/docs/installation#choose-a-flavour).`,
+    `Setup: React 19. Put \`@layer ui-sdk;\` on the first line of the global stylesheet, above \`@import "tailwindcss"\` (the CLI prints this step once but cannot add it): UI SDK normally inserts its styles first, and the line keeps your utilities winning when they arrive later, for example under a Content Security Policy without a nonce. The flavour is built and tested against \`@ui-sdk/react\` and \`@ui-sdk/core\` \`${UI_SDK_VERSION}\`; pnpm, yarn and bun save that exact version, npm saves a caret range, so with npm pin it (\`npm install --save-exact @ui-sdk/react@${UI_SDK_VERSION} @ui-sdk/core@${UI_SDK_VERSION}\`). See [Set up a UI SDK project](/docs/installation#set-up-a-ui-sdk-project).`,
     "",
     "The API is the same in both flavours (exports, props, `data-slot` values, `render`), so code that uses only the SevenUI exports compiles against either.",
     "",
