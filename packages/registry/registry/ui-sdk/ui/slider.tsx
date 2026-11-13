@@ -44,7 +44,8 @@ type SliderProps = Omit<
   onValueCommitted?: (value: number | number[], details: CommitDetails) => void;
   minStepsBetweenValues?: number;
   locale?: Intl.LocalesArgument;
-  // Base UI only: UI SDK positions thumbs itself and never lets them swap.
+  // UI SDK centres thumbs on their value; "edge" (the default, as in base)
+  // shifts them back inside the track. Thumbs never swap in UI SDK.
   thumbAlignment?: "center" | "edge" | "edge-client-only";
   thumbCollisionBehavior?: "push" | "swap" | "none";
   inputRef?: React.Ref<HTMLInputElement>;
@@ -63,7 +64,7 @@ function Slider({
   onValueCommitted,
   minStepsBetweenValues,
   locale,
-  thumbAlignment: _thumbAlignment,
+  thumbAlignment = "edge",
   thumbCollisionBehavior: _thumbCollisionBehavior,
   inputRef: _inputRef,
   ...props
@@ -111,7 +112,14 @@ function Slider({
             index={index}
             // UI SDK focuses the range input inside the thumb, so the focus
             // ring follows has-focus-visible on the thumb.
-            className="relative block size-(--slider-thumb) shrink-0 rounded-full border border-ring bg-white shadow-raised ring-ring/50 transition-[color,box-shadow] select-none after:absolute after:-inset-2 hover:ring-3 focus-visible:ring-3 focus-visible:outline-hidden has-focus-visible:ring-3 active:ring-3 data-disabled:pointer-events-none disabled:pointer-events-none disabled:opacity-50"
+            className={cn(
+              "relative block size-(--slider-thumb) shrink-0 rounded-full border border-ring bg-white shadow-raised ring-ring/50 transition-[color,box-shadow] select-none after:absolute after:-inset-2 hover:ring-3 focus-visible:ring-3 focus-visible:outline-hidden has-focus-visible:ring-3 active:ring-3 data-disabled:pointer-events-none disabled:pointer-events-none disabled:opacity-50",
+              // Edge alignment: UI SDK centres the thumb on its value, so a
+              // translate of (50% - position) of the thumb's own size keeps it
+              // inside the track at any thumb size, as Base UI's measured inset.
+              thumbAlignment !== "center" &&
+                "ltr:data-[orientation=horizontal]:[translate:calc(50%-var(--slider-thumb-position))_-50%]! rtl:data-[orientation=horizontal]:[translate:calc(var(--slider-thumb-position)-50%)_-50%]! data-[orientation=vertical]:[translate:-50%_var(--slider-thumb-position)]!",
+            )}
           />
         ))}
       </SliderControl>

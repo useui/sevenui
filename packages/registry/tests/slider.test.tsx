@@ -140,6 +140,32 @@ describe("Slider", () => {
   });
 });
 
+// Edge alignment keeps a thumb inside the track at 0% and 100%. Base UI
+// measures the thumb and positions it with `var(--position)`; the flavour
+// shifts UI SDK's centred thumb by (50% - --slider-thumb-position) of its own
+// size. jsdom has no layout, so this checks the mechanism; the geometry was
+// compared in Chrome (guide §8, slider).
+function edgeAligned(thumb: HTMLElement) {
+  return isUiSdk
+    ? thumb.className.includes("calc(50%-var(--slider-thumb-position))") &&
+        thumb.className.includes("[translate:-50%_var(--slider-thumb-position)]")
+    : thumb.style.insetInlineStart === "var(--position)";
+}
+
+describe("Slider thumb alignment", () => {
+  it("keeps thumbs inside the track by default", () => {
+    const { container } = render(<Slider defaultValue={[0, 100]} />);
+    const thumbs = container.querySelectorAll<HTMLElement>("[data-slot=slider-thumb]");
+    expect(thumbs).toHaveLength(2);
+    for (const thumb of thumbs) expect(edgeAligned(thumb)).toBe(true);
+  });
+
+  it("centres thumbs on their value with thumbAlignment=\"center\"", () => {
+    const { container } = render(<Slider defaultValue={[0]} thumbAlignment="center" />);
+    expect(edgeAligned(must(container.querySelector<HTMLElement>("[data-slot=slider-thumb]")))).toBe(false);
+  });
+});
+
 describe("Slider styles", () => {
   function parts() {
     const { container } = render(
