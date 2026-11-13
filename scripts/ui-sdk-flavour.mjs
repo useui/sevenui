@@ -89,8 +89,9 @@ const SPECIFIER = String.raw`(?:\bfrom|\bimport|\brequire|<reference\s+types\s*=
 const specifierRegExp = (body) => new RegExp(`${SPECIFIER}(${body})\\1`, "g");
 const REPLACED_NAMES = String.raw`@base-ui\/react|react-day-picker|embla-carousel-react|react-resizable-panels`;
 // The one definition of "imports something UI SDK replaces"; group 2 is the
-// package. packages/registry/vitest.config.ts and tests/api-freeze.test.ts use
-// it through importsReplaced (scripts/ui-sdk-flavour.d.mts types it).
+// specifier. TypeScript callers import importsReplaced, typed by
+// scripts/ui-sdk-flavour.d.mts; packages/registry/vitest.config.ts and
+// tests/api-freeze.test.ts must use it rather than keep a copy of the rule.
 export const REPLACED_IMPORT = specifierRegExp(String.raw`(?:${REPLACED_NAMES})(?:\/[^"'\x60]*)?`);
 // A bare package specifier: not relative, not absolute, not the `@/` alias,
 // not a `node:` builtin.

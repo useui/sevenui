@@ -1,4 +1,4 @@
-// Types for the parts of scripts/ui-sdk-flavour.mjs that TypeScript files
+// Types for the parts of scripts/ui-sdk-flavour.mjs that TypeScript files may
 // import (packages/registry/vitest.config.ts, tests/api-freeze.test.ts), so the
 // rule "imports nothing UI SDK replaces" has one definition.
 
