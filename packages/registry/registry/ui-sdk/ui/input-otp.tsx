@@ -113,6 +113,29 @@ function InputOTP({
     [order, mask],
   );
 
+  // Base UI renders masked slots as password inputs. UI SDK's one native
+  // input has no type option and React writes its type="text" back on every
+  // update, so while masked an observer turns it back into a password input
+  // before the next paint: screen readers do not read the code out and
+  // browsers do not offer to save it.
+  React.useLayoutEffect(() => {
+    const input = rootRef.current?.querySelector<HTMLInputElement>(
+      "input:not([type=hidden])",
+    );
+    if (!input || !mask) return;
+    const previous = input.type;
+    const conceal = () => {
+      if (input.type !== "password") input.type = "password";
+    };
+    conceal();
+    const observer = new MutationObserver(conceal);
+    observer.observe(input, { attributes: true, attributeFilter: ["type"] });
+    return () => {
+      observer.disconnect();
+      input.type = previous;
+    };
+  }, [mask]);
+
   // A normalised value has to be held here, so it is what the slots show.
   const [inner, setInner] = React.useState(defaultValue ?? "");
   const normalized = normalizeValue

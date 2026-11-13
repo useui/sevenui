@@ -150,6 +150,20 @@ describe("InputOTP", () => {
     const slots = getSlots(container);
     expect(slots.map(slotValue).join("")).toBe("1234");
   });
+
+  // Base UI renders masked slots as password inputs: assistive technology
+  // does not read the code out and browsers do not offer to save it.
+  it("keeps a masked code in password inputs", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<OTP mask aria-label="Code" />);
+    await user.click(typingTarget(container));
+    await user.keyboard("123");
+    expect(screen.queryAllByRole("textbox")).toHaveLength(0);
+    const typed = container.querySelectorAll<HTMLInputElement>("input[type=password]");
+    expect(typed.length).toBeGreaterThan(0);
+    expect((document.activeElement as HTMLInputElement).type).toBe("password");
+    expect(getSlots(container).map(slotValue).join("")).toBe(isUiSdk ? "•••" : "123");
+  });
 });
 
 describe("InputOTP v2 styles", () => {
