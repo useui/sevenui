@@ -390,6 +390,15 @@ html {
 [data-flavour="ui-sdk"] .flavour-only-base-ui {
   display: none !important;
 }
+/* FlavouredPreview's wrappers must not take part in layout: an example is written to be the direct child of
+   its preview frame ([data-sevenui-example], a grid that centres its items), and a wrapper box in between
+   became the shrink-to-fit grid item instead, so a `w-full` or `@container` root resolved its width against
+   that box and collapsed (to 0px for a container root). Without a box, the example is the grid item again.
+   `visibility` is inherited, so the rule below still hides the example inside a box-less wrapper. */
+[data-preview-flavour="base-ui"],
+[data-preview-flavour="ui-sdk"] {
+  display: contents;
+}
 /* A server-rendered Base UI preview stays in place, invisible, until a UI SDK reader's preview loads. */
 [data-flavour="ui-sdk"] [data-preview-flavour="base-ui"] {
   visibility: hidden;

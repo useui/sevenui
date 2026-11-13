@@ -137,7 +137,9 @@ function LoadFailure({
     : "You are offline, so this is the Base UI preview. The UI SDK one loads when you are back online.";
 
   return (
-    <div className="flex flex-col items-center gap-4" data-preview-flavour="ui-sdk-fallback">
+    // Stretched to the frame and centring its items as the frame does, so the Base UI example inside lays
+    // out as it would directly in the frame; only the notice below it is added.
+    <div className="grid w-full justify-items-center gap-4" data-preview-flavour="ui-sdk-fallback">
       {children}
       {live !== "none" && (
         <p className="sr-only" role="alert">
@@ -231,6 +233,8 @@ export function FlavouredPreview({
   const [retrying, startRetry] = React.useTransition();
   React.useEffect(() => onRetry(folder, () => startRetry(() => setAttempt((n) => n + 1))), [folder]);
 
+  // The `data-preview-flavour` wrappers are `display: contents` (globals.css): they carry the hiding rule but
+  // no box, so the example stays the frame's direct layout child as it is when installed.
   let content: React.ReactNode;
   if (shown === "base-ui") {
     content = <div data-preview-flavour="base-ui">{children}</div>;
