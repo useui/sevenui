@@ -1,12 +1,13 @@
 #!/usr/bin/env node
-// Asserts the home page's contract (docs/superpowers/specs/2026-11-03-v2-landing-design.md).
+// Asserts the home page's contract: the copy and structure it pins, what it may and may not claim, and how
+// its two-flavour surface loads.
 //
 // The HTML checks read the server-rendered page (no JS runs, which is the point: a crawler and a no-JS
-// visitor see exactly this) plus the stylesheets it links. `--browser` adds checks in headless Chromium
-// through Playwright, a root devDependency; PLAYWRIGHT_DIR optionally points at another install. Its
-// browser downloads separately, once per machine: `pnpm exec playwright install chromium`. `--controls`
-// breaks the input once per assertion and requires that assertion to fail, so a check that cannot fail is
-// caught.
+// visitor see exactly this), the stylesheets it links and the scripts it references. `--browser` adds checks
+// in headless Chromium through Playwright, a root devDependency; PLAYWRIGHT_DIR optionally points at another
+// install. Its browser downloads separately, once per machine: `pnpm exec playwright install chromium`.
+// `--controls` breaks the input once per assertion and requires that assertion to fail, so a check that
+// cannot fail is caught.
 
 import { createRequire } from "node:module";
 
@@ -22,55 +23,90 @@ if (!args.base) {
   process.exit(2);
 }
 
-const H1 = "Interfaces your agents can build. Quality your users can feel.";
-const H1_MUTED = "Quality your users can feel.";
+// The release the pill names. The page derives it from lib/roadmap.ts; this pins what it must come out as.
+const RELEASE = "1.1";
+const RELEASE_ANCHOR = "v1-1-0";
+
+const H1 = "Primitives for shadcn/ui, on Base UI or UI SDK. One API, and the source is yours.";
+const H1_MUTED = "One API, and the source is yours.";
 const OUTLINE = [
   `h1 ${H1}`,
-  "h2 One registry, three sizes.",
-  "h3 Primitive",
-  "h3 Component",
-  "h3 Block",
-  "h2 Built for teams and their agents.",
-  "h3 Set up the project",
-  "h3 Choose the right part",
-  "h3 Compose a page",
-  "h2 Start with one command.",
+  "h2 Same code, two foundations.",
+  // The gallery example's own title (packages/registry/components/combobox/combobox-13.tsx), shown as is.
+  "h3 New deployment",
+  "h2 Start with a part, a pattern or a page.",
+  "h3 Primitives",
+  "h3 Components",
+  "h3 Blocks",
+  "h2 Nothing to depend on but your own files.",
+  "h3 The source is yours",
+  "h3 A drop-in for shadcn/ui",
+  "h3 Tested in both flavours",
+  "h3 Keyboard and screen readers",
+  "h3 Your theme, previewed",
+  "h3 Readable by agents",
+  "h2 Start with two commands.",
 ];
 const HERO_COPY = [
-  "accessible primitives on Base UI or UI SDK, composed into",
+  "Every primitive now also runs on UI SDK",
+  "66 accessible primitives you install as source with the shadcn CLI, themed by the CSS variables you already have.",
   // Pro blocks are Base UI only; the hero says so rather than implying a UI SDK flavour of them.
-  "components and into Pro blocks built on Base UI. Copy the source, or let your agent assemble it.",
-  "Works with",
-  "Claude Code · Cursor · VS Code · Codex",
+  "Composed into 900+ free components, and into Pro blocks built on Base UI.",
 ];
-const FRAME_COPY = [
-  "Acme Inc",
-  "Allow agents to open PRs",
-  "Comfortable",
-  "Compact",
-  "Cancel",
-  "Save changes",
-  "Add a danger zone with a delete-workspace dialog.",
-  "Searched registry for alert-dialog",
-  "Installed @sevenui/alert-dialog",
-  "Composing settings/danger-zone.tsx",
-  "Danger zone",
-  "Ask the agent…",
+// The honest trade-off and the facts the flavour table states.
+const FLAVOUR_COPY = [
+  "Stable, the default",
+  "Beta, from Vercel Labs",
+  "@ui-sdk/react 0.1.0-beta.1, pinned",
+  "React 19, and one CSS layer line",
+  "None: blocks are Base UI only",
+  "1,063 demos and gallery examples are published in both flavours.",
 ];
-const SIZE_LINKS = { primitive: "/docs/components", component: "/components", block: "/blocks" };
-const COMMANDS = ["@sevenui/button", "@sevenui/switch", "@sevenui/component/switch-12", "@sevenui/pro/account-02"];
-const LINKS = ["/docs", "/docs/components", "/docs/installation", "/components", "/blocks", "/pro", "/llms.txt"];
+const SURFACE_COPY = ["Releases", "Environments", "New release", "Saved carts", "Fix tax rounding on refunds", "Rolled back"];
+const COMMANDS = [
+  "@sevenui/button",
+  "@sevenui/ui-sdk/button",
+  "@sevenui/component/combobox-13",
+  "@sevenui/ui-sdk/component/combobox-13",
+  "@sevenui/dialog",
+  "@sevenui/ui-sdk/dialog",
+  "shadcn@latest init --base base",
+  "@sevenui/pro/",
+];
+const LINKS = [
+  "/docs",
+  "/docs/components",
+  "/docs/installation",
+  "/docs/installation#choose-a-flavour",
+  "/docs/theming",
+  "/components",
+  "/blocks",
+  "/pro",
+  "/llms.txt",
+  `/roadmap#${RELEASE_ANCHOR}`,
+];
 const TITLE = "SevenUI — Base UI components for shadcn/ui";
+// Strings only UI SDK's runtime contains (its injected reset and guard styles); the flavour constants in the
+// site's own code ("ui-sdk", ui-sdk.dev) never match.
+const UI_SDK_RUNTIME = /ui-sdk-(scroll-guard|popover-reset|toast-defaults)/;
 
 const text = (html) =>
   html
     .replace(/<[^>]+>/g, "")
     .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
     .replace(/&#x27;|&#39;/g, "'")
     .replace(/&quot;/g, '"')
     .replace(/\s+/g, " ")
     .trim();
-const visibleText = (html) => text(html.replace(/<script\b[\s\S]*?<\/script>/g, "").replace(/<style\b[\s\S]*?<\/style>/g, ""));
+const visibleText = (html) =>
+  text(
+    html
+      .replace(/<script\b[\s\S]*?<\/script>/g, "")
+      .replace(/<style\b[\s\S]*?<\/style>/g, "")
+      .replace(/<template\b[\s\S]*?<\/template>/g, ""),
+  );
 
 function outline(html) {
   return [...html.matchAll(/<(h[1-6])\b[^>]*>([\s\S]*?)<\/\1>/g)].map((m) => `${m[1]} ${text(m[2])}`);
@@ -83,34 +119,36 @@ function mainHtml(html) {
   return start === -1 || end === -1 ? "" : html.slice(start, end);
 }
 
-function frameHtml(html) {
-  const start = html.search(/<figure\b[^>]*data-nosnippet/);
+function surfaceHtml(html) {
+  const start = html.search(/<figure\b[^>]*data-home-surface/);
   if (start === -1) return undefined;
   const end = html.indexOf("</figure>", start);
   return end === -1 ? undefined : html.slice(start, end);
 }
 
-function sizeCards(html) {
-  return [...html.matchAll(/<li\b[^>]*data-size-card="([a-z]+)"[^>]*>([\s\S]*?)<\/li>/g)].map((m) => ({
-    name: m[1],
-    html: m[2],
-  }));
+function sectionHtml(html, id) {
+  const start = html.search(new RegExp(`<section\\b[^>]*aria-labelledby="${id}"`));
+  if (start === -1) return undefined;
+  const end = html.indexOf("</section>", start);
+  return end === -1 ? undefined : html.slice(start, end);
 }
 
 function mainHrefs(html) {
   return [...new Set([...mainHtml(html).matchAll(/href="(\/[^"#?]*)/g)].map((m) => m[1]))];
 }
 
+const scriptSrcs = (html) => [...new Set([...html.matchAll(/(?:src|href)="(\/_next\/static\/[^"]+\.js)"/g)].map((m) => m[1]))];
+
 const replaceDoc = (doc, patch) => ({ ...doc, ...patch });
 
 const CHECKS = {
   outline: {
-    name: "the heading outline is exactly the spec's ten lines (one h1)",
+    name: "the heading outline is exactly the pinned fifteen lines (one h1)",
     run: ({ html }) => {
       const got = outline(html);
       return JSON.stringify(got) === JSON.stringify(OUTLINE) ? null : `got ${JSON.stringify(got)}`;
     },
-    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace("</main>", "<h1>Stray</h1></main>") }),
+    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace("</main>", "<h2>Stray</h2></main>") }),
   },
   h1Shape: {
     name: "the h1 is plain text plus one muted span for the second clause",
@@ -143,44 +181,91 @@ const CHECKS = {
       const missing = HERO_COPY.filter((phrase) => !flat.includes(phrase));
       return missing.length ? `missing: ${missing.join(" | ")}` : null;
     },
-    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replaceAll("Works with", "Works") }),
+    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replaceAll("built on Base UI.", "built on UI.") }),
   },
-  frame: {
-    name: "the product frame exists, carries data-nosnippet, holds no heading, and renders its finished state",
+  release: {
+    name: `the release pill says ${RELEASE}, links to its roadmap entry, and no other version is claimed`,
+    run: async ({ html, roadmap }) => {
+      const main = mainHtml(html);
+      const pill = new RegExp(`<a\\b[^>]*href="/roadmap#${RELEASE_ANCHOR}"[^>]*>([\\s\\S]*?)</a>`).exec(main);
+      if (!pill) return `no link to /roadmap#${RELEASE_ANCHOR}`;
+      const label = /<span\b[^>]*>([\s\S]*?)<\/span>/.exec(pill[1]);
+      if (!label || text(label[1]) !== RELEASE) return `pill label ${JSON.stringify(label && text(label[1]))}`;
+      if (!new RegExp(`id="${RELEASE_ANCHOR}"`).test(roadmap)) return `/roadmap has no #${RELEASE_ANCHOR}`;
+      const stale = visibleText(main).match(/\bv2\b|\bversion 2\b/i);
+      return stale ? `main claims another version: ${stale[0]}` : null;
+    },
+    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace(`href="/roadmap#${RELEASE_ANCHOR}"`, 'href="/roadmap#v9-9-0"') }),
+  },
+  surface: {
+    name: "the live surface is a data-nosnippet figure, server-rendered on Base UI, with no heading and its real controls",
     run: ({ html }) => {
-      const frame = frameHtml(html);
-      if (!frame) return "no data-nosnippet figure";
-      if (/<h[1-6]\b/.test(frame)) return "a heading inside the frame";
-      if (!/data-density="comfortable"/.test(frame)) return "the frame does not carry data-density";
-      const flat = visibleText(frame);
-      const missing = FRAME_COPY.filter((phrase) => !flat.includes(phrase));
+      const surface = surfaceHtml(html);
+      if (!surface) return "no data-home-surface figure";
+      if (!/data-nosnippet/.test(surface.slice(0, 300))) return "the figure lacks data-nosnippet";
+      if (/<h[1-6]\b/.test(surface)) return "a heading inside the surface";
+      if (!/data-preview-flavour="base-ui"/.test(surface)) return "the server render is not the Base UI preview";
+      if (!/role="tablist"/.test(surface)) return "no tablist";
+      const comboboxes = (surface.match(/role="combobox"/g) ?? []).length;
+      if (comboboxes < 2) return `${comboboxes} comboboxes`;
+      const flat = visibleText(surface);
+      const missing = SURFACE_COPY.filter((phrase) => !flat.includes(phrase));
       return missing.length ? `missing: ${missing.join(" | ")}` : null;
     },
-    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replaceAll("Danger zone", "Zone") }),
+    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace(/(<figure\b[^>]*data-home-surface[^>]*>)/, "$1<h3>x</h3>") }),
   },
-  reducedMotion: {
-    name: "the frame's CSS has a reduced-motion path that stops its transitions",
-    run: ({ css }) => {
-      const blocks = [...css.matchAll(/@media\s*\(\s*prefers-reduced-motion:\s*reduce\s*\)\s*\{([\s\S]*?\})\s*\}/g)];
-      const ok = blocks.some((b) => /\.pf-reveal/.test(b[1]) && /transition:\s*none/.test(b[1]));
-      return ok ? null : "no @media (prefers-reduced-motion: reduce) rule turning .pf-reveal transitions off";
-    },
-    breakIt: (doc) => replaceDoc(doc, { css: doc.css.replaceAll("prefers-reduced-motion:reduce", "x").replaceAll("prefers-reduced-motion: reduce", "x") }),
-  },
-  sizes: {
-    name: "three size cards, each with its real render and its link",
+  flavourSection: {
+    name: "the flavour section has the real switch, the comparison and both flavours' commands",
     run: ({ html }) => {
-      const cards = sizeCards(mainHtml(html));
-      if (cards.length !== 3) return `${cards.length} size cards`;
-      for (const card of cards) {
-        const href = SIZE_LINKS[card.name];
-        if (!href) return `unexpected card ${card.name}`;
-        if (!card.html.includes(`href="${href}"`)) return `${card.name} does not link to ${href}`;
-        if (!/role="switch"/.test(card.html)) return `${card.name} renders no real switch`;
+      const section = sectionHtml(html, "flavours-title");
+      if (!section) return "no flavour section";
+      if (!/role="radiogroup"[^>]*aria-label="Primitive flavour"|aria-label="Primitive flavour"[^>]*role="radiogroup"/.test(section))
+        return "no real (non-mirror) flavour switch";
+      if (!/<table\b/.test(section)) return "no comparison table";
+      // In place, not outlined into a hidden element that only a script reveals.
+      if (!/data-preview-flavour="base-ui"/.test(section)) return "the example's Base UI preview is not in the section's server HTML";
+      const flat = visibleText(section);
+      const missing = FLAVOUR_COPY.filter((phrase) => !flat.includes(phrase));
+      if (missing.length) return `missing: ${missing.join(" | ")}`;
+      for (const command of ["@sevenui/component/combobox-13", "@sevenui/ui-sdk/component/combobox-13"]) {
+        if (!section.includes(command)) return `missing ${command}`;
       }
-      return null;
+      return /flavour-only-ui-sdk/.test(section) ? null : "no UI SDK variant to switch to";
     },
-    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replaceAll('href="/blocks"', 'href="/x"') }),
+    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replaceAll("Beta, from Vercel Labs", "Stable") }),
+  },
+  proIsBaseUiOnly: {
+    name: "no Pro block is offered in a UI SDK flavour",
+    run: ({ html }) => {
+      const main = mainHtml(html);
+      if (/@sevenui\/ui-sdk\/pro\//.test(main)) return "a UI SDK pro install command";
+      const blocks = /data-tier="blocks"[\s\S]*?(?=data-tier=|<\/section>)/.exec(main)?.[0] ?? "";
+      if (!blocks) return "no Blocks row";
+      if (/flavour-only-ui-sdk/.test(blocks)) return "the Blocks row switches with the flavour";
+      return /Built on Base UI only/.test(visibleText(blocks)) ? null : "the Blocks row does not say Base UI only";
+    },
+    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace("</main>", "<code>npx shadcn@latest add @sevenui/ui-sdk/pro/x</code></main>") }),
+  },
+  tiers: {
+    name: "the three tiers render what they hold, each with its link",
+    run: ({ html }) => {
+      const main = mainHtml(html);
+      const rows = Object.fromEntries(
+        [...main.matchAll(/data-tier="([a-z]+)"([\s\S]*?)(?=data-tier=|<\/section>)/g)].map((m) => [m[1], m[2]]),
+      );
+      const want = { primitives: "/docs/components", components: "/components", blocks: "/blocks" };
+      if (JSON.stringify(Object.keys(rows)) !== JSON.stringify(Object.keys(want))) return `rows ${Object.keys(rows).join(",")}`;
+      for (const [name, href] of Object.entries(want)) {
+        if (!rows[name].includes(`href="${href}"`)) return `${name} does not link to ${href}`;
+      }
+      const primitiveLinks = new Set([...rows.primitives.matchAll(/href="(\/docs\/components\/[a-z-]+)"/g)].map((m) => m[1]));
+      if (primitiveLinks.size !== 66) return `${primitiveLinks.size} primitive links, want 66`;
+      const families = (rows.components.match(/href="\/components#[a-z-]+"/g) ?? []).length;
+      if (families < 5) return `${families} component family links`;
+      const covers = (rows.blocks.match(/href="\/blocks\/[a-z-]+\/[a-z-]+"/g) ?? []).length;
+      return covers >= 1 ? null : "no block category in the Blocks row";
+    },
+    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace(/<a\b[^>]*href="\/docs\/components\/accordion"[^>]*>[\s\S]*?<\/a>/, "") }),
   },
   noMcpClaim: {
     name: "the page makes no MCP claim",
@@ -188,12 +273,12 @@ const CHECKS = {
     breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace("</main>", "<p>SevenUI MCP server is live</p></main>") }),
   },
   commands: {
-    name: "the four install commands are in the server HTML",
+    name: "the install commands, in both flavours, are in the server HTML",
     run: ({ html }) => {
       const missing = COMMANDS.filter((command) => !html.includes(command));
       return missing.length ? `missing: ${missing.join(", ")}` : null;
     },
-    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replaceAll("@sevenui/component/switch-12", "@sevenui/x") }),
+    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replaceAll("@sevenui/ui-sdk/button", "@sevenui/x") }),
   },
   links: {
     name: "the internal links are real anchors inside <main>",
@@ -216,15 +301,48 @@ const CHECKS = {
     },
     breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace("</main>", '<a href="/no-such-page-check-home">x</a></main>') }),
   },
+  noUiSdkUpFront: {
+    name: "no script the server HTML references contains UI SDK's runtime",
+    run: ({ html, scripts }) => {
+      const srcs = scriptSrcs(html);
+      if (srcs.length < 5) return `only ${srcs.length} scripts referenced; the scan is not looking at the page`;
+      const hits = srcs.filter((src) => UI_SDK_RUNTIME.test(scripts[src] ?? ""));
+      const unread = srcs.filter((src) => scripts[src] === undefined);
+      if (unread.length) return `unread scripts: ${unread.join(", ")}`;
+      return hits.length ? `UI SDK in ${hits.join(", ")}` : null;
+    },
+    breakIt: (doc) => {
+      const src = scriptSrcs(doc.html)[0];
+      return replaceDoc(doc, { scripts: { ...doc.scripts, [src]: `${doc.scripts[src]}/*ui-sdk-popover-reset*/` } });
+    },
+  },
+  reducedMotion: {
+    name: "the home CSS turns its transitions off under prefers-reduced-motion",
+    run: ({ css }) => {
+      const blocks = [...css.matchAll(/@media\s*\(\s*prefers-reduced-motion:\s*reduce\s*\)\s*\{([\s\S]*?\})\s*\}/g)];
+      const ok = blocks.some((b) => /\.home-col-ui-sdk/.test(b[1]) && /transition:\s*none/.test(b[1]));
+      return ok ? null : "no @media (prefers-reduced-motion: reduce) rule turning the .home-col transitions off";
+    },
+    breakIt: (doc) =>
+      replaceDoc(doc, {
+        css: doc.css.replaceAll("prefers-reduced-motion:reduce", "x").replaceAll("prefers-reduced-motion: reduce", "x"),
+      }),
+  },
   noOldSections: {
-    name: "the removed Pull Back sections are gone",
+    name: "the previous landing's sections are gone",
     run: ({ html }) => {
       const flat = visibleText(mainHtml(html));
-      const stale = ["Copy it. Own it. Ship it.", "Same command at every size.", "Start at any size.", "the public profile card"];
+      const stale = [
+        "Interfaces your agents can build.",
+        "One registry, three sizes.",
+        "Built for teams and their agents.",
+        "Ask the agent…",
+        "Start at any size.",
+      ];
       const found = stale.filter((phrase) => flat.includes(phrase));
       return found.length ? `still rendered: ${found.join(" | ")}` : null;
     },
-    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace("</main>", "<p>Start at any size.</p></main>") }),
+    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace("</main>", "<p>One registry, three sizes.</p></main>") }),
   },
 };
 
@@ -237,7 +355,13 @@ const html = await response.text();
 const sheets = [...html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map((m) => m[1]);
 let css = "";
 for (const href of sheets) css += await (await fetch(new URL(href, args.base))).text();
-const doc = { html, css };
+const scripts = {};
+for (const src of scriptSrcs(html)) {
+  const res = await fetch(new URL(src, args.base));
+  if (res.ok) scripts[src] = await res.text();
+}
+const roadmap = await (await fetch(new URL("/roadmap", args.base))).text();
+const doc = { html, css, scripts, roadmap };
 
 let failed = 0;
 const report = (ok, name, problem) => {
@@ -254,7 +378,7 @@ if (args.controls) {
   console.log("");
   for (const [key, check] of Object.entries(CHECKS)) {
     const broken = check.breakIt(doc);
-    if (broken.html === doc.html && broken.css === doc.css) {
+    if (broken.html === doc.html && broken.css === doc.css && broken.scripts === doc.scripts) {
       console.log(`DEAD  ${key}: the control changed nothing`);
       failed++;
     } else if ((await check.run(broken)) === null) {
@@ -280,34 +404,45 @@ async function loadPlaywright() {
 async function browserChecks() {
   const { chromium } = await loadPlaywright();
   const browser = await chromium.launch();
-  const open = async ({ width = 375, reducedMotion = "no-preference", sabotage } = {}) => {
-    const context = await browser.newContext({ viewport: { width, height: 812 }, reducedMotion });
+  const notes = new Set();
+  const open = async ({ width = 360, flavour, javaScriptEnabled = true, sabotage, onScript } = {}) => {
+    const context = await browser.newContext({ viewport: { width, height: 812 }, javaScriptEnabled });
+    if (flavour) await context.addInitScript((f) => localStorage.setItem("sevenui:flavour", f), flavour);
     const page = await context.newPage();
     const errors = [];
-    page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+    page.on("console", (m) => {
+      if (m.type() !== "error") return;
+      // A block cover is the Pro deployment's image, not this page's code; the fixture manifest names covers
+      // that do not exist. Its failure is reported, not counted.
+      const from = m.location()?.url ?? "";
+      if (/^Failed to load resource/.test(m.text()) && /^https:\/\/pro\.sevenui\.dev\/assets\//.test(from)) {
+        notes.add(`pro cover did not load: ${from}`);
+        return;
+      }
+      errors.push(m.text());
+    });
     page.on("pageerror", (e) => errors.push(String(e)));
+    if (onScript) {
+      page.on("response", async (res) => {
+        if (res.request().resourceType() === "script") onScript(res.url(), await res.text().catch(() => ""));
+      });
+    }
     await page.goto(new URL("/", args.base).href, { waitUntil: "networkidle" });
     if (sabotage) await page.evaluate(sabotage);
     await page.waitForTimeout(300);
     return { page, errors, close: () => context.close() };
   };
-  const zoneOpacity = (page) =>
-    page.evaluate(() => {
-      const title = [...document.querySelectorAll("figure [data-slot=layer-card-title]")].find(
-        (el) => el.textContent === "Danger zone",
-      );
-      const reveal = title?.closest(".pf-reveal");
-      return reveal ? Number(getComputedStyle(reveal).opacity) : -1;
-    });
+  const shownFlavour = (page) =>
+    page.evaluate(() => document.querySelector("[data-home-surface] [data-preview-flavour]")?.getAttribute("data-preview-flavour"));
 
   const BROWSER = {
     noHorizontalScroll: {
-      name: "no horizontal scroll at 375px",
+      name: "no horizontal scroll at 360px",
       run: async (sabotage) => {
         const { page, close } = await open({ sabotage });
         const width = await page.evaluate(() => document.documentElement.scrollWidth);
         await close();
-        return width <= 375 ? null : `scrollWidth ${width}`;
+        return width <= 360 ? null : `scrollWidth ${width}`;
       },
       sabotage: () => {
         const wide = document.createElement("div");
@@ -317,11 +452,16 @@ async function browserChecks() {
       },
     },
     noConsoleErrors: {
-      name: "no console errors on load (desktop and phone)",
+      name: "no console errors on load (desktop and phone, both flavours)",
       run: async (sabotage) => {
         const problems = [];
-        for (const width of [1440, 375]) {
-          const { errors, close } = await open({ width, sabotage });
+        for (const [width, flavour] of [
+          [1440, "base-ui"],
+          [360, "base-ui"],
+          [1440, "ui-sdk"],
+        ]) {
+          const { page, errors, close } = await open({ width, flavour, sabotage });
+          if (flavour === "ui-sdk") await page.waitForTimeout(1500);
           await close();
           problems.push(...errors);
         }
@@ -329,33 +469,76 @@ async function browserChecks() {
       },
       sabotage: () => console.error("check-home control"),
     },
-    reducedMotionStatic: {
-      name: "with reduced motion the finished frame shows at once, with no replay control",
-      run: async (_sabotage, reducedMotion = "reduce") => {
-        const { page, close } = await open({ reducedMotion });
-        const opacity = await zoneOpacity(page);
-        const replay = await page.locator('button[aria-label="Replay the agent demo"]').isVisible();
+    baseUiLoadsNoUiSdk: {
+      name: "a Base UI visitor loads no UI SDK code at all",
+      run: async (_sabotage, flavour = "base-ui") => {
+        const hits = [];
+        const { page, close } = await open({ width: 1280, flavour, onScript: (url, body) => UI_SDK_RUNTIME.test(body) && hits.push(url) });
+        await page.waitForTimeout(1500);
         await close();
-        if (opacity !== 1) return `danger zone opacity ${opacity}`;
-        return replay ? "the replay control is visible" : null;
+        return hits.length ? `UI SDK loaded: ${hits.join(", ")}` : null;
       },
-      // The control is the other preference: below the fold, the script has not run, so the zone is hidden.
-      control: () => BROWSER.reducedMotionStatic.run(undefined, "no-preference"),
+      // The control is a UI SDK visitor, who must load it.
+      control: () => BROWSER.baseUiLoadsNoUiSdk.run(undefined, "ui-sdk"),
     },
-    motionPlays: {
-      name: "with motion allowed the script runs in view and ends on the finished frame",
-      run: async (_sabotage, waitMs = 9000) => {
-        const { page, close } = await open();
-        const before = await zoneOpacity(page);
-        await page.locator("figure[data-nosnippet]").scrollIntoViewIfNeeded();
-        await page.waitForTimeout(waitMs);
-        const after = await zoneOpacity(page);
+    uiSdkSwapsIn: {
+      name: "a UI SDK visitor gets the UI SDK surface, with no layout shift",
+      run: async (_sabotage, flavour = "ui-sdk") => {
+        const { page, close } = await open({ width: 1280, flavour });
+        await page.evaluate(() => {
+          window.__shift = 0;
+          new PerformanceObserver((list) => {
+            for (const entry of list.getEntries()) if (!entry.hadRecentInput) window.__shift += entry.value;
+          }).observe({ type: "layout-shift", buffered: true });
+        });
+        await page.waitForTimeout(2500);
+        const shown = await shownFlavour(page);
+        const shift = await page.evaluate(() => window.__shift);
         await close();
-        if (before !== 0) return `danger zone opacity before the frame is in view: ${before}`;
-        return after === 1 ? null : `danger zone opacity after the script: ${after}`;
+        if (shown !== "ui-sdk") return `surface shows ${shown}`;
+        return shift < 0.05 ? null : `layout shift ${shift.toFixed(3)}`;
       },
-      // The control does not wait for the script, so the zone cannot have appeared yet.
-      control: () => BROWSER.motionPlays.run(undefined, 0),
+      control: () => BROWSER.uiSdkSwapsIn.run(undefined, "base-ui"),
+    },
+    uiSdkPopupFits: {
+      name: "on UI SDK the date popover in the dialog sizes to its calendar (top-layer popups inherit no stretch)",
+      run: async (sabotage) => {
+        const { page, close } = await open({ width: 1280, flavour: "ui-sdk", sabotage });
+        await page.waitForFunction(
+          () => document.querySelector("[data-home-surface] [data-preview-flavour]")?.getAttribute("data-preview-flavour") === "ui-sdk",
+          null,
+          { timeout: 10000 },
+        );
+        const surface = page.locator("[data-home-surface]");
+        await surface.getByRole("button", { name: "New release" }).click();
+        await page.getByRole("dialog", { name: "New release" }).getByRole("button", { name: /Nov 20/ }).click();
+        await page.waitForTimeout(1200);
+        const width = await page.evaluate(() => document.querySelector('[data-slot="popover-content"]')?.getBoundingClientRect().width ?? -1);
+        await close();
+        return width > 0 && width < 400 ? null : `popover width ${width}`;
+      },
+      sabotage: () => {
+        const style = document.createElement("style");
+        style.textContent = '[data-slot="popover-content"]{width:100%!important}';
+        document.head.append(style);
+      },
+    },
+    noScript: {
+      name: "without JavaScript the Base UI surface shows and the flavour switches are hidden",
+      run: async (_sabotage, javaScriptEnabled = false) => {
+        const { page, close } = await open({ width: 1280, javaScriptEnabled });
+        const state = await page.evaluate(() => ({
+          surface: Boolean(document.querySelector('[data-home-surface] [data-preview-flavour="base-ui"]')?.getClientRects().length),
+          rows: document.querySelector("[data-home-surface]")?.textContent.includes("Saved carts"),
+          switches: [...document.querySelectorAll(".flavour-switch")].filter((el) => el.getClientRects().length > 0).length,
+          label: [...document.querySelectorAll(".flavour-switch-static")].some((el) => el.getClientRects().length > 0),
+        }));
+        await close();
+        if (!state.surface || !state.rows) return "the Base UI surface is not visible";
+        if (state.switches) return `${state.switches} flavour switches visible`;
+        return state.label ? null : "no static flavour label";
+      },
+      control: () => BROWSER.noScript.run(undefined, true),
     },
   };
 
@@ -364,6 +547,7 @@ async function browserChecks() {
     const problem = await check.run();
     report(!problem, check.name, problem);
   }
+  for (const note of notes) console.log(`NOTE  ${note}`);
   if (args.controls) {
     console.log("");
     for (const [key, check] of Object.entries(BROWSER)) {
