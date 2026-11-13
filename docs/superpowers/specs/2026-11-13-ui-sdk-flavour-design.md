@@ -16,7 +16,7 @@ UI SDK is published by Vercel Labs as `@ui-sdk/react` + `@ui-sdk/core` 0.1.0-bet
 
 Every demo and gallery example is published in the flavour as well: `npx shadcn add @sevenui/ui-sdk/demo/<name>` and `@sevenui/ui-sdk/component/<name>` (§10).
 
-The existing Base UI output is untouched: `/r/*.json`, `/r/demo/*.json` and `/r/component/*.json` stay byte-identical.
+The existing Base UI output is untouched: `/r/*.json`, `/r/demo/*.json` and `/r/component/*.json` stay byte-identical, with one deliberate exception: the `cn` dependency range moved from `^0.2.5` to `^0.5.2` (§6).
 
 ## 2. Decisions
 
@@ -111,6 +111,8 @@ The flavour example registries are guarded too: `check-registry` validates them 
 ## 6. Byte parity
 
 `apps/web/public/r` was built at `e7024e6` (before any flavour work) and at the tip, and compared with `diff -r`. The only difference is the new `r/ui-sdk/` directory: 66 items, the shared `ui-sdk-setup` item and `registry.json`, and `r/ui-sdk/demo/` (148 + `registry.json`) and `r/ui-sdk/component/` (915 + `registry.json`). The other 1,135 files under `r/`, `r/demo/` and `r/component/` are byte-identical.
+
+One deliberate exception was made afterwards: every item's `cn` dependency was raised from `cn@^0.2.5` to `cn@^0.5.2`, because the stale range made `shadcn add` downgrade a consumer's `cn` (a fresh `shadcn init` installs `^0.5.2`; our `install cn@^0.2.5` rewrote it to 0.2.x). Built before and after that change and compared with `diff -r`, the output differs only in that string: 176 base files (65 items + `registry.json`, 107 component items + `registry.json`, 1 demo item + `registry.json`) and their 176 flavour counterparts, every changed line being `cn@^0.2.5` → `cn@^0.5.2`. Measured against `e7024e6`, the 1,135 base files are byte-identical apart from that range.
 
 ## 7. Pilots
 
