@@ -161,7 +161,7 @@ export const UI_SDK_NOTES: Partial<Record<string, UiSdkNote[]>> = {
   ],
   form: [
     {
-      text: "A native `<form noValidate>` adapter with the same `onFormSubmit`, `errors`, `validationMode` and `actionsRef` and the same submitted values; the `details` it passes to `onFormSubmit` are `{ reason: \"none\", event }`.",
+      text: "A native `<form noValidate>` adapter with the same `onFormSubmit`, `errors`, `validationMode` and `actionsRef` and the same submitted values; the `details` it passes to `onFormSubmit` are `{ reason: \"none\", event }`. A failed submit focuses the first invalid control, as Base UI does, but a field that fails only a native constraint (`required`, `type`, `pattern`) takes focus only when it renders a `FieldError`, and the focused input's text is not selected.",
       rows: ["form | Base UI `Form`"],
     },
   ],

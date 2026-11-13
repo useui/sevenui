@@ -89,7 +89,7 @@
     "field | a `FieldError` in a plain `<form>` shows nothing for a native constraint (the browser's bubble only)": "sha256-433c2df697a15e9eb36c721ac8133587873e8d0000b3303c65f86148a55f76c2",
     "field | a `Textarea` or `NativeSelect` in a field reports nothing and its `validate` never runs (plain elements; no Base UI control registers)": "sha256-1d31e1eabaaa1834537eec791443c2f078fdaaa1479956e33d98cbe22cdaffb1",
     "field | parts carry `data-valid`, `data-touched`, `data-dirty`, `data-filled`, `data-focused`": "sha256-111eae86b1a43707a42045dae4200d78acd1aea22442be1138395977c15a9966",
-    "form | Base UI `Form` (`noValidate`; on submit every field's `validate` and native constraints run, with or without `onFormSubmit`, and a failure focuses the first invalid control and stops `onSubmit`; values from registered fields; `errors` cleared on change)": "sha256-2f4032d566eda9164e14847718633199457c0b9fdc6796358573e29b94cc815e",
+    "form | Base UI `Form` (`noValidate`; on submit every field's `validate` and native constraints run, with or without `onFormSubmit`, and a failure focuses the first invalid control and stops `onSubmit`; values from registered fields; `errors` cleared on change)": "sha256-1a704e1d34e87871469e2abd9a8d0838892ea65ed5880549346331bd2ca82bea",
     "input-group | `InputGroup` is a plain `div role=\"group\"`": "sha256-1f6c65cb82f207454c6185db676bee685361704d4e47dcc0ab81e1c9ec398a6d",
     "input-otp | `length`, `validationType`, `onValueComplete`": "sha256-e36ea35ce69b7e2d76ec7e73a97b0e4755b40bf8ad99a8a77de7239b7cde8a2a",
     "input-otp | `normalizeValue`, `mask` (masked slots are password inputs)": "sha256-521a753859006b8736f203b79d55d96dba0c6a8fa6b77fe082b8b39608d5f630",
