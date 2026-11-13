@@ -50,38 +50,39 @@ UI SDK. Each primitive's page lists what behaves differently on UI SDK.
 `shadcn init --base base` installs `@base-ui/react` and writes a Base UI
 `components/ui/button.tsx`. A project on the UI SDK flavour replaces both:
 
-1. UI SDK keeps its runtime styles in a cascade layer that has to be
-   declared before Tailwind's, so your utilities win over it. Put this on
-   the first line of your global stylesheet, above `@import "tailwindcss"`:
+**Declare the cascade layer.** UI SDK keeps its runtime styles in a
+cascade layer that has to be declared before Tailwind's, so your
+utilities win over it. Put this on the first line of your global
+stylesheet, above `@import "tailwindcss"`:
 
-   ```css
-   @layer ui-sdk;
-   @import "tailwindcss";
-   ```
+```css
+@layer ui-sdk;
+@import "tailwindcss";
+```
 
-   The shadcn CLI can only append CSS, so it prints this step after
-   installing a UI SDK primitive instead of adding the line itself.
+The shadcn CLI can only append CSS, so it prints this step after
+installing a UI SDK primitive instead of adding the line itself.
 
-2. Install UI SDK primitives with `--overwrite` the first time, so they
-   replace the starter Base UI files (without it, a non-interactive
-   install writes nothing):
+**Overwrite the starter files.** Install UI SDK primitives with
+`--overwrite` the first time, so they replace the starter Base UI files
+(without it, a non-interactive install writes nothing):
 
-   ```bash
-   npx shadcn@latest add @sevenui/ui-sdk/button @sevenui/ui-sdk/dialog --overwrite
-   ```
+```bash
+npx shadcn@latest add @sevenui/ui-sdk/button @sevenui/ui-sdk/dialog --overwrite
+```
 
-3. Pin UI SDK exactly. The registry asks for `0.1.0-beta.1`, but npm
-   saves it as `^0.1.0-beta.1`, and a caret on a prerelease accepts every
-   later 0.1.0 beta and 0.1.x release, whose API may change under the
-   flavour:
+**Pin UI SDK exactly.** The registry asks for `0.1.0-beta.1`, but npm
+saves it as `^0.1.0-beta.1`, and a caret on a prerelease accepts every
+later 0.1.0 beta and 0.1.x release, whose API may change under the
+flavour:
 
-   ```bash
-   npm install --save-exact @ui-sdk/react@0.1.0-beta.1 @ui-sdk/core@0.1.0-beta.1
-   ```
+```bash
+npm install --save-exact @ui-sdk/react@0.1.0-beta.1 @ui-sdk/core@0.1.0-beta.1
+```
 
-4. Once no file under your `ui` alias imports `@base-ui/react` (the
-   starter files are the only ones that do), remove it:
-   `npm uninstall @base-ui/react`.
+**Remove Base UI.** Once no file under your `ui` alias imports
+`@base-ui/react` (the starter files are the only ones that do), remove
+it with `npm uninstall @base-ui/react`.
 
 Pick one flavour per project: a UI SDK primitive depends on the UI SDK
 flavour of the primitives it uses, and UI SDK components (examples)
