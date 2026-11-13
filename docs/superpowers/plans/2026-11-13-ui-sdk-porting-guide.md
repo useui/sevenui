@@ -9,7 +9,7 @@ Everything below was checked against the installed package and the pilot ports. 
 
 ## 0. The rules in one screen
 
-1. **Edit one file only:** `packages/registry/registry/ui-sdk/ui/<name>.tsx`. You may also add flavour-aware expectations to `packages/registry/tests/<name>.test.tsx`, and append rows to §8 of this guide.
+1. **Edit one file only:** `packages/registry/registry/ui-sdk/ui/<name>.tsx`. You may also add flavour-aware expectations to `packages/registry/tests/<name>.test.tsx`, append rows to §8 of this guide, and keep `apps/web/lib/ui-sdk-notes.ts` in step with them (§2 step 8).
    - Never edit anything under `registry/base/`, `demos/`, `components/`, or the root `registry.json`.
    - There is no list of ported names to update. See §2.
 2. **Keep the same public API as `registry/base/ui/<name>.tsx`:**
@@ -75,10 +75,10 @@ These states fail `pnpm check:registry`:
 5. **Run the flavour tests for your primitive** (§6). Fix the port until they pass.
    - Where a test asserts a Base UI detail that legitimately differs, add a flavour-aware expectation (§6.2). Never weaken the base assertion.
    - A test that fails because the port is wrong is fixed in the port.
-6. **Run the gates:** `pnpm check:registry`, `pnpm typecheck`, `pnpm test`, `pnpm lint`, `pnpm check:ui-sdk-compat`.
+6. **Run the gates:** `pnpm check:registry`, `pnpm typecheck`, `pnpm test`, `pnpm lint`, `pnpm check:ui-sdk-compat`, `pnpm check:ui-sdk-notes`.
    - The export-freeze test compares your file's exports with the base file's exports exactly.
 7. **Look at it in a real browser** (§7) if the primitive has a popup, layout, focus movement or animation.
-8. **Append any divergence to §8.**
+8. **Append any divergence to §8, and keep the site's notes in step.** The UI SDK notes on each primitive page and in its `.md` mirror come from `apps/web/lib/ui-sdk-notes.ts`, where every §8 row is either named by a note or listed in `INTERNAL_ROWS` with the reason a reader would not notice it. `pnpm check:ui-sdk-notes` fails on a row covered by neither, on a note citing a row that no longer exists, and on any row edited since its note was last reviewed. After adding or editing a row, update the note (or `INTERNAL_ROWS`), then record the review: `node scripts/check-ui-sdk-notes.mjs review "<primitive column> | <start of the Base UI column>"`. When a fix removes a difference, say so in the row, and move it to `INTERNAL_ROWS`.
 9. **Commit**, for example `feat(registry): port popover to the ui-sdk flavour`, with a body that says why.
 
 You never mark anything as ported. The status, the published registry (`/r/ui-sdk/<name>.json`), its npm `dependencies` and its `registryDependencies` are all derived from the file when `pnpm build:registry` runs:

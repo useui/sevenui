@@ -52,6 +52,10 @@ jobs:
       # catches a deleted manifest entry, an example newly matching a recorded
       # difference, or a flavour source that no longer typechecks.
       - run: pnpm check:ui-sdk-compat
+      # The UI SDK notes on the primitive pages and in their .md mirrors condense §8 of the porting guide;
+      # this fails when a §8 row is covered by no note or internal reason, or changed since its note was
+      # reviewed, so a difference a port has fixed cannot stay published.
+      - run: pnpm check:ui-sdk-notes
       - run: pnpm test
       - run: pnpm build
         env:

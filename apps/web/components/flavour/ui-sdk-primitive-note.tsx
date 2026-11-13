@@ -51,7 +51,7 @@ export function UiSdkPrimitiveNote() {
  */
 export async function UiSdkApiReference({ name }: { name: string }) {
   const foundation = await primitiveFoundation(name, "ui-sdk");
-  const notes = [...(POPUP_PRIMITIVES.has(name) ? [POPUP_NOTE] : []), ...(UI_SDK_NOTES[name] ?? [])];
+  const notes = [...(POPUP_PRIMITIVES.has(name) ? [POPUP_NOTE] : []), ...(UI_SDK_NOTES[name] ?? [])].map((note) => note.text);
 
   const builtOn: React.ReactNode[] = [
     ...foundation.entries.map((entry) => (
@@ -89,9 +89,12 @@ export async function UiSdkApiReference({ name }: { name: string }) {
           <>The UI SDK flavour is plain markup and styles, the same file as the Base UI flavour.</>
         )}{" "}
         Its API is the SevenUI wrapper&apos;s, the same in both flavours: export names, props,{" "}
-        <code className={INLINE_CODE}>data-slot</code> values and the <code className={INLINE_CODE}>render</code> prop. Code
-        written against the Base UI flavour runs unchanged; a Base UI prop UI SDK has no counterpart for is accepted and
-        ignored. Switch to Base UI to read the prop tables, which describe that shared API in Base UI&apos;s terms.
+        <code className={INLINE_CODE}>data-slot</code> values and the <code className={INLINE_CODE}>render</code> prop, so code
+        that uses only the SevenUI exports compiles against either flavour.{" "}
+        {notes.length > 0
+          ? "What behaves differently, and any prop that is ignored or not supported, is listed below; code that imports a Base UI or third-party library directly needs changes."
+          : "Nothing a reader would notice behaves differently."}{" "}
+        Switch to Base UI to read the prop tables, which describe that shared API in Base UI&apos;s terms.
       </p>
       {notes.length > 0 && (
         <>
