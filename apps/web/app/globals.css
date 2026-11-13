@@ -395,6 +395,15 @@ html {
   visibility: hidden;
 }
 
+/* Without scripts nothing sets data-flavour, the page shows Base UI and a switch could not work: hide the
+   switches and show which flavour the page is in instead (FlavourSwitch's static label). */
+:root:not([data-flavour]) .flavour-switch {
+  display: none;
+}
+:root[data-flavour] .flavour-switch-static {
+  display: none;
+}
+
 /* FlavourSwitch: the selected option is drawn like a LayerCard tab (a small raised panel), from the
    <html> attribute so it is right before hydration. Outside a LayerCard the variables fall back. */
 .flavour-switch {

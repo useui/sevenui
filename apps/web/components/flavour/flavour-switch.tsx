@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { FLAVOUR_LABELS, FLAVOURS, type Flavour, setFlavour } from "../../lib/flavour";
+import { DEFAULT_FLAVOUR, FLAVOUR_LABELS, FLAVOURS, type Flavour, setFlavour } from "../../lib/flavour";
 import { useFlavour } from "./use-flavour";
 
 const OPTION =
@@ -62,7 +62,12 @@ export function FlavourSwitch({ className = "", id, mirror = false }: { classNam
   }
 
   return (
-    <div aria-label="Primitive flavour" className={group} id={id} onKeyDown={onKeyDown} role="radiogroup">
+    <>
+      {/* Shown only without scripts (globals.css), when the page is in the default flavour and cannot switch. */}
+      <span className="flavour-switch-static font-medium text-foreground text-xs" title="Turn on JavaScript to switch to UI SDK">
+        {FLAVOUR_LABELS[DEFAULT_FLAVOUR]}
+      </span>
+      <div aria-label="Primitive flavour" className={group} id={id} onKeyDown={onKeyDown} role="radiogroup">
       {FLAVOURS.map((option) => (
         // biome-ignore lint/a11y/useSemanticElements: a segmented switch drawn like the tabs; roving focus is handled above
         <button
@@ -81,6 +86,7 @@ export function FlavourSwitch({ className = "", id, mirror = false }: { classNam
           {FLAVOUR_LABELS[option]}
         </button>
       ))}
-    </div>
+      </div>
+    </>
   );
 }
