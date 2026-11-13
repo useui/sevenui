@@ -675,7 +675,10 @@ async function browserChecks() {
       run: async (_sabotage, javaScriptEnabled = false) => {
         const { page, close } = await open({ width: 1280, javaScriptEnabled });
         const state = await page.evaluate(() => ({
-          surface: Boolean(document.querySelector('[data-home-surface] [data-preview-flavour="base-ui"]')?.getClientRects().length),
+          // The wrapper itself has no box (display: contents); the surface inside it does.
+          surface: Boolean(
+            document.querySelector('[data-home-surface] [data-preview-flavour="base-ui"]')?.firstElementChild?.getClientRects().length,
+          ),
           rows: document.querySelector("[data-home-surface]")?.textContent.includes("Saved carts"),
           switches: [...document.querySelectorAll(".flavour-switch")].filter((el) => el.getClientRects().length > 0).length,
           label: [...document.querySelectorAll(".flavour-switch-static")].some((el) => el.getClientRects().length > 0),
