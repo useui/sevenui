@@ -55,6 +55,20 @@ describe("ContextMenu", () => {
     expect(screen.queryByRole("menu")).toBeNull();
   });
 
+  it("does not open while the root is disabled", async () => {
+    render(
+      <ContextMenu disabled>
+        <ContextMenuTrigger>Right click here</ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem>Back</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>,
+    );
+    fireEvent.contextMenu(screen.getByText("Right click here"));
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(screen.queryByRole("menu")).toBeNull();
+  });
+
   it("opens on right-click (contextmenu event) and lists items", async () => {
     render(<BasicContextMenu />);
     const menu = await openContextMenu();

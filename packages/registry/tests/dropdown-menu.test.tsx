@@ -64,6 +64,22 @@ describe("DropdownMenu", () => {
     expect(screen.getByRole("menuitem", { name: "Log out" })).toBeTruthy();
   });
 
+  it("does not open while the root is disabled", async () => {
+    const user = userEvent.setup();
+    render(
+      <DropdownMenu disabled>
+        <DropdownMenuTrigger>Open menu</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>Profile</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>,
+    );
+    const trigger = screen.getByRole("button", { name: "Open menu" });
+    expect(trigger.hasAttribute("data-disabled")).toBe(true);
+    await user.click(trigger);
+    expect(screen.queryByRole("menu")).toBeNull();
+  });
+
   it("renders label and separator parts inside the menu", async () => {
     const user = userEvent.setup();
     render(<BasicMenu />);

@@ -52,10 +52,14 @@ function toSide(side: Side | "inline-start" | "inline-end" | undefined): Side {
   return side;
 }
 
-// Base UI root props with no UI SDK counterpart are accepted for API parity
-// and dropped.
+// Base UI's root `disabled` keeps the menu from opening; UI SDK sets it on
+// the trigger, so the root hands it down.
+const RootDisabledContext = React.createContext(false);
+
+// Base UI root props with no UI SDK counterpart (orientation, closeDelay) are
+// accepted for API parity and dropped.
 function ContextMenu({
-  disabled: _disabled,
+  disabled = false,
   orientation: _orientation,
   closeDelay: _closeDelay,
   ...props
@@ -64,7 +68,11 @@ function ContextMenu({
   orientation?: "horizontal" | "vertical";
   closeDelay?: number;
 }) {
-  return <MenuPrimitive {...props} />;
+  return (
+    <RootDisabledContext.Provider value={disabled}>
+      <MenuPrimitive {...props} />
+    </RootDisabledContext.Provider>
+  );
 }
 
 // UI SDK renders popups in place in the top layer, so there is nothing to
@@ -82,14 +90,17 @@ function ContextMenuPortal({
 function ContextMenuTrigger({
   className,
   render,
+  disabled,
   ...props
 }: Omit<React.ComponentProps<typeof MenuContextTrigger>, "render" | "className"> & {
   className?: string;
   render?: BaseRender;
 }) {
+  const rootDisabled = React.useContext(RootDisabledContext);
   return (
     <MenuContextTrigger
       render={part("context-menu-trigger", "div", render, popupOpen)}
+      disabled={disabled ?? (rootDisabled || undefined)}
       className={cn("select-none", className)}
       {...props}
     />

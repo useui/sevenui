@@ -54,13 +54,17 @@ function toSide(side: Side | "inline-start" | "inline-end" | undefined): Side {
   return side;
 }
 
+// Base UI's root `disabled` keeps the menu from opening; UI SDK sets it on
+// the trigger, so the root hands it down.
+const RootDisabledContext = React.createContext(false);
+
 // Base UI root props with no UI SDK counterpart (hover-opening menus,
-// orientation, a disabled root) are accepted for API parity and dropped.
+// orientation) are accepted for API parity and dropped.
 function DropdownMenu({
   openOnHover: _openOnHover,
   closeDelay: _closeDelay,
   orientation: _orientation,
-  disabled: _disabled,
+  disabled = false,
   ...props
 }: React.ComponentProps<typeof MenuPrimitive> & {
   openOnHover?: boolean;
@@ -68,7 +72,11 @@ function DropdownMenu({
   orientation?: "horizontal" | "vertical";
   disabled?: boolean;
 }) {
-  return <MenuPrimitive {...props} />;
+  return (
+    <RootDisabledContext.Provider value={disabled}>
+      <MenuPrimitive {...props} />
+    </RootDisabledContext.Provider>
+  );
 }
 
 // UI SDK renders popups in place in the top layer, so there is nothing to
@@ -85,13 +93,16 @@ function DropdownMenuPortal({
 
 function DropdownMenuTrigger({
   render,
+  disabled,
   ...props
 }: Omit<React.ComponentProps<typeof MenuTrigger>, "render"> & {
   render?: BaseRender;
 }) {
+  const rootDisabled = React.useContext(RootDisabledContext);
   return (
     <MenuTrigger
       render={part("dropdown-menu-trigger", "button", render, popupOpen)}
+      disabled={disabled ?? (rootDisabled || undefined)}
       {...props}
     />
   );

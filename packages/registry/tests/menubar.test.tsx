@@ -53,6 +53,38 @@ describe("Menubar", () => {
     expect(screen.queryByRole("menu")).toBeNull();
   });
 
+  it("opens no menu while the menubar is disabled", async () => {
+    const user = userEvent.setup();
+    render(
+      <Menubar disabled>
+        <MenubarMenu>
+          <MenubarTrigger>File</MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem>New Tab</MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+      </Menubar>,
+    );
+    await user.click(screen.getByRole("menuitem", { name: "File" }));
+    expect(screen.queryByRole("menu")).toBeNull();
+  });
+
+  it("opens no menu from a disabled MenubarMenu", async () => {
+    const user = userEvent.setup();
+    render(
+      <Menubar>
+        <MenubarMenu disabled>
+          <MenubarTrigger>File</MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem>New Tab</MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+      </Menubar>,
+    );
+    await user.click(screen.getByRole("menuitem", { name: "File" }));
+    expect(screen.queryByRole("menu")).toBeNull();
+  });
+
   it("opens a menu on trigger click and shows its items", async () => {
     const user = userEvent.setup();
     render(<BasicMenubar />);
