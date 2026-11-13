@@ -225,8 +225,14 @@ describe("Select", () => {
 // content to where its top must go. jsdom has no layout, so the rects are
 // stubbed; the placement was compared with Base UI's in Chrome (guide §8).
 describe("Select alignItemWithTrigger", () => {
-  it("lays the first item over the trigger while nothing is selected", async () => {
+  // A caller's ref on the content reaches the popup, and the wrapper's own
+  // measuring ref keeps working beside it.
+  it.each([
+    ["without a ref", false],
+    ["with a caller ref on the content", true],
+  ])("lays the first item over the trigger while nothing is selected (%s)", async (_, withRef) => {
     const user = userEvent.setup();
+    const contentRef = React.createRef<HTMLDivElement>();
     const original = Element.prototype.getBoundingClientRect;
     Element.prototype.getBoundingClientRect = function (this: Element) {
       const slot = this.getAttribute("data-slot");
@@ -244,7 +250,7 @@ describe("Select alignItemWithTrigger", () => {
           <SelectTrigger aria-label="Fruit">
             <SelectValue placeholder="Pick a fruit" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent ref={withRef ? contentRef : undefined}>
             {fruits.map((fruit) => (
               <SelectItem key={fruit.value} value={fruit.value}>
                 {fruit.label}
@@ -256,6 +262,7 @@ describe("Select alignItemWithTrigger", () => {
       await user.click(screen.getByRole("combobox", { name: "Fruit" }));
       const popup = must(document.querySelector<HTMLElement>("[data-slot=select-content]"));
       expect(popup.getAttribute("data-align-trigger")).toBe("true");
+      if (withRef) expect(contentRef.current).toBe(popup);
       if (isUiSdk) {
         // trigger top 300 + (34 - item height, 0 in jsdom) / 2 - first item offset 28
         await waitFor(() => expect(popup.style.top).toBe("289px"));

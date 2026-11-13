@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, onTestFinished, vi } from "vitest";
 
 import {
   Drawer,
@@ -55,6 +55,31 @@ describe("Drawer", () => {
     await waitFor(() => expect(document.activeElement).toBe(drawer));
     await user.tab();
     expect(document.activeElement?.textContent).toBe("Dismiss");
+  });
+
+  it("still focuses the popup when the content has a caller ref", async () => {
+    // The flavour's setup reports no client rects, so UI SDK would find no
+    // tabbable control to fall back to; give every element a box here.
+    const rects = Element.prototype.getClientRects;
+    Element.prototype.getClientRects = () => [new DOMRect(0, 0, 10, 10)] as unknown as DOMRectList;
+    onTestFinished(() => {
+      Element.prototype.getClientRects = rects;
+    });
+    const user = userEvent.setup();
+    const contentRef = { current: null as HTMLDivElement | null };
+    render(
+      <Drawer>
+        <DrawerTrigger>Open drawer</DrawerTrigger>
+        <DrawerContent ref={contentRef}>
+          <DrawerTitle>Move goal</DrawerTitle>
+          <DrawerClose>Dismiss</DrawerClose>
+        </DrawerContent>
+      </Drawer>,
+    );
+    await user.click(screen.getByText("Open drawer"));
+    const drawer = await screen.findByRole("dialog");
+    expect(contentRef.current).toBe(drawer);
+    await waitFor(() => expect(document.activeElement).toBe(drawer));
   });
 
   it("wires the title and description via aria attributes", async () => {

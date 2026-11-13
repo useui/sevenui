@@ -196,6 +196,16 @@ describe("InputOTP", () => {
     expect((document.activeElement as HTMLInputElement).type).toBe("password");
     expect(getSlots(container).map(slotValue).join("")).toBe(isUiSdk ? "•••" : "123");
   });
+
+  it("hands a caller ref the root and keeps masking", async () => {
+    const user = userEvent.setup();
+    const rootRef = { current: null as HTMLDivElement | null };
+    const { container } = render(<OTP ref={rootRef} mask aria-label="Code" />);
+    expect(rootRef.current?.getAttribute("data-slot")).toBe("input-otp");
+    await user.click(typingTarget(container));
+    await user.keyboard("1");
+    expect((document.activeElement as HTMLInputElement).type).toBe("password");
+  });
 });
 
 describe("InputOTP v2 styles", () => {

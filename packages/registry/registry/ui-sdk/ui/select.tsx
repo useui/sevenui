@@ -306,6 +306,19 @@ function placeholderAnchor(
   };
 }
 
+// Sets a caller's ref beside the wrapper's own, which a spread `ref` would
+// otherwise replace.
+function useMergedRef<T>(own: React.RefObject<T | null>, ref: React.Ref<T> | undefined) {
+  return React.useCallback(
+    (node: T | null) => {
+      own.current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref) ref.current = node;
+    },
+    [own, ref],
+  );
+}
+
 // No Positioner: UI SDK positions the content itself, in the top layer, so
 // placement props sit on this part and Base UI's `inline-start`/`inline-end`
 // map to `start`/`end`. UI SDK has no scroll arrows; the list scrolls.
@@ -318,6 +331,7 @@ function SelectContent({
   alignOffset = 0,
   alignItemWithTrigger = true,
   finalFocus: _finalFocus,
+  ref,
   ...props
 }: Omit<React.ComponentProps<typeof SelectContentPrimitive>, "side" | "children"> & {
   side?: Side | "inline-start" | "inline-end";
@@ -329,6 +343,7 @@ function SelectContent({
     | ((closeType: string) => boolean | HTMLElement | null | undefined);
 }) {
   const content = React.useRef<HTMLDivElement | null>(null);
+  const contentRef = useMergedRef(content, ref);
   const touch = React.useRef(false);
   React.useEffect(() => {
     const record = (event: PointerEvent) => {
@@ -343,7 +358,7 @@ function SelectContent({
   );
   return (
     <SelectContentPrimitive
-      ref={content}
+      ref={contentRef}
       anchor={anchor}
       data-slot="select-content"
       data-align-trigger={alignItemWithTrigger}

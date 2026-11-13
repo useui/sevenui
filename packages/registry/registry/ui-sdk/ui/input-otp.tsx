@@ -66,6 +66,19 @@ type InputOTPProps = Omit<
   autoSubmit?: boolean;
 };
 
+// Sets a caller's ref beside the wrapper's own, which a spread `ref` would
+// otherwise replace.
+function useMergedRef<T>(own: React.RefObject<T | null>, ref: React.Ref<T> | undefined) {
+  return React.useCallback(
+    (node: T | null) => {
+      own.current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref) ref.current = node;
+    },
+    [own, ref],
+  );
+}
+
 function InputOTP({
   className,
   length,
@@ -79,9 +92,11 @@ function InputOTP({
   defaultValue,
   onValueChange,
   render,
+  ref,
   ...props
 }: InputOTPProps) {
   const rootRef = React.useRef<HTMLDivElement | null>(null);
+  const mergedRef = useMergedRef(rootRef, ref);
   const fallback = React.useRef(new Map<string, number>());
   const [order, setOrder] = React.useState<string[]>([]);
 
@@ -152,7 +167,7 @@ function InputOTP({
   return (
     <SlotOrderContext.Provider value={slotOrder}>
       <OTPInputPrimitive
-        ref={rootRef}
+        ref={mergedRef}
         render={withSlot("input-otp", "div", render)}
         maxLength={length}
         pattern={patterns[validationType]}

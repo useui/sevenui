@@ -240,8 +240,8 @@ function DrawerContent({
 }) {
   const { hasSnapPoints, modal, showSwipeHandle, swipeDirection } = useDrawer();
   // Base UI's drawer focuses the popup itself on open, by any input; UI SDK
-  // focuses the first tabbable control, which then shows its focus style.
-  const popup = React.useRef<HTMLElement | null>(null);
+  // focuses the first tabbable control, which then shows its focus style, so
+  // the content is asked for. No ref is needed, so a caller's reaches it.
   const swipeAxis =
     swipeDirection === "down" || swipeDirection === "up" ? "y" : "x";
 
@@ -259,14 +259,7 @@ function DrawerContent({
           "data-nested-drawer-open": state.nestedOpen ? "" : undefined,
           "data-swiping": state.dragging ? "" : undefined,
         }))}
-        ref={(node: HTMLDivElement | null) => {
-          popup.current = node;
-        }}
-        initialFocus={
-          initialFocus === undefined
-            ? (): HTMLElement | undefined => popup.current ?? undefined
-            : toFocusTarget(initialFocus)
-        }
+        initialFocus={initialFocus === undefined ? "content" : toFocusTarget(initialFocus)}
         finalFocus={toFocusTarget(finalFocus)}
         className={cn(
           // Base.
