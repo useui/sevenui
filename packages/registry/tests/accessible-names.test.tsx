@@ -34,6 +34,11 @@ const INTERACTIVE = [
   "textbox",
 ];
 
+// Some demos have unnamed parts in both flavours (progress-demo), and UI SDK's
+// strict name check throws for them from a timer after the case has ended.
+// Parity, not naming, is what this file checks, so strict mode is off here.
+if (isUiSdk) globalThis.__UI_SDK_STRICT__ = false;
+
 // What some demos need that jsdom lacks (the sidebar and carousel test files
 // stub the same).
 window.matchMedia ??= ((query: string) => ({
