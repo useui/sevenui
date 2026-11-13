@@ -42,7 +42,7 @@ export function FlavourSwitch({ className = "", id }: { className?: string; id?:
         // biome-ignore lint/a11y/useSemanticElements: a segmented switch drawn like the tabs; roving focus is handled above
         <button
           aria-checked={flavour === option}
-          className="flavour-switch-option cursor-pointer whitespace-nowrap rounded-md px-2 py-1 text-muted-foreground outline-none transition-[color,background-color,box-shadow] hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring motion-reduce:transition-none"
+          className="flavour-switch-option cursor-pointer whitespace-nowrap rounded-md px-2 py-1 text-muted-foreground outline-none transition-[color,background-color,box-shadow] hover:text-foreground focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-1 focus-visible:outline-ring motion-reduce:transition-none"
           data-option={option}
           key={option}
           onClick={() => choose(option)}
