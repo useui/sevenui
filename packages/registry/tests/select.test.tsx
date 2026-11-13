@@ -273,6 +273,55 @@ describe("Select alignItemWithTrigger", () => {
   });
 });
 
+describe("Select alignItemWithTrigger geometry", () => {
+  // Base UI lines the item's text up with the value's text, and near the top
+  // of the viewport keeps the popup 10px from the edge (scrolling its list by
+  // the difference). Both compared with base in Chrome to the pixel.
+  it("lines up the text and keeps 10px from the viewport top", async () => {
+    const user = userEvent.setup();
+    const original = Element.prototype.getBoundingClientRect;
+    Element.prototype.getBoundingClientRect = function (this: Element) {
+      const slot = this.getAttribute("data-slot");
+      if (slot === "select-trigger") return new DOMRect(32, 20, 180, 34);
+      if (slot === "select-value") return new DOMRect(45, 28, 150, 18);
+      if (slot === "select-content") return new DOMRect(0, 0, 180, 200);
+      if (slot === "select-item") {
+        const index = [...document.querySelectorAll("[data-slot=select-item]")].indexOf(this);
+        return new DOMRect(4, 28 + 32 * index, 172, 32);
+      }
+      if (slot === "select-item-text") return new DOMRect(12, 0, 100, 18);
+      return original.call(this);
+    };
+    try {
+      render(
+        <Select items={fruits}>
+          <SelectTrigger aria-label="Fruit">
+            <SelectValue placeholder="Pick a fruit" />
+          </SelectTrigger>
+          <SelectContent>
+            {fruits.map((fruit) => (
+              <SelectItem key={fruit.value} value={fruit.value}>
+                {fruit.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>,
+      );
+      await user.click(screen.getByRole("combobox", { name: "Fruit" }));
+      const popup = must(document.querySelector<HTMLElement>("[data-slot=select-content]"));
+      expect(popup.getAttribute("data-align-trigger")).toBe("true");
+      if (isUiSdk) {
+        // trigger top 20 + 34 / 2 - first item offset 28 = 9, below the 10px margin
+        await waitFor(() => expect(popup.style.top).toBe("10px"));
+        // value text at 45, item text 12px into the popup
+        expect(popup.style.left).toBe("33px");
+      }
+    } finally {
+      Element.prototype.getBoundingClientRect = original;
+    }
+  });
+});
+
 describe("Select v2 styles", () => {
   it("renders a bordered trigger with the halo focus ring and control scale", () => {
     render(<FruitSelect />);

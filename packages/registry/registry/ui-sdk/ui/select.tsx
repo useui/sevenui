@@ -277,6 +277,8 @@ function SelectTrigger({
 // zero-height box where its top must go for that item to sit on the trigger
 // (UI SDK re-reads an anchor on every check). Like Base UI it falls back to
 // the trigger when there is no room, and for touch.
+const VIEWPORT_MARGIN = 10;
+
 function placeholderAnchor(
   content: React.RefObject<HTMLElement | null>,
   touch: React.RefObject<boolean>,
@@ -296,12 +298,31 @@ function placeholderAnchor(
       // The content gets sideOffset 0 here (UI SDK drops it while a selected
       // item could align), so the offset is added to the fallback box.
       const below = new DOMRect(box.left, box.top, box.width, box.height + sideOffset);
-      if (touch.current || !item) return below;
-      const offset = item.getBoundingClientRect().top - popup.getBoundingClientRect().top + popup.scrollTop;
+      const fallback = () => {
+        if (popup.style.maxHeight) popup.style.maxHeight = "";
+        return below;
+      };
+      if (touch.current || !item) return fallback();
+      const popupBox = popup.getBoundingClientRect();
+      const offset = item.getBoundingClientRect().top - popupBox.top + popup.scrollTop;
       const top = box.top + (box.height - item.offsetHeight) / 2 - offset;
       const view = popup.ownerDocument.defaultView?.innerHeight ?? 0;
-      if (top < 0 || top + popup.offsetHeight > view) return below;
-      return new DOMRect(box.left, top, box.width, 0);
+      if (top < 0 || top + popup.offsetHeight > view) return fallback();
+      // Near the top of the viewport Base UI keeps the popup 10px from the
+      // edge and scrolls its list by the difference, so the item still sits
+      // on the trigger and the popup is that much shorter.
+      const shift = top < VIEWPORT_MARGIN ? VIEWPORT_MARGIN - top : 0;
+      if (shift > 0) {
+        popup.style.maxHeight = `${popup.scrollHeight - shift}px`;
+        popup.scrollTop = shift;
+      } else if (popup.style.maxHeight) {
+        popup.style.maxHeight = "";
+      }
+      // Base UI also lines the item's text up with the value's text.
+      const value = trigger.querySelector("[data-slot=select-value]")?.getBoundingClientRect();
+      const text = item.querySelector("[data-slot=select-item-text]")?.getBoundingClientRect();
+      const left = value && text ? box.left + (value.left - box.left) - (text.left - popupBox.left) : box.left;
+      return new DOMRect(left, top + shift, box.width, 0);
     },
   };
 }
@@ -363,6 +384,8 @@ function SelectContent({
       data-slot="select-content"
       data-align-trigger={alignItemWithTrigger}
       side={side === "inline-start" ? "start" : side === "inline-end" ? "end" : side}
+      // Base UI keeps popups 5px from the viewport edges; UI SDK 8px.
+      collisionPadding={5}
       sideOffset={anchor ? 0 : sideOffset}
       align={align}
       alignOffset={alignOffset}
