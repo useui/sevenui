@@ -300,6 +300,7 @@ function placeholderAnchor(
   content: React.RefObject<HTMLElement | null>,
   touch: React.RefObject<boolean>,
   sideOffset: number,
+  align: "start" | "center" | "end",
 ) {
   return {
     getBoundingClientRect: () => {
@@ -309,9 +310,9 @@ function placeholderAnchor(
         : null;
       if (!popup || !trigger) return new DOMRect();
       const box = trigger.getBoundingClientRect();
+      const selected = popup.querySelector<HTMLElement>("[data-slot=select-item][data-selected]:not([hidden])");
       const item =
-        popup.querySelector<HTMLElement>("[data-slot=select-item][data-selected]:not([hidden])") ??
-        popup.querySelector<HTMLElement>("[data-slot=select-item]:not([data-disabled]):not([hidden])");
+        selected ?? popup.querySelector<HTMLElement>("[data-slot=select-item]:not([data-disabled]):not([hidden])");
       // The content gets sideOffset 0 here (UI SDK drops it while a selected
       // item could align), so the offset is added to the fallback box.
       const below = new DOMRect(box.left, box.top, box.width, box.height + sideOffset);
@@ -339,7 +340,13 @@ function placeholderAnchor(
       const value = trigger.querySelector("[data-slot=select-value]")?.getBoundingClientRect();
       const text = item.querySelector("[data-slot=select-item-text]")?.getBoundingClientRect();
       const left = value && text ? box.left + (value.left - box.left) - (text.left - popupBox.left) : box.left;
-      return new DOMRect(left, top + shift, box.width, 0);
+      // The box keeps the trigger's width (it sets --anchor-width). With no
+      // selected item UI SDK still applies `align` to a popup wider than it;
+      // Base UI starts an aligned popup at `left` whatever the align, so undo
+      // that shift. (With a selected item UI SDK already starts it at `left`.)
+      const spare = selected ? 0 : popupBox.width - box.width;
+      const x = align === "center" ? left + spare / 2 : align === "end" ? left + spare : left;
+      return new DOMRect(x, top + shift, box.width, 0);
     },
   };
 }
@@ -391,8 +398,8 @@ function SelectContent({
     return () => document.removeEventListener("pointerdown", record, true);
   }, []);
   const anchor = React.useMemo(
-    () => (alignItemWithTrigger ? placeholderAnchor(content, touch, sideOffset) : undefined),
-    [alignItemWithTrigger, sideOffset],
+    () => (alignItemWithTrigger ? placeholderAnchor(content, touch, sideOffset, align) : undefined),
+    [alignItemWithTrigger, sideOffset, align],
   );
   return (
     <SelectContentPrimitive
