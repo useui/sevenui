@@ -106,7 +106,7 @@ export const UI_SDK_NOTES: Partial<Record<string, UiSdkNote[]>> = {
   ],
   "context-menu": [
     {
-      text: "`disabled`, `orientation` and `closeDelay` on the root are accepted and ignored.",
+      text: "`orientation` and `closeDelay` on the root are accepted and ignored.",
       rows: ["context-menu | `disabled`, `orientation`, `closeDelay` on the root"],
     },
   ],
@@ -128,7 +128,7 @@ export const UI_SDK_NOTES: Partial<Record<string, UiSdkNote[]>> = {
   ],
   "dropdown-menu": [
     {
-      text: "Item `onClick` runs on selection by pointer or keyboard (UI SDK's `onSelect`) and receives the selecting event, not a React `MouseEvent`. `openOnHover`, `closeDelay`, `orientation` and `disabled` on the root are accepted and ignored.",
+      text: "Item `onClick` runs on selection by pointer or keyboard (UI SDK's `onSelect`) and receives the selecting event, not a React `MouseEvent`. `openOnHover`, `closeDelay` and `orientation` on the root are accepted and ignored.",
       rows: ["dropdown-menu | item `onClick`, `closeOnClick`", "dropdown-menu | `openOnHover`, `closeDelay`"],
     },
   ],
@@ -204,7 +204,6 @@ export const UI_SDK_NOTES: Partial<Record<string, UiSdkNote[]>> = {
     },
   ],
   "radio-group": [
-    { text: "Values are strings.", rows: ["radio-group | `value` of any type"] },
     { text: "`inputRef` is accepted and ignored.", rows: ["radio-group | `inputRef`"] },
   ],
   resizable: [
@@ -398,6 +397,7 @@ export const INTERNAL_ROWS: Record<string, string> = {
   "textarea | native `onSubmit` accepted": "a textarea never fires `submit` in either flavour",
   "input-group | `InputGroup` is a plain `div role=\"group\"`": "the role is kept",
   "field | `FieldLabel` renders SevenUI `Label`": "looks and labels the same",
+  "radio-group | `value` of any type": "values of any type work: `onValueChange` hands back the item's own value (8304597)",
   "switch | `uncheckedValue` submitted while off": "emulated; the value is submitted as in Base UI",
   "slider | `onValueCommitted`, `minStepsBetweenValues`": "same props, mapped",
   "slider | `thumbAlignment=\"edge\"`": "thumbs sit where Base UI puts them (checked in Chrome)",
