@@ -154,7 +154,7 @@
       "name": "sevenui-tokens",
       "type": "registry:theme",
       "title": "SevenUI Tokens",
-      "description": "SevenUI v2 design tokens: surfaces, hairlines, elevation, focus ring and density variables. Never overrides a shadcn variable.",
+      "description": "SevenUI 1.1 design tokens: surfaces, hairlines, elevation, focus ring and density variables. Never overrides a shadcn variable.",
       "cssVars": {
         "theme": {
           "--color-surface-tray": "var(--surface-tray)",
