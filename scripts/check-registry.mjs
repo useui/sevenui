@@ -205,17 +205,38 @@ const walkFlavour = (rel) => {
     const relPath = `${rel}/${entry.name}`;
     if (relPath === "registry/ui-sdk/examples") continue;
     if (entry.isDirectory()) walkFlavour(relPath);
-    else if (/\.tsx?$/.test(entry.name) && !registeredFlavourFiles.has(relPath)) {
-      errors.push(`ui-sdk file ${relPath} belongs to no primitive`);
+    else if (/\.tsx?$/.test(entry.name)) {
+      if (registeredFlavourFiles.has(relPath)) walkedFlavourFiles++;
+      else errors.push(`ui-sdk file ${relPath} belongs to no primitive`);
     }
   }
 };
+let walkedFlavourFiles = 0;
 if (existsSync(FLAVOUR_ROOT)) walkFlavour("registry/ui-sdk");
+else errors.push(`ui-sdk: ${FLAVOUR_ROOT} does not exist`);
+// The walk must have seen every registered flavour file, or it walked
+// somewhere else.
+if (walkedFlavourFiles !== registeredFlavourFiles.size) {
+  errors.push(`ui-sdk: the stray-file walk saw ${walkedFlavourFiles} registered flavour file(s), expected ${registeredFlavourFiles.size}`);
+}
 
 const baseUiNames = ui.items.filter((i) => i.type === "registry:ui").map((i) => i.name);
-const accounted = new Set([...flavour.ported, ...flavour.pending, ...flavour.blocked.map((e) => e.item.name)]);
+// Every primitive is ported and published: the porting programme is finished,
+// so the flavour is complete, not merely "accounted for" (every primitive is
+// always ported, blocked or pending, so a rule saying that could never fail).
+// Compared with the root registry read here, not with the generator's own
+// state, so a primitive the generator stopped seeing is caught too.
+if (baseUiNames.length === 0) errors.push("ui-sdk: the root registry has no registry:ui items; nothing to compare the flavour with");
 for (const name of baseUiNames) {
-  if (!accounted.has(name)) errors.push(`ui-sdk: primitive "${name}" is neither ported, blocked nor pending`);
+  if (!flavourItems.has(name)) {
+    const status = flavour.state.get(name)?.status ?? "unknown to the generator";
+    errors.push(`ui-sdk: primitive "${name}" is not published in the flavour (${status}); every primitive has a UI SDK flavour`);
+  }
+}
+if (flavour.pending.length > 0) errors.push(`ui-sdk: ${flavour.pending.length} primitive(s) pending: ${flavour.pending.join(", ")}`);
+if (flavour.blocked.length > 0) errors.push(`ui-sdk: ${flavour.blocked.length} primitive(s) blocked: ${flavour.blocked.map((e) => e.item.name).join(", ")}`);
+if (flavourItems.size !== baseUiNames.length) {
+  errors.push(`ui-sdk: ${flavourItems.size} flavour item(s) published for ${baseUiNames.length} base primitive(s)`);
 }
 for (const name of flavourItems.keys()) {
   if (!uiNames.has(name) || SHARED_ITEMS.has(name)) {
