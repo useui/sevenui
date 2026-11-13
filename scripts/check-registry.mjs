@@ -277,6 +277,64 @@ for (const item of flavour.registry.items) {
   checkDepRanges(item, where);
 }
 
+// ---- the UI SDK version is exact everywhere ----
+// UI SDK is a beta. A range operator on a prerelease (`^0.1.0-beta.1`) admits
+// every later 0.1.0 beta and every 0.1.x release, whose API can change under
+// the flavour, so the version is pinned exactly where the workspace declares
+// it and in every published flavour item. checkDepRanges cannot see this: it
+// compares items with packages/registry/package.json, so a caret there passes.
+const EXACT_VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
+const UI_SDK_PACKAGES = ["@ui-sdk/react", "@ui-sdk/core"];
+const PIN_REASON =
+  "UI SDK is a beta, and a range on a prerelease floats across betas, so @ui-sdk/* is pinned to an exact version (no ^, ~, >=, x or *)";
+const uiSdkPins = new Map();
+for (const file of ["package.json", "packages/registry/package.json", "apps/web/package.json"]) {
+  const pkg = loadJson(file);
+  for (const field of ["dependencies", "devDependencies", "peerDependencies", "optionalDependencies"]) {
+    for (const [name, range] of Object.entries(pkg[field] ?? {})) {
+      if (!name.startsWith("@ui-sdk/")) continue;
+      if (!EXACT_VERSION.test(range)) errors.push(`${file} ${field}: "${name}": "${range}" is not an exact version. ${PIN_REASON}`);
+      uiSdkPins.set(`${file} ${name}`, range);
+    }
+  }
+}
+// The domain: the registry package and the site both declare both packages.
+for (const file of ["packages/registry/package.json", "apps/web/package.json"]) {
+  for (const name of UI_SDK_PACKAGES) {
+    if (!uiSdkPins.has(`${file} ${name}`)) errors.push(`${file} does not declare ${name}; the UI SDK pin check has nothing to check there`);
+  }
+}
+const UI_SDK_VERSION = uiSdkPins.get("packages/registry/package.json @ui-sdk/react");
+for (const [where, range] of uiSdkPins) {
+  if (range !== UI_SDK_VERSION) errors.push(`${where} is "${range}" but packages/registry/package.json pins @ui-sdk/react to "${UI_SDK_VERSION}"; the workspace uses one UI SDK version`);
+}
+let uiSdkItemPins = 0;
+const checkItemUiSdkPins = (items, label) => {
+  for (const item of items) {
+    for (const dep of item.dependencies ?? []) {
+      if (!dep.startsWith("@ui-sdk/")) continue;
+      const at = dep.lastIndexOf("@");
+      const range = at > 0 ? dep.slice(at + 1) : "";
+      if (range !== UI_SDK_VERSION || !EXACT_VERSION.test(range)) {
+        errors.push(`${label} item "${item.name}": dependency "${dep}" must be "${dep.slice(0, at > 0 ? at : undefined)}@${UI_SDK_VERSION}". ${PIN_REASON}`);
+      }
+      uiSdkItemPins++;
+    }
+  }
+};
+checkItemUiSdkPins(flavour.registry.items, "ui-sdk");
+// Read from the files, not from the derived dependencies, so an item that
+// lost its pin entirely is caught too.
+for (const item of flavour.registry.items) {
+  const usesUiSdk = item.files.some((f) => readFileSync(join(UI_ROOT, f.path), "utf8").includes('"@ui-sdk/react/'));
+  if (!usesUiSdk) continue;
+  for (const name of UI_SDK_PACKAGES) {
+    if (!(item.dependencies ?? []).includes(`${name}@${UI_SDK_VERSION}`)) {
+      errors.push(`ui-sdk item "${item.name}": imports @ui-sdk/react but does not depend on ${name}@${UI_SDK_VERSION}`);
+    }
+  }
+}
+
 // ---- ui-sdk flavour example registries (/r/ui-sdk/{demo,component}/*) ----
 // Derived from demos/ and components/ plus the overlays in
 // registry/ui-sdk/examples/: see readFlavourExamples.
@@ -339,6 +397,7 @@ for (const [kind, route] of Object.entries(EXAMPLE_KINDS)) {
     }
     checkDepRanges(item, where);
   }
+  checkItemUiSdkPins(derived.items, label);
 }
 // Every overlay mirrors a registered example (readFlavourExamples reports
 // orphans) and is what that example publishes.
@@ -361,4 +420,5 @@ console.log(
     .map(([kind, r]) => `${r.items.length}/${exampleRegistries[kind].items.length} ${kind}`)
     .join(", ")} published, ${flavourExamples.overlays.length} variant(s), ${flavourExamples.excluded.length} excluded`,
 );
+console.log(`check-registry: @ui-sdk/* pinned exactly to ${UI_SDK_VERSION} in ${uiSdkPins.size} workspace declarations and ${uiSdkItemPins} item dependencies`);
 for (const e of flavourExamples.excluded) console.log(`check-registry: ui-sdk example ${e.key} excluded: ${e.reason}`);

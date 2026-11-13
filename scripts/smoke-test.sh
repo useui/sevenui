@@ -239,8 +239,26 @@ for name in button dialog dropdown-menu select tooltip checkbox badge; do
 done
 # The items declare the exact version; npm saves it with a caret, which for a
 # prerelease still only admits 0.1.0 prereleases and 0.1.x.
-grep -Eq '"@ui-sdk/react": "\^?0\.1\.0-beta\.1"' "$SDK/package.json" || { echo "@ui-sdk/react 0.1.0-beta.1 missing from package.json" >&2; grep ui-sdk "$SDK/package.json" >&2; exit 1; }
-grep -Eq '"@ui-sdk/core": "\^?0\.1\.0-beta\.1"' "$SDK/package.json" || { echo "@ui-sdk/core 0.1.0-beta.1 missing from package.json" >&2; grep ui-sdk "$SDK/package.json" >&2; exit 1; }
+# The pin is exact at the source: the served items name the version with no
+# range operator (npm then writes its own save prefix into the consumer's
+# package.json, so that file cannot show it), and exactly that version is
+# what lands in node_modules. UI SDK is a beta; a range would float across
+# betas. check-registry enforces the same on the workspace and every item.
+UI_SDK_PIN="$(node -p 'require(process.argv[1]).dependencies["@ui-sdk/react"]' "$ROOT/packages/registry/package.json")"
+echo "$UI_SDK_PIN" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$' \
+  || { echo "packages/registry/package.json pins @ui-sdk/react to \"$UI_SDK_PIN\", not an exact version" >&2; exit 1; }
+for pkg in react core; do
+  grep -Fq "\"@ui-sdk/$pkg@$UI_SDK_PIN\"" "$WORK/registry/ui-sdk/dialog.json" \
+    || { echo "ui-sdk/dialog.json does not depend on @ui-sdk/$pkg@$UI_SDK_PIN exactly" >&2; grep -o '"@ui-sdk/[^"]*"' "$WORK/registry/ui-sdk/dialog.json" >&2; exit 1; }
+  grep -Eq "\"@ui-sdk/$pkg\": \"\\^?${UI_SDK_PIN//./\\.}\"" "$SDK/package.json" \
+    || { echo "@ui-sdk/$pkg $UI_SDK_PIN missing from package.json" >&2; grep ui-sdk "$SDK/package.json" >&2; exit 1; }
+  installed="$(node -p 'require(process.argv[1]).version' "$SDK/node_modules/@ui-sdk/$pkg/package.json")"
+  test "$installed" = "$UI_SDK_PIN" || { echo "installed @ui-sdk/$pkg is $installed, not $UI_SDK_PIN" >&2; exit 1; }
+done
+if grep -rhoE '"@ui-sdk/[a-z-]+@[^"0-9][^"]*"' "$WORK/registry/ui-sdk" | grep -q .; then
+  echo "a served ui-sdk item names @ui-sdk/* with a range operator:" >&2
+  grep -rhoE '"@ui-sdk/[a-z-]+@[^"0-9][^"]*"' "$WORK/registry/ui-sdk" | sort -u >&2; exit 1
+fi
 if grep -q '@base-ui/react' "$SDK/package.json"; then echo "ui-sdk install pulled @base-ui/react" >&2; exit 1; fi
 grep -q '@ui-sdk/react/button' "$SDK/src/components/ui/button.tsx" || { echo "dialog did not pull the ui-sdk button" >&2; exit 1; }
 grep -q 'from "@/components/ui/button"' "$SDK/src/components/ui/dialog.tsx" \
