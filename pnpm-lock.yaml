@@ -313,6 +313,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.5
         version: 19.2.5(@types/react@19.2.18)
+      dom-accessibility-api:
+        specifier: 0.5.16
+        version: 0.5.16
       jsdom:
         specifier: ^30.0.1
         version: 30.0.1(@noble/hashes@2.4.0)

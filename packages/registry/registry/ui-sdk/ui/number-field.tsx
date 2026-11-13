@@ -102,6 +102,8 @@ function NumberFieldGroup({
   );
 }
 
+// Base UI names the stepper buttons Decrease and Increase; UI SDK leaves
+// them unnamed. A caller's aria-label still wins.
 const stepperClasses =
   "flex w-[var(--control-h,2.125rem)] shrink-0 items-center justify-center bg-muted/50 text-muted-foreground transition-[color,background-color] duration-150 select-none motion-reduce:transition-none hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4";
 
@@ -113,6 +115,7 @@ function NumberFieldDecrement({
 }) {
   return (
     <NumberInputDecrement
+      aria-label="Decrease"
       className={cn(stepperClasses, "border-r border-input", className)}
       {...props}
     >
@@ -161,6 +164,7 @@ function NumberFieldIncrement({
 }) {
   return (
     <NumberInputIncrement
+      aria-label="Increase"
       className={cn(stepperClasses, "border-l border-input", className)}
       {...props}
     >

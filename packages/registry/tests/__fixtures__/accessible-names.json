@@ -1,0 +1,618 @@
+{
+  "accordion-card": [
+    "button: Can I switch billing periods?",
+    "button: How do I cancel?",
+    "button: What's included in the Pro plan?"
+  ],
+  "accordion-demo": [
+    "button: Product Information",
+    "button: Return Policy",
+    "button: Shipping Details"
+  ],
+  "accordion-multiple": [
+    "button: How long does shipping take?",
+    "button: Is there a warranty?",
+    "button: What is the return policy?"
+  ],
+  "accordion-split": [
+    "button: Can I use my own theme?",
+    "button: Do you offer design files?",
+    "button: Where do I get help?"
+  ],
+  "alert-action": [
+    "button: Dismiss",
+    "button: Undo"
+  ],
+  "alert-demo": [],
+  "alert-dialog-demo": [
+    "button: Delete account"
+  ],
+  "alert-dialog-media": [
+    "button: Delete file"
+  ],
+  "aspect-ratio-demo": [],
+  "attachment-actions": [
+    "button: Download design-assets.zip",
+    "button: Preview design-assets.zip",
+    "button: Remove design-assets.zip"
+  ],
+  "attachment-demo": [],
+  "attachment-image": [],
+  "avatar-demo": [],
+  "avatar-group": [],
+  "badge-demo": [],
+  "badge-icon": [],
+  "badge-link": [
+    "link: All releases",
+    "link: Documentation",
+    "link: v0.7.0"
+  ],
+  "badge-processing": [],
+  "breadcrumb-demo": [
+    "link: Breadcrumb",
+    "link: Components",
+    "link: Home"
+  ],
+  "breadcrumb-separator": [
+    "link: Breadcrumb",
+    "link: Components",
+    "link: Home"
+  ],
+  "bubble-demo": [],
+  "bubble-reactions": [],
+  "bubble-variants": [],
+  "button-demo": [
+    "button: Button"
+  ],
+  "button-disabled": [
+    "button: Default",
+    "button: Destructive",
+    "button: Outline",
+    "button: Secondary"
+  ],
+  "button-group-demo": [
+    "button: Move down",
+    "button: Move up",
+    "button: Next page",
+    "button: Previous page"
+  ],
+  "button-group-separator": [
+    "button: Merge pull request",
+    "button: More merge options"
+  ],
+  "button-loading": [
+    "button: LoadingPlease wait",
+    "button: LoadingSaving draft"
+  ],
+  "button-sizes": [
+    "button: Add",
+    "button: Add (extra small)",
+    "button: Add (large)",
+    "button: Add (small)",
+    "button: Default",
+    "button: Extra small",
+    "button: Large",
+    "button: Small"
+  ],
+  "button-variants": [
+    "button: Default",
+    "button: Destructive",
+    "button: Ghost",
+    "button: Link",
+    "button: Outline",
+    "button: Secondary"
+  ],
+  "calendar-demo": [
+    "button: Friday, July 3rd, 2026",
+    "button: Friday, June 12th, 2026, selected",
+    "button: Friday, June 19th, 2026",
+    "button: Friday, June 26th, 2026",
+    "button: Friday, June 5th, 2026",
+    "button: Go to the Next Month",
+    "button: Go to the Previous Month",
+    "button: Monday, June 15th, 2026",
+    "button: Monday, June 1st, 2026",
+    "button: Monday, June 22nd, 2026",
+    "button: Monday, June 29th, 2026",
+    "button: Monday, June 8th, 2026",
+    "button: Saturday, July 4th, 2026",
+    "button: Saturday, June 13th, 2026",
+    "button: Saturday, June 20th, 2026",
+    "button: Saturday, June 27th, 2026",
+    "button: Saturday, June 6th, 2026",
+    "button: Sunday, June 14th, 2026",
+    "button: Sunday, June 21st, 2026",
+    "button: Sunday, June 28th, 2026",
+    "button: Sunday, June 7th, 2026",
+    "button: Sunday, May 31st, 2026",
+    "button: Thursday, July 2nd, 2026",
+    "button: Thursday, June 11th, 2026",
+    "button: Thursday, June 18th, 2026",
+    "button: Thursday, June 25th, 2026",
+    "button: Thursday, June 4th, 2026",
+    "button: Tuesday, June 16th, 2026",
+    "button: Tuesday, June 23rd, 2026",
+    "button: Tuesday, June 2nd, 2026",
+    "button: Tuesday, June 30th, 2026",
+    "button: Tuesday, June 9th, 2026",
+    "button: Wednesday, July 1st, 2026",
+    "button: Wednesday, June 10th, 2026",
+    "button: Wednesday, June 17th, 2026",
+    "button: Wednesday, June 24th, 2026",
+    "button: Wednesday, June 3rd, 2026"
+  ],
+  "calendar-range": [
+    "button: Friday, July 10th, 2026",
+    "button: Friday, July 17th, 2026",
+    "button: Friday, July 24th, 2026",
+    "button: Friday, July 31st, 2026",
+    "button: Friday, July 3rd, 2026",
+    "button: Friday, June 12th, 2026, selected",
+    "button: Friday, June 19th, 2026",
+    "button: Friday, June 26th, 2026",
+    "button: Friday, June 5th, 2026",
+    "button: Go to the Next Month",
+    "button: Go to the Previous Month",
+    "button: Monday, July 13th, 2026",
+    "button: Monday, July 20th, 2026",
+    "button: Monday, July 27th, 2026",
+    "button: Monday, July 6th, 2026",
+    "button: Monday, June 15th, 2026, selected",
+    "button: Monday, June 1st, 2026",
+    "button: Monday, June 22nd, 2026",
+    "button: Monday, June 29th, 2026",
+    "button: Monday, June 8th, 2026, selected",
+    "button: Saturday, July 11th, 2026",
+    "button: Saturday, July 18th, 2026",
+    "button: Saturday, July 25th, 2026",
+    "button: Saturday, July 4th, 2026",
+    "button: Saturday, June 13th, 2026, selected",
+    "button: Saturday, June 20th, 2026",
+    "button: Saturday, June 27th, 2026",
+    "button: Saturday, June 6th, 2026",
+    "button: Sunday, July 12th, 2026",
+    "button: Sunday, July 19th, 2026",
+    "button: Sunday, July 26th, 2026",
+    "button: Sunday, July 5th, 2026",
+    "button: Sunday, June 14th, 2026, selected",
+    "button: Sunday, June 21st, 2026",
+    "button: Sunday, June 28th, 2026",
+    "button: Sunday, June 7th, 2026",
+    "button: Thursday, July 16th, 2026",
+    "button: Thursday, July 23rd, 2026",
+    "button: Thursday, July 2nd, 2026",
+    "button: Thursday, July 30th, 2026",
+    "button: Thursday, July 9th, 2026",
+    "button: Thursday, June 11th, 2026, selected",
+    "button: Thursday, June 18th, 2026",
+    "button: Thursday, June 25th, 2026",
+    "button: Thursday, June 4th, 2026",
+    "button: Tuesday, July 14th, 2026",
+    "button: Tuesday, July 21st, 2026",
+    "button: Tuesday, July 28th, 2026",
+    "button: Tuesday, July 7th, 2026",
+    "button: Tuesday, June 16th, 2026, selected",
+    "button: Tuesday, June 23rd, 2026",
+    "button: Tuesday, June 2nd, 2026",
+    "button: Tuesday, June 30th, 2026",
+    "button: Tuesday, June 9th, 2026, selected",
+    "button: Wednesday, July 15th, 2026",
+    "button: Wednesday, July 1st, 2026",
+    "button: Wednesday, July 22nd, 2026",
+    "button: Wednesday, July 29th, 2026",
+    "button: Wednesday, July 8th, 2026",
+    "button: Wednesday, June 10th, 2026, selected",
+    "button: Wednesday, June 17th, 2026, selected",
+    "button: Wednesday, June 24th, 2026",
+    "button: Wednesday, June 3rd, 2026"
+  ],
+  "card-demo": [
+    "button: Cancel",
+    "button: Save"
+  ],
+  "card-image": [
+    "button: Read article"
+  ],
+  "card-login": [
+    "button: Login",
+    "button: Login with Google",
+    "button: Sign up",
+    "link: Forgot your password?",
+    "textbox: Email"
+  ],
+  "card-notifications": [
+    "switch: Comments",
+    "switch: Mentions",
+    "switch: Weekly digest"
+  ],
+  "card-project": [
+    "button: Project options"
+  ],
+  "card-stats": [],
+  "carousel-demo": [
+    "button: Next slide",
+    "button: Previous slide"
+  ],
+  "chart-demo": [],
+  "chart-line": [],
+  "checkbox-demo": [
+    "checkbox: Accept terms",
+    "checkbox: Disabled checkbox"
+  ],
+  "checkbox-disabled": [
+    "checkbox: Disabled checked",
+    "checkbox: Disabled unchecked"
+  ],
+  "checkbox-indeterminate": [
+    "checkbox: All teams",
+    "checkbox: Design",
+    "checkbox: Engineering",
+    "checkbox: Product"
+  ],
+  "collapsible-demo": [
+    "button: Toggle"
+  ],
+  "collapsible-file-tree": [
+    "button: components",
+    "button: lib",
+    "button: src"
+  ],
+  "combobox-demo": [
+    "button: ",
+    "combobox: "
+  ],
+  "combobox-multiple": [
+    "button: ",
+    "combobox: "
+  ],
+  "command-demo": [
+    "combobox: ",
+    "listbox: ",
+    "option: Billing⌘B",
+    "option: Calculator",
+    "option: Calendar",
+    "option: Log out⇧⌘Q",
+    "option: New Document",
+    "option: Profile⇧⌘P",
+    "option: Recent Files",
+    "option: Search Emoji",
+    "option: Settings⌘S"
+  ],
+  "command-dialog": [
+    "button: Open command palette"
+  ],
+  "context-menu-demo": [],
+  "dialog-demo": [
+    "button: Edit profile"
+  ],
+  "direction-demo": [
+    "textbox: ",
+    "textbox: "
+  ],
+  "drawer-demo": [
+    "button: Open drawer"
+  ],
+  "drawer-snap-points": [
+    "button: Open with snap points"
+  ],
+  "dropdown-menu-demo": [
+    "button: Open menu"
+  ],
+  "empty-avatar": [
+    "button: Leave a note"
+  ],
+  "empty-demo": [
+    "button: Create project",
+    "button: Import"
+  ],
+  "field-demo": [
+    "textbox: Email"
+  ],
+  "field-orientation": [
+    "switch: Marketing emails",
+    "textbox: Display name"
+  ],
+  "field-rhf": [
+    "button: Submit",
+    "textbox: Username"
+  ],
+  "field-validation": [
+    "textbox: Username"
+  ],
+  "form-demo": [
+    "button: Submit",
+    "textbox: Website"
+  ],
+  "hover-card-demo": [
+    "link: @sevenuidev"
+  ],
+  "input-demo": [
+    "textbox: "
+  ],
+  "input-disabled": [
+    "textbox: Username"
+  ],
+  "input-file": [],
+  "input-group-button": [
+    "button: Copy command",
+    "button: Verify",
+    "textbox: "
+  ],
+  "input-group-demo": [
+    "textbox: ",
+    "textbox: "
+  ],
+  "input-group-textarea": [
+    "button: Attach file",
+    "button: Send message",
+    "textbox: "
+  ],
+  "input-invalid": [
+    "textbox: Workspace URL"
+  ],
+  "input-otp-demo": [
+    "textbox: ",
+    "textbox: Digit 2 of 6",
+    "textbox: Digit 3 of 6",
+    "textbox: Digit 4 of 6",
+    "textbox: Digit 5 of 6",
+    "textbox: Digit 6 of 6"
+  ],
+  "input-otp-mask": [],
+  "input-required": [
+    "textbox: Email *"
+  ],
+  "item-demo": [
+    "button: View"
+  ],
+  "item-group": [
+    "link: Emma Clark",
+    "link: Jordan Lee",
+    "link: Sam Rivera"
+  ],
+  "item-variants": [],
+  "kbd-button": [
+    "button: Accept ⏎",
+    "button: Cancel Esc"
+  ],
+  "kbd-demo": [],
+  "kbd-input": [
+    "textbox: "
+  ],
+  "kbd-tooltip": [
+    "button: Save document"
+  ],
+  "label-demo": [
+    "textbox: Email"
+  ],
+  "layer-card-demo": [
+    "button: Open subrequests"
+  ],
+  "layer-card-dense": [],
+  "layer-card-destructive": [
+    "button: Delete",
+    "button: Transfer"
+  ],
+  "layer-card-horizontal": [],
+  "layer-card-link": [
+    "link: Add your first primitiveCopy the source you own.",
+    "link: Customize the themePick colors and radius.",
+    "link: Install the CLISet up shadcn in your project."
+  ],
+  "layer-card-panels": [],
+  "layer-card-radius": [],
+  "layer-card-sizes": [],
+  "layer-card-stacked": [],
+  "layer-card-surface": [],
+  "layer-card-variants": [],
+  "marker-demo": [
+    "link: View history"
+  ],
+  "marker-variants": [],
+  "menubar-demo": [
+    "menuitem: Edit",
+    "menuitem: File",
+    "menuitem: View"
+  ],
+  "message-demo": [],
+  "message-scroller-demo": [
+    "button: Simulate reply"
+  ],
+  "meter-demo": [],
+  "meter-format": [],
+  "meter-resources": [],
+  "native-select-demo": [
+    "combobox: Rows per page",
+    "combobox: Timezone"
+  ],
+  "native-select-groups": [
+    "combobox: Component"
+  ],
+  "navigation-menu-demo": [
+    "button: Components",
+    "button: Getting started",
+    "link: Docs"
+  ],
+  "number-field-currency": [
+    "button: Decrease",
+    "button: Increase",
+    "textbox: "
+  ],
+  "number-field-demo": [
+    "button: Decrease",
+    "button: Increase",
+    "textbox: "
+  ],
+  "number-field-quantity": [
+    "button: Decrease",
+    "button: Increase",
+    "textbox: Quantity"
+  ],
+  "pagination-demo": [
+    "link: 1",
+    "link: 2",
+    "link: 3",
+    "link: Go to next page",
+    "link: Go to previous page"
+  ],
+  "pagination-simple": [
+    "link: Go to next page",
+    "link: Go to previous page"
+  ],
+  "popover-demo": [
+    "button: Open popover"
+  ],
+  "progress-demo": [],
+  "progress-label": [],
+  "questionnaire-demo": [
+    "button: Next",
+    "radio: Designer",
+    "radio: Developer",
+    "radio: ProductPM, founder, or anything in between"
+  ],
+  "radio-group-card": [
+    "radio: ProFor growing teams $12",
+    "radio: StarterFor side projects $0",
+    "radio: TeamFor organizations $32"
+  ],
+  "radio-group-demo": [
+    "radio: Comfortable",
+    "radio: Compact",
+    "radio: Default"
+  ],
+  "radio-group-disabled": [
+    "radio: Express shipping",
+    "radio: Overnight (unavailable)",
+    "radio: Standard shipping"
+  ],
+  "radio-group-invalid": [
+    "radio: Monthly billing",
+    "radio: Yearly billing"
+  ],
+  "resizable-demo": [],
+  "scroll-area-demo": [],
+  "scroll-area-horizontal": [],
+  "select-demo": [
+    "combobox: "
+  ],
+  "select-groups": [
+    "combobox: "
+  ],
+  "separator-demo": [],
+  "sheet-demo": [
+    "button: Open sheet"
+  ],
+  "sheet-side": [
+    "button: bottom",
+    "button: left",
+    "button: right",
+    "button: top"
+  ],
+  "sidebar-demo": [
+    "button: Toggle Sidebar",
+    "link: Acme IncEnterprise",
+    "link: Calendar",
+    "link: Home",
+    "link: Inbox",
+    "link: Search",
+    "link: Settings",
+    "link: Settings"
+  ],
+  "skeleton-demo": [],
+  "slider-demo": [
+    "slider: ",
+    "slider: ",
+    "slider: "
+  ],
+  "slider-disabled": [
+    "slider: ",
+    "slider: ",
+    "slider: "
+  ],
+  "slider-multiple": [
+    "slider: ",
+    "slider: ",
+    "slider: "
+  ],
+  "slider-vertical": [
+    "slider: ",
+    "slider: ",
+    "slider: "
+  ],
+  "spinner-demo": [
+    "button: LoadingLoading…"
+  ],
+  "switch-demo": [
+    "switch: Airplane mode",
+    "switch: Disabled switch",
+    "switch: Small switch"
+  ],
+  "table-demo": [],
+  "tabs-demo": [
+    "button: Save changes",
+    "tab: Account",
+    "tab: Password",
+    "textbox: Name",
+    "textbox: Username"
+  ],
+  "tabs-indicator": [
+    "tab: Overview",
+    "tab: Reports",
+    "tab: Settings"
+  ],
+  "tabs-line": [
+    "tab: Analytics",
+    "tab: Overview",
+    "tab: Reports"
+  ],
+  "textarea-demo": [
+    "textbox: "
+  ],
+  "textarea-disabled": [
+    "textbox: Release notes"
+  ],
+  "textarea-invalid": [
+    "textbox: Bio"
+  ],
+  "textarea-required": [
+    "textbox: Feedback *"
+  ],
+  "toast-demo": [
+    "button: Error",
+    "button: Promise",
+    "button: Show toast",
+    "button: Success"
+  ],
+  "toggle-demo": [
+    "button: Toggle bold"
+  ],
+  "toggle-group-demo": [
+    "button: Align center",
+    "button: Align left",
+    "button: Align right"
+  ],
+  "toggle-group-multiple": [
+    "button: Toggle bold",
+    "button: Toggle italic",
+    "button: Toggle underline"
+  ],
+  "toggle-variants": [
+    "button: Toggle italic",
+    "button: Toggle italic",
+    "button: Toggle italic (large)",
+    "button: Toggle italic (large)",
+    "button: Toggle italic (small)",
+    "button: Toggle italic (small)"
+  ],
+  "toolbar-demo": [
+    "button: Align left",
+    "button: Align right",
+    "button: Toggle bold",
+    "button: Toggle italic",
+    "button: Toggle underline",
+    "link: Edited 2 hours ago"
+  ],
+  "tooltip-demo": [
+    "button: Add to library"
+  ]
+}
