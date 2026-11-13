@@ -573,6 +573,43 @@ async function browserChecks() {
         document.head.append(style);
       },
     },
+    plainActiveTab: {
+      // The default-variant active tab is a plain pill: an inset shadow draws a bar along its bottom edge.
+      name: "the planner's active tab carries no inset bar and no visible ::after (both flavours, dark)",
+      run: async (sabotage) => {
+        const problems = [];
+        for (const flavour of ["base-ui", "ui-sdk"]) {
+          const { page, close } = await open({ width: 1280, flavour, sabotage });
+          await page.evaluate(() => {
+            localStorage.setItem("theme", "dark");
+            document.documentElement.setAttribute("data-theme", "dark");
+          });
+          if (flavour === "ui-sdk") {
+            await page.waitForFunction(
+              () => document.querySelector("[data-home-surface] [data-preview-flavour]")?.getAttribute("data-preview-flavour") === "ui-sdk",
+              null,
+              { timeout: 10000 },
+            );
+          }
+          await page.waitForTimeout(400);
+          const tab = await page.evaluate(() => {
+            const el = document.querySelector('[data-home-surface] [role="tablist"][data-variant="default"] [role="tab"][data-active]');
+            if (!el) return null;
+            return { shadow: getComputedStyle(el).boxShadow, after: getComputedStyle(el, "::after").opacity };
+          });
+          await close();
+          if (!tab) problems.push(`${flavour}: no active default-variant tab`);
+          else if (/inset/.test(tab.shadow)) problems.push(`${flavour}: box-shadow ${tab.shadow}`);
+          else if (tab.after !== "0") problems.push(`${flavour}: ::after opacity ${tab.after}`);
+        }
+        return problems.length ? problems.join(" | ") : null;
+      },
+      sabotage: () => {
+        const style = document.createElement("style");
+        style.textContent = '[role="tab"][data-active]{box-shadow:inset 0 -2px 0 currentColor!important}';
+        document.head.append(style);
+      },
+    },
     noScript: {
       name: "without JavaScript the Base UI surface shows and the flavour switches are hidden",
       run: async (_sabotage, javaScriptEnabled = false) => {
