@@ -36,7 +36,7 @@ export async function InstallCommand({ item, plain = false }: { item: string; pl
         language="bash"
         headerRight={
           <>
-            {flavoured && <FlavourSwitch className="me-1" />}
+            {flavoured && <FlavourSwitch className="me-1" mirror />}
             <PackageManagerMenu />
           </>
         }

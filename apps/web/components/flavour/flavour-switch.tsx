@@ -4,12 +4,20 @@ import * as React from "react";
 import { FLAVOUR_LABELS, FLAVOURS, type Flavour, setFlavour } from "../../lib/flavour";
 import { useFlavour } from "./use-flavour";
 
+const OPTION =
+  "flavour-switch-option cursor-pointer whitespace-nowrap rounded-md px-2 py-1 text-foreground/60 outline-none transition-[color,background-color,box-shadow] hover:text-foreground focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-1 focus-visible:outline-ring motion-reduce:transition-none";
+
 /**
  * The site-wide primitive flavour control: a two-option segmented switch in the LayerCard tab vocabulary.
  * The selected look comes from `<html data-flavour>` in CSS (`.flavour-switch` in globals.css), so it is
  * right at first paint; `aria-checked` follows once React knows the stored choice.
+ *
+ * The page has one real control, in the sidebar (also inside the menu drawer on narrow screens). Copies
+ * next to an example or an install command are `mirror`s: a pointer shortcut to the same setting, left out
+ * of the tab order and the accessibility tree, so a gallery page does not offer a keyboard or screen-reader
+ * user a dozen identical radio groups.
  */
-export function FlavourSwitch({ className = "", id }: { className?: string; id?: string }) {
+export function FlavourSwitch({ className = "", id, mirror = false }: { className?: string; id?: string; mirror?: boolean }) {
   const flavour = useFlavour();
   const refs = React.useRef<Partial<Record<Flavour, HTMLButtonElement | null>>>({});
 
@@ -30,19 +38,36 @@ export function FlavourSwitch({ className = "", id }: { className?: string; id?:
     choose(FLAVOURS[next], true);
   }
 
+  const group = `flavour-switch inline-flex shrink-0 items-center gap-0.5 rounded-lg p-0.5 font-medium text-xs ${className}`;
+
+  if (mirror) {
+    return (
+      <div aria-hidden="true" className={group} id={id}>
+        {FLAVOURS.map((option) => (
+          <button
+            className={OPTION}
+            data-option={option}
+            key={option}
+            onClick={() => choose(option)}
+            // A mirror takes no focus, so a click never strands focus inside an aria-hidden control.
+            onMouseDown={(event) => event.preventDefault()}
+            tabIndex={-1}
+            type="button"
+          >
+            {FLAVOUR_LABELS[option]}
+          </button>
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div
-      aria-label="Primitive flavour"
-      className={`flavour-switch inline-flex shrink-0 items-center gap-0.5 rounded-lg p-0.5 font-medium text-xs ${className}`}
-      id={id}
-      onKeyDown={onKeyDown}
-      role="radiogroup"
-    >
+    <div aria-label="Primitive flavour" className={group} id={id} onKeyDown={onKeyDown} role="radiogroup">
       {FLAVOURS.map((option) => (
         // biome-ignore lint/a11y/useSemanticElements: a segmented switch drawn like the tabs; roving focus is handled above
         <button
           aria-checked={flavour === option}
-          className="flavour-switch-option cursor-pointer whitespace-nowrap rounded-md px-2 py-1 text-muted-foreground outline-none transition-[color,background-color,box-shadow] hover:text-foreground focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-1 focus-visible:outline-ring motion-reduce:transition-none"
+          className={OPTION}
           data-option={option}
           key={option}
           onClick={() => choose(option)}

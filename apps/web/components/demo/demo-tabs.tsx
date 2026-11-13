@@ -115,7 +115,7 @@ export function DemoTabs({
         <LayerCard className={`${heading === undefined ? "" : "mt-3"} ${detached ? LAYER_FRAME_LG : ""}`}>
           <LayerCardHeader className={LAYER_TOOLBAR}>
             {tablist}
-            {flavoured && <FlavourSwitch className="hidden @xl/toolbar:inline-flex" />}
+            {flavoured && <FlavourSwitch className="hidden @xl/toolbar:inline-flex" mirror />}
             <div className="ml-auto flex min-w-0 items-center gap-1">{actions}</div>
           </LayerCardHeader>
           <LayerCardPanel className={LAYER_WINDOW}>{panels}</LayerCardPanel>
