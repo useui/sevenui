@@ -3,7 +3,7 @@ import {
   type ButtonActionDetails,
   Button as ButtonPrimitive,
 } from "@ui-sdk/react/button";
-import { renderElement } from "@ui-sdk/react/primitive";
+import { type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
@@ -46,15 +46,6 @@ const buttonVariants = cva(
 
 type ButtonPrimitiveProps = React.ComponentProps<typeof ButtonPrimitive>;
 
-function withSlot(slot: string, render: ButtonPrimitiveProps["render"]): ButtonPrimitiveProps["render"] {
-  if (render === undefined) return <button data-slot={slot} />;
-  if (React.isValidElement<Record<string, unknown>>(render)) {
-    return React.cloneElement(render, { "data-slot": render.props["data-slot"] ?? slot });
-  }
-  return (partProps, state) =>
-    renderElement("button", { ...partProps, "data-slot": slot }, render, state);
-}
-
 // Typed as Base UI types them, so callers written against the base flavour
 // compile unchanged: a <button> event, and UI SDK's press details optional.
 type ButtonProps = Omit<ButtonPrimitiveProps, "className" | "onClick"> &
@@ -80,9 +71,42 @@ function Button({
   "data-slot": slot = "button",
   ...props
 }: ButtonProps) {
+  const classes = cn(buttonVariants({ variant, size, className }));
+  // Rendered by a Server Component (React's server build has no useState),
+  // a custom slot or a render element cannot reach UI SDK's client Button:
+  // a function cannot cross into the client, and an element arrives there
+  // lazy, which UI SDK cannot render. The markup is built here instead; no
+  // handler can come from the server, so nothing interactive is lost.
+  if (
+    (slot !== "button" || render !== undefined) &&
+    typeof (React as { useState?: unknown }).useState !== "function"
+  ) {
+    const {
+      disabled,
+      focusableWhenDisabled,
+      pendingAnnouncement: _pendingAnnouncement,
+      type,
+      ...rest
+    } = props;
+    const off = disabled === true;
+    return renderElement(
+      "button",
+      {
+        type: render === undefined ? (type ?? "button") : type,
+        ...rest,
+        "data-slot": slot,
+        className: classes,
+        disabled: off && !focusableWhenDisabled ? true : undefined,
+        "aria-disabled": off && focusableWhenDisabled ? true : undefined,
+        "data-disabled": off ? "" : undefined,
+      },
+      render as RenderProp<{ disabled: boolean; pending: boolean }> | undefined,
+      { disabled: off, pending: false },
+    );
+  }
   return (
     <ButtonPrimitive
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={classes}
       // UI SDK keeps a button pending while a returned Promise runs; Base UI
       // ignores it, so the result is dropped.
       onClick={
@@ -91,10 +115,13 @@ function Button({
           void onClick(event, details)) as unknown as ButtonPrimitiveProps["onClick"])
       }
       // UI SDK ignores a data-slot prop on a part; one on the rendered
-      // element wins, so a caller's slot (carousel-next) goes there. It goes
-      // on an element, not a render function, so a Server Component can
-      // still render the button (a function cannot cross into the client).
-      render={slot === "button" ? render : withSlot(slot, render)}
+      // element wins, so a caller's slot (carousel-next) goes there.
+      render={
+        slot === "button"
+          ? render
+          : (partProps, state) =>
+              renderElement("button", { ...partProps, "data-slot": slot }, render, state)
+      }
       {...props}
     />
   );
