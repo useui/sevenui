@@ -110,7 +110,7 @@ The flavour example registries are guarded too: `check-registry` validates them 
 
 ## 6. Byte parity
 
-`apps/web/public/r` was built at `e7024e6` (before any flavour work) and at the tip, and compared with `diff -r`. The only difference is the new `r/ui-sdk/` directory: 66 items plus `registry.json`, and `r/ui-sdk/demo/` (148 + `registry.json`) and `r/ui-sdk/component/` (915 + `registry.json`). The other 1,135 files under `r/`, `r/demo/` and `r/component/` are byte-identical.
+`apps/web/public/r` was built at `e7024e6` (before any flavour work) and at the tip, and compared with `diff -r`. The only difference is the new `r/ui-sdk/` directory: 66 items, the shared `ui-sdk-setup` item and `registry.json`, and `r/ui-sdk/demo/` (148 + `registry.json`) and `r/ui-sdk/component/` (915 + `registry.json`). The other 1,135 files under `r/`, `r/demo/` and `r/component/` are byte-identical.
 
 ## 7. Pilots
 
@@ -132,8 +132,8 @@ Things found on the way, each with its fix, are in the guide:
 
 | Run | Result | What changed |
 |---|---|---|
-| `base` project | 1,055 tests, 71 files (2026-11-13, at the end of the review fixes) | The original tests pass unchanged; the additions are export-freeze checks for every ported file and tests added with the ports. |
-| `ui-sdk` project | 907 tests, 66 files (every test file that imports a primitive) | The input-otp paste bug of UI SDK 0.1.0-beta.1 is pinned by its exact strict-mode error and proved without strict mode (guide §8). |
+| `base` project | 1,214 tests, 72 files (2026-11-13, verified at the branch tip after both fix rounds) | The original tests pass unchanged; the additions are export-freeze checks for every ported file and tests added with the ports. |
+| `ui-sdk` project | 1,066 tests, 67 files (every test file that imports a primitive) | The input-otp paste bug of UI SDK 0.1.0-beta.1 is pinned by its exact strict-mode error and proved without strict mode (guide §8). |
 
 Flavour-specific expectations live in `tests/helpers/flavour.ts`. Each states why it exists.
 
