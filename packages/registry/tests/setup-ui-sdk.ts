@@ -1,10 +1,17 @@
 import { configure } from "@testing-library/react";
 import "./setup";
+import { installDevChecks } from "./helpers/ui-sdk-dev-checks";
 
 declare global {
   var __UI_SDK_STRICT__: boolean | undefined;
 }
 globalThis.__UI_SDK_STRICT__ = true;
+
+// UI SDK's accessible-name checks run on a timer (300ms for a select,
+// combobox or command input). Each one still pending when a test ends runs
+// then, before cleanup, so an unnamed control fails on every machine rather
+// than only on one slow enough to reach the timer (see the helper).
+installDevChecks();
 
 // UI SDK announces toasts and field errors through visually hidden live
 // regions ([data-ui-sdk-announcer]) that it fills about 100ms later and never
