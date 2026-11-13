@@ -115,7 +115,13 @@ export function DemoTabs({
         <LayerCard className={`${heading === undefined ? "" : "mt-3"} ${detached ? LAYER_FRAME_LG : ""}`}>
           <LayerCardHeader className={LAYER_TOOLBAR}>
             {tablist}
-            {flavoured && <FlavourSwitch className="hidden @xl/toolbar:inline-flex" mirror />}
+            {/* The wrapper hides it: on the switch itself `hidden` lost to the switch's own `inline-flex`, so it
+                stayed on narrow toolbars and squeezed the install command to nothing. */}
+            {flavoured && (
+              <div className="hidden shrink-0 @xl/toolbar:flex">
+                <FlavourSwitch mirror />
+              </div>
+            )}
             <div className="ml-auto flex min-w-0 items-center gap-1">{actions}</div>
           </LayerCardHeader>
           <LayerCardPanel className={LAYER_WINDOW}>{panels}</LayerCardPanel>

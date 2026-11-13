@@ -2,10 +2,11 @@
 
 import * as React from "react";
 import { DEFAULT_FLAVOUR, FLAVOUR_LABELS, FLAVOURS, type Flavour, setFlavour } from "../../lib/flavour";
+import { TOOLBAR_SEGMENT_RADIUS } from "../toolbar-classes";
 import { useFlavour } from "./use-flavour";
 
 const OPTION =
-  "flavour-switch-option cursor-pointer whitespace-nowrap rounded-md px-2 py-1 text-foreground/60 outline-none transition-[color,background-color,box-shadow] hover:text-foreground focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-1 focus-visible:outline-ring motion-reduce:transition-none";
+  `flavour-switch-option inline-flex cursor-pointer items-center whitespace-nowrap ${TOOLBAR_SEGMENT_RADIUS} px-2 py-1 text-foreground/60 outline-none transition-[color,background-color,box-shadow] hover:text-foreground focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-1 focus-visible:outline-ring motion-reduce:transition-none`;
 
 /**
  * The site-wide primitive flavour control: a two-option segmented switch in the LayerCard tab vocabulary.
@@ -38,7 +39,7 @@ export function FlavourSwitch({ className = "", id, mirror = false }: { classNam
     choose(FLAVOURS[next], true);
   }
 
-  const group = `flavour-switch inline-flex shrink-0 items-center gap-0.5 rounded-lg p-0.5 font-medium text-xs ${className}`;
+  const group = `flavour-switch inline-flex min-h-(--toolbar-h) shrink-0 items-stretch gap-0.5 rounded-[var(--toolbar-radius,var(--radius-lg))] p-0.5 font-medium text-xs ${className}`;
 
   if (mirror) {
     return (

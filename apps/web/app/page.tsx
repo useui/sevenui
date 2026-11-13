@@ -89,7 +89,7 @@ export default async function Home() {
         <div className={`${ROW} pt-14 sm:pt-16`}>
           <figure aria-labelledby="surface-caption" className="m-0" data-nosnippet data-home-surface>
             <LayerCard className={LAYER_FRAME_LG}>
-              <LayerCardHeader className={`${LAYER_TOOLBAR} justify-between px-3`}>
+              <LayerCardHeader className={`${LAYER_TOOLBAR} justify-between ps-3`}>
                 <span aria-hidden="true" className="flex min-w-0 items-center gap-2 text-[0.8125rem] font-[510]">
                   <span className="grid size-5 shrink-0 place-items-center rounded-[6px] bg-foreground text-[0.6875rem] font-semibold text-background">
                     A
