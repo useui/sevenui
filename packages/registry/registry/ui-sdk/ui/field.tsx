@@ -271,7 +271,9 @@ function Field({
 
   const external = name ? toMessages(form?.errors?.[name]) : null;
   const message = external ?? (shown ? error : null);
-  const forcedInvalid = invalid ?? (message ? true : undefined);
+  // Base UI's `invalid={false}` is inert (`invalid === true || failed`);
+  // UI SDK's would hide every error, so only `true` or a message is passed.
+  const forcedInvalid = invalid === true || message ? true : undefined;
 
   return (
     <FieldMessageContext.Provider value={message}>

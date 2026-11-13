@@ -98,6 +98,22 @@ describe("Form", () => {
     expect(document.activeElement).toBe(email);
   });
 
+  it("shows a native error on a field with invalid={false}", async () => {
+    const user = userEvent.setup();
+    render(
+      <Form onFormSubmit={() => {}}>
+        <Field name="email" invalid={false}>
+          <FieldLabel>Email</FieldLabel>
+          <Input required />
+          <FieldError />
+        </Field>
+        <button type="submit">Submit</button>
+      </Form>,
+    );
+    await user.click(screen.getByRole("button", { name: "Submit" }));
+    expect(screen.getByLabelText("Email").getAttribute("aria-invalid")).toBe("true");
+  });
+
   it("flows external errors into a nested bare FieldError", () => {
     render(
       <Form errors={{ email: "Email is already taken." }}>
