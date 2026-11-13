@@ -34,12 +34,13 @@ packages/registry/
   registry/ui-sdk/hooks/          flavour hooks (use-mobile.ts, mirrored)
   registry/ui-sdk/examples/{demos,components}/<primitive>/<file>.tsx
                                   example VARIANTS (overlays), §11
+  ui-sdk-variants.lock.json       the original each variant was reviewed against (§11)
   registry.ui-sdk.json            GENERATED at build time, git-ignored, never edit
   .generated/ui-sdk/{demos,components}/
                                   GENERATED flavour example tree + its two
                                   registries, git-ignored, never edit (§11)
 scripts/ui-sdk-flavour.mjs        derives the flavour registries and the example
-                                  tree; build | examples | sync | status
+                                  tree; build | examples | sync | review | status
 ```
 
 The generator reads each primitive's state from the files themselves:
@@ -701,6 +702,8 @@ Every demo and gallery example is published in the flavour too, as `/r/ui-sdk/de
 | `components/resizable/resizable-10`, `-14` | `usePanelRef()` → `React.useRef<ResizablePanelHandle \| null>(null)` |
 | `components/resizable/resizable-13` | `Layout` and `ResizablePanelGroupHandle` from the flavour resizable; `useGroupRef()` → `React.useRef<ResizablePanelGroupHandle \| null>(null)` |
 | `demos/tabs/tabs-indicator`, `components/tabs/tabs-05` | `TabsIndicator` from `@ui-sdk/react/tabs` instead of Base UI's `Tabs.Indicator`; their published items depend on `@ui-sdk/react` |
+
+**Keeping a variant current.** A variant is a copy, so an edit to its original does not reach it by itself. `packages/registry/ui-sdk-variants.lock.json` records the SHA-256 of the original each variant was last reviewed against. When an original changes, `build`, `pnpm check:registry`, `pnpm check:ui-sdk-compat` and `status --strict` fail and name the variant (the `examples` refresh behind `pnpm dev` and `pnpm typecheck` only warns, so a running dev server keeps working). Carry the change into the variant, then record the review with `node scripts/ui-sdk-flavour.mjs review <demos|components>/<primitive>/<file>.tsx`. A new variant needs the same command; a lock entry without a variant fails too. Paths are named one by one on purpose: there is no "accept all".
 
 **What is derived** (`node scripts/ui-sdk-flavour.mjs examples`, also run by `build`, `build:registry`, root `pnpm dev` and `pnpm typecheck`; root alias `pnpm ui-sdk:examples`):
 - `packages/registry/.generated/ui-sdk/{demos,components}/<primitive>/<file>.tsx`: every example's flavour source, imports retargeted. The docs site's live previews import from here.

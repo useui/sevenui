@@ -38,10 +38,14 @@
 //                                             and the generated example tree
 //   node scripts/ui-sdk-flavour.mjs examples  write the generated example tree only
 //   node scripts/ui-sdk-flavour.mjs sync      re-seed pending files and mirrors from base
+//   node scripts/ui-sdk-flavour.mjs review <kind>/<primitive>/<file>.tsx ...
+//                                             record that each named variant was
+//                                             reviewed against its original as it is now
 //   node scripts/ui-sdk-flavour.mjs status    list ported, blocked and pending primitives
 //                                             and the example totals (--strict exits 1
 //                                             while any primitive remains)
 
+import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -59,6 +63,14 @@ export const SHARED_ITEMS = new Set(["theme", "sevenui-tokens", "animations"]);
 export const EXAMPLE_KINDS = { demos: "demo", components: "component" };
 export const OVERLAY_ROOT = join(REGISTRY_ROOT, "registry/ui-sdk/examples");
 export const GENERATED_ROOT = join(REGISTRY_ROOT, ".generated/ui-sdk");
+// A variant is a copy of its original with only what the flavour needs
+// changed, so an edit to the original does not reach it by itself. This lock
+// records, per variant, the hash of the original it was last reviewed
+// against; when the original changes, every check fails until the change is
+// carried into the variant and `review` records the new hash. It lives
+// outside the overlay tree, so nothing about it is published.
+export const VARIANT_LOCK = join(REGISTRY_ROOT, "ui-sdk-variants.lock.json");
+export const hashSource = (source) => `sha256-${createHash("sha256").update(source).digest("hex")}`;
 // Examples that cannot exist in the flavour, as "<route>/<name>": reason.
 // They are left out of /r/ui-sdk/{demo,component}/ and the generated tree,
 // and check-registry prints each one. Every example has a flavour today.
@@ -348,6 +360,9 @@ export function readFlavourExamples(flavour = readFlavour()) {
     overlays.set(rel, read(abs));
   }
   const registered = new Set();
+  const lock = existsSync(VARIANT_LOCK) ? loadJson(VARIANT_LOCK).variants ?? {} : null;
+  if (lock === null) problems.push(`${posix(relative(REPO, VARIANT_LOCK))} is missing; it records the original each variant was reviewed against`);
+  const stale = [];
 
   for (const [kind, route] of Object.entries(EXAMPLE_KINDS)) {
     const kindRoot = join(REGISTRY_ROOT, kind);
@@ -372,6 +387,15 @@ export function readFlavourExamples(flavour = readFlavour()) {
           }
           if (retarget(original) === source) {
             problems.push(`overlay ${rel}: is the original with only its imports retargeted, which the generator does by itself; delete it`);
+          }
+          const reviewed = lock?.[rel]?.original;
+          if (lock && reviewed === undefined) {
+            problems.push(`overlay ${rel}: has no entry in ui-sdk-variants.lock.json; once the variant is right, run "node scripts/ui-sdk-flavour.mjs review ${rel}"`);
+          } else if (lock && reviewed !== hashSource(original)) {
+            stale.push(rel);
+            problems.push(
+              `overlay ${rel}: its original, packages/registry/${rel}, changed since the variant was reviewed, so /r/ui-sdk/${route}/${item.name}.json and the UI SDK preview would publish the old example. Carry the change into registry/ui-sdk/examples/${rel}, then run "node scripts/ui-sdk-flavour.mjs review ${rel}"`,
+            );
           }
         }
         const replaced = replacedImports(source);
@@ -446,16 +470,26 @@ export function readFlavourExamples(flavour = readFlavour()) {
   for (const key of Object.keys(EXCLUDED_EXAMPLES)) {
     if (!excluded.some((e) => e.key === key)) problems.push(`EXCLUDED_EXAMPLES lists ${key}, which is not an example`);
   }
-  return { registries, files, examples, overlays: [...overlays.keys()], excluded, problems };
+  for (const rel of Object.keys(lock ?? {})) {
+    if (!overlays.has(rel)) problems.push(`ui-sdk-variants.lock.json lists ${rel}, which has no variant; remove the entry`);
+  }
+  return { registries, files, examples, overlays: [...overlays.keys()], excluded, stale, problems };
 }
 
 // Writes the generated tree, touching only files whose content changed so a
 // running dev server sees real changes only, and removing stale files.
-function writeExamples(derived) {
-  const { files, problems } = derived;
+// `examples` (run by `pnpm dev` and `pnpm typecheck`) still writes the tree
+// while a variant only waits for review, so editing an original does not stop
+// the dev server; it prints the problem. `build` and every check fail on it.
+function writeExamples(derived, { allowStale = false } = {}) {
+  const { files } = derived;
+  const problems = allowStale ? derived.problems.filter((p) => !derived.stale.some((rel) => p.startsWith(`overlay ${rel}: its original`))) : derived.problems;
   if (problems.length) {
     console.error(`ui-sdk-flavour: ${problems.length} example problem(s)\n${problems.map((p) => `  - ${p}`).join("\n")}`);
     process.exit(1);
+  }
+  for (const rel of allowStale ? derived.stale : []) {
+    console.warn(`ui-sdk-flavour: WARNING the variant ${rel} has not been reviewed against its changed original; build and the checks fail until it is (node scripts/ui-sdk-flavour.mjs review ${rel})`);
   }
   let written = 0;
   let removed = 0;
@@ -503,6 +537,41 @@ function sync() {
   console.log(`sync: ${written} file(s) written`);
 }
 
+// Records that each named variant was reviewed against its original as it is
+// now. Paths must be named one by one: accepting every variant at once would
+// wave stale ones through.
+function review(paths) {
+  if (paths.length === 0) {
+    console.error('review: name each reviewed variant, e.g. "node scripts/ui-sdk-flavour.mjs review components/tabs/tabs-05.tsx"');
+    process.exit(1);
+  }
+  const lock = existsSync(VARIANT_LOCK) ? loadJson(VARIANT_LOCK) : {};
+  const variants = { ...(lock.variants ?? {}) };
+  for (const raw of paths) {
+    const rel = posix(raw).replace(/^(?:packages\/registry\/)?(?:registry\/ui-sdk\/examples\/)?/, "");
+    const [kind] = rel.split("/");
+    if (!(kind in EXAMPLE_KINDS) || !existsSync(join(OVERLAY_ROOT, rel)) || !existsSync(join(REGISTRY_ROOT, rel))) {
+      console.error(`review: ${raw} is not a variant (expected <demos|components>/<primitive>/<file>.tsx with a file under registry/ui-sdk/examples/ and an original)`);
+      process.exit(1);
+    }
+    variants[rel] = { original: hashSource(read(join(REGISTRY_ROOT, rel))) };
+    console.log(`review: ${rel} reviewed against its current original`);
+  }
+  const sorted = Object.fromEntries(Object.entries(variants).sort(([a], [b]) => a.localeCompare(b)));
+  writeFileSync(
+    VARIANT_LOCK,
+    `${JSON.stringify(
+      {
+        description:
+          "The original each UI SDK example variant (registry/ui-sdk/examples/) was last reviewed against. When an original changes, the checks fail until the change is carried into its variant and `node scripts/ui-sdk-flavour.mjs review <path>` records the new hash. Never edit by hand.",
+        variants: sorted,
+      },
+      null,
+      2,
+    )}\n`,
+  );
+}
+
 function status() {
   const { ported, blocked, pending, mirrors, problems } = readFlavour();
   console.log(`ported (${ported.length}): ${ported.join(", ")}`);
@@ -536,11 +605,12 @@ function build() {
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const command = process.argv[2] ?? "status";
   if (command === "build") build();
-  else if (command === "examples") writeExamples(readFlavourExamples());
+  else if (command === "examples") writeExamples(readFlavourExamples(), { allowStale: true });
   else if (command === "sync") sync();
+  else if (command === "review") review(process.argv.slice(3));
   else if (command === "status") status();
   else {
-    console.error(`unknown command "${command}" (build, examples, sync, status)`);
+    console.error(`unknown command "${command}" (build, examples, sync, review, status)`);
     process.exit(1);
   }
 }
