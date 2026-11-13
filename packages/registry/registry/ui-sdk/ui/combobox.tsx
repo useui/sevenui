@@ -248,7 +248,16 @@ function Combobox<Value, Multiple extends boolean | undefined = false>({
     [itemToStringLabel],
   );
   const context = React.useMemo(() => ({ items, toLabel }), [items, toLabel]);
-  const { value, defaultValue, onValueChange } = props;
+  const { value, defaultValue, onValueChange, autoHighlight } = props;
+  // Base UI highlights the selected item (the first, with several) when the
+  // list opens, nothing while none is selected, and nothing once the user
+  // types (unless autoHighlight). UI SDK's autoHighlight="always" does the
+  // first, so it is set while a value is selected and nothing was typed
+  // since the list opened.
+  const filled = (next: unknown) => (Array.isArray(next) ? next.length > 0 : next != null);
+  const [uncontrolledFilled, setFilled] = React.useState(() => filled(defaultValue));
+  const [typed, setTyped] = React.useState(false);
+  const hasValue = value !== undefined ? filled(value) : uncontrolledFilled;
   const { current, track } = useCurrentValue<unknown>(
     value,
     defaultValue ?? (props.multiple ? [] : null),
@@ -282,13 +291,22 @@ function Combobox<Value, Multiple extends boolean | undefined = false>({
             details,
           );
           track(next, details);
+          if (!details?.canceled) setFilled(filled(next));
         }}
+        autoHighlight={hasValue && !typed ? "always" : autoHighlight}
         itemToLabel={toLabel}
         itemToValue={itemToStringValue}
         filter={uiFilter}
         query={toText(inputValue)}
         defaultQuery={toText(defaultInputValue)}
-        onQueryChange={onInputValueChange}
+        onQueryChange={(next: string, details: { reason?: string }) => {
+          onInputValueChange?.(next, details);
+          if (details?.reason === "input-change") setTyped(true);
+        }}
+        onOpenChange={(open: boolean, details: unknown) => {
+          props.onOpenChange?.(open, details);
+          if (open) setTyped(false);
+        }}
         onHighlight={onItemHighlighted}
         loop={loopFocus}
       >

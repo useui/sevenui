@@ -65,6 +65,31 @@ describe("Combobox", () => {
     expect(input.getAttribute("placeholder")).toBe("Pick a fruit");
   });
 
+  // Base UI highlights the selected item when the list opens, so ArrowDown
+  // moves on from it (combobox-multiple: ArrowDown + Enter adds the next
+  // language instead of removing the selected one). Nothing is highlighted
+  // while nothing is selected.
+  it("highlights the selected item when the list opens", async () => {
+    const user = userEvent.setup();
+    render(<FruitCombobox defaultValue="Banana" />);
+    await user.click(getInput());
+    await screen.findByRole("listbox");
+    await waitFor(() =>
+      expect(document.querySelector("[data-highlighted]")?.textContent).toBe("Banana"),
+    );
+    await user.keyboard("{ArrowDown}");
+    expect(document.querySelector("[data-highlighted]")?.textContent).toBe("Cherry");
+  });
+
+  it("highlights nothing on open while nothing is selected", async () => {
+    const user = userEvent.setup();
+    render(<FruitCombobox />);
+    await user.click(getInput());
+    await screen.findByRole("listbox");
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(document.querySelector("[data-highlighted]")).toBeNull();
+  });
+
   it("opens the popup and lists all options when typing begins", async () => {
     const user = userEvent.setup();
     render(<FruitCombobox />);
