@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -8,7 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/registry/base/ui/tooltip";
-import { expectClosed, movePointerAway } from "./helpers/flavour";
+import { expectClosed, isUiSdk, movePointerAway } from "./helpers/flavour";
 
 function ExampleTooltip(props: React.ComponentProps<typeof Tooltip>) {
   return (
@@ -89,6 +89,59 @@ describe("Tooltip", () => {
     await waitFor(() => {
       expectClosed(screen.queryByText("Add to library"));
     });
+  });
+});
+
+// Base UI options UI SDK has no counterpart for, which the flavour emulates.
+describe("Tooltip pointer options", () => {
+  // The element that carries the popup's position: Base UI's positioner, or
+  // UI SDK's content.
+  const positioned = (text: string) =>
+    screen.getByText(text).closest<HTMLElement>('[style*="position"]');
+
+  it("follows the pointer along trackCursorAxis", async () => {
+    const user = userEvent.setup();
+    render(
+      <TooltipProvider delay={0} closeDelay={0}>
+        <Tooltip trackCursorAxis="x">
+          <TooltipTrigger delay={0}>Hover me</TooltipTrigger>
+          <TooltipContent>Tip</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>,
+    );
+    const trigger = screen.getByText("Hover me");
+    trigger.getBoundingClientRect = () => new DOMRect(100, 100, 200, 20);
+    await user.pointer({ target: trigger, coords: { clientX: 120, clientY: 110 } });
+    await screen.findByText("Tip");
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    });
+    const before = positioned("Tip")?.style.cssText;
+    await user.pointer({ target: trigger, coords: { clientX: 260, clientY: 110 } });
+    await waitFor(() => expect(positioned("Tip")?.style.cssText).not.toBe(before));
+  });
+
+  it("lets the pointer through the popup with disableHoverablePopup", async () => {
+    const user = userEvent.setup();
+    render(
+      <TooltipProvider delay={0} closeDelay={0}>
+        <Tooltip disableHoverablePopup>
+          <TooltipTrigger delay={0}>Hover me</TooltipTrigger>
+          <TooltipContent>Tip</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>,
+    );
+    await user.hover(screen.getByText("Hover me"));
+    const popup = await screen.findByText("Tip");
+    // Base UI sets pointer-events: none on the popup; the flavour sets the
+    // class (jsdom applies no Tailwind). Moving onto the popup then closes it,
+    // checked in Chrome (guide §8).
+    const passThrough = (el: HTMLElement | null): boolean =>
+      el !== null &&
+      (getComputedStyle(el).pointerEvents === "none" ||
+        (isUiSdk && el.className.includes("pointer-events-none")) ||
+        passThrough(el.parentElement));
+    expect(passThrough(popup)).toBe(true);
   });
 });
 

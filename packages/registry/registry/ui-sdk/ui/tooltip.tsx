@@ -38,12 +38,23 @@ function TooltipProvider({
 // root. The trigger reports its values up so the root can apply them.
 const ReportTiming = React.createContext<((timing: Timing) => void) | null>(null);
 
+// Base UI's trackCursorAxis and disableHoverablePopup, which UI SDK lacks. The
+// trigger records the pointer, and the content anchors to a box at the
+// pointer on the tracked axis and at the trigger on the other.
+type Tracking = {
+  axis: "none" | "x" | "y" | "both";
+  hoverable: boolean;
+  trigger: React.RefObject<HTMLElement | null>;
+  pointer: React.RefObject<{ x: number; y: number } | null>;
+};
+const TrackingContext = React.createContext<Tracking | null>(null);
+
 function Tooltip({
   delay,
   closeDelay,
   closeOnPress,
-  trackCursorAxis: _trackCursorAxis,
-  disableHoverablePopup: _disableHoverablePopup,
+  trackCursorAxis = "none",
+  disableHoverablePopup = false,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive> & {
   trackCursorAxis?: "none" | "x" | "y" | "both";
@@ -51,14 +62,27 @@ function Tooltip({
 }) {
   const provider = React.useContext(ProviderTiming);
   const [trigger, setTrigger] = React.useState<Timing>({});
+  const triggerRef = React.useRef<HTMLElement | null>(null);
+  const pointerRef = React.useRef<{ x: number; y: number } | null>(null);
+  const tracking = React.useMemo<Tracking>(
+    () => ({
+      axis: trackCursorAxis,
+      hoverable: !disableHoverablePopup,
+      trigger: triggerRef,
+      pointer: pointerRef,
+    }),
+    [trackCursorAxis, disableHoverablePopup],
+  );
   return (
     <ReportTiming.Provider value={setTrigger}>
-      <TooltipPrimitive
-        delay={trigger.delay ?? delay ?? provider.delay}
-        closeDelay={trigger.closeDelay ?? closeDelay ?? provider.closeDelay}
-        closeOnPress={trigger.closeOnClick ?? closeOnPress}
-        {...props}
-      />
+      <TrackingContext.Provider value={tracking}>
+        <TooltipPrimitive
+          delay={trigger.delay ?? delay ?? provider.delay}
+          closeDelay={trigger.closeDelay ?? closeDelay ?? provider.closeDelay}
+          closeOnPress={trigger.closeOnClick ?? closeOnPress}
+          {...props}
+        />
+      </TrackingContext.Provider>
     </ReportTiming.Provider>
   );
 }
@@ -90,10 +114,31 @@ function TooltipTrigger({
   ...props
 }: TriggerProps & Timing) {
   const report = React.useContext(ReportTiming);
+  const tracking = React.useContext(TrackingContext);
   React.useLayoutEffect(() => {
     report?.({ delay, closeDelay, closeOnClick });
   }, [report, delay, closeDelay, closeOnClick]);
-  return <TooltipTriggerPrimitive render={popupOpen(render)} {...props} />;
+  const track =
+    tracking && tracking.axis !== "none"
+      ? (event: React.PointerEvent<HTMLElement>) => {
+          tracking.trigger.current = event.currentTarget;
+          tracking.pointer.current = { x: event.clientX, y: event.clientY };
+        }
+      : undefined;
+  return (
+    <TooltipTriggerPrimitive
+      render={popupOpen(render)}
+      {...props}
+      onPointerEnter={(event: React.PointerEvent<HTMLElement>) => {
+        track?.(event);
+        props.onPointerEnter?.(event as never);
+      }}
+      onPointerMove={(event: React.PointerEvent<HTMLElement>) => {
+        track?.(event);
+        props.onPointerMove?.(event as never);
+      }}
+    />
+  );
 }
 
 // Base UI's logical sides map onto UI SDK's start/end.
@@ -115,15 +160,34 @@ function TooltipContent({
   side?: Side | "inline-start" | "inline-end";
   children?: React.ReactNode;
 }) {
+  const tracking = React.useContext(TrackingContext);
+  const axis = tracking?.axis ?? "none";
+  const anchor = React.useMemo(() => {
+    if (!tracking || axis === "none") return undefined;
+    return {
+      getBoundingClientRect: () => {
+        const box = tracking.trigger.current?.getBoundingClientRect() ?? new DOMRect();
+        const pointer = tracking.pointer.current;
+        if (!pointer) return box;
+        const x = axis === "x" || axis === "both" ? pointer.x : null;
+        const y = axis === "y" || axis === "both" ? pointer.y : null;
+        return new DOMRect(x ?? box.x, y ?? box.y, x === null ? box.width : 0, y === null ? box.height : 0);
+      },
+    };
+  }, [tracking, axis]);
   return (
     <TooltipContentPrimitive
       side={toSide(side)}
+      anchor={props.anchor ?? anchor}
       align={align}
       sideOffset={sideOffset}
       alignOffset={alignOffset}
       className={cn(
         // Inverted bubble, fixed size; a 100ms fade, instant under reduced motion.
         "z-50 w-fit max-w-xs origin-[var(--transform-origin)] rounded-md bg-primary px-2 py-1 text-xs text-balance text-primary-foreground transition-opacity duration-100 data-[ending-style]:opacity-0 data-[instant]:transition-none data-[starting-style]:opacity-0 motion-reduce:transition-none",
+        // Not hoverable: the pointer passes through, so leaving the trigger
+        // closes the tooltip even when it moves over the popup.
+        tracking?.hoverable === false && "pointer-events-none",
         className,
       )}
       {...props}
