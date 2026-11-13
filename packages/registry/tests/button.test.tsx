@@ -35,7 +35,7 @@ describe("Button", () => {
       const run = ServerButton as unknown as (props: object) => React.ReactElement;
       const cases: [object, string][] = [
         [{ "data-slot": "carousel-next", children: "Next" }, "carousel-next"],
-        [{ render: <a href="#next" />, children: "Next" }, "button"],
+        [{ render: <a href="#next">Next</a> }, "button"],
       ];
       for (const [props, slot] of cases) {
         const element = run(props);

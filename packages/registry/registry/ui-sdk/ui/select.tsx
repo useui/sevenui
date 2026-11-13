@@ -168,13 +168,13 @@ function Select<T, Multiple extends boolean | undefined = false>({
     props.value,
     props.defaultValue ?? (props.multiple ? [] : null),
   );
-  const toString = (props as { itemToStringValue?: (item: never) => string }).itemToStringValue;
+  const itemToString = (props as { itemToStringValue?: (item: never) => string }).itemToStringValue;
   useFieldControl({
     value: () => current.current,
     formValue: () =>
       Array.isArray(current.current)
-        ? current.current.map((item) => toFormValue(item, toString))
-        : toFormValue(current.current, toString),
+        ? current.current.map((item) => toFormValue(item, itemToString))
+        : toFormValue(current.current, itemToString),
     disabled: () => props.disabled === true,
   });
   return (
