@@ -116,6 +116,19 @@ describe("Switch", () => {
       "default",
     );
   });
+
+  it("submits uncheckedValue while off and value while on", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <form>
+        <Switch aria-label="Marketing" name="marketing" value="yes" uncheckedValue="no" />
+      </form>,
+    );
+    const form = must(container.querySelector("form"));
+    expect(new FormData(form).getAll("marketing")).toEqual(["no"]);
+    await user.click(screen.getByRole("switch"));
+    expect(new FormData(form).getAll("marketing")).toEqual(["yes"]);
+  });
 });
 
 describe("Switch styles", () => {

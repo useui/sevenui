@@ -5,13 +5,16 @@ import {
   Switch as SwitchPrimitive,
   SwitchThumb,
 } from "@ui-sdk/react/switch";
+import { renderElement } from "@ui-sdk/react/primitive";
 import { cn } from "cn";
 
 type SwitchProps = Omit<React.ComponentProps<typeof SwitchPrimitive>, "className"> & {
   className?: string;
   size?: "sm" | "default";
-  // Base UI only: the value submitted while off, a ref to the hidden input,
-  // and a hint for a `render` that is not a <button>. Accepted, not mapped.
+  // Base UI submits `uncheckedValue` while off; UI SDK submits nothing, so
+  // the flavour adds that hidden input itself. `inputRef` (Base UI's hidden
+  // input) and `nativeButton` (a hint for a non-button `render`) are
+  // accepted, not mapped.
   uncheckedValue?: string;
   inputRef?: React.Ref<HTMLInputElement>;
   nativeButton?: boolean;
@@ -20,7 +23,7 @@ type SwitchProps = Omit<React.ComponentProps<typeof SwitchPrimitive>, "className
 function Switch({
   className,
   size = "default",
-  uncheckedValue: _uncheckedValue,
+  uncheckedValue,
   inputRef: _inputRef,
   nativeButton: _nativeButton,
   ...props
@@ -42,6 +45,14 @@ function Switch({
       {...props}
     >
       <SwitchThumb
+        render={(thumbProps, state) => (
+          <>
+            {renderElement("span", thumbProps, undefined, state)}
+            {uncheckedValue !== undefined && props.name && !state.checked && !state.disabled ? (
+              <input type="hidden" name={props.name} value={uncheckedValue} form={props.form} />
+            ) : null}
+          </>
+        )}
         data-slot="switch-thumb"
         className="pointer-events-none block size-[calc(var(--switch-h)-4px)] rounded-full bg-white shadow-raised data-checked:bg-primary-foreground transition-transform duration-200 ease-spring motion-reduce:transition-none data-checked:translate-x-[calc(var(--switch-w)-var(--switch-h))] data-unchecked:translate-x-0"
       />
