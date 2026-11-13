@@ -1,4 +1,4 @@
-import type * as React from "react";
+import * as React from "react";
 import {
   type ButtonActionDetails,
   Button as ButtonPrimitive,
@@ -46,6 +46,15 @@ const buttonVariants = cva(
 
 type ButtonPrimitiveProps = React.ComponentProps<typeof ButtonPrimitive>;
 
+function withSlot(slot: string, render: ButtonPrimitiveProps["render"]): ButtonPrimitiveProps["render"] {
+  if (render === undefined) return <button data-slot={slot} />;
+  if (React.isValidElement<Record<string, unknown>>(render)) {
+    return React.cloneElement(render, { "data-slot": render.props["data-slot"] ?? slot });
+  }
+  return (partProps, state) =>
+    renderElement("button", { ...partProps, "data-slot": slot }, render, state);
+}
+
 // Typed as Base UI types them, so callers written against the base flavour
 // compile unchanged: a <button> event, and UI SDK's press details optional.
 type ButtonProps = Omit<ButtonPrimitiveProps, "className" | "onClick"> &
@@ -82,13 +91,10 @@ function Button({
           void onClick(event, details)) as unknown as ButtonPrimitiveProps["onClick"])
       }
       // UI SDK ignores a data-slot prop on a part; one on the rendered
-      // element wins, so a caller's slot (carousel-next) goes there.
-      render={
-        slot === "button"
-          ? render
-          : (partProps, state) =>
-              renderElement("button", { ...partProps, "data-slot": slot }, render, state)
-      }
+      // element wins, so a caller's slot (carousel-next) goes there. It goes
+      // on an element, not a render function, so a Server Component can
+      // still render the button (a function cannot cross into the client).
+      render={slot === "button" ? render : withSlot(slot, render)}
       {...props}
     />
   );

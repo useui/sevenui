@@ -18,6 +18,21 @@ describe("Button", () => {
     expect(button.getAttribute("data-slot")).toBe("button");
   });
 
+  // Button has no "use client" and Server Components render it; React cannot
+  // pass a function from a Server Component to the client part, so the props
+  // it hands the part must all be serializable, with a custom slot too
+  // (carousel-next, attachment-action). Checked as a real RSC render in
+  // Next.js as well.
+  it("hands its part only serializable props, so a Server Component can render it", () => {
+    const renderButton = Button as unknown as (props: object) => React.ReactElement;
+    for (const props of [{ children: "Save" }, { "data-slot": "carousel-next", children: "Next" }]) {
+      const element = renderButton(props);
+      const passed = element.props as Record<string, unknown>;
+      const functions = Object.keys(passed).filter((key) => typeof passed[key] === "function");
+      expect(functions).toEqual([]);
+    }
+  });
+
   it("applies the default variant and size tokens", () => {
     render(<Button>Save</Button>);
     const button = screen.getByRole("button", { name: "Save" });
