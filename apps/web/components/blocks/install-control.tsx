@@ -15,7 +15,6 @@ import { installCommand } from "../../lib/registry";
 import { useFlavour } from "../flavour/use-flavour";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/registry/base/ui/tooltip";
 import { useAnnounce } from "../announcer";
-import { TOOLBAR_KEY_RADIUS_END, TOOLBAR_KEY_RADIUS_START, TOOLBAR_RADIUS } from "../toolbar-classes";
 
 const KEY =
   "relative inline-flex cursor-pointer items-center text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:z-[1] focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-ring";
@@ -130,7 +129,7 @@ export function InstallControl({ item, title, flavoured = false }: InstallContro
 
   return (
     <div
-      className={`relative flex h-8 min-w-0 shrink items-stretch ${TOOLBAR_RADIUS} border border-border bg-background text-xs`}
+      className="relative flex h-8 min-w-0 shrink items-stretch rounded-md border border-border bg-background text-xs"
       ref={rootRef}
     >
       <Tooltip>
@@ -139,7 +138,7 @@ export function InstallControl({ item, title, flavoured = false }: InstallContro
             <button
               aria-expanded={open}
               aria-haspopup="menu"
-              className={`${KEY} gap-1 ${TOOLBAR_KEY_RADIUS_START} px-2 font-medium text-foreground`}
+              className={`${KEY} gap-1 rounded-s-md px-2 font-medium text-foreground`}
               onClick={() => {
                 if (!open) setChecked(currentPackageManager());
                 setOpen((value) => !value);
@@ -191,7 +190,7 @@ export function InstallControl({ item, title, flavoured = false }: InstallContro
           closeOnClick={false}
           render={
             <button
-              className={`${KEY} w-8 shrink-0 justify-center ${TOOLBAR_KEY_RADIUS_END}`}
+              className={`${KEY} w-8 shrink-0 justify-center rounded-e-md`}
               onClick={() => void copy()}
               type="button"
             >
