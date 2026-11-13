@@ -5,19 +5,72 @@ import { DEFAULT_FLAVOUR, type Flavour } from "../../lib/flavour";
 import { type PreviewFolder, uiSdkPreviewFolders } from "./generated";
 import { useFlavour } from "./use-flavour";
 
-const folderPromises = new Map<string, Promise<PreviewFolder>>();
+// One load per folder chunk, shared by every preview of that folder. A failed load stays cached as failed:
+// React re-renders a suspended transition, so a cache that forgot the failure started a new request on every
+// render and the rejection never reached the error boundary (a request loop behind an empty box). A retry is
+// explicit instead: the notice's button, or the browser coming back online, drops the failed entry and
+// tells that folder's previews to render again.
+type FolderLoad = { promise: Promise<PreviewFolder>; failed: boolean };
+const loads = new Map<string, FolderLoad>();
+/** Failed attempts per folder, so a retry that fails again while online can point at a reload. */
+const failures = new Map<string, number>();
+const retryListeners = new Map<string, Set<() => void>>();
+
+/** The folder's chunk did not arrive (offline, blocked, or gone after a redeploy), as opposed to an example
+ * that threw while rendering. */
+class FolderLoadError extends Error {
+  constructor(folder: string, cause: unknown) {
+    super(`The UI SDK previews for ${folder} did not load`, { cause });
+    this.name = "FolderLoadError";
+  }
+}
 
 function loadFolder(folder: string): Promise<PreviewFolder> {
-  let promise = folderPromises.get(folder);
-  if (!promise) {
-    const load = uiSdkPreviewFolders[folder];
-    promise = load ? load() : Promise.reject(new Error(`No UI SDK previews for ${folder}`));
-    // A failed chunk load may succeed on the next attempt (a flaky network), so it is not cached.
-    promise.catch(() => folderPromises.delete(folder));
-    folderPromises.set(folder, promise);
+  let load = loads.get(folder);
+  if (!load) {
+    const importFolder = uiSdkPreviewFolders[folder];
+    const promise = importFolder ? importFolder() : Promise.reject(new Error(`No UI SDK previews for ${folder}`));
+    const entry: FolderLoad = {
+      promise: promise.catch((cause: unknown) => {
+        throw new FolderLoadError(folder, cause);
+      }),
+      failed: false,
+    };
+    entry.promise.catch(() => {
+      entry.failed = true;
+      failures.set(folder, (failures.get(folder) ?? 0) + 1);
+    });
+    loads.set(folder, entry);
+    load = entry;
   }
-  return promise;
+  return load.promise;
 }
+
+function retryFolder(folder: string): void {
+  if (!loads.get(folder)?.failed) return;
+  loads.delete(folder);
+  for (const listener of retryListeners.get(folder) ?? []) listener();
+}
+
+function onRetry(folder: string, listener: () => void): () => void {
+  const set = retryListeners.get(folder) ?? new Set();
+  retryListeners.set(folder, set);
+  set.add(listener);
+  return () => {
+    set.delete(listener);
+  };
+}
+
+// Back online: every failed folder tries again by itself.
+if (typeof window !== "undefined") {
+  window.addEventListener("online", () => {
+    for (const [folder, load] of loads) if (load.failed) retryFolder(folder);
+  });
+}
+
+// One preview per failed folder announces the failure; the others show the same notice silently, so a
+// gallery page whose chunk failed does not read out a dozen identical alerts.
+const announcers = new Map<string, string>();
 
 function UiSdkExample({ folder, name }: { folder: string; name: string }) {
   const Example = React.use(loadFolder(folder)).default[name];
@@ -25,11 +78,92 @@ function UiSdkExample({ folder, name }: { folder: string; name: string }) {
   return <Example />;
 }
 
-class PreviewBoundary extends React.Component<{ children: React.ReactNode; label: string }, { failed: boolean }> {
-  state = { failed: false };
+const BUTTON =
+  "cursor-pointer rounded-md border border-border bg-background px-2 py-0.5 font-medium text-foreground text-xs hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:outline-solid disabled:cursor-default disabled:opacity-60";
 
-  static getDerivedStateFromError() {
-    return { failed: true };
+/** Shown when the UI SDK chunk did not load: the Base UI preview stays usable, with a notice and a retry. */
+function LoadFailure({
+  children,
+  folder,
+  retrying,
+  onRetryClick,
+}: {
+  children: React.ReactNode;
+  folder: string;
+  retrying: boolean;
+  onRetryClick: () => void;
+}) {
+  const id = React.useId();
+  // The live region is mounted empty and filled a moment later: text inserted into a region that is
+  // already in the page is what screen readers reliably announce.
+  const [live, setLive] = React.useState<"none" | "empty" | "filled">("none");
+  React.useEffect(() => {
+    if (announcers.has(folder)) return;
+    announcers.set(folder, id);
+    setLive("empty");
+    return () => {
+      if (announcers.get(folder) === id) announcers.delete(folder);
+    };
+  }, [folder, id]);
+  React.useEffect(() => {
+    if (live !== "empty") return;
+    const timer = window.setTimeout(() => setLive("filled"), 150);
+    return () => window.clearTimeout(timer);
+  }, [live]);
+  const [online, setOnline] = React.useState(true);
+  React.useEffect(() => {
+    const update = () => setOnline(navigator.onLine);
+    update();
+    window.addEventListener("online", update);
+    window.addEventListener("offline", update);
+    return () => {
+      window.removeEventListener("online", update);
+      window.removeEventListener("offline", update);
+    };
+  }, []);
+  // A retry that failed again while online usually means the site was redeployed after this page loaded,
+  // so its old chunk is gone: only a reload brings the new one.
+  const suggestReload = online && (failures.get(folder) ?? 0) > 1;
+  const message = online
+    ? "The UI SDK preview did not load, so this is the Base UI one."
+    : "You are offline, so this is the Base UI preview. The UI SDK one loads when you are back online.";
+
+  return (
+    <div className="flex flex-col items-center gap-4" data-preview-flavour="ui-sdk-fallback">
+      {children}
+      {live !== "none" && (
+        <p className="sr-only" role="alert">
+          {live === "filled" ? `UI SDK previews: ${message}` : null}
+        </p>
+      )}
+      <div className="flex max-w-sm flex-wrap items-center justify-center gap-x-2 gap-y-1.5 text-balance text-center text-muted-foreground text-xs leading-5">
+        <span>
+          {message}
+          {suggestReload && " If the site was updated since you opened this page, reload it."}
+        </span>
+        {online && (
+          <button aria-busy={retrying} className={BUTTON} disabled={retrying} onClick={onRetryClick} type="button">
+            {retrying ? "Loading…" : "Try again"}
+          </button>
+        )}
+        {suggestReload && (
+          <button className={BUTTON} onClick={() => window.location.reload()} type="button">
+            Reload page
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+class PreviewBoundary extends React.Component<
+  { children: React.ReactNode; label: string; fallback: (error: unknown) => React.ReactNode },
+  { error: unknown; failed: boolean }
+> {
+  state = { error: undefined as unknown, failed: false };
+
+  static getDerivedStateFromError(error: unknown) {
+    return { error, failed: true };
   }
 
   componentDidCatch(error: unknown) {
@@ -37,17 +171,14 @@ class PreviewBoundary extends React.Component<{ children: React.ReactNode; label
   }
 
   render() {
-    if (this.state.failed) {
-      return <p className="max-w-sm text-center text-muted-foreground text-sm">This example failed to render on UI SDK.</p>;
-    }
-    return this.props.children;
+    return this.state.failed ? this.props.fallback(this.state.error) : this.props.children;
   }
 }
 
 /**
  * A live preview in the reader's flavour. The Base UI example arrives server-rendered as `children`; a UI SDK
  * reader gets it invisible at first paint (globals.css), then this swaps in the UI SDK example once its
- * folder's chunk loads. Only one of the two is ever mounted at a time.
+ * folder's chunk loads. If the chunk does not load, the Base UI example is shown with a notice and a retry.
  */
 export function FlavouredPreview({
   children,
@@ -71,6 +202,12 @@ export function FlavouredPreview({
     React.startTransition(() => setShown(flavour));
   }, [flavour]);
 
+  // A retry remounts the boundary in a transition, so the notice and the Base UI example stay on screen
+  // until the new attempt either renders or fails again.
+  const [attempt, setAttempt] = React.useState(0);
+  const [retrying, startRetry] = React.useTransition();
+  React.useEffect(() => onRetry(folder, () => startRetry(() => setAttempt((n) => n + 1))), [folder]);
+
   let content: React.ReactNode;
   if (shown === "base-ui") {
     content = <div data-preview-flavour="base-ui">{children}</div>;
@@ -83,7 +220,21 @@ export function FlavouredPreview({
   } else {
     content = (
       <div data-preview-flavour="ui-sdk">
-        <PreviewBoundary label={`${folder}/${name}`}>
+        <PreviewBoundary
+          fallback={(error) =>
+            error instanceof FolderLoadError ? (
+              <LoadFailure folder={folder} onRetryClick={() => retryFolder(folder)} retrying={retrying}>
+                {children}
+              </LoadFailure>
+            ) : (
+              <p className="max-w-sm text-center text-muted-foreground text-sm" role="alert">
+                This example failed to render on UI SDK.
+              </p>
+            )
+          }
+          key={attempt}
+          label={`${folder}/${name}`}
+        >
           <UiSdkExample folder={folder} name={name} />
         </PreviewBoundary>
       </div>
