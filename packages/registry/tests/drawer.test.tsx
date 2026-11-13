@@ -45,6 +45,18 @@ describe("Drawer", () => {
     expect(drawer.getAttribute("data-slot")).toBe("drawer-popup");
   });
 
+  it("focuses the popup itself on open, not its first control", async () => {
+    // So a pointer open shows no focus style on the first button; Tab then
+    // moves to it.
+    const user = userEvent.setup();
+    render(<ExampleDrawer />);
+    await user.click(screen.getByText("Open drawer"));
+    const drawer = await screen.findByRole("dialog");
+    await waitFor(() => expect(document.activeElement).toBe(drawer));
+    await user.tab();
+    expect(document.activeElement?.textContent).toBe("Dismiss");
+  });
+
   it("wires the title and description via aria attributes", async () => {
     const user = userEvent.setup();
     render(<ExampleDrawer />);
