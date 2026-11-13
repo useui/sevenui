@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -106,6 +107,32 @@ describe("Command", () => {
     expect(onTeamA).not.toHaveBeenCalled();
     await user.click(options[0]);
     expect(onTeamA).toHaveBeenCalledTimes(1);
+  });
+
+  // The filter gets the item, not its key, from the first render on, which
+  // on the server is the only one (command-07 reads `item.label`).
+  it("hands a custom filter the item during a server render", () => {
+    const filter = vi.fn((item: Item, query: string) =>
+      item.label.toLowerCase().includes(query.toLowerCase()),
+    );
+    const html = renderToString(
+      <Command items={groups} filter={filter} defaultValue="cal">
+        <CommandInput placeholder="Search" />
+        <CommandList>
+          {(group: Group) => (
+            <CommandGroup key={group.value} heading={group.value} items={group.items}>
+              {(item: Item) => (
+                <CommandItem key={item.value} value={item}>
+                  {item.label}
+                </CommandItem>
+              )}
+            </CommandGroup>
+          )}
+        </CommandList>
+      </Command>,
+    );
+    expect(html).toContain("Calendar");
+    for (const [item] of filter.mock.calls) expect(typeof item).toBe("object");
   });
 
   it("filters items as the user types", async () => {

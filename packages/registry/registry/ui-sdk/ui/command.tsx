@@ -73,46 +73,55 @@ type CommandContextValue = {
   toLabel: (item: unknown) => string;
   toKey: (item: unknown) => string;
   keys: ReturnType<typeof createKeys>;
-  register: (key: string, item: unknown) => () => void;
 };
 const CommandContext = React.createContext<CommandContextValue>({
   items: undefined,
   toLabel: defaultItemLabel,
   toKey: defaultItemKey,
   keys: createKeys(),
-  register: () => () => {},
 });
 
 // Base UI tells items apart by identity; UI SDK by a string key, and two
 // equal keys break the list (two groups each with a "Settings" object item
-// and no string value). So each mounted item claims its key, and an item
-// whose key another one holds gets a numbered one ("Settings (2)"). Claims
-// belong to the item, not its value, so a value rebuilt on every render
-// keeps its key; an item releases its claim when it unmounts.
+// and no string value). So each item claims its key while rendering, and an
+// item whose key another one holds gets a numbered one ("Settings (2)").
+// Claims belong to the item, not its value, so a value rebuilt on every
+// render keeps its key. The claim also maps the key back to the value for
+// the filter, which runs while rendering (on the server too); an item
+// releases its claim when it unmounts.
 function createKeys() {
   const holders = new Map<string, string>();
+  const values = new Map<string, unknown>();
   const claims = new Map<string, { base: string; key: string }>();
   return {
-    claim(item: string, base: string) {
+    claim(item: string, base: string, value: unknown) {
       const claim = claims.get(item);
+      let key: string;
       if (claim && claim.base === base && (holders.get(claim.key) ?? item) === item) {
-        return claim.key;
+        key = claim.key;
+      } else {
+        if (claim && holders.get(claim.key) === item) holders.delete(claim.key);
+        key = base;
+        for (let n = 2; holders.has(key) && holders.get(key) !== item; n++) key = `${base} (${n})`;
+        claims.set(item, { base, key });
       }
-      if (claim && holders.get(claim.key) === item) holders.delete(claim.key);
-      let key = base;
-      for (let n = 2; holders.has(key) && holders.get(key) !== item; n++) key = `${base} (${n})`;
       holders.set(key, item);
-      claims.set(item, { base, key });
+      values.set(key, value);
       return key;
     },
-    hold(item: string, base: string, key: string) {
+    hold(item: string, base: string, key: string, value: unknown) {
       holders.set(key, item);
+      values.set(key, value);
       claims.set(item, { base, key });
       return () => {
-        if (holders.get(key) === item) holders.delete(key);
+        if (holders.get(key) !== item) return;
+        holders.delete(key);
+        values.delete(key);
         if (claims.get(item)?.key === key) claims.delete(item);
       };
     },
+    has: (key: string) => values.has(key),
+    valueOf: (key: string) => values.get(key),
   };
 }
 
@@ -201,7 +210,6 @@ function Command({
   required: _required,
   ...props
 }: CommandProps) {
-  const [byKey] = React.useState(() => new Map<string, unknown>());
   const [keys] = React.useState(createKeys);
   const context = React.useMemo<CommandContextValue>(
     () => ({
@@ -213,15 +221,8 @@ function Command({
         ? (item) => (typeof item === "string" ? item : itemToStringValue(item))
         : defaultItemKey,
       keys,
-      // Items register while mounted, so the filter can map a key back.
-      register: (key, item) => {
-        byKey.set(key, item);
-        return () => {
-          if (byKey.get(key) === item) byKey.delete(key);
-        };
-      },
     }),
-    [items, itemToStringValue, keys, byKey],
+    [items, itemToStringValue, keys],
   );
 
   // Base UI's default matches the text itself; mode "none" leaves the
@@ -231,7 +232,7 @@ function Command({
   else if (filter) {
     uiFilter = (entry, query) => {
       const key = String(entry.value);
-      const item = byKey.has(key) ? byKey.get(key) : entry.value;
+      const item = keys.has(key) ? keys.valueOf(key) : entry.value;
       return filter(item, query, context.toLabel);
     };
   }
@@ -434,20 +435,15 @@ function CommandItem({
   render?: BaseRender;
   nativeButton?: boolean;
 }) {
-  const { toLabel, toKey, keys, register } = React.useContext(CommandContext);
+  const { toLabel, toKey, keys } = React.useContext(CommandContext);
   const { nativeButton: _nativeButton, ...rest } = props;
   const id = React.useId();
   const base = value === undefined ? undefined : toKey(value);
-  const key = base === undefined ? undefined : keys.claim(id, base);
-  React.useLayoutEffect(() => {
-    if (base === undefined || key === undefined) return;
-    const release = keys.hold(id, base, key);
-    const unregister = register(key, value);
-    return () => {
-      unregister();
-      release();
-    };
-  }, [keys, register, id, base, key, value]);
+  const key = base === undefined ? undefined : keys.claim(id, base, value);
+  React.useLayoutEffect(
+    () => (base === undefined || key === undefined ? undefined : keys.hold(id, base, key, value)),
+    [keys, id, base, key, value],
+  );
   return (
     <CommandItemPrimitive
       render={part("command-item", "div", render)}
