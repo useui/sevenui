@@ -147,6 +147,8 @@ function PopoverContent({
       align={align}
       alignOffset={alignOffset}
       side={toSide(side)}
+      // Base UI keeps popups 5px from the viewport edges; UI SDK 8px.
+      collisionPadding={5}
       sideOffset={sideOffset}
       initialFocus={toFocusTarget(initialFocus)}
       finalFocus={toFocusTarget(finalFocus)}

@@ -132,3 +132,40 @@ describe("Popover v2 styles", () => {
     }
   });
 });
+
+// Base UI keeps a popup 5px from the viewport edges (collisionPadding 5);
+// UI SDK's default is 8px. jsdom has no layout, so the rects are stubbed: a
+// 288px popup centred under a trigger at the left edge has to shift right.
+describe("Popover collision padding", () => {
+  it("keeps the popup 5px from the viewport edge", async () => {
+    const user = userEvent.setup();
+    const original = Element.prototype.getBoundingClientRect;
+    Element.prototype.getBoundingClientRect = function (this: Element) {
+      const slot = this.getAttribute("data-slot");
+      if (slot === "popover-trigger") return new DOMRect(10, 40, 100, 30);
+      if (slot === "popover-content" || this.querySelector?.("[data-slot=popover-content]")) {
+        return new DOMRect(0, 0, 288, 100);
+      }
+      return original.call(this);
+    };
+    const offsetWidth = Object.getOwnPropertyDescriptor(HTMLElement.prototype, "offsetWidth");
+    Object.defineProperty(HTMLElement.prototype, "offsetWidth", {
+      configurable: true,
+      get() {
+        return this.getAttribute?.("data-slot") === "popover-content" ? 288 : 0;
+      },
+    });
+    try {
+      render(<ExamplePopover />);
+      await user.click(screen.getByRole("button", { name: "Open popover" }));
+      const content = await screen.findByRole("dialog");
+      // Base UI's floating-ui positioner does not place anything in jsdom (its
+      // 5px default was compared with the flavour in Chrome, guide §8).
+      if (isUiSdk) await waitFor(() => expect(content.style.left).toBe("5px"));
+    } finally {
+      Element.prototype.getBoundingClientRect = original;
+      if (offsetWidth) Object.defineProperty(HTMLElement.prototype, "offsetWidth", offsetWidth);
+    }
+  });
+});
+

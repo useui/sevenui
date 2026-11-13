@@ -513,6 +513,8 @@ function ComboboxContent({
     <ComboboxContentPrimitive
       render={part("combobox-content", "div", render)}
       side={toSide(side)}
+      // Base UI keeps popups 5px from the viewport edges; UI SDK 8px.
+      collisionPadding={5}
       sideOffset={sideOffset}
       align={align}
       alignOffset={alignOffset}

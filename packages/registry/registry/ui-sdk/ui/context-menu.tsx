@@ -159,6 +159,8 @@ function contentPart(Content: typeof MenuContent, defaultSlot: string) {
         align={align}
         alignOffset={alignOffset}
         side={toSide(side)}
+        // Base UI keeps popups 5px from the viewport edges; UI SDK 8px.
+        collisionPadding={5}
         sideOffset={sideOffset}
         className={cn(
           "z-50 max-h-(--available-height) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground shadow-overlay ring-1 ring-foreground/10 outline-none transition-[opacity,scale] duration-100 ease-snappy data-starting-style:scale-[0.98] data-starting-style:opacity-0 data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-closed:overflow-hidden motion-reduce:transition-none",

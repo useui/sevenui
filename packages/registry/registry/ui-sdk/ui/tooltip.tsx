@@ -203,6 +203,8 @@ function TooltipContent({
       side={toSide(side)}
       anchor={props.anchor ?? anchor}
       align={align}
+      // Base UI keeps popups 5px from the viewport edges; UI SDK 8px.
+      collisionPadding={5}
       sideOffset={sideOffset}
       alignOffset={alignOffset}
       className={cn(

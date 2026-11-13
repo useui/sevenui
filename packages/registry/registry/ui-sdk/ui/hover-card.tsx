@@ -114,6 +114,8 @@ function HoverCardContent({
       align={align}
       alignOffset={alignOffset}
       side={toSide(side)}
+      // Base UI keeps popups 5px from the viewport edges; UI SDK 8px.
+      collisionPadding={5}
       sideOffset={sideOffset}
       className={cn(
         "z-50 w-64 origin-(--transform-origin) rounded-lg bg-popover p-[var(--panel-pad,1.125rem)] text-sm text-popover-foreground shadow-overlay ring-1 ring-foreground/10 outline-hidden",

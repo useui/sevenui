@@ -223,7 +223,8 @@ function NavigationMenuPositioner({
       sideOffset={sideOffset}
       align={align}
       alignOffset={alignOffset}
-      collisionPadding={collisionPadding}
+      // Base UI keeps popups 5px from the viewport edges; UI SDK 8px.
+      collisionPadding={collisionPadding ?? 5}
       arrowPadding={arrowPadding}
       anchor={anchor}
       container={container}
