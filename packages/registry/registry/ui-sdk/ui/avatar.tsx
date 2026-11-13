@@ -85,20 +85,41 @@ function AvatarImage({
   onLoadingStatusChange?: (status: AvatarLoadingStatus) => void;
 }) {
   const imageStatus = React.useContext(ImageStatusContext);
+  const [loaded, setLoaded] = React.useState(false);
+  const [entered, setEntered] = React.useState(false);
   React.useLayoutEffect(() => {
     if (!imageStatus) return;
-    imageStatus.current = onLoadingStatusChange;
+    imageStatus.current = (status) => {
+      setLoaded(status === "loaded");
+      onLoadingStatusChange?.(status);
+    };
     return () => {
       imageStatus.current = undefined;
     };
   }, [imageStatus, onLoadingStatusChange]);
+  // Base UI mounts the image once it loads with data-starting-style for one
+  // frame, so a transition can fade it in. UI SDK renders the image at once,
+  // so the flavour marks the frame it becomes visible instead.
+  React.useEffect(() => {
+    if (!loaded) {
+      setEntered(false);
+      return;
+    }
+    let frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(() => setEntered(true));
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [loaded]);
   return (
     <AvatarImagePrimitive
       className={cn(
         "aspect-square size-full rounded-full object-cover",
         className,
       )}
-      {...slotted("avatar-image", "img", props)}
+      {...slotted("avatar-image", "img", {
+        ...props,
+        ...(loaded && !entered ? { "data-starting-style": "" } : {}),
+      })}
     />
   );
 }

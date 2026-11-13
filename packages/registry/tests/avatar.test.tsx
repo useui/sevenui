@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
@@ -83,6 +83,27 @@ describe("Avatar", () => {
     }
     expect(screen.getByAltText("Ada Lovelace")).not.toBeNull();
     expect(screen.queryByText("AL")).toBeNull();
+  });
+
+  it("marks the first frame of a loaded image with data-starting-style", async () => {
+    window.Image = LoadedImage as unknown as typeof Image;
+    render(
+      <Avatar>
+        <AvatarImage src="https://example.com/a.png" alt="Ada Lovelace" />
+        <AvatarFallback>AL</AvatarFallback>
+      </Avatar>,
+    );
+    if (isUiSdk) {
+      const image = screen.getByAltText("Ada Lovelace");
+      expect(image.hasAttribute("data-starting-style")).toBe(false);
+      Object.defineProperty(image, "complete", { value: true });
+      Object.defineProperty(image, "naturalWidth", { value: 128 });
+      fireEvent.load(image);
+    }
+    // A transition from data-[starting-style]:opacity-0 fades the image in.
+    const image = screen.getByAltText("Ada Lovelace");
+    expect(image.hasAttribute("data-starting-style")).toBe(true);
+    await waitFor(() => expect(image.hasAttribute("data-starting-style")).toBe(false));
   });
 
   it("delays fallback rendering when a delay is set", async () => {
