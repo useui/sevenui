@@ -194,6 +194,8 @@ export async function buildSearchIndex(): Promise<SearchEntry[]> {
 
     for (const heading of page.headings) {
       if (GENERIC_HEADINGS.has(heading.text)) continue;
+      // Shown to UI SDK readers only; search serves both, and its target is hidden from Base UI readers.
+      if (heading.flavour === "ui-sdk") continue;
       entries.push({
         route: page.route,
         hash: heading.id,

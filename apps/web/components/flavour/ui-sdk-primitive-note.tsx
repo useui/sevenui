@@ -4,6 +4,7 @@ import Link from "next/link";
 import * as React from "react";
 import { UI_SDK_VERSION, uiSdkDocsUrl } from "../../lib/flavour";
 import { primitiveFoundation } from "../../lib/flavour-items";
+import { UI_SDK_DIFFERENCES } from "../../lib/docs/headings";
 import { POPUP_NOTE, POPUP_PRIMITIVES, UI_SDK_NOTES } from "../../lib/ui-sdk-notes";
 
 const BOX = "flavour-only-ui-sdk my-6 rounded-xl border border-border bg-muted/40 px-4 py-3.5 text-sm leading-6";
@@ -100,8 +101,11 @@ export async function UiSdkApiReference({ name }: { name: string }) {
       </p>
       {notes.length > 0 && (
         <>
-          <h3 className="mt-8 mb-2 font-display font-medium text-base text-foreground leading-6 tracking-normal">
-            Differences on UI SDK
+          <h3
+            className="mt-8 mb-2 scroll-mt-24 font-display font-medium text-base text-foreground leading-6 tracking-normal"
+            id={UI_SDK_DIFFERENCES.id}
+          >
+            {UI_SDK_DIFFERENCES.text}
           </h3>
           <ul className="my-4 list-disc ps-[1.625em]">
             {notes.map((note) => (

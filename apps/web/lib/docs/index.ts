@@ -3,6 +3,7 @@ import "server-only";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { scanHeadings, type Heading } from "./headings";
+import { POPUP_PRIMITIVES, UI_SDK_NOTES } from "../ui-sdk-notes";
 import { validateLinks } from "./links";
 import { assertNavCoversIndex, buildNavTree } from "./nav";
 import { assertElementsAllowed } from "./elements";
@@ -19,6 +20,12 @@ export type DocPage = {
   raw: string;
 };
 
+/** Whether a primitive page's UI SDK API reference renders a "Differences on UI SDK" list. */
+function hasUiSdkDifferences(relPath: string): boolean {
+  const name = relPath.match(/^components\/([a-z0-9-]+)\.mdx$/)?.[1];
+  return name !== undefined && (POPUP_PRIMITIVES.has(name) || (UI_SDK_NOTES[name]?.length ?? 0) > 0);
+}
+
 async function readPage(fullPath: string): Promise<DocPage> {
   const content = await readFile(fullPath, "utf8");
 
@@ -31,7 +38,7 @@ async function readPage(fullPath: string): Promise<DocPage> {
     route: routeFor(relPath),
     title: frontmatter.title,
     description: frontmatter.description,
-    headings: scanHeadings(raw),
+    headings: scanHeadings(raw, { uiSdkDifferences: hasUiSdkDifferences(relPath) }),
     sourcePath: `docs/${relPath}`,
     raw,
   };
