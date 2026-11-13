@@ -2,6 +2,7 @@ import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
+import { DirectionProvider } from "@/registry/base/ui/direction";
 import { Slider } from "@/registry/base/ui/slider";
 import { isUiSdk } from "./helpers/flavour";
 import { must } from "./helpers/must";
@@ -41,6 +42,26 @@ describe("Slider", () => {
     expect(valueNow(slider)).toBe("25");
     expect(slider.min).toBe("0");
     expect(slider.max).toBe("100");
+  });
+
+  // Right to left comes from DirectionProvider in both flavours: the arrows
+  // follow the reading direction, horizontal and for every thumb of a range.
+  it.each([[[40]], [[20, 80]]])("mirrors Left/Right under DirectionProvider rtl (%j)", async (value) => {
+    const user = userEvent.setup();
+    render(
+      <DirectionProvider direction="rtl">
+        <Slider defaultValue={value} aria-label="Volume" />
+      </DirectionProvider>,
+    );
+    for (const [index, slider] of getSliders().entries()) {
+      await focusSlider(slider);
+      await user.keyboard("{ArrowRight}");
+      expect(valueNow(slider)).toBe(String(value[index] - 1));
+      await user.keyboard("{ArrowLeft}{ArrowLeft}");
+      expect(valueNow(slider)).toBe(String(value[index] + 1));
+      await user.keyboard("{ArrowUp}");
+      expect(valueNow(slider)).toBe(String(value[index] + 2));
+    }
   });
 
   it("respects custom min and max", () => {
