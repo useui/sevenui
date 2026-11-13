@@ -72,14 +72,49 @@ type CommandContextValue = {
   items: readonly unknown[] | undefined;
   toLabel: (item: unknown) => string;
   toKey: (item: unknown) => string;
-  register: (key: string, item: unknown) => void;
+  keys: ReturnType<typeof createKeys>;
+  register: (key: string, item: unknown) => () => void;
 };
 const CommandContext = React.createContext<CommandContextValue>({
   items: undefined,
   toLabel: defaultItemLabel,
   toKey: defaultItemKey,
-  register: () => {},
+  keys: createKeys(),
+  register: () => () => {},
 });
+
+// Base UI tells items apart by identity; UI SDK by a string key, and two
+// equal keys break the list (two groups each with a "Settings" object item
+// and no string value). So each mounted item claims its key, and an item
+// whose key another one holds gets a numbered one ("Settings (2)"). Claims
+// belong to the item, not its value, so a value rebuilt on every render
+// keeps its key; an item releases its claim when it unmounts.
+function createKeys() {
+  const holders = new Map<string, string>();
+  const claims = new Map<string, { base: string; key: string }>();
+  return {
+    claim(item: string, base: string) {
+      const claim = claims.get(item);
+      if (claim && claim.base === base && (holders.get(claim.key) ?? item) === item) {
+        return claim.key;
+      }
+      if (claim && holders.get(claim.key) === item) holders.delete(claim.key);
+      let key = base;
+      for (let n = 2; holders.has(key) && holders.get(key) !== item; n++) key = `${base} (${n})`;
+      holders.set(key, item);
+      claims.set(item, { base, key });
+      return key;
+    },
+    hold(item: string, base: string, key: string) {
+      holders.set(key, item);
+      claims.set(item, { base, key });
+      return () => {
+        if (holders.get(key) === item) holders.delete(key);
+        if (claims.get(item)?.key === key) claims.delete(item);
+      };
+    },
+  };
+}
 
 // The Base UI Autocomplete root props the command takes. Its `value` is the
 // search text, which UI SDK calls the query; UI SDK's own `value` is the
@@ -166,7 +201,8 @@ function Command({
   required: _required,
   ...props
 }: CommandProps) {
-  const byKey = React.useRef(new Map<string, unknown>());
+  const [byKey] = React.useState(() => new Map<string, unknown>());
+  const [keys] = React.useState(createKeys);
   const context = React.useMemo<CommandContextValue>(
     () => ({
       items,
@@ -176,11 +212,16 @@ function Command({
       toKey: itemToStringValue
         ? (item) => (typeof item === "string" ? item : itemToStringValue(item))
         : defaultItemKey,
+      keys,
+      // Items register while mounted, so the filter can map a key back.
       register: (key, item) => {
-        byKey.current.set(key, item);
+        byKey.set(key, item);
+        return () => {
+          if (byKey.get(key) === item) byKey.delete(key);
+        };
       },
     }),
-    [items, itemToStringValue],
+    [items, itemToStringValue, keys, byKey],
   );
 
   // Base UI's default matches the text itself; mode "none" leaves the
@@ -190,7 +231,7 @@ function Command({
   else if (filter) {
     uiFilter = (entry, query) => {
       const key = String(entry.value);
-      const item = byKey.current.has(key) ? byKey.current.get(key) : entry.value;
+      const item = byKey.has(key) ? byKey.get(key) : entry.value;
       return filter(item, query, context.toLabel);
     };
   }
@@ -393,10 +434,20 @@ function CommandItem({
   render?: BaseRender;
   nativeButton?: boolean;
 }) {
-  const { toLabel, toKey, register } = React.useContext(CommandContext);
+  const { toLabel, toKey, keys, register } = React.useContext(CommandContext);
   const { nativeButton: _nativeButton, ...rest } = props;
-  const key = value === undefined ? undefined : toKey(value);
-  if (key !== undefined) register(key, value);
+  const id = React.useId();
+  const base = value === undefined ? undefined : toKey(value);
+  const key = base === undefined ? undefined : keys.claim(id, base);
+  React.useLayoutEffect(() => {
+    if (base === undefined || key === undefined) return;
+    const release = keys.hold(id, base, key);
+    const unregister = register(key, value);
+    return () => {
+      unregister();
+      release();
+    };
+  }, [keys, register, id, base, key, value]);
   return (
     <CommandItemPrimitive
       render={part("command-item", "div", render)}

@@ -69,6 +69,45 @@ describe("Command", () => {
     expect(screen.getByText("Settings")).toBeTruthy();
   });
 
+  // Base UI tells object items apart by identity, so two groups may each
+  // hold an item labelled "Settings" without a string value or id.
+  it("keeps object items apart when they share a label", async () => {
+    const user = userEvent.setup();
+    const onTeamA = vi.fn();
+    const onTeamB = vi.fn();
+    type Entry = { label: string; run: () => void };
+    // Fresh objects on every render, as an inline literal gives.
+    const teams = (): { value: string; items: Entry[] }[] => [
+      { value: "Team A", items: [{ label: "Settings", run: onTeamA }] },
+      { value: "Team B", items: [{ label: "Settings", run: onTeamB }] },
+    ];
+    const palette = () => (
+      <Command items={teams()}>
+        <CommandInput placeholder="Search" />
+        <CommandList>
+          {(team: ReturnType<typeof teams>[number]) => (
+            <CommandGroup key={team.value} heading={team.value} items={team.items}>
+              {(item: Entry) => (
+                <CommandItem key={team.value} value={item} onClick={item.run}>
+                  {item.label}
+                </CommandItem>
+              )}
+            </CommandGroup>
+          )}
+        </CommandList>
+      </Command>
+    );
+    const { rerender } = render(palette());
+    rerender(palette());
+    const options = screen.getAllByRole("option", { name: "Settings" });
+    expect(options).toHaveLength(2);
+    await user.click(options[1]);
+    expect(onTeamB).toHaveBeenCalledTimes(1);
+    expect(onTeamA).not.toHaveBeenCalled();
+    await user.click(options[0]);
+    expect(onTeamA).toHaveBeenCalledTimes(1);
+  });
+
   it("filters items as the user types", async () => {
     const user = userEvent.setup();
     render(<Palette />);
