@@ -148,51 +148,45 @@ export function createReleasesApp(ui: Kit) {
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <ui.Field>
                   <ui.FieldLabel htmlFor={`${id}-env`}>Environment</ui.FieldLabel>
-                  {/* A wrapper keeps the popup from being a direct child of Field: UI SDK renders popups in place
-                      (top layer, no portal), and Field's `*:w-full` would stretch them to the viewport. */}
-                  <div>
-                    <ui.Select items={ENVS} onValueChange={(value) => value && setEnv(value as EnvId)} value={env}>
-                      <ui.SelectTrigger className="w-full" id={`${id}-env`}>
-                        <ui.SelectValue />
-                      </ui.SelectTrigger>
-                      <ui.SelectContent>
-                        {ENVS.map((item) => (
-                          <ui.SelectItem key={item.value} value={item.value}>
-                            {item.label}
-                          </ui.SelectItem>
-                        ))}
-                      </ui.SelectContent>
-                    </ui.Select>
-                  </div>
+                  <ui.Select items={ENVS} onValueChange={(value) => value && setEnv(value as EnvId)} value={env}>
+                    <ui.SelectTrigger className="w-full" id={`${id}-env`}>
+                      <ui.SelectValue />
+                    </ui.SelectTrigger>
+                    <ui.SelectContent>
+                      {ENVS.map((item) => (
+                        <ui.SelectItem key={item.value} value={item.value}>
+                          {item.label}
+                        </ui.SelectItem>
+                      ))}
+                    </ui.SelectContent>
+                  </ui.Select>
                 </ui.Field>
                 <ui.Field>
                   <ui.FieldLabel htmlFor={`${id}-date`}>Ship date</ui.FieldLabel>
-                  <div>
-                    <ui.Popover onOpenChange={setDateOpen} open={dateOpen}>
-                      <ui.PopoverTrigger
-                        render={
-                          <ui.Button className="w-full justify-start font-normal" id={`${id}-date`} variant="outline" />
-                        }
-                      >
-                        <CalendarIcon aria-hidden="true" data-icon="inline-start" />
-                        {date ? longDate(date) : "Pick a day"}
-                      </ui.PopoverTrigger>
-                      <ui.PopoverContent align="start" className="w-auto p-0">
-                        <React.Suspense fallback={<div aria-hidden="true" className="h-[18.5rem] w-[15.75rem]" />}>
-                          <ui.Calendar
-                            defaultMonth={TODAY}
-                            disabled={{ before: TODAY }}
-                            mode="single"
-                            onSelect={(day: Date | undefined) => {
-                              setDate(day);
-                              if (day) setDateOpen(false);
-                            }}
-                            selected={date}
-                          />
-                        </React.Suspense>
-                      </ui.PopoverContent>
-                    </ui.Popover>
-                  </div>
+                  <ui.Popover onOpenChange={setDateOpen} open={dateOpen}>
+                    <ui.PopoverTrigger
+                      render={
+                        <ui.Button className="w-full justify-start font-normal" id={`${id}-date`} variant="outline" />
+                      }
+                    >
+                      <CalendarIcon aria-hidden="true" data-icon="inline-start" />
+                      {date ? longDate(date) : "Pick a day"}
+                    </ui.PopoverTrigger>
+                    <ui.PopoverContent align="start" className="w-auto p-0">
+                      <React.Suspense fallback={<div aria-hidden="true" className="h-[18.5rem] w-[15.75rem]" />}>
+                        <ui.Calendar
+                          defaultMonth={TODAY}
+                          disabled={{ before: TODAY }}
+                          mode="single"
+                          onSelect={(day: Date | undefined) => {
+                            setDate(day);
+                            if (day) setDateOpen(false);
+                          }}
+                          selected={date}
+                        />
+                      </React.Suspense>
+                    </ui.PopoverContent>
+                  </ui.Popover>
                 </ui.Field>
               </div>
               <ui.Field className="items-center justify-between gap-4 rounded-lg border border-hairline px-3 py-2.5" orientation="horizontal">

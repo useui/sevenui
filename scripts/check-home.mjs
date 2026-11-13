@@ -501,7 +501,9 @@ async function browserChecks() {
       control: () => BROWSER.uiSdkSwapsIn.run(undefined, "base-ui"),
     },
     uiSdkPopupFits: {
-      name: "on UI SDK the date popover in the dialog sizes to its calendar (top-layer popups inherit no stretch)",
+      // The Select and the date Popover are direct children of a Field in the dialog: UI SDK renders popups
+      // in place, so unless the flavour moves them out, Field's `*:w-full` stretches them to the viewport.
+      name: "on UI SDK the popups in the dialog's Fields size as on Base UI (select = trigger width, date popover = calendar)",
       run: async (sabotage) => {
         const { page, close } = await open({ width: 1280, flavour: "ui-sdk", sabotage });
         await page.waitForFunction(
@@ -511,15 +513,28 @@ async function browserChecks() {
         );
         const surface = page.locator("[data-home-surface]");
         await surface.getByRole("button", { name: "New release" }).click();
-        await page.getByRole("dialog", { name: "New release" }).getByRole("button", { name: /Nov 20/ }).click();
+        const dialog = page.getByRole("dialog", { name: "New release" });
+        await dialog.getByRole("combobox", { name: "Environment" }).click();
+        await page.waitForTimeout(800);
+        const select = await page.evaluate(() => {
+          const content = document.querySelector('[data-slot="select-content"]:not([hidden])')?.getBoundingClientRect();
+          const trigger = document.querySelector('[role="dialog"] [data-slot="select-trigger"]')?.getBoundingClientRect();
+          return { content: content?.width ?? -1, trigger: trigger?.width ?? -1 };
+        });
+        await page.keyboard.press("Escape");
+        await page.waitForTimeout(400);
+        await dialog.getByRole("button", { name: /Nov 20/ }).click();
         await page.waitForTimeout(1200);
         const width = await page.evaluate(() => document.querySelector('[data-slot="popover-content"]')?.getBoundingClientRect().width ?? -1);
         await close();
+        if (select.content < 0 || select.trigger < 0 || Math.abs(select.content - select.trigger) > 1) {
+          return `select content ${select.content} for a ${select.trigger} trigger`;
+        }
         return width > 0 && width < 400 ? null : `popover width ${width}`;
       },
       sabotage: () => {
         const style = document.createElement("style");
-        style.textContent = '[data-slot="popover-content"]{width:100%!important}';
+        style.textContent = '[data-slot="popover-content"],[data-slot="select-content"]{width:100vw!important}';
         document.head.append(style);
       },
     },
