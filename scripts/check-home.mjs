@@ -28,51 +28,42 @@ if (!args.base) {
 const RELEASE = "1.1";
 const RELEASE_ANCHOR = "v1-1-0";
 
-const H1 = "Primitives for shadcn/ui, on Base UI or UI SDK. One API, and the source is yours.";
-const H1_MUTED = "One API, and the source is yours.";
+const H1 = "Own every primitive. Choose the foundation.";
+const H1_MUTED = "Choose the foundation.";
 const OUTLINE = [
   `h1 ${H1}`,
-  "h2 Same code, two foundations.",
-  // The gallery example's own title (packages/registry/components/combobox/combobox-13.tsx), shown as is.
-  "h3 New deployment",
-  "h2 Start with a part, a pattern or a page.",
+  "h2 Same code. Two foundations.",
+  "h3 Base UI",
+  "h3 UI SDK",
+  "h2 Parts. Patterns. Pages.",
   "h3 Primitives",
   "h3 Components",
   "h3 Blocks",
-  "h2 Nothing to depend on but your own files.",
-  "h3 The source is yours",
-  "h3 A drop-in for shadcn/ui",
-  "h3 Tested in both flavours",
-  "h3 Keyboard and screen readers",
-  "h3 Your theme, previewed",
-  "h3 Readable by agents",
-  "h2 Start with two commands.",
+  "h2 Already speaks shadcn/ui.",
+  "h3 The source is yours.",
+  "h3 Your theme carries over.",
+  "h3 Tested on both.",
+  "h2 Two commands. Then it's yours.",
 ];
 const HERO_COPY = [
   "Every primitive now also runs on UI SDK",
-  "66 accessible primitives you install as source with the shadcn CLI, themed by the CSS variables you already have.",
-  // Pro blocks are Base UI only; the hero says so rather than implying a UI SDK flavour of them.
-  "Composed into 900+ free components, and into Pro blocks built on Base UI.",
+  "66 accessible primitives for shadcn/ui, installed as source.",
+  "One API, on Base UI or UI SDK.",
 ];
-// The honest trade-off and the facts the flavour table states.
+// The honest trade-off each foundation's column states.
 const FLAVOUR_COPY = [
   "Stable, the default",
   "Beta, from Vercel Labs",
   "@ui-sdk/react 0.1.0-beta.1, pinned",
   "React 19, and one CSS layer line",
-  "None: blocks are Base UI only",
-  "1,063 demos and gallery examples are published in both flavours.",
 ];
 const SURFACE_COPY = ["Releases", "Environments", "New release", "Saved carts", "Fix tax rounding on refunds", "Rolled back"];
 const COMMANDS = [
   "@sevenui/button",
   "@sevenui/ui-sdk/button",
-  "@sevenui/component/combobox-13",
-  "@sevenui/ui-sdk/component/combobox-13",
   "@sevenui/dialog",
   "@sevenui/ui-sdk/dialog",
   "shadcn@latest init --base base",
-  "@sevenui/pro/",
 ];
 const LINKS = [
   "/docs",
@@ -83,9 +74,10 @@ const LINKS = [
   "/components",
   "/blocks",
   "/pro",
-  "/llms.txt",
   `/roadmap#${RELEASE_ANCHOR}`,
 ];
+// The page's one real (focusable, announced) flavour control; every other copy is an aria-hidden mirror.
+const REAL_SWITCH = /role="radiogroup"[^>]*aria-label="Primitive flavour"|aria-label="Primitive flavour"[^>]*role="radiogroup"/g;
 const TITLE = "SevenUI — Base UI components for shadcn/ui";
 // Strings only UI SDK's runtime contains (its injected reset and guard styles); the flavour constants in the
 // site's own code ("ui-sdk", ui-sdk.dev) never match.
@@ -144,7 +136,7 @@ const replaceDoc = (doc, patch) => ({ ...doc, ...patch });
 
 const CHECKS = {
   outline: {
-    name: "the heading outline is exactly the pinned fifteen lines (one h1)",
+    name: "the heading outline is exactly the pinned thirteen lines (one h1)",
     run: ({ html }) => {
       const got = outline(html);
       return JSON.stringify(got) === JSON.stringify(OUTLINE) ? null : `got ${JSON.stringify(got)}`;
@@ -182,7 +174,7 @@ const CHECKS = {
       const missing = HERO_COPY.filter((phrase) => !flat.includes(phrase));
       return missing.length ? `missing: ${missing.join(" | ")}` : null;
     },
-    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replaceAll("built on Base UI.", "built on UI.") }),
+    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replaceAll("installed as source.", "installed.") }),
   },
   release: {
     name: `the release pill says ${RELEASE}, links to its roadmap entry, and no other version is claimed`,
@@ -215,23 +207,29 @@ const CHECKS = {
     },
     breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace(/(<figure\b[^>]*data-home-surface[^>]*>)/, "$1<h3>x</h3>") }),
   },
+  oneRealSwitch: {
+    name: "the page has one real flavour switch, in the live surface's toolbar, next to what it changes",
+    run: ({ html }) => {
+      const count = (mainHtml(html).match(REAL_SWITCH) ?? []).length;
+      if (count !== 1) return `${count} real flavour switches in main`;
+      return new RegExp(REAL_SWITCH.source).test(surfaceHtml(html) ?? "") ? null : "the real switch is not in the surface";
+    },
+    breakIt: (doc) =>
+      replaceDoc(doc, { html: doc.html.replace("</main>", '<div role="radiogroup" aria-label="Primitive flavour"></div></main>') }),
+  },
   flavourSection: {
-    name: "the flavour section has the real switch, the comparison and both flavours' commands",
+    name: "the flavour section sets the two foundations side by side, each with its honest status, under a mirror switch",
     run: ({ html }) => {
       const section = sectionHtml(html, "flavours-title");
       if (!section) return "no flavour section";
-      if (!/role="radiogroup"[^>]*aria-label="Primitive flavour"|aria-label="Primitive flavour"[^>]*role="radiogroup"/.test(section))
-        return "no real (non-mirror) flavour switch";
-      if (!/<table\b/.test(section)) return "no comparison table";
-      // In place, not outlined into a hidden element that only a script reveals.
-      if (!/data-preview-flavour="base-ui"/.test(section)) return "the example's Base UI preview is not in the section's server HTML";
+      if (!/<div\b(?=[^>]*aria-hidden="true")(?=[^>]*class="flavour-switch\b)[^>]*>/.test(section)) return "no mirror flavour switch";
+      // Each column carries the class home.css tints for the reader's flavour.
+      for (const column of ["home-col-base-ui", "home-col-ui-sdk"]) {
+        if (!new RegExp(`class="${column}\\b`).test(section)) return `no ${column} column`;
+      }
       const flat = visibleText(section);
       const missing = FLAVOUR_COPY.filter((phrase) => !flat.includes(phrase));
-      if (missing.length) return `missing: ${missing.join(" | ")}`;
-      for (const command of ["@sevenui/component/combobox-13", "@sevenui/ui-sdk/component/combobox-13"]) {
-        if (!section.includes(command)) return `missing ${command}`;
-      }
-      return /flavour-only-ui-sdk/.test(section) ? null : "no UI SDK variant to switch to";
+      return missing.length ? `missing: ${missing.join(" | ")}` : null;
     },
     breakIt: (doc) => replaceDoc(doc, { html: doc.html.replaceAll("Beta, from Vercel Labs", "Stable") }),
   },
@@ -248,25 +246,25 @@ const CHECKS = {
     breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace("</main>", "<code>npx shadcn@latest add @sevenui/ui-sdk/pro/x</code></main>") }),
   },
   tiers: {
-    name: "the three tiers render what they hold, each with its link",
+    name: "the three tiers are one row each, with the count the registry derives and the way in",
     run: ({ html }) => {
       const main = mainHtml(html);
       const rows = Object.fromEntries(
         [...main.matchAll(/data-tier="([a-z]+)"([\s\S]*?)(?=data-tier=|<\/section>)/g)].map((m) => [m[1], m[2]]),
       );
-      const want = { primitives: "/docs/components", components: "/components", blocks: "/blocks" };
+      const want = {
+        primitives: { href: "/docs/components", says: "66 · free, MIT" },
+        components: { href: "/components", says: "900+ · free, MIT" },
+        blocks: { href: "/blocks", says: "Pro · " },
+      };
       if (JSON.stringify(Object.keys(rows)) !== JSON.stringify(Object.keys(want))) return `rows ${Object.keys(rows).join(",")}`;
-      for (const [name, href] of Object.entries(want)) {
+      for (const [name, { href, says }] of Object.entries(want)) {
         if (!rows[name].includes(`href="${href}"`)) return `${name} does not link to ${href}`;
+        if (!visibleText(rows[name]).includes(says)) return `${name} does not say ${JSON.stringify(says)}`;
       }
-      const primitiveLinks = new Set([...rows.primitives.matchAll(/href="(\/docs\/components\/[a-z-]+)"/g)].map((m) => m[1]));
-      if (primitiveLinks.size !== 66) return `${primitiveLinks.size} primitive links, want 66`;
-      const families = (rows.components.match(/href="\/components#[a-z-]+"/g) ?? []).length;
-      if (families < 5) return `${families} component family links`;
-      const covers = (rows.blocks.match(/href="\/blocks\/[a-z-]+\/[a-z-]+"/g) ?? []).length;
-      return covers >= 1 ? null : "no block category in the Blocks row";
+      return rows.blocks.includes('href="/pro"') ? null : "the Blocks row does not link to /pro";
     },
-    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace(/<a\b[^>]*href="\/docs\/components\/accordion"[^>]*>[\s\S]*?<\/a>/, "") }),
+    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace("900+ · free, MIT", "900 · free") }),
   },
   noMcpClaim: {
     name: "the page makes no MCP claim",
@@ -288,7 +286,7 @@ const CHECKS = {
       const missing = LINKS.filter((href) => !main.includes(`href="${href}"`));
       return missing.length ? `missing: ${missing.join(", ")}` : null;
     },
-    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replaceAll('href="/llms.txt"', 'href="/x"') }),
+    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replaceAll('href="/docs/theming"', 'href="/x"') }),
   },
   linksResolve: {
     name: "every internal link in <main> answers 200",
@@ -339,6 +337,10 @@ const CHECKS = {
         "Built for teams and their agents.",
         "Ask the agent…",
         "Start at any size.",
+        // The first two-flavour home, before the spacing and copy pass.
+        "Primitives for shadcn/ui, on Base UI or UI SDK.",
+        "Start with a part, a pattern or a page.",
+        "Nothing to depend on but your own files.",
       ];
       const found = stale.filter((phrase) => flat.includes(phrase));
       return found.length ? `still rendered: ${found.join(" | ")}` : null;
