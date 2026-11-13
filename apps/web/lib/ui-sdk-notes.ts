@@ -86,6 +86,10 @@ export const UI_SDK_NOTES: Partial<Record<string, UiSdkNote[]>> = {
       rows: ["combobox | `items` + function children", "combobox | `filter(item, query)`"],
     },
     {
+      text: "After typing with a value selected, the first match stays highlighted, so Enter chooses it; Base UI highlights nothing until an arrow key.",
+      rows: ["combobox | after typing with a value selected"],
+    },
+    {
       text: "`id`, `inputRef`, `actionsRef`, `openOnInputClick`, `highlightItemOnHover`, `autoComplete`, `limit`, `locale`, `grid`, `virtualized`, `inline` and `filteredItems` on the root are accepted and ignored.",
       rows: ["combobox | root `id`, `inputRef`"],
     },
@@ -115,6 +119,10 @@ export const UI_SDK_NOTES: Partial<Record<string, UiSdkNote[]>> = {
       text: "`DirectionProvider` adds a `display: contents` wrapper with `dir`, because UI SDK reads direction from the page.",
       rows: ["direction | `DirectionProvider` is context only"],
     },
+    {
+      text: "Without a `DirectionProvider`, on a page with `dir=\"rtl\"`, arrow keys follow the page's direction (ArrowRight moves a slider thumb right); Base UI reads the direction only from `DirectionProvider`, so its arrows stay left-to-right there.",
+      rows: ["direction, slider (and every arrow-key part) | without a `DirectionProvider`, a page with `dir=\"rtl\"`"],
+    },
   ],
   drawer: [
     {
@@ -134,8 +142,9 @@ export const UI_SDK_NOTES: Partial<Record<string, UiSdkNote[]>> = {
   ],
   field: [
     {
-      text: "Validation runs through the wrapper; native constraints (`required`, `type`, `pattern`) show after a submit attempt. In a plain `<form>`, a field with `validate` also re-validates on change once its error shows. `FieldError match=\"valid\"` never shows.",
+      text: "Validation runs through the wrapper; native constraints (`required`, `type`, `pattern`) show after a submit attempt, and in a plain `<form>` a `FieldError` shows the browser's message beside its bubble, where Base UI shows only the bubble. In a plain `<form>`, a field with `validate` also re-validates on change once its error shows. `FieldError match=\"valid\"` never shows.",
       rows: [
+        "field | a `FieldError` in a plain `<form>`",
         "field | `validate`, `validationMode`",
         "field | `validate` (onSubmit mode)",
         "field | `FieldError match=\"valid\"`",
@@ -261,6 +270,10 @@ export const UI_SDK_NOTES: Partial<Record<string, UiSdkNote[]>> = {
       text: "`thumbCollisionBehavior`, `inputRef` and a non-string `locale` are accepted and ignored.",
       rows: ["slider | `thumbCollisionBehavior`"],
     },
+    {
+      text: "Without a `DirectionProvider`, on a page with `dir=\"rtl\"`, ArrowRight moves the thumb right, following the page; Base UI's moves it left there. Under `DirectionProvider` both flavours behave the same.",
+      rows: ["direction, slider (and every arrow-key part) | without a `DirectionProvider`, a page with `dir=\"rtl\"`"],
+    },
   ],
   switch: [
     {
@@ -348,6 +361,10 @@ export const INTERNAL_ROWS: Record<string, string> = {
   "tabs, accordion, radio-group | item values of any type": "callbacks hand back the item's own value, as in Base UI",
   "select, input-otp, drawer | a caller's `ref`": "a caller's ref reaches the element, as in Base UI",
   "field | `invalid={false}` is inert": "matches Base UI",
+  "all popups | `collisionPadding` defaults to 5": "the same default as Base UI",
+  "combobox | opening the list highlights the selected item": "the same as Base UI",
+  "sheet, drawer | a modal popup keeps Tab inside": "the same as Base UI",
+  "number-field | stepper buttons are named": "the same names as Base UI",
   "button | `nativeButton`": "UI SDK detects a native button itself, which is what the prop told Base UI",
   "badge | `useRender` state": "the same attributes are set explicitly",
   "dialog | `DialogOverlay` is a plain div": "the overlay keeps its slot and look",
