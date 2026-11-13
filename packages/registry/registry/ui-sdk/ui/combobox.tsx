@@ -21,6 +21,23 @@ import {
 } from "@ui-sdk/react/combobox";
 import { type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cn } from "cn";
+
+// Base UI portals popups to <body>; UI SDK renders them in place, as children
+// of whatever holds the trigger, where that parent's child rules (Field's
+// `*:w-full`, ButtonGroup's corners) and inherited styles reach them. So they
+// render into <body>, or into a DirectionProvider's host to keep its `dir`
+// (direction.tsx); in place on the server and while hydrating.
+type PopupHost = { host: HTMLElement | null } | null;
+const popupHostKey = Symbol.for("sevenui.ui-sdk.popup-host");
+const popupHosts = globalThis as { [key: symbol]: React.Context<PopupHost> | undefined };
+popupHosts[popupHostKey] ??= React.createContext<PopupHost>(null);
+const PopupHostContext = popupHosts[popupHostKey] as React.Context<PopupHost>;
+const subscribeToNothing = () => () => {};
+function usePopupContainer(): HTMLElement | null {
+  const scope = React.useContext(PopupHostContext);
+  const body = React.useSyncExternalStore(subscribeToNothing, () => document.body, () => null);
+  return body && (scope ? scope.host : body);
+}
 import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react";
 
 import { Button } from "@/registry/ui-sdk/ui/button";
@@ -524,6 +541,7 @@ function ComboboxContent({
         "group/combobox-content relative isolate z-50 max-h-(--available-height) w-(--anchor-width) max-w-(--available-width) min-w-[calc(var(--anchor-width)+--spacing(7))] [--list-available-h:var(--available-height)] origin-(--transform-origin) overflow-hidden rounded-lg bg-popover text-popover-foreground shadow-overlay ring-1 ring-foreground/10 transition-[opacity,scale] duration-150 ease-snappy data-[chips=true]:min-w-(--anchor-width) data-starting-style:scale-[0.98] data-starting-style:opacity-0 data-ending-style:scale-[0.98] data-ending-style:opacity-0 motion-reduce:transition-none *:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-[var(--control-h,2.125rem)] *:data-[slot=input-group]:border-input/30 *:data-[slot=input-group]:bg-input/30 *:data-[slot=input-group]:shadow-none",
         className,
       )}
+      container={usePopupContainer()}
       {...props}
     />
   );

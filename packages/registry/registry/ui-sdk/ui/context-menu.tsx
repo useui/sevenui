@@ -19,6 +19,23 @@ import {
 } from "@ui-sdk/react/menu";
 import { type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cn } from "cn";
+
+// Base UI portals popups to <body>; UI SDK renders them in place, as children
+// of whatever holds the trigger, where that parent's child rules (Field's
+// `*:w-full`, ButtonGroup's corners) and inherited styles reach them. So they
+// render into <body>, or into a DirectionProvider's host to keep its `dir`
+// (direction.tsx); in place on the server and while hydrating.
+type PopupHost = { host: HTMLElement | null } | null;
+const popupHostKey = Symbol.for("sevenui.ui-sdk.popup-host");
+const popupHosts = globalThis as { [key: symbol]: React.Context<PopupHost> | undefined };
+popupHosts[popupHostKey] ??= React.createContext<PopupHost>(null);
+const PopupHostContext = popupHosts[popupHostKey] as React.Context<PopupHost>;
+const subscribeToNothing = () => () => {};
+function usePopupContainer(): HTMLElement | null {
+  const scope = React.useContext(PopupHostContext);
+  const body = React.useSyncExternalStore(subscribeToNothing, () => document.body, () => null);
+  return body && (scope ? scope.host : body);
+}
 import { CheckIcon, ChevronRightIcon } from "lucide-react";
 
 type Side = React.ComponentProps<typeof MenuContent>["side"];
@@ -166,6 +183,7 @@ function contentPart(Content: typeof MenuContent, defaultSlot: string) {
           "z-50 max-h-(--available-height) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground shadow-overlay ring-1 ring-foreground/10 outline-none transition-[opacity,scale] duration-100 ease-snappy data-starting-style:scale-[0.98] data-starting-style:opacity-0 data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-closed:overflow-hidden motion-reduce:transition-none",
           className,
         )}
+        container={usePopupContainer()}
         {...props}
       />
     );

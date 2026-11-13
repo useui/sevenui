@@ -1,6 +1,6 @@
 "use client";
 
-import type * as React from "react";
+import * as React from "react";
 import {
   NavigationMenuContent as NavigationMenuContentPrimitive,
   NavigationMenuIndicator as NavigationMenuIndicatorPrimitive,
@@ -14,6 +14,23 @@ import {
 import { type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cva } from "class-variance-authority";
 import { cn } from "cn";
+
+// Base UI portals popups to <body>; UI SDK renders them in place, as children
+// of whatever holds the trigger, where that parent's child rules (Field's
+// `*:w-full`, ButtonGroup's corners) and inherited styles reach them. So they
+// render into <body>, or into a DirectionProvider's host to keep its `dir`
+// (direction.tsx); in place on the server and while hydrating.
+type PopupHost = { host: HTMLElement | null } | null;
+const popupHostKey = Symbol.for("sevenui.ui-sdk.popup-host");
+const popupHosts = globalThis as { [key: symbol]: React.Context<PopupHost> | undefined };
+popupHosts[popupHostKey] ??= React.createContext<PopupHost>(null);
+const PopupHostContext = popupHosts[popupHostKey] as React.Context<PopupHost>;
+const subscribeToNothing = () => () => {};
+function usePopupContainer(): HTMLElement | null {
+  const scope = React.useContext(PopupHostContext);
+  const body = React.useSyncExternalStore(subscribeToNothing, () => document.body, () => null);
+  return body && (scope ? scope.host : body);
+}
 import { ChevronDownIcon } from "lucide-react";
 
 type BaseRender = React.ReactElement<unknown> | RenderProp<never>;
@@ -217,6 +234,7 @@ function NavigationMenuPositioner({
   collisionAvoidance?: unknown;
   disableAnchorTracking?: boolean;
 }) {
+  const body = usePopupContainer();
   return (
     <NavigationMenuViewportPrimitive
       side={toSide(side)}
@@ -227,7 +245,7 @@ function NavigationMenuPositioner({
       collisionPadding={collisionPadding ?? 5}
       arrowPadding={arrowPadding}
       anchor={anchor}
-      container={container}
+      container={container === undefined ? body : container}
       className={cn(
         "isolate z-50 h-(--viewport-height) w-(--viewport-width) max-w-(--available-width) overflow-hidden [--panel-h:var(--available-height)] origin-(--transform-origin) rounded-lg bg-popover text-popover-foreground shadow-overlay ring-1 ring-foreground/10 transition-[opacity,transform,width,height,scale,translate,top,left] duration-[0.35s] ease-[cubic-bezier(0.22,1,0.36,1)] outline-none data-ending-style:scale-90 data-ending-style:opacity-0 data-ending-style:duration-150 data-starting-style:scale-90 data-starting-style:opacity-0 data-instant:transition-none motion-reduce:transition-none",
         className,

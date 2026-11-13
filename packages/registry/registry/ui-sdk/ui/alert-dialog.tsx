@@ -1,6 +1,6 @@
 "use client";
 
-import type * as React from "react";
+import * as React from "react";
 import {
   AlertDialogBackdrop as AlertDialogBackdropPrimitive,
   AlertDialogClose as AlertDialogClosePrimitive,
@@ -12,6 +12,23 @@ import {
 } from "@ui-sdk/react/alert-dialog";
 import { type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 import { cn } from "cn";
+
+// Base UI portals popups to <body>; UI SDK renders them in place, as children
+// of whatever holds the trigger, where that parent's child rules (Field's
+// `*:w-full`, ButtonGroup's corners) and inherited styles reach them. So they
+// render into <body>, or into a DirectionProvider's host to keep its `dir`
+// (direction.tsx); in place on the server and while hydrating.
+type PopupHost = { host: HTMLElement | null } | null;
+const popupHostKey = Symbol.for("sevenui.ui-sdk.popup-host");
+const popupHosts = globalThis as { [key: symbol]: React.Context<PopupHost> | undefined };
+popupHosts[popupHostKey] ??= React.createContext<PopupHost>(null);
+const PopupHostContext = popupHosts[popupHostKey] as React.Context<PopupHost>;
+const subscribeToNothing = () => () => {};
+function usePopupContainer(): HTMLElement | null {
+  const scope = React.useContext(PopupHostContext);
+  const body = React.useSyncExternalStore(subscribeToNothing, () => document.body, () => null);
+  return body && (scope ? scope.host : body);
+}
 
 import { Button } from "@/registry/ui-sdk/ui/button";
 
@@ -59,7 +76,7 @@ function toFocusTarget(focus: BaseFocus | undefined) {
 function AlertDialog({
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive>) {
-  return <AlertDialogPrimitive {...props} />;
+  return <AlertDialogPrimitive container={usePopupContainer()} {...props} />;
 }
 
 // Base UI marks an open popup's trigger with data-popup-open and examples
@@ -157,6 +174,7 @@ function AlertDialogContent({
           "transition-[scale,opacity] duration-150 ease-snappy data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0 motion-reduce:transition-opacity motion-reduce:scale-100!",
           className,
         )}
+        container={usePopupContainer()}
         {...props}
       />
     </>

@@ -11,6 +11,23 @@ import { type RenderProp, renderElement } from "@ui-sdk/react/primitive";
 
 import { cn } from "cn";
 
+// Base UI portals popups to <body>; UI SDK renders them in place, as children
+// of whatever holds the trigger, where that parent's child rules (Field's
+// `*:w-full`, ButtonGroup's corners) and inherited styles reach them. So they
+// render into <body>, or into a DirectionProvider's host to keep its `dir`
+// (direction.tsx); in place on the server and while hydrating.
+type PopupHost = { host: HTMLElement | null } | null;
+const popupHostKey = Symbol.for("sevenui.ui-sdk.popup-host");
+const popupHosts = globalThis as { [key: symbol]: React.Context<PopupHost> | undefined };
+popupHosts[popupHostKey] ??= React.createContext<PopupHost>(null);
+const PopupHostContext = popupHosts[popupHostKey] as React.Context<PopupHost>;
+const subscribeToNothing = () => () => {};
+function usePopupContainer(): HTMLElement | null {
+  const scope = React.useContext(PopupHostContext);
+  const body = React.useSyncExternalStore(subscribeToNothing, () => document.body, () => null);
+  return body && (scope ? scope.host : body);
+}
+
 type Timing = { delay?: number; closeDelay?: number; closeOnClick?: boolean };
 type Side = React.ComponentProps<typeof TooltipContentPrimitive>["side"];
 
@@ -215,6 +232,7 @@ function TooltipContent({
         tracking?.hoverable === false && "pointer-events-none",
         className,
       )}
+      container={usePopupContainer()}
       {...props}
     >
       {children}

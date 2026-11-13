@@ -17,6 +17,23 @@ import {
   createToaster,
 } from "@ui-sdk/react/toast";
 import { cn } from "cn";
+
+// Base UI portals popups to <body>; UI SDK renders them in place, as children
+// of whatever holds the trigger, where that parent's child rules (Field's
+// `*:w-full`, ButtonGroup's corners) and inherited styles reach them. So they
+// render into <body>, or into a DirectionProvider's host to keep its `dir`
+// (direction.tsx); in place on the server and while hydrating.
+type PopupHost = { host: HTMLElement | null } | null;
+const popupHostKey = Symbol.for("sevenui.ui-sdk.popup-host");
+const popupHosts = globalThis as { [key: symbol]: React.Context<PopupHost> | undefined };
+popupHosts[popupHostKey] ??= React.createContext<PopupHost>(null);
+const PopupHostContext = popupHosts[popupHostKey] as React.Context<PopupHost>;
+const subscribeToNothing = () => () => {};
+function usePopupContainer(): HTMLElement | null {
+  const scope = React.useContext(PopupHostContext);
+  const body = React.useSyncExternalStore(subscribeToNothing, () => document.body, () => null);
+  return body && (scope ? scope.host : body);
+}
 import {
   CircleCheckIcon,
   InfoIcon,
@@ -328,6 +345,7 @@ function ToastViewport({
         "pointer-events-none fixed inset-x-4 top-auto bottom-4 z-50 mx-auto w-auto max-w-sm overflow-visible bg-transparent text-inherit outline-none sm:right-4 sm:left-auto sm:mx-0 sm:w-full",
         className,
       )}
+      container={usePopupContainer()}
       {...props}
     >
       {(_toast, item) => <ItemContext.Provider value={item}>{children}</ItemContext.Provider>}
