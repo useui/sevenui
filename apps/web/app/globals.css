@@ -384,6 +384,32 @@ html {
   display: block;
 }
 
+/* The primitive flavour (lib/flavour.ts). Both variants are server-rendered; this only hides the one
+   that does not match, so it composes with .pm-only. No attribute (scripts off) means Base UI. */
+:root:not([data-flavour="ui-sdk"]) .flavour-only-ui-sdk,
+[data-flavour="ui-sdk"] .flavour-only-base-ui {
+  display: none !important;
+}
+/* A server-rendered Base UI preview stays in place, invisible, until a UI SDK reader's preview loads. */
+[data-flavour="ui-sdk"] [data-preview-flavour="base-ui"] {
+  visibility: hidden;
+}
+
+/* FlavourSwitch: the selected option is drawn like a LayerCard tab (a small raised panel), from the
+   <html> attribute so it is right before hydration. Outside a LayerCard the variables fall back. */
+.flavour-switch {
+  background: color-mix(in oklch, var(--muted) 70%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--foreground) 6%, transparent);
+}
+:root:not([data-flavour="ui-sdk"]) .flavour-switch-option[data-option="base-ui"],
+[data-flavour="ui-sdk"] .flavour-switch-option[data-option="ui-sdk"] {
+  background: var(--layer-card-panel-bg, var(--card));
+  color: var(--foreground);
+  box-shadow:
+    var(--elevation-raised, 0 1px 2px 0 rgb(0 0 0 / 0.05)),
+    0 0 0 1px var(--layer-card-border-color, color-mix(in oklch, var(--foreground) 10%, transparent));
+}
+
 [data-block-preview] [data-preview-wrap][data-dragging="true"] iframe {
   pointer-events: none;
 }

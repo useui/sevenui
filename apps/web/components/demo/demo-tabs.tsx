@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { LayerCard, LayerCardHeader, LayerCardPanel } from "@/registry/base/ui/layer-card";
+import { FlavourSwitch } from "../flavour/flavour-switch";
 import { LAYER_FRAME_LG, LAYER_TAB, LAYER_TOOLBAR, LAYER_WINDOW } from "../layer-frame";
 
 const TABS = [
@@ -25,6 +26,7 @@ export function DemoTabs({
   label = "Example view",
   className,
   detached = false,
+  flavoured = false,
 }: {
   code: React.ReactNode;
   preview: React.ReactNode;
@@ -36,6 +38,8 @@ export function DemoTabs({
   className?: string;
   /** The docs look: a larger tray radius for the single demo that heads a primitive page. */
   detached?: boolean;
+  /** Shows the site-wide flavour switch in the toolbar: the preview, code and install follow it. */
+  flavoured?: boolean;
 }) {
   const [tab, setTab] = React.useState<Tab>("preview");
   const [codeWanted, setCodeWanted] = React.useState(false);
@@ -111,6 +115,7 @@ export function DemoTabs({
         <LayerCard className={`${heading === undefined ? "" : "mt-3"} ${detached ? LAYER_FRAME_LG : ""}`}>
           <LayerCardHeader className={LAYER_TOOLBAR}>
             {tablist}
+            {flavoured && <FlavourSwitch className="hidden @xl/toolbar:inline-flex" />}
             <div className="ml-auto flex min-w-0 items-center gap-1">{actions}</div>
           </LayerCardHeader>
           <LayerCardPanel className={LAYER_WINDOW}>{panels}</LayerCardPanel>

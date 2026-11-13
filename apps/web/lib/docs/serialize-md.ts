@@ -1,9 +1,11 @@
+import { readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { DocPage } from "./index.ts";
 import { rewriteRegistryImports } from "../registry-imports.ts";
 import { installCommand } from "../registry.ts";
 import { PACKAGE_MANAGERS } from "../package-manager.ts";
+import { UI_SDK_VERSION } from "../flavour.ts";
 
 const REGISTRY_DIR = path.join(process.cwd(), "../../packages/registry");
 
@@ -188,8 +190,32 @@ function renderInstallCommand(attrs: Record<string, string | true>, sourcePath: 
       `lib/docs/serialize-md.ts: ${sourcePath} has an <InstallCommand> tag with no "item" attribute.`,
     );
   }
-  const commands = PACKAGE_MANAGERS.map((pm) => installCommand(item, pm));
-  return fence("bash", commands.join("\n"));
+  const base = PACKAGE_MANAGERS.map((pm) => installCommand(item, pm));
+  if (!isFlavouredItem(item)) return fence("bash", base.join("\n"));
+  // A primitive or an example of one comes in both flavours; the page shows the reader's, a mirror shows both.
+  const uiSdk = PACKAGE_MANAGERS.map((pm) => installCommand(item, pm, "ui-sdk"));
+  return fence(
+    "bash",
+    [
+      "# Base UI flavour (the default)",
+      ...base,
+      "",
+      `# UI SDK flavour (@ui-sdk/react ${UI_SDK_VERSION}, beta; React 19; put \`@layer ui-sdk;\` above \`@import "tailwindcss"\`)`,
+      ...uiSdk,
+    ].join("\n"),
+  );
+}
+
+let primitiveNames: Set<string> | undefined;
+
+/** Mirrors lib/flavour-items.ts, which is server-only; this module also runs off-graph under plain node. */
+function isFlavouredItem(item: string): boolean {
+  primitiveNames ??= new Set(
+    (JSON.parse(readFileSync(path.join(REGISTRY_DIR, "registry.json"), "utf8")) as { items: { name: string; type: string }[] }).items
+      .filter((entry) => entry.type === "registry:ui")
+      .map((entry) => entry.name),
+  );
+  return primitiveNames.has(item) || item.startsWith("component/") || item.startsWith("demo/");
 }
 
 export type DocPageSummary = Pick<DocPage, "route" | "title" | "description">;

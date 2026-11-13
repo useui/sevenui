@@ -1,6 +1,7 @@
 import { getDocIndex } from "../../lib/docs";
 import { toMarkdown } from "../../lib/docs/serialize-md";
 import { site } from "../../lib/site";
+import { FLAVOURS_NOTE } from "../../lib/site-index";
 
 export const dynamic = "force-static";
 
@@ -18,6 +19,6 @@ export async function GET() {
     }),
   );
 
-  const text = `# ${site.name}\n\n> ${site.description}\n\n${sections.join(SECTION_SEPARATOR)}\n`;
+  const text = `# ${site.name}\n\n> ${site.description}\n\n${FLAVOURS_NOTE}\n\n${sections.join(SECTION_SEPARATOR)}\n`;
   return new Response(text, { headers: { "content-type": "text/plain; charset=utf-8" } });
 }

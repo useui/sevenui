@@ -1,6 +1,10 @@
 import GithubSlugger from "github-slugger";
 
-export type Heading = { depth: 2 | 3; text: string; id: string };
+/**
+ * `flavour` marks a heading that exists for one primitive flavour only: the h3s of an "API reference"
+ * section, which lib/mdx/remark-flavour-api.mjs shows to Base UI readers only.
+ */
+export type Heading = { depth: 2 | 3; text: string; id: string; flavour?: "base-ui" };
 
 const FENCE_MARKER = /^ {0,3}(`{3,}|~{3,})/;
 
@@ -32,11 +36,16 @@ export function stripFences(raw: string): string {
 export function scanHeadings(raw: string): Heading[] {
   const slugger = new GithubSlugger(); // one instance per document
   const out: Heading[] = [];
+  let inApiReference = false;
   for (const line of stripFences(raw).split("\n")) {
     const m = /^(#{2,3})\s+(.+?)\s*$/u.exec(line);
     if (!m) continue;
     const text = m[2];
-    out.push({ depth: m[1].length as 2 | 3, text, id: slugger.slug(text) });
+    const depth = m[1].length as 2 | 3;
+    if (depth === 2) inApiReference = text === "API reference";
+    const heading: Heading = { depth, text, id: slugger.slug(text) };
+    if (depth === 3 && inApiReference) heading.flavour = "base-ui";
+    out.push(heading);
   }
   return out;
 }

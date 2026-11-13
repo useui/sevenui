@@ -1,5 +1,6 @@
 import * as React from "react";
 import type { MDXComponents } from "mdx/types";
+import { UiSdkApiReference } from "./components/flavour/ui-sdk-primitive-note";
 import { CodeBlock } from "./components/mdx/code-block";
 import { prepareCodeChild } from "./components/mdx/code-element";
 import { Component } from "./components/mdx/component";
@@ -8,6 +9,11 @@ import { PrimitiveIndex } from "./components/mdx/primitive-index";
 
 function cx(...values: Array<string | false | null | undefined>): string {
   return values.filter(Boolean).join(" ");
+}
+
+/** The Base UI prose of a primitive's API reference; lib/mdx/remark-flavour-api.mjs wraps it. */
+function BaseUiOnly({ children }: { children?: React.ReactNode }) {
+  return <div className="flavour-only-base-ui">{children}</div>;
 }
 
 function P({ className, ...props }: React.ComponentPropsWithoutRef<"p">) {
@@ -138,5 +144,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     Component,
 
     PrimitiveIndex,
+    BaseUiOnly,
+    UiSdkApiReference,
   };
 }

@@ -3,6 +3,7 @@ import "server-only";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { rewriteRegistryImports } from "../../lib/registry-imports";
+import { type ExampleKind, exampleSourcePath, hasOverlay } from "../../lib/ui-sdk-examples";
 import { highlightLines } from "../../lib/shiki";
 import { CodeBlock } from "../mdx/code-block";
 import { CODE_CLASS, cx } from "../mdx/code-element";
@@ -40,6 +41,32 @@ export async function sourcePane(relPath: string): Promise<React.ReactElement> {
         className={cx(CODE_CLASS, "language-tsx shiki")}
         // biome-ignore lint/security/noDangerouslySetInnerHtml: build-time Shiki output from our own sources
         dangerouslySetInnerHTML={{ __html: highlighted }}
+      />
+    </CodeBlock>
+  );
+}
+
+/**
+ * The Code pane of a demo or gallery example in both flavours. An example with a UI SDK overlay gets one
+ * <code> per flavour, switched by CSS; any other example's source is the same in both, so it gets one.
+ */
+export async function flavouredSourcePane(kind: ExampleKind, file: string): Promise<React.ReactElement> {
+  if (!hasOverlay(kind, file)) return sourcePane(`${kind}/${file}`);
+  const [base, uiSdk] = await Promise.all([
+    highlightRegistrySource(`${kind}/${file}`),
+    highlightRegistrySource(exampleSourcePath(kind, file, "ui-sdk")),
+  ]);
+  return (
+    <CodeBlock bare language="tsx">
+      <code
+        className={cx(CODE_CLASS, "language-tsx shiki flavour-only-base-ui")}
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: build-time Shiki output from our own sources
+        dangerouslySetInnerHTML={{ __html: base }}
+      />
+      <code
+        className={cx(CODE_CLASS, "language-tsx shiki flavour-only-ui-sdk")}
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: build-time Shiki output from our own sources
+        dangerouslySetInnerHTML={{ __html: uiSdk }}
       />
     </CodeBlock>
   );

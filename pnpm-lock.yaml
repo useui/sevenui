@@ -151,6 +151,12 @@ importers:
       '@shikijs/themes':
         specifier: 4.4.3
         version: 4.4.3
+      '@ui-sdk/core':
+        specifier: 0.1.0-beta.1
+        version: 0.1.0-beta.1
+      '@ui-sdk/react':
+        specifier: 0.1.0-beta.1
+        version: 0.1.0-beta.1(@types/react@19.2.18)(@ui-sdk/core@0.1.0-beta.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       github-slugger:
         specifier: ^2.0.0
         version: 2.0.0

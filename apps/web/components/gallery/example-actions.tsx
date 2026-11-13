@@ -49,7 +49,7 @@ export function ExampleActions({ id, title }: { id: string; title: string }) {
         />
         <TooltipContent>{copied ? "Copied" : "Copy link to this example"}</TooltipContent>
       </Tooltip>
-      <InstallControl item={`component/${id}`} title={title} />
+      <InstallControl flavoured item={`component/${id}`} title={title} />
       <ThemeCustomizer />
     </>
   );

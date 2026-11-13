@@ -3,6 +3,7 @@ import "server-only";
 import { loadBlocksTree } from "./blocks";
 import { getDocIndex } from "./docs";
 import { getNavTree, isNavGroup, type NavLink } from "./docs/nav";
+import { UI_SDK_VERSION } from "./flavour";
 import { GALLERY_SLUGS } from "./gallery";
 import { CUSTOM_ROUTES, requirePageMeta } from "./page-meta";
 import { site } from "./site";
@@ -44,6 +45,13 @@ const entry = (title: string, route: string, description: string): string =>
 
 const LOOSE_PAGES_HEADING = "## Docs";
 
+/** Both install spellings, so an agent reading only this index can install either flavour. */
+export const FLAVOURS_NOTE =
+  "Every primitive comes in two flavours with one API. Base UI (the default): `npx shadcn@latest add @sevenui/<name>`. " +
+  `UI SDK (@ui-sdk/react ${UI_SDK_VERSION}, beta, React 19; declare \`@layer ui-sdk;\` above \`@import "tailwindcss"\`): ` +
+  "`npx shadcn@latest add @sevenui/ui-sdk/<name>`. Components install the same way, as `@sevenui/component/<name>` or " +
+  "`@sevenui/ui-sdk/component/<name>`. Pro blocks are built on Base UI.";
+
 export async function buildLlmsIndex(): Promise<string> {
   const [index, tree, blocks] = await Promise.all([getDocIndex(), getNavTree(), blocksRoutes()]);
 
@@ -56,7 +64,7 @@ export async function buildLlmsIndex(): Promise<string> {
     return entry(page.title, href, page.description);
   };
 
-  const lines = [`# ${site.name}`, "", `> ${site.description}`];
+  const lines = [`# ${site.name}`, "", `> ${site.description}`, "", FLAVOURS_NOTE];
 
   const looseLinks = tree.filter((node): node is NavLink => !isNavGroup(node));
   if (looseLinks.length > 0) {
