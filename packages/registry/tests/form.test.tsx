@@ -1,3 +1,4 @@
+import type * as React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -31,6 +32,70 @@ describe("Form", () => {
       email: "ada@example.com",
       username: "ada",
     });
+  });
+
+  // Base UI validates every field on submit whether or not onFormSubmit is
+  // set, and a failure stops onSubmit (and a native action) from running.
+  it("runs field validators before a plain onSubmit and blocks it on failure", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn((event: React.FormEvent) => event.preventDefault());
+    render(
+      <Form onSubmit={onSubmit}>
+        <Field
+          name="username"
+          validate={(value) => (String(value ?? "").length >= 3 ? null : "Too short.")}
+        >
+          <FieldLabel>Username</FieldLabel>
+          <Input />
+          <FieldError />
+        </Field>
+        <button type="submit">Submit</button>
+      </Form>,
+    );
+    await user.click(screen.getByRole("button", { name: "Submit" }));
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(screen.getByText("Too short.")).toBeTruthy();
+    const input = screen.getByLabelText("Username");
+    expect(input.getAttribute("aria-invalid")).toBe("true");
+    expect(document.activeElement).toBe(input);
+
+    await user.type(input, "ada");
+    await user.click(screen.getByRole("button", { name: "Submit" }));
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  // Base UI's Form is noValidate: a native constraint failure shows in the
+  // field, not as a browser bubble that stops the submit event, so the other
+  // fields' validators still run and show their messages.
+  it("is noValidate and reports native and validate errors together", async () => {
+    const user = userEvent.setup();
+    const onFormSubmit = vi.fn();
+    render(
+      <Form onFormSubmit={onFormSubmit}>
+        <Field name="email">
+          <FieldLabel>Email</FieldLabel>
+          <Input required />
+          <FieldError />
+        </Field>
+        <Field
+          name="username"
+          validate={(value) => (String(value ?? "").length >= 3 ? null : "Too short.")}
+        >
+          <FieldLabel>Username</FieldLabel>
+          <Input />
+          <FieldError />
+        </Field>
+        <button type="submit">Submit</button>
+      </Form>,
+    );
+    const form = document.querySelector("form") as HTMLFormElement;
+    expect(form.noValidate).toBe(true);
+    await user.click(screen.getByRole("button", { name: "Submit" }));
+    expect(onFormSubmit).not.toHaveBeenCalled();
+    expect(screen.getByText("Too short.")).toBeTruthy();
+    const email = screen.getByLabelText("Email");
+    expect(email.getAttribute("aria-invalid")).toBe("true");
+    expect(document.activeElement).toBe(email);
   });
 
   it("flows external errors into a nested bare FieldError", () => {

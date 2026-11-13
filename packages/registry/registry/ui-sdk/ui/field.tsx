@@ -31,6 +31,7 @@ type FormRegistration = {
   value: () => unknown;
   validate: () => Promise<boolean> | boolean;
   focus: () => void;
+  element: () => HTMLElement | null;
 };
 type FormContextValue = {
   errors?: Record<string, string | string[]>;
@@ -231,6 +232,7 @@ function Field({
       value: () => readValue(rootRef.current),
       validate: runValidate,
       focus: () => focusControl(rootRef.current),
+      element: () => rootRef.current,
     });
   }, [form, name, runValidate]);
 

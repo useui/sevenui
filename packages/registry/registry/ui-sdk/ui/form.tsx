@@ -17,6 +17,7 @@ type FormRegistration = {
   value: () => unknown;
   validate: () => Promise<boolean> | boolean;
   focus: () => void;
+  element: () => HTMLElement | null;
 };
 type FormContextValue = {
   errors?: FormErrors;
@@ -33,6 +34,37 @@ contexts[formContextKey] ??= React.createContext<FormContextValue | null>(null);
 const FormContext = contexts[formContextKey] as React.Context<FormContextValue | null>;
 
 const noNames = new Set<string>();
+
+// Focus goes to the first invalid control in the page, whether a validator
+// or the browser failed it, as in Base UI. UI SDK has already focused the
+// first control the browser failed.
+function focusFirstInvalid(
+  form: HTMLFormElement,
+  failed: FormRegistration[],
+  nativeValid: boolean,
+) {
+  const active = form.ownerDocument.activeElement;
+  const native = !nativeValid && active && form.contains(active) ? active : null;
+  let first: FormRegistration | undefined;
+  let firstElement: HTMLElement | null = null;
+  for (const field of failed) {
+    const element = field.element();
+    if (
+      !first ||
+      (element &&
+        firstElement &&
+        element.compareDocumentPosition(firstElement) & Node.DOCUMENT_POSITION_FOLLOWING)
+    ) {
+      first = field;
+      firstElement = element;
+    }
+  }
+  if (!first) return;
+  if (native && firstElement && native.compareDocumentPosition(firstElement) & Node.DOCUMENT_POSITION_FOLLOWING) {
+    return;
+  }
+  first.focus();
+}
 
 type FormSubmitEventDetails = {
   reason: "none";
@@ -116,18 +148,25 @@ function Form<FormValues extends Record<string, any> = Record<string, any>>({
     [visibleErrors, validationMode, values, errors],
   );
 
+  // Base UI's Form is `noValidate` and checks every field itself before
+  // `onSubmit` runs. The flavour does the same: checkValidity() fires the
+  // `invalid` events UI SDK shows native errors from (and focuses the first
+  // one), and synchronous validators block too; asynchronous ones only show
+  // their result.
   const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
+    const form = event.currentTarget;
+    const failed = validate()
+      .filter((result) => result.valid === false)
+      .map((result) => result.field);
+    const nativeValid = form.noValidate ? form.checkValidity() : true;
+    if (failed.length > 0 || !nativeValid) {
+      event.preventDefault();
+      focusFirstInvalid(form, failed, nativeValid);
+      return;
+    }
     onSubmit?.(event);
     if (!onFormSubmit) return;
     event.preventDefault();
-    // Synchronous validators block the submit, as in Base UI; asynchronous
-    // ones only show their result.
-    const results = validate();
-    const invalid = results.find((result) => result.valid === false);
-    if (invalid) {
-      invalid.field.focus();
-      return;
-    }
     onFormSubmit(values() as FormValues, {
       reason: "none",
       event: event.nativeEvent,
@@ -139,6 +178,7 @@ function Form<FormValues extends Record<string, any> = Record<string, any>>({
       {renderElement(
         "form",
         {
+          noValidate: true,
           ...props,
           className: cn("grid gap-4", className),
           onSubmit: handleSubmit,
