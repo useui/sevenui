@@ -221,12 +221,47 @@ function DrawerSwipeHandle({
 // attributes: data-swipe-direction/-axis and data-snap-points are set here,
 // and UI SDK's nestedOpen/dragging state is mirrored as Base UI's
 // data-nested-drawer-open/data-swiping.
+// UI SDK's focus trap finds its content by UI SDK's own data-slot, which the
+// SevenUI slot replaces, so Tab left a modal drawer at its last control (and
+// Shift+Tab at its first). Checked in Chrome: a plain UI SDK drawer wraps, and
+// the same one re-slotted through render does not. So the content wraps Tab
+// itself while modal.
+const TABBABLE =
+  'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
+
+function wrapTab(event: React.KeyboardEvent<HTMLElement>) {
+  const content = event.currentTarget;
+  if (event.key !== "Tab" || event.defaultPrevented) return;
+  if (content.getAttribute("aria-modal") !== "true") return;
+  const tabbables = [...content.querySelectorAll<HTMLElement>(TABBABLE)].filter(
+    (element) =>
+      element.tabIndex >= 0 &&
+      !element.closest("[inert], [hidden]") &&
+      element.checkVisibility?.() !== false,
+  );
+  const first = tabbables[0];
+  const last = tabbables[tabbables.length - 1];
+  const active = content.ownerDocument.activeElement;
+  if (!first || !last) {
+    event.preventDefault();
+    return;
+  }
+  if (event.shiftKey && (active === first || active === content)) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && active === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
 function DrawerContent({
   className,
   children,
   render,
   initialFocus,
   finalFocus,
+  onKeyDown,
   ...props
 }: Omit<
   React.ComponentProps<typeof DrawerContentPrimitive>,
@@ -279,6 +314,10 @@ function DrawerContent({
           "motion-reduce:data-starting-style:opacity-0 motion-reduce:data-ending-style:opacity-0!",
           className,
         )}
+        onKeyDown={(event: React.KeyboardEvent<HTMLDivElement>) => {
+          onKeyDown?.(event);
+          wrapTab(event);
+        }}
         {...props}
       >
         {showSwipeHandle && <DrawerSwipeHandle />}

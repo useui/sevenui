@@ -57,6 +57,32 @@ describe("Drawer", () => {
     expect(document.activeElement?.textContent).toBe("Dismiss");
   });
 
+  // A modal drawer keeps Tab inside: from its last control to its first, and
+  // Shift+Tab back. (UI SDK's own trap misses content re-slotted as
+  // drawer-popup; checked in Chrome as well.)
+  it("wraps Tab and Shift+Tab inside the open drawer", async () => {
+    const user = userEvent.setup();
+    render(
+      <Drawer defaultOpen>
+        <DrawerTrigger>Open drawer</DrawerTrigger>
+        <DrawerContent>
+          <DrawerTitle>Move goal</DrawerTitle>
+          <button type="button">Submit</button>
+          <DrawerClose>Cancel</DrawerClose>
+        </DrawerContent>
+      </Drawer>,
+    );
+    await screen.findByRole("dialog");
+    const submit = screen.getByRole("button", { name: "Submit" });
+    const cancel = screen.getByRole("button", { name: "Cancel" });
+    cancel.focus();
+    await user.tab();
+    // Base UI routes it through a focus guard inside the popup first.
+    await waitFor(() => expect(document.activeElement).toBe(submit));
+    await user.tab({ shift: true });
+    await waitFor(() => expect(document.activeElement).toBe(cancel));
+  });
+
   it("still focuses the popup when the content has a caller ref", async () => {
     // The flavour's setup reports no client rects, so UI SDK would find no
     // tabbable control to fall back to; give every element a box here.

@@ -131,6 +131,40 @@ function SheetOverlay({
 
 // Base UI marks a dialog with an open nested dialog data-nested-dialog-open;
 // UI SDK's state calls it nestedOpen (dialog-10 styles the Base UI name).
+// UI SDK's focus trap finds its content by UI SDK's own data-slot, which the
+// SevenUI slot replaces, so Tab left a modal sheet at its last control (and
+// Shift+Tab at its first). Checked in Chrome: a plain UI SDK dialog wraps, and
+// the same one re-slotted through render does not. So the content wraps Tab
+// itself while modal.
+const TABBABLE =
+  'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
+
+function wrapTab(event: React.KeyboardEvent<HTMLElement>) {
+  const content = event.currentTarget;
+  if (event.key !== "Tab" || event.defaultPrevented) return;
+  if (content.getAttribute("aria-modal") !== "true") return;
+  const tabbables = [...content.querySelectorAll<HTMLElement>(TABBABLE)].filter(
+    (element) =>
+      element.tabIndex >= 0 &&
+      !element.closest("[inert], [hidden]") &&
+      element.checkVisibility?.() !== false,
+  );
+  const first = tabbables[0];
+  const last = tabbables[tabbables.length - 1];
+  const active = content.ownerDocument.activeElement;
+  if (!first || !last) {
+    event.preventDefault();
+    return;
+  }
+  if (event.shiftKey && (active === first || active === content)) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && active === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
 function SheetContent({
   className,
   children,
@@ -140,6 +174,7 @@ function SheetContent({
   initialFocus,
   finalFocus,
   "data-slot": slot = "sheet-content",
+  onKeyDown,
   ...props
 }: Omit<
   React.ComponentProps<typeof SheetContentPrimitive>,
@@ -175,6 +210,10 @@ function SheetContent({
           "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-auto data-[side=bottom]:border-t data-[side=bottom]:data-ending-style:translate-y-[2.5rem] data-[side=bottom]:data-starting-style:translate-y-[2.5rem] data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-3/4 data-[side=left]:border-r data-[side=left]:data-ending-style:translate-x-[-2.5rem] data-[side=left]:data-starting-style:translate-x-[-2.5rem] data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-full data-[side=right]:w-3/4 data-[side=right]:border-l data-[side=right]:data-ending-style:translate-x-[2.5rem] data-[side=right]:data-starting-style:translate-x-[2.5rem] data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:h-auto data-[side=top]:border-b data-[side=top]:data-ending-style:translate-y-[-2.5rem] data-[side=top]:data-starting-style:translate-y-[-2.5rem] data-[side=left]:sm:max-w-sm data-[side=right]:sm:max-w-sm",
           className,
         )}
+        onKeyDown={(event: React.KeyboardEvent<HTMLDivElement>) => {
+          onKeyDown?.(event);
+          wrapTab(event);
+        }}
         {...props}
       >
         {children}
