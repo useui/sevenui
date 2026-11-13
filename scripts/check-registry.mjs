@@ -3,7 +3,9 @@ import { join } from "node:path";
 import {
   EXAMPLE_KINDS,
   FLAVOUR_URL,
+  LAYER_DOCS,
   REPLACED,
+  SETUP_ITEM,
   SHARED_ITEMS,
   UI_SDK_PORTS,
   importedPackages,
@@ -235,16 +237,44 @@ for (const name of baseUiNames) {
 }
 if (flavour.pending.length > 0) errors.push(`ui-sdk: ${flavour.pending.length} primitive(s) pending: ${flavour.pending.join(", ")}`);
 if (flavour.blocked.length > 0) errors.push(`ui-sdk: ${flavour.blocked.length} primitive(s) blocked: ${flavour.blocked.map((e) => e.item.name).join(", ")}`);
-if (flavourItems.size !== baseUiNames.length) {
-  errors.push(`ui-sdk: ${flavourItems.size} flavour item(s) published for ${baseUiNames.length} base primitive(s)`);
+const primitiveFlavourItems = [...flavourItems.keys()].filter((name) => name !== SETUP_ITEM);
+if (primitiveFlavourItems.length !== baseUiNames.length) {
+  errors.push(`ui-sdk: ${primitiveFlavourItems.length} flavour item(s) published for ${baseUiNames.length} base primitive(s)`);
 }
+// The one flavour item that is not a primitive: it carries the setup message,
+// which the CLI prints once per resolved item, so every item that imports UI
+// SDK depends on it and no other item carries `docs`.
+const setupItem = flavourItems.get(SETUP_ITEM);
+const SETUP_URL = `https://sevenui.dev/r/ui-sdk/${SETUP_ITEM}.json`;
+if (!setupItem) errors.push(`ui-sdk: no "${SETUP_ITEM}" item; the layer step would never be printed`);
+else {
+  if (setupItem.docs !== LAYER_DOCS) errors.push(`ui-sdk item "${SETUP_ITEM}": its docs are not the setup message`);
+  if ((setupItem.files ?? []).length || (setupItem.registryDependencies ?? []).length || (setupItem.dependencies ?? []).length) {
+    errors.push(`ui-sdk item "${SETUP_ITEM}": carries files or dependencies; it exists only for its message`);
+  }
+  if (uiNames.has(SETUP_ITEM)) errors.push(`ui-sdk: "${SETUP_ITEM}" collides with a base registry item`);
+}
+let setupDependents = 0;
+for (const item of flavour.registry.items) {
+  if (item.name === SETUP_ITEM) continue;
+  if (item.docs !== undefined) errors.push(`ui-sdk item "${item.name}": carries docs; the setup message lives on "${SETUP_ITEM}" so it prints once`);
+  const usesUiSdk = item.files.some((f) => readFileSync(join(UI_ROOT, f.path), "utf8").includes('"@ui-sdk/react/'));
+  const dependsOnSetup = (item.registryDependencies ?? []).includes(SETUP_URL);
+  if (usesUiSdk !== dependsOnSetup) {
+    errors.push(`ui-sdk item "${item.name}": ${usesUiSdk ? "imports UI SDK but does not depend on" : "depends on"} ${SETUP_ITEM}${usesUiSdk ? "" : " without importing UI SDK"}`);
+  }
+  if (dependsOnSetup) setupDependents++;
+}
+if (setupDependents === 0) errors.push(`ui-sdk: no item depends on "${SETUP_ITEM}"`);
 for (const name of flavourItems.keys()) {
+  if (name === SETUP_ITEM) continue;
   if (!uiNames.has(name) || SHARED_ITEMS.has(name)) {
     errors.push(`ui-sdk item "${name}" is not a base primitive`);
   }
 }
 
 for (const item of flavour.registry.items) {
+  if (item.name === SETUP_ITEM) continue;
   const where = `ui-sdk item "${item.name}"`;
   for (const file of item.files) {
     const filePath = join(UI_ROOT, file.path);

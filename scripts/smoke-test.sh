@@ -265,7 +265,11 @@ grep -q 'from "@/components/ui/button"' "$SDK/src/components/ui/dialog.tsx" \
   || { echo "ui-sdk import not rewritten to consumer alias" >&2; exit 1; }
 grep -q -- '--surface-tray:' "$SDK/src/styles.css" || { echo "ui-sdk install did not pull sevenui-tokens" >&2; exit 1; }
 test "$(head -n 1 "$SDK/src/styles.css")" = "@layer ui-sdk;" || { echo "@layer ui-sdk; is no longer the first line" >&2; exit 1; }
-grep -q '@layer ui-sdk;' "$SDK_LOG" || { echo "install did not print the cascade-layer step" >&2; exit 1; }
+# The setup message lives on one shared item (ui-sdk-setup), so a six-item
+# install prints it once, not once per item and dependency.
+test "$(grep -c 'cascade layer named ui-sdk' "$SDK_LOG")" -eq 1 \
+  || { echo "install should print the cascade-layer step exactly once, printed $(grep -c 'cascade layer named ui-sdk' "$SDK_LOG")" >&2; exit 1; }
+grep -q 'npm install --save-exact @ui-sdk/react@' "$SDK_LOG" || { echo "install did not print how to pin UI SDK" >&2; exit 1; }
 
 # UI SDK flavour examples: /r/ui-sdk/demo/* and /r/ui-sdk/component/* land as
 # single files under components/ like their base counterparts, and pull only

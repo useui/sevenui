@@ -124,8 +124,16 @@ const DESCRIPTION_OVERRIDES = {
     "Displays rich content in the top layer, positioned relative to an anchor element, built on the UI SDK Popover component.",
 };
 
-export const LAYER_DOCS =
-  'UI SDK adds its runtime CSS to a cascade layer named ui-sdk. Put `@layer ui-sdk;` on the first line of your global CSS file, above `@import "tailwindcss"`, so your utilities win over it. Without it, popups such as dialogs can lose their padding and background.';
+// The one-time setup message. The shadcn CLI prints an item's `docs` once for
+// every item it resolves, dependencies included, so it lives on one flavour-only
+// item, SETUP_ITEM, that every item importing UI SDK depends on: one install
+// prints it once (checked with shadcn 4.19.1: four times for dialog, select and
+// tooltip when each item carried it, once this way).
+export const SETUP_ITEM = "ui-sdk-setup";
+export const LAYER_DOCS = [
+  'UI SDK keeps its runtime CSS in a cascade layer named ui-sdk. Put `@layer ui-sdk;` on the first line of your global CSS file, above `@import "tailwindcss"`. UI SDK normally inserts its styles first, so a default setup also works without the line; it keeps your utilities winning when UI SDK\'s styles end up after yours (for example under a Content Security Policy without a nonce, where they become constructed stylesheets), where popups such as dialogs would lose their padding and background.',
+  "SevenUI's UI SDK flavour is built and tested against @ui-sdk/react and @ui-sdk/core 0.1.0-beta.1. pnpm, yarn and bun save that exact version; npm saves ^0.1.0-beta.1, which also accepts later betas, so pin it: npm install --save-exact @ui-sdk/react@0.1.0-beta.1 @ui-sdk/core@0.1.0-beta.1",
+].join("\n\n");
 
 export const retarget = (source) =>
   source.replaceAll("@/registry/base/", "@/registry/ui-sdk/");
@@ -283,21 +291,31 @@ export function readFlavour() {
     const { name, type, title, cssVars, css } = entry.item;
     // shadcn can only append CSS, and a late `@layer ui-sdk;` cannot order the
     // layer below Tailwind's, so the install prints the one manual step.
-    const docs = packages.has("@ui-sdk/react") ? LAYER_DOCS : undefined;
+    const usesUiSdk = packages.has("@ui-sdk/react");
     items.push({
       name,
       type,
       title,
       description: describe(entry.item),
       ...(dependencies.length ? { dependencies } : {}),
-      registryDependencies: regDepsOf(entry),
+      registryDependencies: [...(usesUiSdk ? [`${SITE}/ui-sdk/${SETUP_ITEM}.json`] : []), ...regDepsOf(entry)],
       files: entry.files,
       ...(cssVars ? { cssVars } : {}),
       ...(css ? { css } : {}),
-      ...(docs ? { docs } : {}),
     });
   }
 
+  if (items.some((i) => i.registryDependencies.includes(`${SITE}/ui-sdk/${SETUP_ITEM}.json`))) {
+    items.push({
+      name: SETUP_ITEM,
+      type: "registry:lib",
+      title: "UI SDK setup",
+      description: "The one-time setup of the UI SDK flavour, printed on install: the cascade layer line and the exact UI SDK version.",
+      registryDependencies: [],
+      files: [],
+      docs: LAYER_DOCS,
+    });
+  }
   const registry = {
     $schema: "https://ui.shadcn.com/schema/registry.json",
     name: "sevenui-ui-sdk",
