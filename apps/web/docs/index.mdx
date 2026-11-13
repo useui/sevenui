@@ -1,11 +1,12 @@
 ---
 title: Introduction
-description: Base UI powered React primitives, distributed through the shadcn registry. What SevenUI is, why it exists, and what it covers.
+description: React primitives on Base UI or UI SDK, distributed through the shadcn registry. What SevenUI is, why it exists, and what it covers.
 ---
 
 SevenUI is a registry of 66 primitives built on
-[Base UI](https://base-ui.com). Primitives are installed as
-source code into your project through the shadcn CLI — no runtime
+[Base UI](https://base-ui.com), each also available on
+[UI SDK](https://ui-sdk.dev) with the same API. Primitives are installed
+as source code into your project through the shadcn CLI — no runtime
 package to depend on.
 
 Composed, copy-and-go usage of these primitives lives in
@@ -17,6 +18,11 @@ live in [Blocks](/blocks).
 - **Base UI first** — no Radix, anywhere. Every interactive part is built
   on [Base UI](https://base-ui.com); the only exceptions are four sanctioned,
   Radix-free specialized libraries (calendar, carousel, chart, resizable).
+- **Two flavours, one API** — every primitive also ships on UI SDK
+  (`@sevenui/ui-sdk/<name>`, a beta that needs React 19), where UI SDK
+  also replaces react-day-picker, embla-carousel and
+  react-resizable-panels. See
+  [Choose a flavour](/docs/installation#choose-a-flavour).
 - **Drop-in shadcn compatibility** — works with the `shadcn` CLI and your
   existing `components.json` setup.
 - **Source distribution via the registry** — primitives install as
@@ -46,7 +52,7 @@ else. The third-party wrapper wave adds exactly four specialized,
 Radix-free libraries — react-day-picker, embla-carousel, recharts, and
 react-resizable-panels — for the primitives that genuinely cannot be
 built on Base UI alone, the same sanctioned choices shadcn makes.
-These four are the only non-Base-UI dependencies in the registry.
+These four are the only non-Base-UI dependencies of the Base UI flavour.
 
 Form primitives use Base UI-native form handling. Libraries like
 [react-hook-form](https://react-hook-form.com) plug into the `Field`

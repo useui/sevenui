@@ -79,7 +79,7 @@ export default function Home() {
             <span className="rounded-full bg-surface-raised px-2 py-0.5 text-[0.6875rem] font-medium text-foreground shadow-docs-panel">
               v2
             </span>
-            <span className="truncate">Base UI components for shadcn/ui</span>
+            <span className="truncate">Base UI and UI SDK components for shadcn/ui</span>
             <ArrowRightIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
           </Link>
 
@@ -91,7 +91,7 @@ export default function Home() {
           </h1>
 
           <p className="mt-6 max-w-[34rem] text-base leading-relaxed text-pretty text-muted-foreground sm:text-[1.0625rem]">
-            <span className="tabular-nums">{primitiveCount}</span> accessible primitives on Base UI, composed
+            <span className="tabular-nums">{primitiveCount}</span> accessible primitives on Base UI or UI SDK, composed
             into <span className="tabular-nums">{componentLabel}</span> components and Pro blocks. Copy the
             source, or let your agent assemble it.
           </p>
@@ -177,7 +177,7 @@ export default function Home() {
             ))}
           </ol>
           <p className={`${CAPTION} mt-8 leading-relaxed`}>
-            React 19 · Base UI 1.7 · Tailwind CSS v4 · shadcn CLI
+            React 19 · Base UI 1.7 or UI SDK beta · Tailwind CSS v4 · shadcn CLI
           </p>
         </div>
       </section>

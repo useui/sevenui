@@ -1,11 +1,11 @@
 ---
 title: Installation
-description: Install SevenUI primitives with the shadcn CLI. The @sevenui registry is in the shadcn registry index, so any primitive installs by name.
+description: Install SevenUI primitives with the shadcn CLI, on Base UI or UI SDK. The @sevenui registry is in the shadcn registry index, so any primitive installs by name.
 ---
 
 SevenUI requires a project already set up with the shadcn CLI and
 Tailwind CSS v4. If you have not initialized one yet, pick the Base UI
-base, since every SevenUI primitive is built on it:
+base, which the default flavour of every SevenUI primitive is built on:
 
 ```bash
 npx shadcn@latest init --base base
@@ -25,13 +25,44 @@ the command exits with "Done" having written none of the requested
 files. Leave `--overwrite` off later on, once you have edited primitives
 you want to keep.
 
+## Choose a flavour
+
+Every primitive comes in two flavours with the same API: the same
+exports, props, `data-slot` values and `render` prop, so code written
+against one runs on the other.
+
+- **Base UI** (the default) is built on [Base UI](https://base-ui.com)
+  and installs as `@sevenui/<name>`.
+- **UI SDK** is built on [UI SDK](https://ui-sdk.dev)
+  (`@ui-sdk/react` 0.1.0-beta.1, a beta from Vercel Labs) and installs
+  as `@sevenui/ui-sdk/<name>`. It needs React 19.
+
+The flavour switch in the sidebar and above every example sets which
+one this site shows: install commands, example source and live
+previews follow it, and a link with `?flavour=ui-sdk` opens the site on
+UI SDK. Each primitive's page lists what behaves differently on UI SDK.
+
+UI SDK keeps its runtime styles in a cascade layer that has to be
+declared before Tailwind's, so your utilities win over it. Put this on
+the first line of your global stylesheet, above `@import "tailwindcss"`:
+
+```css
+@layer ui-sdk;
+@import "tailwindcss";
+```
+
+The shadcn CLI can only append CSS, so it prints this step after
+installing a UI SDK primitive instead of adding the line itself. Pick
+one flavour per project: a UI SDK primitive depends on the UI SDK
+flavour of the primitives it uses.
+
 ## Add primitives
 
 `@sevenui` is listed in the
 [shadcn registry index](https://ui.shadcn.com/docs/registry/registry-index),
 so the CLI resolves the namespace with no extra configuration:
 
-<InstallCommand item="button" />
+<InstallCommand item="button" plain />
 
 Primitives install as source files under your `ui` alias.
 
@@ -65,7 +96,8 @@ The registry is namespaced by kind, one namespace per tier: primitives at
 `/r/<name>.json`, components — the composed examples on
 [sevenui.dev/components](/components) — at
 `/r/component/<name>.json`, docs demos at `/r/demo/<name>.json`, and pro
-blocks at `/r/pro/<name>.json`.
+blocks at `/r/pro/<name>.json`. The UI SDK flavour mirrors the first three
+under `/r/ui-sdk/`; pro blocks are built on Base UI only.
 
 A component installs the same way as a primitive:
 
@@ -75,6 +107,8 @@ The `@sevenui` namespace form works the same way:
 
 ```bash
 npx shadcn@latest add @sevenui/component/accordion-01
+# UI SDK flavour
+npx shadcn@latest add @sevenui/ui-sdk/component/accordion-01
 ```
 
 The file lands in your `components/` directory as a single self-contained

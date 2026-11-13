@@ -60,7 +60,7 @@ export default async function GalleryComponentPage({ params }: { params: Promise
               </ActionLink>
               <ShareOnX
                 route={route}
-                text={`${component.count} ${component.label} components for React, built on Base UI. Copy the code, own it.`}
+                text={`${component.count} ${component.label} components for React, built on Base UI or UI SDK. Copy the code, own it.`}
               />
             </PageIntro>
           </div>

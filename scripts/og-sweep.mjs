@@ -67,13 +67,13 @@ const MISSING_PAGES = [
   "/blocks/marketing/not-a-category", // §10's category `notFound()`
 ];
 
-const SITE_DESCRIPTION = "Base UI components for shadcn/ui, built for teams and their agents. Copy the source, or let your agent assemble it.";
+const SITE_DESCRIPTION = "Base UI and UI SDK components for shadcn/ui, built for teams and their agents. Copy the source, or let your agent assemble it.";
 
 const UNLISTED_PAGE_META = {
   "/": {
     title: "SevenUI",
     description:
-      "Base UI components for shadcn/ui, built for teams and their agents: 66 primitives, 900+ components, Pro blocks. Copy the source or let your agent assemble it.",
+      "Base UI and UI SDK components for shadcn/ui, built for teams and their agents: 66 primitives, 900+ components, Pro blocks. Copy the source or let agents do it.",
   },
   "/pro": {
     title: "Pro",

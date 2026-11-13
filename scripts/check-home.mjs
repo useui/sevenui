@@ -37,7 +37,7 @@ const OUTLINE = [
   "h2 Start with one command.",
 ];
 const HERO_COPY = [
-  "accessible primitives on Base UI, composed into",
+  "accessible primitives on Base UI or UI SDK, composed into",
   "components and Pro blocks. Copy the source, or let your agent assemble it.",
   "Works with",
   "Claude Code · Cursor · VS Code · Codex",

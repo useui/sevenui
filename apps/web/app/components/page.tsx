@@ -31,7 +31,7 @@ export default async function ComponentsPage() {
       <PageIntro crumbs={CRUMBS} description={summary} title={meta.title}>
         <ShareOnX
           route={ROUTE}
-          text={`${totalExamples} free, copy-and-go React components built on Base UI and the shadcn registry.`}
+          text={`${totalExamples} free, copy-and-go React components built on Base UI or UI SDK and the shadcn registry.`}
         />
       </PageIntro>
       <nav aria-label="Families" className="mt-6">

@@ -8,7 +8,7 @@ const CUSTOM: Record<string, PageMeta> = {
   "/": {
     title: site.name,
     description:
-      "Base UI components for shadcn/ui, built for teams and their agents: 66 primitives, 900+ components, Pro blocks. Copy the source or let your agent assemble it.",
+      "Base UI and UI SDK components for shadcn/ui, built for teams and their agents: 66 primitives, 900+ components, Pro blocks. Copy the source or let agents do it.",
   },
   "/components": {
     title: "Components",

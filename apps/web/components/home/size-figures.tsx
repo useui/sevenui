@@ -33,7 +33,7 @@ export function SizeFigures({
       fig: "Fig 0.1",
       name: "Primitive",
       terms: `${primitiveCount} · free, MIT`,
-      body: "Accessible building blocks on Base UI. Every state and every keyboard path, tested.",
+      body: "Accessible building blocks on Base UI or UI SDK. Every state and every keyboard path, tested.",
       item: "switch",
       href: "/docs/components",
       linkLabel: `Browse ${primitiveCount} primitives`,

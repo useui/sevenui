@@ -33,6 +33,7 @@ const resourceLinks: FooterLink[] = [
 
 const builtOnLinks: FooterLink[] = [
   { label: "Base UI", href: "https://base-ui.com", external: true },
+  { label: "UI SDK", href: "https://ui-sdk.dev", external: true },
   { label: "shadcn registry", href: "https://ui.shadcn.com/docs/registry", external: true },
   { label: "Tailwind CSS", href: "https://tailwindcss.com", external: true },
 ];
@@ -113,7 +114,7 @@ export function SiteFooter({
             <Logomark className="h-6 w-auto" />
           </Link>
           <p className="mt-3.5 max-w-[27rem] font-medium text-muted-foreground text-sm">
-            SevenUI is a set of Base UI components for shadcn/ui, built for teams and their agents and
+            SevenUI is a set of Base UI and UI SDK components for shadcn/ui, built for teams and their agents and
             distributed through the shadcn registry.
           </p>
         </div>

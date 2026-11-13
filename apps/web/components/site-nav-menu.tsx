@@ -236,7 +236,7 @@ function LibraryPanel({ blocks, nav, pathname }: { blocks?: BlocksNav; nav: Head
       <section aria-label="Primitives" className="flex min-w-0 flex-col">
         <ColumnHead
           count={nav.primitives.count}
-          description="Installable units on Base UI, one command each."
+          description="Installable units on Base UI or UI SDK, one command each."
           href={nav.primitives.href}
           icon={Boxes}
           label="Primitives"
