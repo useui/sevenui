@@ -107,7 +107,7 @@ export const UI_SDK_NOTES: Partial<Record<string, UiSdkNote[]>> = {
   "context-menu": [
     {
       text: "`orientation` and `closeDelay` on the root are accepted and ignored.",
-      rows: ["context-menu | `disabled`, `orientation`, `closeDelay` on the root"],
+      rows: ["context-menu | `orientation`, `closeDelay` on the root"],
     },
   ],
   direction: [
@@ -134,7 +134,7 @@ export const UI_SDK_NOTES: Partial<Record<string, UiSdkNote[]>> = {
   ],
   field: [
     {
-      text: "Validation runs through the wrapper. `validate` blocks a submit only inside SevenUI `Form`; native constraints (`required`, `type`, `pattern`) show after a submit attempt. `FieldError match=\"valid\"` never shows.",
+      text: "Validation runs through the wrapper; native constraints (`required`, `type`, `pattern`) show after a submit attempt. In a plain `<form>`, a field with `validate` also re-validates on change once its error shows. `FieldError match=\"valid\"` never shows.",
       rows: [
         "field | `validate`, `validationMode`",
         "field | `validate` (onSubmit mode)",
@@ -145,10 +145,14 @@ export const UI_SDK_NOTES: Partial<Record<string, UiSdkNote[]>> = {
       text: "Parts carry UI SDK's state attributes (`data-invalid`, `data-valid`, `data-focused`, `data-required`, `data-disabled`, `data-filled` on the control); `data-dirty` and `data-touched` are set on the root only.",
       rows: ["field | parts carry `data-valid`", "field | `dirty`, `touched` mark every part"],
     },
+    {
+      text: "A `Textarea` or `NativeSelect` inside a field reports its value and runs the field's `validate`; with Base UI it does neither.",
+      rows: ["field | a `Textarea` or `NativeSelect` in a field"],
+    },
   ],
   form: [
     {
-      text: "A native `<form>` adapter with the same `onFormSubmit`, `errors`, `validationMode` and `actionsRef`; native constraint errors are shown by the browser and UI SDK.",
+      text: "A native `<form noValidate>` adapter with the same `onFormSubmit`, `errors`, `validationMode` and `actionsRef` and the same submitted values; the `details` it passes to `onFormSubmit` are `{ reason: \"none\", event }`.",
       rows: ["form | Base UI `Form`"],
     },
   ],
@@ -233,8 +237,9 @@ export const UI_SDK_NOTES: Partial<Record<string, UiSdkNote[]>> = {
   ],
   select: [
     {
-      text: "Opening by pointer highlights the first or selected option and moves focus into the list. There are no scroll arrows; the list scrolls. `finalFocus` is ignored: focus always returns to the trigger.",
+      text: "Opening by pointer highlights the first or selected option and moves focus into the list. There are no scroll arrows; the list scrolls. `finalFocus` is ignored: focus always returns to the trigger. Without `items`, `SelectValue` shows the selected item's label rather than its raw value.",
       rows: [
+        "select | without `items`, `SelectValue` shows the raw value",
         "select | opening by pointer highlights nothing",
         "select | `SelectScrollUp/DownButton`",
         "select | `finalFocus` on `SelectContent`",
@@ -288,11 +293,12 @@ export const UI_SDK_NOTES: Partial<Record<string, UiSdkNote[]>> = {
   toolbar: [{ text: "UI SDK's own `toolbar-*` data slots appear on the parts.", rows: ["toolbar | parts have no `data-slot`"] }],
   tooltip: [
     {
-      text: "A closed tooltip stays mounted with `hidden`. A hover tooltip closes once the pointer moves somewhere else, so the pointer can travel onto it. The provider's `timeout` is ignored.",
+      text: "A closed tooltip stays mounted with `hidden`. A hover tooltip closes once the pointer moves somewhere else, so the pointer can travel onto it. The provider's `timeout` is ignored. While a tooltip is open and enabled, its trigger is described by it (`aria-describedby`); Base UI never sets that.",
       rows: [
         "tooltip | closed content unmounted",
         "tooltip | hover close on pointer leave",
         "tooltip | `TooltipProvider` groups tooltips",
+        "tooltip | the trigger has no `aria-describedby`",
       ],
     },
     {
@@ -336,6 +342,12 @@ export const POPUP_NOTE: UiSdkNote = {
  */
 export const INTERNAL_ROWS: Record<string, string> = {
   "all popups | trigger `data-popup-open`": "the flavour adds `data-popup-open`, so trigger styles keep working",
+  "button, menu items, command items | a Promise returned from `onClick`": "the result is dropped, as in Base UI",
+  "button | no `\"use client\"`": "a Server Component renders it as before",
+  "dropdown-menu, context-menu, menubar | `disabled` on the menu root": "honoured: the menu does not open",
+  "tabs, accordion, radio-group | item values of any type": "callbacks hand back the item's own value, as in Base UI",
+  "select, input-otp, drawer | a caller's `ref`": "a caller's ref reaches the element, as in Base UI",
+  "field | `invalid={false}` is inert": "matches Base UI",
   "button | `nativeButton`": "UI SDK detects a native button itself, which is what the prop told Base UI",
   "badge | `useRender` state": "the same attributes are set explicitly",
   "dialog | `DialogOverlay` is a plain div": "the overlay keeps its slot and look",
@@ -397,7 +409,7 @@ export const INTERNAL_ROWS: Record<string, string> = {
   "textarea | native `onSubmit` accepted": "a textarea never fires `submit` in either flavour",
   "input-group | `InputGroup` is a plain `div role=\"group\"`": "the role is kept",
   "field | `FieldLabel` renders SevenUI `Label`": "looks and labels the same",
-  "radio-group | `value` of any type": "values of any type work: `onValueChange` hands back the item's own value (8304597)",
+  "radio-group | `value` of any type": "values of any type work: callbacks and form values hand back the item's own value",
   "switch | `uncheckedValue` submitted while off": "emulated; the value is submitted as in Base UI",
   "slider | `onValueCommitted`, `minStepsBetweenValues`": "same props, mapped",
   "slider | `thumbAlignment=\"edge\"`": "thumbs sit where Base UI puts them (checked in Chrome)",
