@@ -41,6 +41,17 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm check:registry
+      # The UI SDK flavour's finish line: nothing pending or blocked and no
+      # problem in the flavour or its examples. check:registry asserts the
+      # same since it checks completeness directly; this states it on its own.
+      - run: node scripts/ui-sdk-flavour.mjs status --strict
+      # Typechecks every example's flavour source as a UI SDK project sees it
+      # and fails when packages/registry/ui-sdk-compat.json is stale. Before
+      # pnpm build, because the site reads that manifest at build time (which
+      # examples have a UI SDK preview, the per-example notes). Only this
+      # catches a deleted manifest entry, an example newly matching a recorded
+      # difference, or a flavour source that no longer typechecks.
+      - run: pnpm check:ui-sdk-compat
       - run: pnpm test
       - run: pnpm build
         env:
