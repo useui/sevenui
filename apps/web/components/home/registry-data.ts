@@ -13,10 +13,12 @@ import { REGISTRY_DIR } from "../../lib/ui-sdk-examples";
 const uiItems = registry.items.filter((item) => item.type === "registry:ui");
 
 export const primitiveCount = uiItems.length;
-export const componentCount = componentsRegistry.items.length;
 
-/** "900+": the free component count, rounded down to the hundred so the copy does not churn. */
-export const componentLabel = `${Math.floor(componentCount / 100) * 100}+`;
+/**
+ * The free component count, stated exactly ("915"), never rounded: the home page sets it as a display number,
+ * and the footer under it prints the same exact count. It is read from the registry, so it moves with it.
+ */
+export const componentCount = componentsRegistry.items.length;
 
 /**
  * The home page says every primitive has its own test file (packages/registry/tests/<name>.test.tsx, run by
@@ -34,7 +36,13 @@ if (untested.length > 0) {
 export const baseUiVersion = registryPackage.dependencies["@base-ui/react"].replace(/^\^?(\d+\.\d+)\..*$/, "$1");
 export const uiSdkVersion = registryPackage.dependencies["@ui-sdk/react"];
 
-export type Catalog = { groups: Group[]; blockCount: number; categoryCount: number };
+export type Catalog = {
+  groups: Group[];
+  blockCount: number;
+  categoryCount: number;
+  /** The labels of the categories that hold at least one block, in the manifest's order. */
+  filledCategories: string[];
+};
 
 /** The live Pro manifest. Throws like /blocks does, so a failed ISR render keeps the last good page. */
 export async function loadCatalog(): Promise<Catalog> {
@@ -44,5 +52,6 @@ export async function loadCatalog(): Promise<Catalog> {
     groups,
     blockCount: categories.reduce((sum, category) => sum + category.items.length, 0),
     categoryCount: categories.length,
+    filledCategories: categories.filter((category) => category.items.length > 0).map((category) => category.label),
   };
 }

@@ -9,7 +9,10 @@
 // `--controls` breaks the input once per assertion and requires that assertion to fail, so a check that
 // cannot fail is caught.
 
+import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { parseHTML } from "linkedom";
 
 const args = Object.fromEntries(
@@ -20,9 +23,29 @@ const args = Object.fromEntries(
   }, []),
 );
 if (!args.base) {
-  console.error("usage: check-home.mjs --base <url> [--browser] [--controls]");
+  console.error("usage: check-home.mjs --base <url> [--manifest <path|url>] [--browser] [--controls]");
   process.exit(2);
 }
+
+// The two counts the page sets as headlines, derived here from the same sources the page reads, never typed
+// in: the free components from the registry, the Pro blocks from the manifest the build under test loaded.
+// That manifest is --manifest, else PRO_MANIFEST_URL (a path is relative to apps/web, as for the build), else
+// the live one, the build's own default.
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const COMPONENT_COUNT = JSON.parse(readFileSync(path.join(ROOT, "packages/registry/components/registry.json"), "utf8")).items.length;
+const MANIFEST = args.manifest ?? process.env.PRO_MANIFEST_URL ?? "https://pro.sevenui.dev/r/pro-manifest.json";
+const manifest = MANIFEST.startsWith("http")
+  ? await (await fetch(MANIFEST)).json()
+  : JSON.parse(readFileSync(path.resolve(ROOT, "apps/web", MANIFEST), "utf8"));
+// Counted the way loadCatalog does: the items whose category belongs to a group.
+const groupOf = new Map(manifest.categories.map((category) => [category.id, category.group]));
+const groupIds = new Set(manifest.groups.map((group) => group.id));
+const BLOCK_COUNT = manifest.items.filter((item) => groupIds.has(groupOf.get(item.category))).length;
+const STAT_HEADINGS = {
+  components: `${COMPONENT_COUNT} Components. Free to copy.`,
+  // A count of zero is never set as a headline number.
+  blocks: `${BLOCK_COUNT > 0 ? `${BLOCK_COUNT} ` : ""}${BLOCK_COUNT === 1 ? "Pro block." : "Pro blocks."} Sections and pages.`,
+};
 
 // The release the pill names. The page derives it from lib/roadmap.ts; this pins what it must come out as.
 const RELEASE = "1.1";
@@ -35,10 +58,8 @@ const OUTLINE = [
   "h2 Same code. Two foundations.",
   "h3 Base UI",
   "h3 UI SDK",
-  "h2 Parts. Patterns. Pages.",
-  "h3 Primitives",
-  "h3 Components",
-  "h3 Blocks",
+  `h2 ${STAT_HEADINGS.components}`,
+  `h2 ${STAT_HEADINGS.blocks}`,
   "h2 Already speaks shadcn/ui.",
   "h3 The source is yours.",
   "h3 Your theme carries over.",
@@ -136,7 +157,7 @@ const replaceDoc = (doc, patch) => ({ ...doc, ...patch });
 
 const CHECKS = {
   outline: {
-    name: "the heading outline is exactly the pinned thirteen lines (one h1)",
+    name: `the heading outline is exactly the pinned ${OUTLINE.length} lines (one h1), with both counts derived`,
     run: ({ html }) => {
       const got = outline(html);
       return JSON.stringify(got) === JSON.stringify(OUTLINE) ? null : `got ${JSON.stringify(got)}`;
@@ -238,33 +259,38 @@ const CHECKS = {
     run: ({ html }) => {
       const main = mainHtml(html);
       if (/@sevenui\/ui-sdk\/pro\//.test(main)) return "a UI SDK pro install command";
-      const blocks = /data-tier="blocks"[\s\S]*?(?=data-tier=|<\/section>)/.exec(main)?.[0] ?? "";
-      if (!blocks) return "no Blocks row";
-      if (/flavour-only-ui-sdk/.test(blocks)) return "the Blocks row switches with the flavour";
-      return /Built on Base UI only/.test(visibleText(blocks)) ? null : "the Blocks row does not say Base UI only";
+      const blocks = sectionHtml(html, "blocks-title") ?? "";
+      if (!blocks) return "no Blocks section";
+      if (/flavour-only-/.test(blocks)) return "the Blocks section switches with the flavour";
+      const flat = visibleText(blocks);
+      if (!/\bPro blocks?\./.test(flat)) return "the Blocks section does not say Pro";
+      return /Built on Base UI only/.test(flat) ? null : "the Blocks section does not say Base UI only";
     },
     breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace("</main>", "<code>npx shadcn@latest add @sevenui/ui-sdk/pro/x</code></main>") }),
   },
-  tiers: {
-    name: "the three tiers are one row each, with the count the registry derives and the way in",
+  stats: {
+    name: "Components and Blocks each get a section led by its count: the registry's exact count, the manifest's",
     run: ({ html }) => {
-      const main = mainHtml(html);
-      const rows = Object.fromEntries(
-        [...main.matchAll(/data-tier="([a-z]+)"([\s\S]*?)(?=data-tier=|<\/section>)/g)].map((m) => [m[1], m[2]]),
-      );
       const want = {
-        primitives: { href: "/docs/components", says: "66 · free, MIT" },
-        components: { href: "/components", says: "900+ · free, MIT" },
-        blocks: { href: "/blocks", says: "Pro · " },
+        components: { count: COMPONENT_COUNT, links: ["/components"] },
+        blocks: { count: BLOCK_COUNT, links: ["/blocks", "/pro"] },
       };
-      if (JSON.stringify(Object.keys(rows)) !== JSON.stringify(Object.keys(want))) return `rows ${Object.keys(rows).join(",")}`;
-      for (const [name, { href, says }] of Object.entries(want)) {
-        if (!rows[name].includes(`href="${href}"`)) return `${name} does not link to ${href}`;
-        if (!visibleText(rows[name]).includes(says)) return `${name} does not say ${JSON.stringify(says)}`;
+      const order = [...mainHtml(html).matchAll(/<section\b[^>]*data-stat="([a-z]+)"/g)].map((m) => m[1]);
+      if (order.join(",") !== "components,blocks") return `stat sections ${order.join(",") || "none"}`;
+      for (const [id, { count, links }] of Object.entries(want)) {
+        const section = sectionHtml(html, `${id}-title`) ?? "";
+        const numbers = [...section.matchAll(/<span\b[^>]*data-stat-count[^>]*>([\s\S]*?)<\/span>/g)].map((m) => text(m[1]));
+        // The number sits inside the h2, so it is read as part of the heading.
+        const h2 = /<h2\b[^>]*>([\s\S]*?)<\/h2>/.exec(section)?.[1] ?? "";
+        if (count > 0) {
+          if (numbers.length !== 1 || numbers[0] !== String(count)) return `${id}: count ${JSON.stringify(numbers)}, want ${count}`;
+          if (!/data-stat-count/.test(h2)) return `${id}: the count is not part of the heading`;
+        } else if (numbers.length) return `${id}: a count of zero is set as ${JSON.stringify(numbers)}`;
+        for (const href of links) if (!section.includes(`href="${href}"`)) return `${id} does not link to ${href}`;
       }
-      return rows.blocks.includes('href="/pro"') ? null : "the Blocks row does not link to /pro";
+      return null;
     },
-    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace("900+ · free, MIT", "900 · free") }),
+    breakIt: (doc) => replaceDoc(doc, { html: doc.html.replace(/(data-stat-count[^>]*>)[^<]*/, "$1900+") }),
   },
   noMcpClaim: {
     name: "the page makes no MCP claim",
@@ -341,6 +367,9 @@ const CHECKS = {
         "Primitives for shadcn/ui, on Base UI or UI SDK.",
         "Start with a part, a pattern or a page.",
         "Nothing to depend on but your own files.",
+        // The three-row tier index, before Components and Blocks got their own numbers.
+        "Parts. Patterns. Pages.",
+        "All of it installs with the shadcn CLI you already use.",
       ];
       const found = stale.filter((phrase) => flat.includes(phrase));
       return found.length ? `still rendered: ${found.join(" | ")}` : null;
@@ -484,6 +513,37 @@ async function browserChecks() {
         wide.style.width = "900px";
         wide.style.height = "1px";
         document.querySelector("main").append(wide);
+      },
+    },
+    statsFit: {
+      // The live manifest's count is three digits today; a four-digit one must still sit on one line at 360.
+      name: "each headline count sits on one line inside the 16px gutter at 360px, as rendered and at four digits",
+      run: async (sabotage) => {
+        const { page, close } = await open({ sabotage });
+        const problems = await page.evaluate((stress) => {
+          const out = [];
+          const counts = [...document.querySelectorAll("[data-stat-count]")];
+          if (counts.length !== 2) out.push(`${counts.length} counts`);
+          for (const value of [null, stress]) {
+            for (const el of counts) {
+              if (value) el.textContent = value;
+              const box = el.getBoundingClientRect();
+              const lineHeight = Number.parseFloat(getComputedStyle(el).fontSize);
+              if (box.height > lineHeight * 1.2) out.push(`"${el.textContent}" wraps (${Math.round(box.height)}px)`);
+              const range = document.createRange();
+              range.selectNodeContents(el);
+              const ink = range.getBoundingClientRect();
+              if (ink.left < 16 || ink.right > window.innerWidth - 16) out.push(`"${el.textContent}" spans ${Math.round(ink.left)}–${Math.round(ink.right)}`);
+            }
+          }
+          if (document.documentElement.scrollWidth > window.innerWidth) out.push(`scrollWidth ${document.documentElement.scrollWidth}`);
+          return out;
+        }, "9999");
+        await close();
+        return problems.length ? problems.join(" | ") : null;
+      },
+      sabotage: () => {
+        for (const el of document.querySelectorAll("[data-stat-count]")) el.textContent = "99999999";
       },
     },
     noConsoleErrors: {

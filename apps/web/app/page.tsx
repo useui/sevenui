@@ -6,7 +6,7 @@ import { ArrowRightIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { FlavourSwitch } from "../components/flavour/flavour-switch";
 import { InstallCommand } from "../components/home/install-command";
-import { baseUiVersion, componentLabel, loadCatalog, primitiveCount, uiSdkVersion } from "../components/home/registry-data";
+import { baseUiVersion, componentCount, loadCatalog, primitiveCount, uiSdkVersion } from "../components/home/registry-data";
 import { releaseHref, releaseLabel } from "../components/home/release";
 import { HomeSurface } from "../components/home/surface/surface";
 import { JsonLd } from "../components/json-ld";
@@ -29,6 +29,9 @@ const SECTION = `${ROW} py-24 sm:py-28 lg:py-32`;
 const DISPLAY = "font-[510] tracking-[-0.03em] text-balance";
 const MUTED = "text-muted-foreground";
 const H2 = `${DISPLAY} text-[2.25rem] leading-[1.05] sm:text-[3rem] lg:text-[3.5rem]`;
+// A count set as the section's headline: three to four times the h2, tight enough that four digits fit a phone.
+const NUMBER =
+  "mb-3 block text-[6.5rem] leading-[0.9] font-[600] tracking-[-0.055em] text-foreground sm:mb-4 sm:text-[9rem] lg:text-[11rem]";
 const LEAD = "text-[1.0625rem] leading-relaxed text-pretty text-muted-foreground sm:text-xl sm:leading-relaxed";
 const QUIET_LINK =
   "inline-flex w-fit items-center gap-1.5 rounded-sm text-[0.9375rem] font-medium underline decoration-foreground/30 underline-offset-[5px] hover:decoration-foreground focus-visible:focus-ring";
@@ -80,8 +83,8 @@ export default async function Home() {
 
           <div className="mt-10 flex w-full max-w-[40rem] flex-col items-stretch gap-3 sm:flex-row sm:items-center">
             <InstallCommand className="sm:flex-1" label="button install command" {...flavouredCommands("button")} />
-            <Link className={buttonVariants({ className: "h-10 rounded-[10px] px-5" })} href="/components">
-              Browse components
+            <Link className={buttonVariants({ className: "h-10 rounded-[10px] px-5" })} href="/docs/components">
+              Browse primitives
             </Link>
           </div>
         </div>
@@ -154,51 +157,54 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 3 — The three sizes, as an index: a name, a line, a way in. */}
-      <section aria-labelledby="tiers-title">
-        <div className={SECTION}>
-          <header className="flex flex-col items-center text-center">
-            <h2 className={H2} id="tiers-title">
-              Parts. Patterns. <span className={MUTED}>Pages.</span>
-            </h2>
-            <p className={`${LEAD} mt-5 max-w-[32rem]`}>All of it installs with the shadcn CLI you already use.</p>
-          </header>
+      {/* 3 and 4 — The two larger sizes, one number each. The hero already counts the primitives. */}
+      <Stat
+        count={componentCount}
+        id="components"
+        line={
+          <>
+            The primitives, composed into real screens. <span className="sm:block">On Base UI or UI SDK.</span>
+          </>
+        }
+        links={
+          <Link className={QUIET_LINK} href="/components">
+            Browse components
+            <ArrowRightIcon aria-hidden="true" className="size-3.5" />
+          </Link>
+        }
+        muted="Free to copy."
+        title="Components."
+      />
 
-          <div className="mx-auto mt-16 max-w-[60rem] sm:mt-20">
-            <Tier
-              href="/docs/components"
-              id="primitives"
-              linkLabel={`Browse ${primitiveCount} primitives`}
-              line="From a button to a date picker, in both foundations."
-              terms={`${primitiveCount} · free, MIT`}
-              title="Primitives"
-            />
-            <Tier
-              href="/components"
-              id="components"
-              linkLabel={`Browse ${componentLabel} components`}
-              line="The primitives, composed into screens you can copy."
-              terms={`${componentLabel} · free, MIT`}
-              title="Components"
-            />
-            <Tier
-              extra={
-                <Link className={`${QUIET_LINK} text-muted-foreground`} href="/pro">
-                  <span className="tabular-nums">{`Get Pro for ${PRO_LAUNCH}, once`}</span>
-                </Link>
-              }
-              href="/blocks"
-              id="blocks"
-              linkLabel="Browse blocks"
-              line="Whole sections and pages. Built on Base UI only."
-              terms={`Pro · ${catalog.blockCount} ${catalog.blockCount === 1 ? "block" : "blocks"}`}
-              title="Blocks"
-            />
-          </div>
-        </div>
-      </section>
+      {/* Pro, and Base UI only on every flavour: nothing here follows the switch. */}
+      <Stat
+        count={catalog.blockCount}
+        id="blocks"
+        line="Built on Base UI only."
+        links={
+          <>
+            <Link className={QUIET_LINK} href="/blocks">
+              Browse blocks
+              <ArrowRightIcon aria-hidden="true" className="size-3.5" />
+            </Link>
+            <Link className={`${QUIET_LINK} text-muted-foreground`} href="/pro">
+              <span className="tabular-nums">{`Get Pro for ${PRO_LAUNCH}, once`}</span>
+            </Link>
+          </>
+        }
+        muted="Sections and pages."
+        title={catalog.blockCount === 1 ? "Pro block." : "Pro blocks."}
+      >
+        {catalog.filledCategories.length > 0 && (
+          <ul aria-label="Block categories" className="mt-8 flex max-w-[40rem] flex-wrap justify-center gap-x-4 gap-y-1 text-sm text-muted-foreground sm:gap-x-5 sm:gap-y-1.5 sm:text-[0.9375rem]">
+            {catalog.filledCategories.map((label) => (
+              <li key={label}>{label}</li>
+            ))}
+          </ul>
+        )}
+      </Stat>
 
-      {/* 4 — Why it is safe to adopt: three things the repo can back. */}
+      {/* 5 — Why it is safe to adopt: three things the repo can back. */}
       <section aria-labelledby="adopt-title">
         <div className={SECTION}>
           <header className="flex flex-col items-center text-center">
@@ -220,7 +226,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 5 — The way in. Inset like the footer below it, so the page ends on two framed surfaces, not a band. */}
+      {/* 6 — The way in. Inset like the footer below it, so the page ends on two framed surfaces, not a band. */}
       <section aria-labelledby="start-title" className="mx-3 rounded-3xl bg-surface-tray sm:mx-4">
         <div className={`${SECTION} flex flex-col items-center text-center`}>
           <h2 className={H2} id="start-title">
@@ -286,41 +292,48 @@ function Foundation({
   );
 }
 
-function Tier({
+/**
+ * One number as the section's headline, the way a single stat is presented: the count at display size, then
+ * the h2's words under it, one line, the way in. The count is part of the heading, so it is read as one
+ * sentence ("915 Components. Free to copy."). A count of zero is never set as a boast: the number is left out.
+ */
+function Stat({
   id,
+  count,
   title,
-  terms,
+  muted,
   line,
-  href,
-  linkLabel,
-  extra,
+  links,
+  children,
 }: {
   id: string;
+  count: number;
   title: string;
-  terms: string;
-  line: string;
-  href: string;
-  linkLabel: string;
-  extra?: ReactNode;
+  muted: string;
+  line: ReactNode;
+  links: ReactNode;
+  children?: ReactNode;
 }) {
   return (
-    <div
-      className="grid grid-cols-1 gap-x-10 gap-y-3 border-t border-hairline py-8 last:border-b sm:py-10 lg:grid-cols-[13rem_minmax(0,1fr)_auto] lg:items-baseline"
-      data-tier={id}
-    >
-      <h3 className="text-[1.75rem] leading-tight font-[510] tracking-[-0.022em] sm:text-[2rem]">{title}</h3>
-      <div className="flex flex-col gap-1">
-        <p className="text-base text-pretty sm:text-[1.0625rem]">{line}</p>
-        <p className="text-sm text-muted-foreground tabular-nums">{terms}</p>
+    <section aria-labelledby={`${id}-title`} data-stat={id}>
+      <div className={`${SECTION} flex flex-col items-center text-center`}>
+        <h2 className={H2} id={`${id}-title`}>
+          {count > 0 && (
+            <>
+              <span className={NUMBER} data-stat-count>
+                {count}
+              </span>{" "}
+            </>
+          )}
+          <span className="block">
+            {title} <span className={MUTED}>{muted}</span>
+          </span>
+        </h2>
+        <p className={`${LEAD} mt-5 max-w-[34rem]`}>{line}</p>
+        {children}
+        <div className="mt-10 flex flex-wrap justify-center gap-x-8 gap-y-3">{links}</div>
       </div>
-      <div className="mt-2 flex flex-wrap gap-x-6 gap-y-2 lg:mt-0 lg:flex-col lg:items-end">
-        <Link className={QUIET_LINK} href={href}>
-          {linkLabel}
-          <ArrowRightIcon aria-hidden="true" className="size-3.5" />
-        </Link>
-        {extra}
-      </div>
-    </div>
+    </section>
   );
 }
 
