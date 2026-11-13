@@ -247,7 +247,7 @@ What decides the layer's place:
 | Where | How |
 |---|---|
 | The docs site | `apps/web/app/globals.css` line 3: `@layer ui-sdk;` above `@import "tailwindcss"`. |
-| Consumers | shadcn can only *append* CSS. A `css: {"@layer ui-sdk": {}}` lands at the end of the file, which is too late. So every flavour item that imports UI SDK carries a `docs` string that `shadcn add` prints after install. The smoke test checks that it is printed. |
+| Consumers | shadcn can only *append* CSS. A `css: {"@layer ui-sdk": {}}` lands at the end of the file, which is too late. So the message is a `docs` string that `shadcn add` prints after install. The CLI prints `docs` once per resolved item, dependencies included, so it lives on one flavour-only item, `ui-sdk-setup` (`/r/ui-sdk/ui-sdk-setup.json`, no files), that every item importing UI SDK depends on: one install prints it once. `check-registry` asserts that, and the smoke test that a six-item install prints it exactly once. |
 
 ## 6. Tests
 

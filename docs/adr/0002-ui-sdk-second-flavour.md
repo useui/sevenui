@@ -33,7 +33,7 @@ Base UI remains the default. Its output (`/r/*.json`, `/r/demo/*.json`, `/r/comp
 
 ## Consequences
 
-- **One manual step for consumers.** UI SDK's runtime CSS lives in `@layer ui-sdk`, which must be declared above `@import "tailwindcss"`. shadcn can only append CSS, so the step is printed on install rather than performed.
+- **One manual step for consumers.** UI SDK's runtime CSS lives in `@layer ui-sdk`, which must be declared above `@import "tailwindcss"`. shadcn can only append CSS, so the step is printed on install rather than performed, once per install: the message lives on one shared `ui-sdk-setup` item. A default setup works without the line because UI SDK prepends its styles; the line protects setups where its styles arrive later.
 - **Divergences are permanent and documented.** Examples:
   - closed tooltips stay mounted with `hidden`;
   - opening a select by pointer highlights the first option;
@@ -42,7 +42,7 @@ Base UI remains the default. Its output (`/r/*.json`, `/r/demo/*.json`, `/r/comp
 
   The tests encode each one through small flavour-aware helpers rather than weakened assertions.
 - **Examples are flavoured too.** Every demo and gallery example is also published at `/r/ui-sdk/demo/*` and `/r/ui-sdk/component/*`, depending on the flavour primitives. The 15 examples that cannot work unchanged have variants (overlays); a committed lock fails the checks when a variant's original changes until the variant is reviewed.
-- **One exact UI SDK version.** UI SDK is a beta, so `@ui-sdk/*` is pinned exactly in the workspace and in every published item, and `check-registry` rejects a range. npm still saves a consumer's install with a caret, so the installation guide tells consumers to pin it.
+- **One exact UI SDK version.** UI SDK is a beta, so `@ui-sdk/*` is pinned exactly in the workspace and in every published item, and `check-registry` rejects a range. The registry cannot make a consumer's package manager save it exactly: pnpm, yarn and bun do, npm saves a caret, so the docs give npm users the fix.
 - **Pro blocks stay on Base UI.** Only primitives and their free examples have a UI SDK flavour.
 - **The site's notes are tied to the divergence table.** Every UI SDK difference shown on a primitive page cites its row in the guide's §8, and `check-ui-sdk-notes` fails when a row changes until its note is reviewed.
 
