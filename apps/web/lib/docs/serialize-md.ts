@@ -6,6 +6,7 @@ import { rewriteRegistryImports } from "../registry-imports.ts";
 import { installCommand } from "../registry.ts";
 import { PACKAGE_MANAGERS } from "../package-manager.ts";
 import { UI_SDK_VERSION } from "../flavour.ts";
+import { POPUP_NOTE, POPUP_PRIMITIVES, UI_SDK_NOTES } from "../ui-sdk-notes.ts";
 
 const REGISTRY_DIR = path.join(process.cwd(), "../../packages/registry");
 
@@ -194,7 +195,7 @@ function renderInstallCommand(attrs: Record<string, string | true>, sourcePath: 
   if (!isFlavouredItem(item)) return fence("bash", base.join("\n"));
   // A primitive or an example of one comes in both flavours; the page shows the reader's, a mirror shows both.
   const uiSdk = PACKAGE_MANAGERS.map((pm) => installCommand(item, pm, "ui-sdk"));
-  return fence(
+  const commands = fence(
     "bash",
     [
       "# Base UI flavour (the default)",
@@ -204,9 +205,32 @@ function renderInstallCommand(attrs: Record<string, string | true>, sourcePath: 
       ...uiSdk,
     ].join("\n"),
   );
+  // A primitive's own page shows the UI SDK setup and differences only to UI SDK readers; a mirror has no
+  // reader to switch, so it carries them in full (the same data the page renders, lib/ui-sdk-notes.ts).
+  return isPrimitiveItem(item) && attrs.plain === undefined ? `${commands}\n\n${uiSdkSection(item)}` : commands;
+}
+
+function uiSdkSection(item: string): string {
+  const notes = [...(POPUP_PRIMITIVES.has(item) ? [POPUP_NOTE] : []), ...(UI_SDK_NOTES[item] ?? [])];
+  return [
+    "### UI SDK flavour",
+    "",
+    `Setup: React 19; \`@ui-sdk/react\` and \`@ui-sdk/core\` pinned exactly to \`${UI_SDK_VERSION}\` (a beta: a caret range floats across betas); and \`@layer ui-sdk;\` as the first line of the global stylesheet, above \`@import "tailwindcss"\` (the CLI prints this step but cannot add it). See [Choose a flavour](/docs/installation#choose-a-flavour).`,
+    "",
+    "The API is the same in both flavours (exports, props, `data-slot` values, `render`), so code that uses only the SevenUI exports compiles against either.",
+    "",
+    notes.length > 0
+      ? ["Differences on UI SDK:", "", ...notes.map((note) => `- ${note.text}`)].join("\n")
+      : "Nothing a reader would notice behaves differently on UI SDK.",
+  ].join("\n");
 }
 
 let primitiveNames: Set<string> | undefined;
+
+function isPrimitiveItem(item: string): boolean {
+  isFlavouredItem(item);
+  return primitiveNames?.has(item) ?? false;
+}
 
 /** Mirrors lib/flavour-items.ts, which is server-only; this module also runs off-graph under plain node. */
 function isFlavouredItem(item: string): boolean {
